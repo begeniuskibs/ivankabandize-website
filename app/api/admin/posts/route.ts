@@ -1,0 +1,99 @@
+import { createClient } from '@/utils/supabase/server'
+import { NextResponse, type NextRequest } from 'next/server'
+
+export async function GET() {
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  const { data: posts, error } = await supabase
+    .from('posts')
+    .select('*, post_tags(tag:tags(*))')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 400 })
+  }
+
+  return NextResponse.json({ posts })
+}
+
+export async function POST(request: NextRequest) {
+  const supabase = await createClient()
+  const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+  if (authError || !user) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
+
+  try {
+    const body = await request.json()
+    const {
+      title,
+      slug,
+      excerpt,
+      content,
+      visibility = 'public',
+      publish_status = 'draft',
+      published_at,
+      tag_ids = [],
+    } = body
+
+    if (!title) {
+      return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+    }
+
+    const generatedSlug =
+      slug ||
+      title
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-|-$/g, '') + `-${Date.now()}`
+
+    // Insert post under active user session (RLS enforces is_owner)
+    const { data: post, error: postError } = await supabase
+      .from('posts')
+      .insert({
+        title,
+        slug: generatedSlug,
+        excerpt,
+        content: content || {},
+        visibility,
+        publish_status,
+        published_at:
+          publish_status === 'published' && !published_at
+            ? new Date().toISOString()
+            : published_at || null,
+        author_id: user.id,
+      })
+      .select()
+      .single()
+
+    if (postError) {
+      return NextResponse.json({ error: postError.message }, { status: 403 })
+    }
+
+    // Attach tags if tag_ids are provided
+    if (tag_ids && Array.isArray(tag_ids) && tag_ids.length > 0) {
+      const postTagRecords = tag_ids.map((tagId: string) => ({
+        post_id: post.id,
+        tag_id: tagId,
+      }))
+      const { error: tagError } = await supabase
+        .from('post_tags')
+        .insert(postTagRecords)
+
+      if (tagError) {
+        console.error('Post tags error:', tagError)
+      }
+    }
+
+    return NextResponse.json({ post }, { status: 201 })
+  } catch (err) {
+    const message = err instanceof Error ? err.message : 'Unknown server error'
+    return NextResponse.json({ error: message }, { status: 500 })
+  }
+}
