@@ -171,6 +171,118 @@ export default async function AboutPage() {
         </div>
       </section>
 
+      {/* Provisional content - not yet in the approved Website Copy Document. Pending formal addition. */}
+      {/* ================= THREE PILLARS / AREAS OF PRACTICE ================= */}
+      <section className="py-20 md:py-28 bg-[#FDF8F1] border-b border-[#F5ECDE]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <ScrollReveal>
+            <div className="text-center max-w-2xl mx-auto mb-16">
+              <span className="text-xs uppercase font-bold tracking-widest text-[#2AA198] mb-2 block">
+                Areas of Practice
+              </span>
+              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+                Three Rooms, <span className="italic text-[#EF5B45]">One Discipline</span>
+              </h2>
+              <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
+                Bridging strategy, education, and operations across distinct environments.
+              </p>
+            </div>
+          </ScrollReveal>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Pillar 1: Systems Consulting */}
+            <ScrollReveal delayMs={50}>
+              <div className="bg-[#FCEBE7]/70 hover:bg-[#FCEBE7] border border-[#EF5B45]/15 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+                <div>
+                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm mb-6">
+                    ⚙️
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-2 block">
+                    Consulting
+                  </span>
+                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-3">
+                    Systems &amp; Operations
+                  </h3>
+                  <p className="text-[#5A5D70] text-base leading-relaxed">
+                    Diagnosing operational bottlenecks, untangling chaotic workflows, and designing
+                    durable structures that help leadership teams scale without burning out.
+                  </p>
+                </div>
+                <div className="pt-6 mt-6 border-t border-[#EF5B45]/10">
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#EF5B45] hover:text-[#D94834] transition"
+                  >
+                    <span>Explore Advisory</span>
+                    <span aria-hidden="true">&rarr;</span>
+                  </Link>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Pillar 2: Training & People */}
+            <ScrollReveal delayMs={120}>
+              <div className="bg-[#EAF4F3]/70 hover:bg-[#EAF4F3] border border-[#2AA198]/15 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+                <div>
+                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm mb-6">
+                    🎓
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-2 block">
+                    Training Lead
+                  </span>
+                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-3">
+                    People &amp; Competence
+                  </h3>
+                  <p className="text-[#5A5D70] text-base leading-relaxed">
+                    At Watoto Church, leading institutional learning and leadership frameworks that
+                    turn strategic goals into practical, day-to-day staff competence.
+                  </p>
+                </div>
+                <div className="pt-6 mt-6 border-t border-[#2AA198]/10">
+                  <Link
+                    href="/services"
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#2AA198] hover:text-[#1D7A73] transition"
+                  >
+                    <span>Training Method</span>
+                    <span aria-hidden="true">&rarr;</span>
+                  </Link>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Pillar 3: Writing & Media */}
+            <ScrollReveal delayMs={190}>
+              <div className="bg-[#FDF3DC]/70 hover:bg-[#FDF3DC] border border-[#F7C55C]/30 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+                <div>
+                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-2xl shadow-sm mb-6">
+                    ✍️
+                  </div>
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-2 block">
+                    Broadcast &amp; Garden
+                  </span>
+                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-3">
+                    Writing &amp; Media
+                  </h3>
+                  <p className="text-[#5A5D70] text-base leading-relaxed">
+                    Sharing ideas publicly through essays in The Garden and weekly radio conversations
+                    on Power FM on leadership, systems thinking, and intentional work.
+                  </p>
+                </div>
+                <div className="pt-6 mt-6 border-t border-[#F7C55C]/20">
+                  <Link
+                    href="/blog"
+                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#C99424] hover:text-[#9A7015] transition"
+                  >
+                    <span>Read The Garden</span>
+                    <span aria-hidden="true">&rarr;</span>
+                  </Link>
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </div>
+      </section>
+
       {/* ================= SECTION 2: BACKGROUND (Approved Copy Document v1.0) ================= */}
       <section className="py-20 md:py-28 bg-[#FDF8F1] border-b border-[#F5ECDE]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
