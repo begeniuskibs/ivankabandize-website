@@ -73,3 +73,18 @@ body {
   animation: float-subtle 6s ease-in-out infinite;
 }
 
+@keyframes blob-morph {
+  0%, 100% {
+    border-radius: 46% 54% 52% 48% / 44% 46% 54% 56%;
+  }
+  50% {
+    border-radius: 52% 48% 46% 54% / 50% 54% 46% 50%;
+  }
+}
+
+.animate-blob {
+  border-radius: 46% 54% 52% 48% / 44% 46% 54% 56%;
+  animation: blob-morph 12s ease-in-out infinite;
+}
+
+
