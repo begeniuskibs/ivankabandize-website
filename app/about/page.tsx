@@ -16,9 +16,6 @@ export default async function AboutPage() {
     .maybeSingle()
 
   const headline = page?.hero_headline || 'Hey, I’m Ivan Kabandize'
-  const subheadline =
-    page?.hero_subheadline ||
-    'I help founders and leaders turn operational chaos into structure that works.'
   
   const bodyParagraphs: string[] =
     Array.isArray(page?.body_paragraphs) && page.body_paragraphs.length > 0
@@ -69,12 +66,6 @@ export default async function AboutPage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={140}>
-                <p className="text-xl sm:text-2xl font-medium text-[#5A5D70] leading-relaxed">
-                  {subheadline}
-                </p>
-              </ScrollReveal>
-
-              <ScrollReveal delayMs={200}>
                 <div className="space-y-4 text-base sm:text-lg text-[#5A5D70] leading-relaxed pt-2">
                   {bodyParagraphs.map((paragraph, idx) => (
                     <p key={idx}>{paragraph}</p>
@@ -82,7 +73,7 @@ export default async function AboutPage() {
                 </div>
               </ScrollReveal>
 
-              <ScrollReveal delayMs={260}>
+              <ScrollReveal delayMs={200}>
                 <div className="flex flex-wrap items-center gap-4 pt-4">
                   <Link
                     href="/lets-talk"
