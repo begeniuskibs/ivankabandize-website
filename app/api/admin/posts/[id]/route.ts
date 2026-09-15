@@ -1,4 +1,4 @@
-import { createClient } from '@/utils/supabase/server'
+import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
 
 interface RouteParams {
@@ -7,11 +7,10 @@ interface RouteParams {
 
 export async function GET(request: NextRequest, { params }: RouteParams) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
 
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (authError) {
+    return NextResponse.json({ error: authError }, { status: authStatus })
   }
 
   const { data: post, error } = await supabase
@@ -29,11 +28,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
 export async function PUT(request: NextRequest, { params }: RouteParams) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
 
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (authError) {
+    return NextResponse.json({ error: authError }, { status: authStatus })
   }
 
   try {
@@ -98,11 +96,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
 export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { id } = await params
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
 
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (authError) {
+    return NextResponse.json({ error: authError }, { status: authStatus })
   }
 
   const { error } = await supabase.from('posts').delete().eq('id', id)

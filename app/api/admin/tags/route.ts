@@ -1,8 +1,13 @@
-import { createClient } from '@/utils/supabase/server'
+import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function GET() {
-  const supabase = await createClient()
+  const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
+
+  if (authError) {
+    return NextResponse.json({ error: authError }, { status: authStatus })
+  }
+
   const { data: tags, error } = await supabase
     .from('tags')
     .select('*')
@@ -16,11 +21,10 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient()
-  const { data: { user }, error: authError } = await supabase.auth.getUser()
+  const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
 
-  if (authError || !user) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (authError) {
+    return NextResponse.json({ error: authError }, { status: authStatus })
   }
 
   try {

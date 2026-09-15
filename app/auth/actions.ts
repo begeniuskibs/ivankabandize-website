@@ -30,7 +30,7 @@ export async function signUp(formData: FormData) {
   const password = formData.get('password') as string
   const fullName = (formData.get('full_name') as string) || ''
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
@@ -44,8 +44,13 @@ export async function signUp(formData: FormData) {
     redirect(`/auth/login?error=${encodeURIComponent(error.message)}`)
   }
 
-  revalidatePath('/', 'layout')
-  redirect('/auth/account')
+  if (data?.session) {
+    revalidatePath('/', 'layout')
+    redirect('/auth/account')
+  }
+
+  // Redirect to clear post-signup confirmation state
+  redirect(`/auth/login?mode=signup-success&email=${encodeURIComponent(email)}`)
 }
 
 export async function signOut() {
