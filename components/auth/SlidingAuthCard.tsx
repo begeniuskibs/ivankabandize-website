@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { signIn, signUp } from '@/app/auth/actions'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
+import { AuthImage, AUTH_IMAGE_POOL } from '@/components/auth/auth-images'
 
 interface AuthCardProps {
   initialMode?: 'signin' | 'signup'
@@ -12,6 +13,7 @@ interface AuthCardProps {
   message?: string
   isSignupSuccess?: boolean
   signupEmail?: string
+  selectedImage?: AuthImage
 }
 
 export default function SlidingAuthCard({
@@ -20,6 +22,7 @@ export default function SlidingAuthCard({
   message,
   isSignupSuccess = false,
   signupEmail = '',
+  selectedImage = AUTH_IMAGE_POOL[0],
 }: AuthCardProps) {
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup')
 
@@ -225,19 +228,15 @@ export default function SlidingAuthCard({
       </div>
 
       {/* --- OVERLAY / IMAGE PANEL (Desktop: absolute top-0 right-0 w-1/2; Mobile: below) --- */}
-      {/* 
-        Photo Credit: Cozy library study nook with reading chair by Jon Tyson on Unsplash
-        URL: https://unsplash.com/photos/kGUmNEYaSMY (photo-1555116505-38ab61800975)
-      */}
       <div
         className={`w-full md:w-1/2 min-h-[320px] md:min-h-[660px] md:absolute md:top-0 md:right-0 md:h-full transition-transform duration-700 ease-in-out overflow-hidden z-20 ${
           isSignUp ? 'md:-translate-x-full' : 'md:translate-x-0'
         }`}
       >
-        {/* Background Image */}
+        {/* Background Image from Rotating Pool */}
         <Image
-          src="/images/library-tyson.jpg"
-          alt="Cozy library study nook with bookshelves and reading chair"
+          src={selectedImage.src}
+          alt={selectedImage.alt}
           fill
           priority
           sizes="(max-width: 768px) 100vw, 50vw"
@@ -250,11 +249,16 @@ export default function SlidingAuthCard({
 
         {/* Dynamic Overlay Content */}
         <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between text-white z-30">
-          {/* Top subtle badge */}
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#EF5B45] animate-pulse" />
-            <span className="text-[11px] font-mono uppercase tracking-widest text-[#FDF8F1]/80">
-              Personal Knowledge &amp; Essays
+          {/* Top subtle badge with Photographer Credit */}
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-[#EF5B45] animate-pulse" />
+              <span className="text-[11px] font-mono uppercase tracking-widest text-[#FDF8F1]/80">
+                Personal Knowledge &amp; Essays
+              </span>
+            </div>
+            <span className="hidden sm:inline-block text-[10px] font-mono text-[#FDF8F1]/50 tracking-wider">
+              Photo: {selectedImage.photographer}
             </span>
           </div>
 
