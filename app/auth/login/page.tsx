@@ -1,5 +1,6 @@
 import { signIn, signUp } from '@/app/auth/actions'
 import Link from 'next/link'
+import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 
 export const dynamic = 'force-dynamic'
 
@@ -76,6 +77,22 @@ export default async function LoginPage({ searchParams }: Props) {
             )}
 
             <div className="space-y-6">
+              {/* Google OAuth Sign-in */}
+              <div>
+                <GoogleSignInButton />
+                
+                <div className="relative my-6">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-[#F5ECDE]" />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase tracking-wider">
+                    <span className="bg-white px-3 font-semibold text-[#5A5D70]">
+                      Or continue with email
+                    </span>
+                  </div>
+                </div>
+              </div>
+
               {/* Sign In Form */}
               <div className="border-b border-[#F5ECDE] pb-6">
                 <h3 className="font-['Fraunces',_Georgia,_serif] text-xl font-semibold text-[#232536] mb-4">
