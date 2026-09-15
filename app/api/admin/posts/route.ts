@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
       content,
       visibility = 'public',
       publish_status = 'draft',
+      content_type = 'structured_thoughts',
       published_at,
       tag_ids = [],
     } = body
@@ -63,6 +64,7 @@ export async function POST(request: NextRequest) {
         content: content || {},
         visibility,
         publish_status,
+        content_type,
         published_at:
           publish_status === 'published' && !published_at
             ? new Date().toISOString()

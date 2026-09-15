@@ -45,6 +45,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       content,
       visibility,
       publish_status,
+      content_type,
       published_at,
       tag_ids,
     } = body
@@ -55,6 +56,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (excerpt !== undefined) updatePayload.excerpt = excerpt
     if (content !== undefined) updatePayload.content = content
     if (visibility !== undefined) updatePayload.visibility = visibility
+    if (content_type !== undefined) updatePayload.content_type = content_type
     if (publish_status !== undefined) {
       updatePayload.publish_status = publish_status
       if (publish_status === 'published' && !published_at) {

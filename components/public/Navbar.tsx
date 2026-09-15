@@ -18,8 +18,8 @@ export default function Navbar() {
           <Link href="/about" className="hover:text-black transition">
             About
           </Link>
-          <Link href="/blog" className="hover:text-black transition">
-            Articles
+          <Link href="/garden" className="hover:text-black transition">
+            The Garden
           </Link>
           <Link
             href="/auth/login"

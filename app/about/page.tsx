@@ -270,7 +270,7 @@ export default async function AboutPage() {
                 </div>
                 <div className="pt-6 mt-6 border-t border-[#F7C55C]/20">
                   <Link
-                    href="/blog"
+                    href="/garden"
                     className="inline-flex items-center gap-1.5 text-sm font-bold text-[#C99424] hover:text-[#9A7015] transition"
                   >
                     <span>Read The Garden</span>

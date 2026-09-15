@@ -211,7 +211,7 @@ export default async function HomePage() {
             {/* Card 2 */}
             <ScrollReveal delayMs={80}>
               <Link
-                href="/blog"
+                href="/garden"
                 className="bg-[#FDF3DC] hover:bg-[#faeac4] border border-[#F7C55C]/30 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
@@ -233,7 +233,7 @@ export default async function HomePage() {
             {/* Card 3 */}
             <ScrollReveal delayMs={120}>
               <Link
-                href="/blog"
+                href="/garden"
                 className="bg-[#EAF4F3] hover:bg-[#d5ebe9] border border-[#2AA198]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
@@ -255,7 +255,7 @@ export default async function HomePage() {
             {/* Card 4 */}
             <ScrollReveal delayMs={160}>
               <Link
-                href="/blog"
+                href="/garden"
                 className="bg-[#EEEDF9] hover:bg-[#dfdcf5] border border-[#6B66C4]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
@@ -449,7 +449,7 @@ export default async function HomePage() {
                 return (
                   <ScrollReveal key={post.id} delayMs={idx * 80}>
                     <Link
-                      href={`/blog/${post.slug}`}
+                      href={`/garden/${post.slug}`}
                       className="bg-white border border-[#F5ECDE] rounded-3xl p-8 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300 group"
                     >
                       <div>
@@ -502,7 +502,7 @@ export default async function HomePage() {
           <ScrollReveal delayMs={240}>
             <div className="text-center mt-12">
               <Link
-                href="/blog"
+                href="/garden"
                 className="inline-flex items-center justify-center font-bold text-base px-8 py-4 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 Wander the Garden &#127793;
