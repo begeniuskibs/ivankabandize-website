@@ -21,8 +21,9 @@ function PostEditorContent() {
   const [excerpt, setExcerpt] = useState('')
   const [content, setContent] = useState<Record<string, unknown>>({})
 
-  // Row 2: Who
+  // Row 2: Who & Classification
   const [visibility, setVisibility] = useState<'public' | 'free' | 'paid' | 'comped'>('public')
+  const [contentType, setContentType] = useState<'random_thoughts' | 'structured_thoughts' | 'tools_for_thought'>('structured_thoughts')
   const [availableTags, setAvailableTags] = useState<Tag[]>([])
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [newTagName, setNewTagName] = useState('')
@@ -66,6 +67,7 @@ function PostEditorContent() {
         setExcerpt(post.excerpt || '')
         setContent(post.content || {})
         setVisibility(post.visibility || 'public')
+        setContentType(post.content_type || 'structured_thoughts')
         setPublishStatus(post.publish_status || 'draft')
         if (post.published_at) {
           setScheduledDate(new Date(post.published_at).toISOString().slice(0, 16))
@@ -137,6 +139,7 @@ function PostEditorContent() {
       excerpt,
       content,
       visibility,
+      content_type: contentType,
       publish_status: status,
       published_at: targetPublishedAt,
       tag_ids: selectedTagIds,
@@ -326,6 +329,44 @@ function PostEditorContent() {
                   Add
                 </button>
               </div>
+            </div>
+          </div>
+
+          {/* Content Type / Garden Stream Selector */}
+          <div className="border-t border-gray-100 pt-4">
+            <label className="block text-sm font-semibold text-gray-800 mb-2">Garden Stream / Content Type</label>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              {[
+                {
+                  value: 'random_thoughts',
+                  label: 'Random Thoughts',
+                  desc: 'Spontaneous sparks, observations, raw reflections',
+                },
+                {
+                  value: 'structured_thoughts',
+                  label: 'Structured Thoughts',
+                  desc: 'In-depth essays, mental models, frameworks',
+                },
+                {
+                  value: 'tools_for_thought',
+                  label: 'Tools for Thought',
+                  desc: 'Workflows, software tools, systems',
+                },
+              ].map(opt => (
+                <button
+                  key={opt.value}
+                  type="button"
+                  onClick={() => setContentType(opt.value as typeof contentType)}
+                  className={`p-3 text-left border rounded-lg transition ${
+                    contentType === opt.value
+                      ? 'border-black bg-gray-50 text-black font-semibold ring-1 ring-black'
+                      : 'border-gray-200 hover:border-gray-300 text-gray-600'
+                  }`}
+                >
+                  <div className="text-sm font-medium">{opt.label}</div>
+                  <div className="text-xs text-gray-400 mt-0.5">{opt.desc}</div>
+                </button>
+              ))}
             </div>
           </div>
         </div>
