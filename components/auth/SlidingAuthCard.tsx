@@ -21,7 +21,6 @@ export default function SlidingAuthCard({
   isSignupSuccess = false,
   signupEmail = '',
 }: AuthCardProps) {
-  // isSignUpState: false = Sign In active (image on left or right, matching layout), true = Sign Up active
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup')
 
   if (isSignupSuccess) {
@@ -55,20 +54,21 @@ export default function SlidingAuthCard({
   }
 
   return (
-    <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F5ECDE] min-h-[620px] flex flex-col md:flex-row">
+    <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F5ECDE] min-h-[660px]">
       {/* 
-        Container for the two form panels 
-        On desktop (md:), card is 2-column. 
+        DESKTOP TWO-PANEL SLIDING ARCHITECTURE:
+        1. Form Container (takes 50% width on left, shifts to right on Sign Up)
+        2. Overlay Panel (takes 50% width on right, shifts to left on Sign Up)
       */}
 
-      {/* --- FORM PANEL (Left on Sign In, Right on Sign Up) --- */}
+      {/* --- FORM SECTION --- */}
       <div
-        className={`w-full md:w-1/2 p-8 sm:p-12 flex flex-col justify-center transition-all duration-700 ease-in-out z-10 bg-white ${
-          isSignUp ? 'md:translate-x-full order-2 md:order-2' : 'md:translate-x-0 order-2 md:order-1'
+        className={`w-full md:w-1/2 min-h-[660px] p-8 sm:p-12 flex flex-col justify-center transition-transform duration-700 ease-in-out bg-white z-10 ${
+          isSignUp ? 'md:translate-x-full' : 'md:translate-x-0'
         }`}
       >
         <div className="w-full max-w-sm mx-auto">
-          {/* Header Link */}
+          {/* Header Branding */}
           <div className="mb-6">
             <Link
               href="/"
@@ -117,9 +117,8 @@ export default function SlidingAuthCard({
             </div>
           </div>
 
-          {/* Active Form */}
+          {/* Sign Up Form */}
           {isSignUp ? (
-            /* Sign Up Form */
             <form className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-[#5A5D70] uppercase tracking-wider mb-1 font-sans" htmlFor="card-signup-name">
@@ -171,7 +170,6 @@ export default function SlidingAuthCard({
               </button>
             </form>
           ) : (
-            /* Sign In Form */
             <form className="space-y-4">
               <div>
                 <label className="block text-xs font-semibold text-[#5A5D70] uppercase tracking-wider mb-1 font-sans" htmlFor="card-signin-email">
@@ -226,32 +224,32 @@ export default function SlidingAuthCard({
         </div>
       </div>
 
-      {/* --- OVERLAY / IMAGE PANEL (Right on Sign In, Left on Sign Up) --- */}
+      {/* --- OVERLAY / IMAGE PANEL (Desktop: absolute top-0 right-0 w-1/2; Mobile: below) --- */}
       {/* 
-        Photo Credit: Green fern leaves with water droplets by Buddy AN on Unsplash
-        URL: https://unsplash.com/photos/green-fern-leaves-with-water-droplets-on-white-W2f62zIy80A
+        Photo Credit: Dark botanical vine leaves by Rodion Kutsaiev on Unsplash
+        URL: https://unsplash.com/photos/049M_crau5k (photo-1473081556163-2a17de81fc97)
       */}
       <div
-        className={`w-full md:w-1/2 relative min-h-[300px] md:min-h-[620px] transition-all duration-700 ease-in-out overflow-hidden ${
-          isSignUp ? 'md:-translate-x-full order-1 md:order-1' : 'md:translate-x-0 order-1 md:order-2'
+        className={`w-full md:w-1/2 min-h-[320px] md:min-h-[660px] md:absolute md:top-0 md:right-0 md:h-full transition-transform duration-700 ease-in-out overflow-hidden z-20 ${
+          isSignUp ? 'md:-translate-x-full' : 'md:translate-x-0'
         }`}
       >
         {/* Background Image */}
         <Image
-          src="/images/fern-leaves-buddy-an.jpg"
-          alt="Fresh green fern leaves with morning dew droplets"
+          src="/images/leaves-kutsaiev.jpg"
+          alt="Dark botanical vine leaves"
           fill
           priority
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-transform duration-1000 scale-105"
         />
 
-        {/* Gradient Overlay for high text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#14151E]/90 via-[#232536]/75 to-[#14151E]/80 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-[#232536]/30 backdrop-blur-[1px]" />
+        {/* Dark Gradient Overlay for high text contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#14151E]/95 via-[#1E202B]/80 to-[#14151E]/85 mix-blend-multiply" />
+        <div className="absolute inset-0 bg-[#1E202B]/40 backdrop-blur-[0.5px]" />
 
         {/* Dynamic Overlay Content */}
-        <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between text-white z-20">
+        <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between text-white z-30">
           {/* Top subtle badge */}
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#EF5B45] animate-pulse" />
@@ -265,7 +263,7 @@ export default function SlidingAuthCard({
             <h3 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-[#FDF8F1]">
               {isSignUp ? 'Hey friend,' : 'Welcome back,'}
             </h3>
-            <p className="text-sm sm:text-base text-[#FDF8F1]/80 max-w-sm leading-relaxed font-sans">
+            <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans">
               {isSignUp
                 ? 'Create an account to join discussions, bookmark seedlings, and follow my thinking as it grows.'
                 : 'Sign in to access your saved notes, follow threads in the garden, and manage your account.'}
