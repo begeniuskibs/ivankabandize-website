@@ -226,8 +226,8 @@ export default function SlidingAuthCard({
 
       {/* --- OVERLAY / IMAGE PANEL (Desktop: absolute top-0 right-0 w-1/2; Mobile: below) --- */}
       {/* 
-        Photo Credit: Dark botanical vine leaves by Rodion Kutsaiev on Unsplash
-        URL: https://unsplash.com/photos/049M_crau5k (photo-1473081556163-2a17de81fc97)
+        Photo Credit: Cozy library study nook with reading chair by Jon Tyson on Unsplash
+        URL: https://unsplash.com/photos/kGUmNEYaSMY (photo-1555116505-38ab61800975)
       */}
       <div
         className={`w-full md:w-1/2 min-h-[320px] md:min-h-[660px] md:absolute md:top-0 md:right-0 md:h-full transition-transform duration-700 ease-in-out overflow-hidden z-20 ${
@@ -236,17 +236,17 @@ export default function SlidingAuthCard({
       >
         {/* Background Image */}
         <Image
-          src="/images/leaves-kutsaiev.jpg"
-          alt="Dark botanical vine leaves"
+          src="/images/library-tyson.jpg"
+          alt="Cozy library study nook with bookshelves and reading chair"
           fill
           priority
           sizes="(max-width: 768px) 100vw, 50vw"
           className="object-cover transition-transform duration-1000 scale-105"
         />
 
-        {/* Dark Gradient Overlay for high text contrast */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#14151E]/95 via-[#1E202B]/80 to-[#14151E]/85 mix-blend-multiply" />
-        <div className="absolute inset-0 bg-[#1E202B]/40 backdrop-blur-[0.5px]" />
+        {/* Lighter Gradient Overlay for balanced photo visibility + text legibility */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#14151E]/90 via-[#1E202B]/60 to-[#14151E]/70" />
+        <div className="absolute inset-0 bg-[#14151E]/20 backdrop-blur-[0.5px]" />
 
         {/* Dynamic Overlay Content */}
         <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between text-white z-30">
