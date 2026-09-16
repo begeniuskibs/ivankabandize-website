@@ -79,7 +79,7 @@ export default function GardenFeed({
           <p className="text-xs uppercase tracking-widest font-bold text-[#C99424] mb-3">
             {eyebrow}
           </p>
-          <h1 className="font-['Fraunces',_Georgia,_serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-tight mb-4">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-tight mb-4">
             {title}
           </h1>
           <p className="text-lg text-[#5A5D70] max-w-2xl leading-relaxed">
@@ -203,7 +203,7 @@ export default function GardenFeed({
                         ))}
                       </div>
 
-                      <h2 className="font-['Fraunces',_Georgia,_serif] text-xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-2">
+                      <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-2">
                         {post.title}
                       </h2>
 
@@ -238,7 +238,7 @@ export default function GardenFeed({
               <div className="w-12 h-12 rounded-full bg-[#FDF8F1] border border-[#F5ECDE] flex items-center justify-center mx-auto mb-4 text-[#C99424] text-xl">
                 &#127793;
               </div>
-              <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-2">
+              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-2">
                 New entries coming soon
               </h3>
               <p className="text-sm text-[#5A5D70] max-w-md mx-auto leading-relaxed">

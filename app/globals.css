@@ -1,5 +1,19 @@
+/* Fraunces (Original font - commented out for trial review)
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400..700;1,9..144,400..700&family=Google+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+*/
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
+
+/* Trial: MTN Brighter Sans as sitewide headline font (replaces Fraunces) */
+@font-face {
+  font-family: 'MTN Brighter Sans';
+  src: url('/fonts/MTNBrighterSans-Regular.woff2') format('woff2'),
+       url('/fonts/MTNBrighterSans-Regular.woff') format('woff'),
+       url('/fonts/MTNBrighterSans-Regular.ttf') format('truetype');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
   --background: #ffffff;
@@ -22,7 +36,10 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-serif: 'Fraunces', Georgia, serif;
+  /* Trial swap: Fraunces -> MTN Brighter Sans */
+  /* --font-serif: 'Fraunces', Georgia, serif; */
+  --font-serif: 'MTN Brighter Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-display: 'MTN Brighter Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono: var(--font-geist-mono);
 }
 
@@ -41,7 +58,8 @@ body {
 }
 
 .font-display {
-  font-family: 'Fraunces', Georgia, serif;
+  /* font-family: 'Fraunces', Georgia, serif; */
+  font-family: 'MTN Brighter Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
 .font-body {

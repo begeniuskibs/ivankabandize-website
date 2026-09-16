@@ -33,7 +33,7 @@ export default function SlidingAuthCard({
           ✉️
         </div>
         <div>
-          <h2 className="font-['Fraunces',_Georgia,_serif] text-2xl font-bold text-[#232536]">
+          <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536]">
             Check your email
           </h2>
           <p className="mt-2 text-sm text-[#5A5D70] leading-relaxed font-sans">
@@ -75,7 +75,7 @@ export default function SlidingAuthCard({
           <div className="mb-6">
             <Link
               href="/"
-              className="inline-block font-['Fraunces',_Georgia,_serif] text-2xl font-bold text-[#232536] hover:opacity-80 transition tracking-tight"
+              className="inline-block font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536] hover:opacity-80 transition tracking-tight"
             >
               Ivan Kabandize
             </Link>
@@ -85,7 +85,7 @@ export default function SlidingAuthCard({
           </div>
 
           {/* Dynamic Headline */}
-          <h2 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-2">
+          <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-2">
             {isSignUp ? 'Create your account' : 'Welcome back'}
           </h2>
           <p className="text-sm text-[#5A5D70] mb-6 font-sans">
@@ -264,7 +264,7 @@ export default function SlidingAuthCard({
 
           {/* Central Message */}
           <div className="space-y-4 my-auto py-8">
-            <h3 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-[#FDF8F1]">
+            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-[#FDF8F1]">
               {isSignUp ? 'Hey friend,' : 'Welcome back,'}
             </h3>
             <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans">

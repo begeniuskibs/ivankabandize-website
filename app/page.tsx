@@ -50,7 +50,7 @@ export default async function HomePage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={80}>
-                <h1 className="font-['Fraunces',_Georgia,_serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.12]">
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.12]">
                   Ambition is rarely the problem. <span className="italic text-[#EF5B45]">Structure usually is.</span>
                 </h1>
               </ScrollReveal>
@@ -176,7 +176,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 How Can I <span className="italic text-[#EF5B45]">Help You?</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
@@ -194,7 +194,7 @@ export default async function HomePage() {
               >
                 <div>
                   <span className="text-3xl block mb-4">&#127959;&#65039;</span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Fix Your Operations
                   </h3>
                   <p className="text-sm sm:text-base text-[#5A5D70] leading-relaxed">
@@ -216,7 +216,7 @@ export default async function HomePage() {
               >
                 <div>
                   <span className="text-3xl block mb-4">&#9881;&#65039;</span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Build Better Systems
                   </h3>
                   <p className="text-sm sm:text-base text-[#5A5D70] leading-relaxed">
@@ -238,7 +238,7 @@ export default async function HomePage() {
               >
                 <div>
                   <span className="text-3xl block mb-4">&#129658;</span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Lead With Clarity
                   </h3>
                   <p className="text-sm sm:text-base text-[#5A5D70] leading-relaxed">
@@ -260,7 +260,7 @@ export default async function HomePage() {
               >
                 <div>
                   <span className="text-3xl block mb-4">&#129302;</span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Make Sense of AI
                   </h3>
                   <p className="text-sm sm:text-base text-[#5A5D70] leading-relaxed">
@@ -282,7 +282,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 My 3-Step <span className="italic text-[#2AA198]">Method</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
@@ -296,10 +296,10 @@ export default async function HomePage() {
             <ScrollReveal delayMs={50}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-12 h-12 rounded-full bg-[#EF5B45] text-white flex items-center justify-center font-['Fraunces',_Georgia,_serif] font-bold text-xl mb-6 shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-[#EF5B45] text-white flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     1
                   </div>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
                     Diagnose
                   </h3>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-4">
@@ -319,10 +319,10 @@ export default async function HomePage() {
             <ScrollReveal delayMs={120}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-12 h-12 rounded-full bg-[#2AA198] text-white flex items-center justify-center font-['Fraunces',_Georgia,_serif] font-bold text-xl mb-6 shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-[#2AA198] text-white flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     2
                   </div>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
                     Architect
                   </h3>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-4">
@@ -342,10 +342,10 @@ export default async function HomePage() {
             <ScrollReveal delayMs={190}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-12 h-12 rounded-full bg-[#F7C55C] text-[#232536] flex items-center justify-center font-['Fraunces',_Georgia,_serif] font-bold text-xl mb-6 shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-[#F7C55C] text-[#232536] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     3
                   </div>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
                     Sequence
                   </h3>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-4">
@@ -381,7 +381,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 Watch &amp; <span className="italic text-[#EF5B45]">Listen</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
@@ -416,7 +416,7 @@ export default async function HomePage() {
                       <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-2 block">
                         {video.kind}
                       </span>
-                      <h3 className="font-['Fraunces',_Georgia,_serif] text-xl font-semibold text-[#232536] leading-snug group-hover:text-[#EF5B45] transition-colors">
+                      <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-semibold text-[#232536] leading-snug group-hover:text-[#EF5B45] transition-colors">
                         {video.title}
                       </h3>
                     </div>
@@ -433,7 +433,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 Recent <span className="italic text-[#EF5B45]">Thinking</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
@@ -465,7 +465,7 @@ export default async function HomePage() {
                             ))}
                           </div>
                         )}
-                        <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-3">
+                        <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-3">
                           {post.title}
                         </h3>
                         {post.excerpt && (
@@ -516,7 +516,7 @@ export default async function HomePage() {
       <section className="py-20 md:py-28 bg-[#FDF8F1] text-center">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
-            <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
+            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
               The problem has a name. <span className="italic text-[#EF5B45]">Let&apos;s find it together.</span>
             </h2>
           </ScrollReveal>

@@ -37,7 +37,7 @@ export default async function ServicesPage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={80}>
-                <h1 className="font-['Fraunces',_Georgia,_serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.15]">
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.15]">
                   Let’s untangle your organisation — <span className="italic text-[#EF5B45]">properly.</span>
                 </h1>
               </ScrollReveal>
@@ -90,7 +90,7 @@ export default async function ServicesPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 How an Engagement <span className="italic text-[#2AA198]">Works</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
@@ -107,7 +107,7 @@ export default async function ServicesPage() {
                   <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-sm mb-6">
                     🔍
                   </div>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-1">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Audit
                   </h3>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-4">
@@ -129,7 +129,7 @@ export default async function ServicesPage() {
                   <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-sm mb-6">
                     🛠️
                   </div>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-1">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Build
                   </h3>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-4">
@@ -151,7 +151,7 @@ export default async function ServicesPage() {
                   <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center text-3xl shadow-sm mb-6">
                     🤝
                   </div>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-1">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Support
                   </h3>
                   <p className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-4">
@@ -174,7 +174,7 @@ export default async function ServicesPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 Is This <span className="italic text-[#EF5B45]">For You?</span>
               </h2>
             </div>
@@ -219,7 +219,7 @@ export default async function ServicesPage() {
       <section className="py-20 md:py-28 bg-[#FDF8F1] text-center">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
-            <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
+            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
               Ready when <span className="italic text-[#EF5B45]">you are.</span>
             </h2>
           </ScrollReveal>

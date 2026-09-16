@@ -46,7 +46,7 @@ export default async function LibraryPage() {
             </ScrollReveal>
 
             <ScrollReveal delayMs={80}>
-              <h1 className="font-['Fraunces',_Georgia,_serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.15]">
+              <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.15]">
                 Curated <span className="italic text-[#EF5B45]">Library</span>
               </h1>
             </ScrollReveal>
@@ -68,7 +68,7 @@ export default async function LibraryPage() {
             <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
               <span className="text-2xl" aria-hidden="true">🎙️</span>
               <div>
-                <h2 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
                   Podcasts & Conversations
                 </h2>
                 <p className="text-sm text-[#5A5D70] mt-0.5">
@@ -112,7 +112,7 @@ export default async function LibraryPage() {
                       <p className="text-xs font-semibold text-[#EF5B45] tracking-wide uppercase">
                         {item.creator}
                       </p>
-                      <h3 className="font-['Fraunces',_Georgia,_serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug line-clamp-2">
+                      <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug line-clamp-2">
                         {item.title}
                       </h3>
                     </div>
@@ -134,7 +134,7 @@ export default async function LibraryPage() {
             <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
               <span className="text-2xl" aria-hidden="true">📚</span>
               <div>
-                <h2 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
                   Books & Reading
                 </h2>
                 <p className="text-sm text-[#5A5D70] mt-0.5">
@@ -176,7 +176,7 @@ export default async function LibraryPage() {
                         <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-[#2AA198] text-[10px] font-bold uppercase tracking-wider">
                           Book
                         </span>
-                        <h3 className="font-['Fraunces',_Georgia,_serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
+                        <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
                           {item.title}
                         </h3>
                         <p className="text-xs font-medium text-[#5A5D70]">
@@ -202,7 +202,7 @@ export default async function LibraryPage() {
             <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
               <span className="text-2xl" aria-hidden="true">📬</span>
               <div>
-                <h2 className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
                   Newsletters & Dispatches
                 </h2>
                 <p className="text-sm text-[#5A5D70] mt-0.5">
@@ -246,7 +246,7 @@ export default async function LibraryPage() {
                       <p className="text-xs font-semibold text-[#2AA198] tracking-wide uppercase">
                         {item.creator}
                       </p>
-                      <h3 className="font-['Fraunces',_Georgia,_serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
+                      <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
                         {item.title}
                       </h3>
                     </div>

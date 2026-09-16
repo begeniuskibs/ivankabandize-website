@@ -114,7 +114,7 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
             </time>
           </div>
 
-          <h1 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl md:text-5xl font-semibold text-[#232536] leading-[1.2] mb-6">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl font-semibold text-[#232536] leading-[1.2] mb-6">
             {post.title}
           </h1>
 

@@ -60,7 +60,7 @@ export default async function AboutPage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={80}>
-                <h1 className="font-['Fraunces',_Georgia,_serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.12]">
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.12]">
                   {headline}
                 </h1>
               </ScrollReveal>
@@ -145,7 +145,7 @@ export default async function AboutPage() {
               <span className="text-xs uppercase font-bold tracking-widest text-[#EF5B45] mb-4 block">
                 The Central Philosophy
               </span>
-              <blockquote className="font-['Fraunces',_Georgia,_serif] text-2xl sm:text-3xl lg:text-4xl text-[#232536] font-medium leading-snug pl-6 border-l-4 border-[#EF5B45] my-4 italic">
+              <blockquote className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl lg:text-4xl text-[#232536] font-medium leading-snug pl-6 border-l-4 border-[#EF5B45] my-4 italic">
                 &ldquo;{pullquote}&rdquo;
               </blockquote>
               <div className="mt-8 pt-6 border-t border-[#F5ECDE] flex items-center justify-between flex-wrap gap-4 text-sm text-[#5A5D70]">
@@ -180,7 +180,7 @@ export default async function AboutPage() {
               <span className="text-xs uppercase font-bold tracking-widest text-[#2AA198] mb-2 block">
                 Areas of Practice
               </span>
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
                 Three Rooms, <span className="italic text-[#EF5B45]">One Discipline</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
@@ -200,7 +200,7 @@ export default async function AboutPage() {
                   <span className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-2 block">
                     Consulting
                   </span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-3">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-3">
                     Systems &amp; Operations
                   </h3>
                   <p className="text-[#5A5D70] text-base leading-relaxed">
@@ -230,7 +230,7 @@ export default async function AboutPage() {
                   <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-2 block">
                     Training Lead
                   </span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-3">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-3">
                     People &amp; Competence
                   </h3>
                   <p className="text-[#5A5D70] text-base leading-relaxed">
@@ -260,7 +260,7 @@ export default async function AboutPage() {
                   <span className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-2 block">
                     Broadcast &amp; Garden
                   </span>
-                  <h3 className="font-['Fraunces',_Georgia,_serif] text-2xl font-semibold text-[#232536] mb-3">
+                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-3">
                     Writing &amp; Media
                   </h3>
                   <p className="text-[#5A5D70] text-base leading-relaxed">
@@ -291,7 +291,7 @@ export default async function AboutPage() {
               <span className="text-xs uppercase font-bold tracking-widest text-[#2AA198] mb-2 block">
                 Background
               </span>
-              <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl font-semibold text-[#232536] tracking-tight">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl font-semibold text-[#232536] tracking-tight">
                 Credibility through specifics
               </h2>
             </div>
@@ -341,7 +341,7 @@ export default async function AboutPage() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <ScrollReveal>
               <div className="text-center mb-12">
-                <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl font-semibold text-[#232536]">
                   Kind words from colleagues &amp; clients
                 </h2>
               </div>
@@ -369,7 +369,7 @@ export default async function AboutPage() {
       <section className="py-20 md:py-28 bg-[#FDF8F1] text-center">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
-            <h2 className="font-['Fraunces',_Georgia,_serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
+            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
               {closingCtaHeadline}
             </h2>
           </ScrollReveal>
