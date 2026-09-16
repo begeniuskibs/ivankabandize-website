@@ -19,6 +19,7 @@ interface GardenFeedProps {
   description: string
   currentFilter: 'all' | 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought'
   posts: PostItem[]
+  heroBannerImage?: string | null
 }
 
 const TYPE_CONFIG = {
@@ -49,6 +50,7 @@ export default function GardenFeed({
   description,
   currentFilter,
   posts,
+  heroBannerImage = null,
 }: GardenFeedProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
@@ -74,25 +76,59 @@ export default function GardenFeed({
   return (
     <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1]">
       {/* Header Section */}
-      <section className="py-16 md:py-20 bg-[#FDF8F1] border-b border-[#F5ECDE]">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xs uppercase tracking-widest font-bold text-[#C99424] mb-3">
+      <section
+        className={`relative py-16 md:py-24 border-b border-[#F5ECDE] overflow-hidden ${
+          heroBannerImage ? 'text-[#FDF8F1] bg-[#232536]' : 'bg-[#FDF8F1]'
+        }`}
+      >
+        {heroBannerImage && (
+          <>
+            {/* Background Banner Image */}
+            <div
+              className="absolute inset-0 bg-cover bg-center transition-transform duration-700 scale-105"
+              style={{ backgroundImage: `url(${heroBannerImage})` }}
+            />
+            {/* Dark Gradient Overlay matching auth card visual styling */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#232536] via-[#232536]/80 to-[#232536]/55 backdrop-blur-[1px]" />
+          </>
+        )}
+
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p
+            className={`text-xs uppercase tracking-widest font-bold mb-3 ${
+              heroBannerImage ? 'text-[#F7C55C]' : 'text-[#C99424]'
+            }`}
+          >
             {eyebrow}
           </p>
-          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-tight mb-4">
+          <h1
+            className={`font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-4 ${
+              heroBannerImage ? 'text-[#FDF8F1]' : 'text-[#232536]'
+            }`}
+          >
             {title}
           </h1>
-          <p className="text-lg text-[#5A5D70] max-w-2xl leading-relaxed">
+          <p
+            className={`text-lg max-w-2xl leading-relaxed ${
+              heroBannerImage ? 'text-[#FDF8F1]/85 font-light' : 'text-[#5A5D70]'
+            }`}
+          >
             {description}
           </p>
 
           {/* Stream Type Navigation Pills */}
-          <div className="mt-8 pt-6 border-t border-[#F5ECDE] flex flex-wrap items-center gap-2 sm:gap-3">
+          <div
+            className={`mt-8 pt-6 border-t flex flex-wrap items-center gap-2 sm:gap-3 ${
+              heroBannerImage ? 'border-white/15' : 'border-[#F5ECDE]'
+            }`}
+          >
             <Link
               href="/garden"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'all'
-                  ? 'bg-[#232536] text-white shadow-sm'
+                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  : heroBannerImage
+                  ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
               }`}
             >
@@ -102,7 +138,9 @@ export default function GardenFeed({
               href="/random-thoughts"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'random_thoughts'
-                  ? 'bg-[#232536] text-white shadow-sm'
+                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  : heroBannerImage
+                  ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
               }`}
             >
@@ -112,7 +150,9 @@ export default function GardenFeed({
               href="/structured-thoughts"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'structured_thoughts'
-                  ? 'bg-[#232536] text-white shadow-sm'
+                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  : heroBannerImage
+                  ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
               }`}
             >
@@ -122,7 +162,9 @@ export default function GardenFeed({
               href="/tools-for-thought"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'tools_for_thought'
-                  ? 'bg-[#232536] text-white shadow-sm'
+                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  : heroBannerImage
+                  ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
               }`}
             >
@@ -132,26 +174,44 @@ export default function GardenFeed({
 
           {/* Topic Pillar Filter (if tags exist) */}
           {allTags.length > 0 && (
-            <div className="mt-4 flex flex-wrap items-center gap-2 pt-3">
-              <span className="text-xs font-semibold text-[#5A5D70] mr-1">Topics:</span>
+            <div
+              className={`mt-4 flex flex-wrap items-center gap-2 pt-3 ${
+                heroBannerImage ? 'border-t border-white/10' : ''
+              }`}
+            >
+              <span
+                className={`text-xs font-semibold mr-1 ${
+                  heroBannerImage ? 'text-[#FDF8F1]/70' : 'text-[#5A5D70]'
+                }`}
+              >
+                Topics:
+              </span>
               <button
                 onClick={() => setSelectedTag(null)}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition ${
+                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
                   selectedTag === null
-                    ? 'bg-[#2AA198] text-white'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:bg-[#FDF8F1]'
+                    ? heroBannerImage
+                      ? 'bg-white text-[#232536] font-bold'
+                      : 'bg-[#232536] text-white'
+                    : heroBannerImage
+                    ? 'bg-white/10 text-[#FDF8F1]/80 hover:bg-white/20'
+                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE]'
                 }`}
               >
                 All Topics
               </button>
-              {allTags.map((tag) => (
+              {allTags.map((tag, idx) => (
                 <button
-                  key={tag}
-                  onClick={() => setSelectedTag(selectedTag === tag ? null : tag)}
-                  className={`text-xs px-3 py-1 rounded-full font-medium transition ${
+                  key={idx}
+                  onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
+                  className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
                     selectedTag === tag
-                      ? 'bg-[#2AA198] text-white'
-                      : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:bg-[#FDF8F1]'
+                      ? heroBannerImage
+                        ? 'bg-[#2AA198] text-white font-bold'
+                        : 'bg-[#2AA198] text-white'
+                      : heroBannerImage
+                      ? 'bg-white/10 text-[#FDF8F1]/80 hover:bg-white/20'
+                      : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#2AA198]'
                   }`}
                 >
                   {tag}

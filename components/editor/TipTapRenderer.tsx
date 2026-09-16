@@ -65,11 +65,26 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             ))}
           </ol>
         )
+      case 'image': {
+        const src = String(node.attrs?.src || '')
+        const alt = String(node.attrs?.alt || node.attrs?.title || 'Article image')
+        const caption = node.attrs?.caption ? String(node.attrs?.caption) : (node.attrs?.title ? String(node.attrs?.title) : null)
+        return (
+          <figure key={index} className="my-8">
+            <img src={src} alt={alt} className="w-full rounded-2xl border border-[#F5ECDE] shadow-sm object-cover" />
+            {caption && (
+              <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
+                {caption}
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
       case 'blockquote':
         return (
           <blockquote
             key={index}
-            className="border-l-4 border-black pl-4 py-1 italic my-6 text-gray-700 bg-gray-50 rounded-r"
+            className="border-l-4 border-[#EF5B45] pl-6 py-2 my-6 text-[#232536] bg-[#FDF8F1] rounded-r-2xl text-lg font-medium"
           >
             {node.content?.map(renderNode)}
           </blockquote>
@@ -78,7 +93,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         return (
           <pre
             key={index}
-            className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto text-sm my-6 font-mono"
+            className="bg-[#232536] text-gray-100 p-4 rounded-2xl overflow-x-auto text-sm my-6 font-mono border border-black/10"
           >
             <code>{node.content?.map(n => n.text).join('')}</code>
           </pre>

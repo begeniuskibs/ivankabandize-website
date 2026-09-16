@@ -3,6 +3,9 @@ import GardenFeed from '@/components/public/GardenFeed'
 
 export const dynamic = 'force-dynamic'
 
+// Temporary hero banner image (swap with final image anytime)
+const HERO_BANNER = '/images/auth-pool/01-bookblock-notebook.jpg'
+
 export const metadata = {
   title: 'Random Thoughts | Ivan Kabandize',
   description: 'Spontaneous sparks, observations, raw reflections, and working notes.',
@@ -28,6 +31,7 @@ export default async function RandomThoughtsPage() {
       description="Spontaneous ideas, fleeting observations, and short reflections captured in the moment."
       currentFilter="random_thoughts"
       posts={posts || []}
+      heroBannerImage={HERO_BANNER}
     />
   )
 }

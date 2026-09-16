@@ -46,8 +46,8 @@ export default async function LibraryPage() {
             </ScrollReveal>
 
             <ScrollReveal delayMs={80}>
-              <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.15]">
-                Curated <span className="italic text-[#EF5B45]">Library</span>
+              <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.15]">
+                Curated <span className="text-[#EF5B45]">Library</span>
               </h1>
             </ScrollReveal>
 
@@ -68,7 +68,7 @@ export default async function LibraryPage() {
             <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
               <span className="text-2xl" aria-hidden="true">🎙️</span>
               <div>
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                   Podcasts & Conversations
                 </h2>
                 <p className="text-sm text-[#5A5D70] mt-0.5">
@@ -134,7 +134,7 @@ export default async function LibraryPage() {
             <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
               <span className="text-2xl" aria-hidden="true">📚</span>
               <div>
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                   Books & Reading
                 </h2>
                 <p className="text-sm text-[#5A5D70] mt-0.5">
@@ -202,7 +202,7 @@ export default async function LibraryPage() {
             <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
               <span className="text-2xl" aria-hidden="true">📬</span>
               <div>
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536]">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                   Newsletters & Dispatches
                 </h2>
                 <p className="text-sm text-[#5A5D70] mt-0.5">

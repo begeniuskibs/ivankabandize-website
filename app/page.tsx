@@ -50,8 +50,8 @@ export default async function HomePage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={80}>
-                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.12]">
-                  Ambition is rarely the problem. <span className="italic text-[#EF5B45]">Structure usually is.</span>
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
+                  Ambition is rarely the problem. <span className="text-[#EF5B45]">Structure usually is.</span>
                 </h1>
               </ScrollReveal>
 
@@ -176,8 +176,8 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
-                How Can I <span className="italic text-[#EF5B45]">Help You?</span>
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
+                How Can I <span className="text-[#EF5B45]">Help You?</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
                 Pick the thing that&rsquo;s keeping you up at night. There&rsquo;s a starting point for each one.
@@ -282,8 +282,8 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
-                My 3-Step <span className="italic text-[#2AA198]">Method</span>
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
+                My 3-Step <span className="text-[#2AA198]">Method</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
                 Every engagement — an SME, a school, a nonprofit — follows the same three moves, in the same order. That&rsquo;s the whole trick.
@@ -309,7 +309,7 @@ export default async function HomePage() {
                     Surface the problem you&apos;ve been operating around without naming. Most organisations know something isn&apos;t working. Few can articulate exactly what.
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] italic leading-relaxed">
+                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
                   &ldquo;A pest control company&apos;s founder discovery session surfaced financial leakage, manual processes, and data integrity gaps across five dimensions - none of which had been named before.&rdquo;
                 </div>
               </div>
@@ -332,7 +332,7 @@ export default async function HomePage() {
                     Design the structure that solves it. Systems, processes, frameworks, workflows, documentation. Not theory. Working structures your team can actually use.
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] italic leading-relaxed">
+                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
                   &ldquo;An international school being built from scratch needed everything - email infrastructure, admissions forms, branding, teacher onboarding - designed and delivered before doors opened.&rdquo;
                 </div>
               </div>
@@ -355,7 +355,7 @@ export default async function HomePage() {
                     Define what to do first, second, third. Doing things in the wrong order wastes everything.
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] italic leading-relaxed">
+                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
                   &ldquo;A logistics startup needed strategic clarity before systems could be built - advisory work that shaped the founder&apos;s thinking on what to prioritise and defer.&rdquo;
                 </div>
               </div>
@@ -381,8 +381,8 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
-                Watch &amp; <span className="italic text-[#EF5B45]">Listen</span>
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
+                Watch &amp; <span className="text-[#EF5B45]">Listen</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
                 Talks, radio segments, and walkthroughs — for when reading isn&rsquo;t your thing.
@@ -433,8 +433,8 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
-                Recent <span className="italic text-[#EF5B45]">Thinking</span>
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
+                Recent <span className="text-[#EF5B45]">Thinking</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
                 A digital garden of essays, notes, and tools — some polished, some still growing. Recently tended entries below.
@@ -516,8 +516,8 @@ export default async function HomePage() {
       <section className="py-20 md:py-28 bg-[#FDF8F1] text-center">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
-            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
-              The problem has a name. <span className="italic text-[#EF5B45]">Let&apos;s find it together.</span>
+            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] leading-tight">
+              The problem has a name. <span className="text-[#EF5B45]">Let&apos;s find it together.</span>
             </h2>
           </ScrollReveal>
 

@@ -3,6 +3,9 @@ import GardenFeed from '@/components/public/GardenFeed'
 
 export const dynamic = 'force-dynamic'
 
+// Temporary hero banner image (swap with final image anytime)
+const HERO_BANNER = '/images/auth-pool/03-gery-wibowo-laptop-study.jpg'
+
 export const metadata = {
   title: 'Structured Thoughts | Ivan Kabandize',
   description: 'In-depth essays, mental models, systems thinking, and long-form analysis.',
@@ -28,6 +31,7 @@ export default async function StructuredThoughtsPage() {
       description="Long-form essays, architectural explorations, and frameworks for leadership and systems."
       currentFilter="structured_thoughts"
       posts={posts || []}
+      heroBannerImage={HERO_BANNER}
     />
   )
 }

@@ -37,8 +37,8 @@ export default async function ServicesPage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={80}>
-                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-[#232536] leading-[1.15]">
-                  Let’s untangle your organisation — <span className="italic text-[#EF5B45]">properly.</span>
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.15]">
+                  Let’s untangle your organisation — <span className="text-[#EF5B45]">properly.</span>
                 </h1>
               </ScrollReveal>
 
@@ -90,8 +90,8 @@ export default async function ServicesPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
-                How an Engagement <span className="italic text-[#2AA198]">Works</span>
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
+                How an Engagement <span className="text-[#2AA198]">Works</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
                 Three phases. You can stop after any of them with something complete in hand.
@@ -174,8 +174,8 @@ export default async function ServicesPage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-14">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] tracking-tight">
-                Is This <span className="italic text-[#EF5B45]">For You?</span>
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
+                Is This <span className="text-[#EF5B45]">For You?</span>
               </h2>
             </div>
           </ScrollReveal>
@@ -219,8 +219,8 @@ export default async function ServicesPage() {
       <section className="py-20 md:py-28 bg-[#FDF8F1] text-center">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
-            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-semibold text-[#232536] leading-tight">
-              Ready when <span className="italic text-[#EF5B45]">you are.</span>
+            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] leading-tight">
+              Ready when <span className="text-[#EF5B45]">you are.</span>
             </h2>
           </ScrollReveal>
 
