@@ -15,10 +15,10 @@ export default async function ServicesPage() {
     .eq('slug', 'services')
     .maybeSingle()
 
-  const headline = page?.hero_headline || 'Let’s untangle your organisation — properly.'
+  const headline = page?.hero_headline || 'Ambition is rarely the problem. Structure usually is.'
   const subheadline =
     page?.hero_subheadline ||
-    'Every engagement runs Diagnose → Architect → Sequence, delivered in three phases. No jargon, no 90-slide decks, no system your team can’t run without me.'
+    "Let's untangle your organisation — properly. Every engagement runs in the same 3-phased process; Diagnose → Architect → Sequence. No jargon, no 90-slide decks, no system your team can't run without me."
 
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
@@ -38,7 +38,7 @@ export default async function ServicesPage() {
 
               <ScrollReveal delayMs={80}>
                 <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.15]">
-                  Let’s untangle your organisation — <span className="text-[#EF5B45]">properly.</span>
+                  Ambition is rarely the problem. <span className="text-[#EF5B45]">Structure usually is.</span>
                 </h1>
               </ScrollReveal>
 
@@ -70,12 +70,12 @@ export default async function ServicesPage() {
                 <div className="relative mx-auto w-full pt-4 pb-6 px-4">
                   <div className="relative transform -rotate-2 hover:rotate-0 transition-transform duration-500 ease-out">
                     <Image
-                      src="/images/ivan-headshot.jpg"
-                      alt="Ivan Kabandize"
+                      src="/images/auth-pool/11-nubelson-fernandes-person-reading.jpg"
+                      alt="Reading and deep focus session"
                       width={420}
                       height={500}
                       priority
-                      className="w-full aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.13)] border-4 border-white"
+                      className="w-full aspect-[4/5] object-cover object-center rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.13)] border-4 border-white"
                     />
                   </div>
                 </div>

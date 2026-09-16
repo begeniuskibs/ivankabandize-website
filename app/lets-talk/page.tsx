@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
+import ScrollReveal from '@/components/public/ScrollReveal'
 
 interface FormData {
   name: string
@@ -13,19 +14,17 @@ interface FormData {
   timing: string
 }
 
-const HELP_TYPE_OPTIONS = [
-  'Advisory & Architecture',
-  'Engineering & Delivery',
-  'Data & AI Pipelines',
-  'Full-Stack Systems',
-  'General Consultation',
+const HELP_OPTIONS = [
+  'Operations & systems',
+  'Training my team',
+  'Strategy & planning',
+  'Not sure yet',
 ]
 
 const TIMING_OPTIONS = [
-  'Immediately',
-  'Within 1 month',
-  '1–3 months',
-  'Exploring options',
+  { label: 'ASAP', value: 'As soon as possible' },
+  { label: '1–3 months', value: 'In the next 1–3 months' },
+  { label: 'Just exploring', value: 'Just exploring' },
 ]
 
 export default function LetsTalkPage() {
@@ -35,8 +34,8 @@ export default function LetsTalkPage() {
     email: '',
     organisation: '',
     problem: '',
-    help_type: '',
-    timing: '',
+    help_type: 'Not sure yet',
+    timing: 'Just exploring',
   })
 
   const [errors, setErrors] = useState<{ name?: string; email?: string; problem?: string }>({})
@@ -46,12 +45,12 @@ export default function LetsTalkPage() {
   const validateStep1 = () => {
     const newErrors: { name?: string; email?: string } = {}
     if (!formData.name.trim()) {
-      newErrors.name = 'Please enter your name.'
+      newErrors.name = 'Please tell me your name.'
     }
     if (!formData.email.trim()) {
-      newErrors.email = 'Please enter your email address.'
+      newErrors.email = 'A valid email so I can reply to you.'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
-      newErrors.email = 'Please enter a valid email address.'
+      newErrors.email = 'A valid email so I can reply to you.'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
@@ -60,34 +59,33 @@ export default function LetsTalkPage() {
   const validateStep2 = () => {
     const newErrors: { problem?: string } = {}
     if (!formData.problem.trim()) {
-      newErrors.problem = 'Please describe what you are looking to solve or build.'
+      newErrors.problem = 'A sentence or two helps me come prepared.'
     }
     setErrors(newErrors)
     return Object.keys(newErrors).length === 0
   }
 
-  const handleNextStep = () => {
-    if (step === 1) {
+  const handleNextStep = (from: 1 | 2) => {
+    if (from === 1) {
       if (validateStep1()) setStep(2)
-    } else if (step === 2) {
+    } else if (from === 2) {
       if (validateStep2()) setStep(3)
     }
   }
 
-  const handlePrevStep = () => {
-    if (step === 2) setStep(1)
-    if (step === 3) setStep(2)
+  const handleBack = (from: 2 | 3) => {
+    setStep((from - 1) as 1 | 2)
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+  const handleSubmit = async (e?: React.FormEvent) => {
+    if (e) e.preventDefault()
     setIsSubmitting(true)
     setSubmitError(null)
 
     try {
       const supabase = createClient()
 
-      // 1. Primary source of truth: Insert into live inquiries table
+      // 1. Primary insert into live inquiries table
       const { error: dbError } = await supabase.from('inquiries').insert([
         {
           name: formData.name.trim(),
@@ -105,7 +103,7 @@ export default function LetsTalkPage() {
         throw new Error(dbError.message || 'Failed to submit inquiry')
       }
 
-      // 2. Secondary server-side notification trigger (non-blocking for UI success)
+      // 2. Server-side notification trigger (non-blocking)
       fetch('/api/inquiries', {
         method: 'POST',
         headers: {
@@ -120,10 +118,10 @@ export default function LetsTalkPage() {
           timing: formData.timing || null,
         }),
       }).catch((err) => {
-        console.error('Server email notification error (non-fatal):', err)
+        console.error('Server notification error (non-fatal):', err)
       })
 
-      // 3. Transition to success step
+      // 3. Move to success step
       setStep(4)
     } catch (err: any) {
       console.error('Submission failed:', err)
@@ -133,394 +131,562 @@ export default function LetsTalkPage() {
     }
   }
 
+  const firstName = formData.name.trim().split(' ')[0] || 'friend'
+
   return (
-    <div className="min-h-[80vh] py-12 md:py-20 font-sans">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <p className="text-xs uppercase tracking-widest font-semibold text-gray-400 mb-2">
-            Get in Touch
-          </p>
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
-            Let&apos;s Talk
-          </h1>
-          <p className="text-base sm:text-lg text-gray-600 max-w-lg mx-auto leading-relaxed">
-            Tell me about your project, engineering problem, or strategic initiative.
-          </p>
-        </div>
-
-        {/* Progress Bar (Visible on Steps 1–3) */}
-        {step < 4 && (
-          <div className="mb-10">
-            <div className="flex items-center justify-between text-xs font-semibold text-gray-500 mb-2">
-              <span className={step >= 1 ? 'text-black font-bold' : ''}>1. About You</span>
-              <span className={step >= 2 ? 'text-black font-bold' : ''}>2. The Problem</span>
-              <span className={step >= 3 ? 'text-black font-bold' : ''}>3. Review</span>
-            </div>
-            <div className="w-full bg-gray-100 h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-black h-full transition-all duration-300 ease-out"
-                style={{ width: `${((step - 1) / 2) * 100 || 10}%` }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Form Container */}
-        <div className="bg-white border border-gray-100 rounded-3xl p-6 sm:p-10 shadow-sm">
-          {submitError && (
-            <div className="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm">
-              {submitError}
-            </div>
-          )}
-
-          {/* STEP 1: About You */}
-          {step === 1 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">About You</h2>
-                <p className="text-sm text-gray-500">Who are you and how can I reach you?</p>
+    <div className="min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536] py-14 md:py-24">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start max-w-5xl mx-auto">
+          
+          {/* ================= LEFT COLUMN: STATIC ================= */}
+          <div className="lg:col-span-5 space-y-6">
+            <ScrollReveal>
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#EF5B45] text-xs font-bold uppercase tracking-widest">
+                <Link href="/" className="hover:underline text-[#5A5D70]">
+                  Home
+                </Link>
+                <span className="text-[#5A5D70]">/</span>
+                <span>Let&rsquo;s Talk</span>
               </div>
+            </ScrollReveal>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-1.5" htmlFor="name">
-                  Full Name <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="name"
-                  type="text"
-                  placeholder="Jane Doe"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-black transition ${
-                    errors.name ? 'border-red-400 bg-red-50/20' : 'border-gray-200'
-                  }`}
-                />
-                {errors.name && <p className="text-xs text-red-600 mt-1.5">{errors.name}</p>}
-              </div>
+            <ScrollReveal delayMs={80}>
+              <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#232536] leading-[1.15]">
+                Tell me what&rsquo;s <span className="text-[#EF5B45]">not working.</span>
+              </h1>
+            </ScrollReveal>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-1.5" htmlFor="email">
-                  Email Address <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="jane@company.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-black transition ${
-                    errors.email ? 'border-red-400 bg-red-50/20' : 'border-gray-200'
-                  }`}
-                />
-                {errors.email && <p className="text-xs text-red-600 mt-1.5">{errors.email}</p>}
-              </div>
+            <ScrollReveal delayMs={140}>
+              <p className="text-base sm:text-lg text-[#5A5D70] leading-relaxed">
+                Three quick steps, two minutes of your time. No obligation, no pressure — the first conversation is a diagnosis, not a pitch.
+              </p>
+            </ScrollReveal>
 
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-1.5" htmlFor="organisation">
-                  Organisation / Company <span className="text-xs text-gray-400 font-normal">(Optional)</span>
-                </label>
-                <input
-                  id="organisation"
-                  type="text"
-                  placeholder="Acme Corp"
-                  value={formData.organisation}
-                  onChange={(e) => setFormData({ ...formData, organisation: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-black transition"
-                />
-              </div>
-
-              <div className="pt-4 flex justify-end">
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="px-7 py-3 rounded-full bg-black text-white text-sm font-medium hover:bg-gray-800 transition shadow-sm"
-                >
-                  Continue &rarr;
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 2: The Problem */}
-          {step === 2 && (
-            <div className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">The Problem</h2>
-                <p className="text-sm text-gray-500">What are you looking to solve, build, or accelerate?</p>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-1.5" htmlFor="problem">
-                  Problem Description <span className="text-red-500">*</span>
-                </label>
-                <textarea
-                  id="problem"
-                  rows={4}
-                  placeholder="Describe your current challenge, architectural bottleneck, or what you'd like to achieve..."
-                  value={formData.problem}
-                  onChange={(e) => setFormData({ ...formData, problem: e.target.value })}
-                  className={`w-full px-4 py-3 rounded-xl border text-sm focus:outline-none focus:ring-2 focus:ring-black transition ${
-                    errors.problem ? 'border-red-400 bg-red-50/20' : 'border-gray-200'
-                  }`}
-                />
-                {errors.problem && <p className="text-xs text-red-600 mt-1.5">{errors.problem}</p>}
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-2">
-                  Type of Help <span className="text-xs text-gray-400 font-normal">(Optional)</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {HELP_TYPE_OPTIONS.map((option) => {
-                    const isSelected = formData.help_type === option
-                    return (
-                      <button
-                        key={option}
-                        type="button"
-                        onClick={() =>
-                          setFormData({
-                            ...formData,
-                            help_type: isSelected ? '' : option,
-                          })
-                        }
-                        className={`px-3.5 py-2 rounded-xl text-xs font-medium border transition ${
-                          isSelected
-                            ? 'bg-black text-white border-black shadow-sm'
-                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-400'
-                        }`}
-                      >
-                        {option}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-800 mb-2">
-                  Timing <span className="text-xs text-gray-400 font-normal">(Optional)</span>
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {TIMING_OPTIONS.map((timing) => {
-                    const isSelected = formData.timing === timing
-                    return (
-                      <button
-                        key={timing}
-                        type="button"
-                        onClick={() =>
-                          setFormData({
-                            ...formData,
-                            timing: isSelected ? '' : timing,
-                          })
-                        }
-                        className={`px-3.5 py-2 rounded-xl text-xs font-medium border transition ${
-                          isSelected
-                            ? 'bg-black text-white border-black shadow-sm'
-                            : 'bg-gray-50 text-gray-700 border-gray-200 hover:border-gray-400'
-                        }`}
-                      >
-                        {timing}
-                      </button>
-                    )
-                  })}
-                </div>
-              </div>
-
-              <div className="pt-4 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-700 text-sm font-medium hover:border-black transition"
-                >
-                  &larr; Back
-                </button>
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="px-7 py-3 rounded-full bg-black text-white text-sm font-medium hover:bg-gray-800 transition shadow-sm"
-                >
-                  Review Inquiry &rarr;
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* STEP 3: Review */}
-          {step === 3 && (
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 mb-1">Review Your Inquiry</h2>
-                <p className="text-sm text-gray-500">Please confirm everything looks correct before submitting.</p>
-              </div>
-
-              {/* Review Section 1: Contact Details */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
-                <div className="flex items-center justify-between border-b border-gray-200/60 pb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                    Contact Details
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setStep(1)}
-                    className="text-xs font-semibold text-black hover:underline"
-                  >
-                    Edit
-                  </button>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-sm">
-                  <div>
-                    <span className="text-gray-500 text-xs block">Name</span>
-                    <span className="font-medium text-gray-900">{formData.name}</span>
+            {/* Three Numbered Rows */}
+            <ScrollReveal delayMs={200}>
+              <div className="space-y-6 pt-4">
+                {/* Row 1 */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-white border-2 border-[#F5ECDE] shadow-[0_4px_14px_rgba(35,37,54,0.06)] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base text-[#232536] flex-shrink-0">
+                    1
                   </div>
                   <div>
-                    <span className="text-gray-500 text-xs block">Email</span>
-                    <span className="font-medium text-gray-900">{formData.email}</span>
-                  </div>
-                  {formData.organisation && (
-                    <div className="sm:col-span-2">
-                      <span className="text-gray-500 text-xs block">Organisation</span>
-                      <span className="font-medium text-gray-900">{formData.organisation}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Review Section 2: Project Details */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-gray-50 border border-gray-100 space-y-3">
-                <div className="flex items-center justify-between border-b border-gray-200/60 pb-2">
-                  <span className="text-xs font-bold uppercase tracking-wider text-gray-400">
-                    Inquiry Details
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => setStep(2)}
-                    className="text-xs font-semibold text-black hover:underline"
-                  >
-                    Edit
-                  </button>
-                </div>
-                <div className="space-y-3 text-sm">
-                  <div>
-                    <span className="text-gray-500 text-xs block">Problem Description</span>
-                    <p className="font-medium text-gray-900 whitespace-pre-wrap mt-0.5 leading-relaxed">
-                      {formData.problem}
+                    <h3 className="font-bold text-base text-[#232536]">
+                      I read every enquiry personally
+                    </h3>
+                    <p className="text-sm text-[#5A5D70] mt-1 leading-relaxed">
+                      You&rsquo;ll hear back from me within two business days — a real reply, not an autoresponder.
                     </p>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-1 border-t border-gray-200/40">
-                    <div>
-                      <span className="text-gray-500 text-xs block">Type of Help</span>
-                      <span className="font-medium text-gray-900">
-                        {formData.help_type || 'Unspecified'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-gray-500 text-xs block">Timing</span>
-                      <span className="font-medium text-gray-900">{formData.timing || 'Flexible'}</span>
-                    </div>
+                </div>
+
+                {/* Row 2 */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-white border-2 border-[#F5ECDE] shadow-[0_4px_14px_rgba(35,37,54,0.06)] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base text-[#232536] flex-shrink-0">
+                    2
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#232536]">
+                      We talk for 30 minutes
+                    </h3>
+                    <p className="text-sm text-[#5A5D70] mt-1 leading-relaxed">
+                      A focused conversation about what&rsquo;s not working. You&rsquo;ll leave with a clearer picture either way.
+                    </p>
+                  </div>
+                </div>
+
+                {/* Row 3 */}
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-white border-2 border-[#F5ECDE] shadow-[0_4px_14px_rgba(35,37,54,0.06)] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base text-[#232536] flex-shrink-0">
+                    3
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-base text-[#232536]">
+                      A proposal — only if it fits
+                    </h3>
+                    <p className="text-sm text-[#5A5D70] mt-1 leading-relaxed">
+                      If I can genuinely help, I&rsquo;ll propose an engagement scoped to your situation. If I can&rsquo;t, I&rsquo;ll say so and point you to someone who can.
+                    </p>
                   </div>
                 </div>
               </div>
+            </ScrollReveal>
+          </div>
 
-              <div className="pt-4 flex items-center justify-between">
-                <button
-                  type="button"
-                  onClick={handlePrevStep}
-                  disabled={isSubmitting}
-                  className="px-5 py-2.5 rounded-full border border-gray-200 text-gray-700 text-sm font-medium hover:border-black transition disabled:opacity-50"
-                >
-                  &larr; Back
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="px-8 py-3.5 rounded-full bg-black text-white text-sm font-medium hover:bg-gray-800 transition shadow-sm disabled:opacity-50 flex items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>
-                      <svg
-                        className="animate-spin h-4 w-4 text-white"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
+          {/* ================= RIGHT COLUMN: INTERACTIVE CARD ================= */}
+          <div className="lg:col-span-7">
+            <ScrollReveal delayMs={100}>
+              <div className="bg-white border border-[#F5ECDE] rounded-[28px] p-6 sm:p-10 shadow-[0_18px_44px_rgba(35,37,54,0.1)]">
+                
+                {/* Step Indicator (Steps 1-3) */}
+                {step < 4 && (
+                  <div className="flex items-center gap-2 sm:gap-3 mb-8">
+                    {/* Step 1 badge */}
+                    <div className={`flex items-center gap-2 text-xs sm:text-sm font-bold ${
+                      step === 1 ? 'text-[#232536]' : step > 1 ? 'text-[#2AA198]' : 'text-[#A9ACBC]'
+                    }`}>
+                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
+                        step === 1
+                          ? 'bg-[#EF5B45] text-white'
+                          : step > 1
+                          ? 'bg-[#2AA198] text-white'
+                          : 'bg-[#F5ECDE] text-[#5A5D70]'
+                      }`}>
+                        {step > 1 ? '✓' : '1'}
+                      </div>
+                      <span className="hidden sm:inline">About you</span>
+                    </div>
+
+                    {/* Connecting Line 1 */}
+                    <div className={`flex-1 h-0.5 rounded-full ${step > 1 ? 'bg-[#2AA198]' : 'bg-[#F5ECDE]'}`} />
+
+                    {/* Step 2 badge */}
+                    <div className={`flex items-center gap-2 text-xs sm:text-sm font-bold ${
+                      step === 2 ? 'text-[#232536]' : step > 2 ? 'text-[#2AA198]' : 'text-[#A9ACBC]'
+                    }`}>
+                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
+                        step === 2
+                          ? 'bg-[#EF5B45] text-white'
+                          : step > 2
+                          ? 'bg-[#2AA198] text-white'
+                          : 'bg-[#F5ECDE] text-[#5A5D70]'
+                      }`}>
+                        {step > 2 ? '✓' : '2'}
+                      </div>
+                      <span className="hidden sm:inline">The problem</span>
+                    </div>
+
+                    {/* Connecting Line 2 */}
+                    <div className={`flex-1 h-0.5 rounded-full ${step > 2 ? 'bg-[#2AA198]' : 'bg-[#F5ECDE]'}`} />
+
+                    {/* Step 3 badge */}
+                    <div className={`flex items-center gap-2 text-xs sm:text-sm font-bold ${
+                      step === 3 ? 'text-[#232536]' : 'text-[#A9ACBC]'
+                    }`}>
+                      <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
+                        step === 3
+                          ? 'bg-[#EF5B45] text-white'
+                          : 'bg-[#F5ECDE] text-[#5A5D70]'
+                      }`}>
+                        3
+                      </div>
+                      <span className="hidden sm:inline">Review</span>
+                    </div>
+                  </div>
+                )}
+
+                {submitError && (
+                  <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+                    {submitError}
+                  </div>
+                )}
+
+                {/* ================= STEP 1: ABOUT YOU ================= */}
+                {step === 1 && (
+                  <div className="space-y-5">
+                    <div>
+                      <label className="block text-sm font-bold text-[#232536] mb-2" htmlFor="tName">
+                        Your name
+                      </label>
+                      <input
+                        id="tName"
+                        type="text"
+                        placeholder="e.g. Jennifer Kiiza"
+                        value={formData.name}
+                        onChange={(e) => {
+                          setFormData({ ...formData, name: e.target.value })
+                          if (errors.name) setErrors({ ...errors, name: undefined })
+                        }}
+                        className={`w-full px-4 py-3.5 rounded-2xl border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition ${
+                          errors.name ? 'border-[#EF5B45]' : 'border-[#F5ECDE] focus:border-[#EF5B45]'
+                        }`}
+                      />
+                      {errors.name && (
+                        <p className="text-xs font-bold text-[#EF5B45] mt-1.5">{errors.name}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-bold text-[#232536] mb-2" htmlFor="tEmail">
+                        Email
+                      </label>
+                      <input
+                        id="tEmail"
+                        type="email"
+                        placeholder="you@yourorganisation.com"
+                        value={formData.email}
+                        onChange={(e) => {
+                          setFormData({ ...formData, email: e.target.value })
+                          if (errors.email) setErrors({ ...errors, email: undefined })
+                        }}
+                        className={`w-full px-4 py-3.5 rounded-2xl border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition ${
+                          errors.email ? 'border-[#EF5B45]' : 'border-[#F5ECDE] focus:border-[#EF5B45]'
+                        }`}
+                      />
+                      {errors.email && (
+                        <p className="text-xs font-bold text-[#EF5B45] mt-1.5">{errors.email}</p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-bold text-[#232536] mb-2" htmlFor="tOrg">
+                        Organisation <span className="font-normal text-[#A9ACBC]">(optional)</span>
+                      </label>
+                      <input
+                        id="tOrg"
+                        type="text"
+                        placeholder="Your company, school, or nonprofit"
+                        value={formData.organisation}
+                        onChange={(e) => setFormData({ ...formData, organisation: e.target.value })}
+                        className="w-full px-4 py-3.5 rounded-2xl border-2 border-[#F5ECDE] text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
+                      />
+                    </div>
+
+                    <div className="pt-4 flex justify-end">
+                      <button
+                        type="button"
+                        onClick={() => handleNextStep(1)}
+                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8v8H4z"
-                        />
-                      </svg>
-                      Sending Inquiry...
-                    </>
-                  ) : (
-                    'Submit Inquiry'
-                  )}
-                </button>
-              </div>
-            </form>
-          )}
+                        <span>Continue</span>
+                        <span aria-hidden="true">&rarr;</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
 
-          {/* STEP 4: Success State */}
-          {step === 4 && (
-            <div className="py-8 text-center space-y-5">
-              <div className="w-16 h-16 bg-green-50 text-green-600 rounded-full flex items-center justify-center mx-auto border border-green-100">
-                <svg
-                  className="w-8 h-8"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
+                {/* ================= STEP 2: THE PROBLEM ================= */}
+                {step === 2 && (
+                  <div className="space-y-6">
+                    <div>
+                      <label className="block text-sm font-bold text-[#232536] mb-2" htmlFor="tProblem">
+                        What&rsquo;s not working?
+                      </label>
+                      <textarea
+                        id="tProblem"
+                        rows={4}
+                        placeholder="In your own words — the messier the better. e.g. 'We've grown to 15 staff and everything still lives in the founder's head. Nothing is documented, reporting is chaotic…'"
+                        value={formData.problem}
+                        onChange={(e) => {
+                          setFormData({ ...formData, problem: e.target.value })
+                          if (errors.problem) setErrors({ ...errors, problem: undefined })
+                        }}
+                        className={`w-full px-4 py-3.5 rounded-2xl border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition min-h-[120px] ${
+                          errors.problem ? 'border-[#EF5B45]' : 'border-[#F5ECDE] focus:border-[#EF5B45]'
+                        }`}
+                      />
+                      {errors.problem && (
+                        <p className="text-xs font-bold text-[#EF5B45] mt-1.5">{errors.problem}</p>
+                      )}
+                    </div>
 
-              <div className="space-y-2">
-                <h2 className="text-2xl font-bold text-gray-900">Inquiry Received</h2>
-                <p className="text-sm text-gray-600 max-w-md mx-auto leading-relaxed">
-                  Thank you for reaching out, <span className="font-semibold text-gray-900">{formData.name}</span>. Your submission has been securely recorded, and I will review it and get back to you shortly.
-                </p>
-              </div>
+                    {/* Choice Pills: What kind of help */}
+                    <div>
+                      <label className="block text-sm font-bold text-[#232536] mb-2.5">
+                        What kind of help are you exploring?
+                      </label>
+                      <div className="flex flex-wrap gap-2.5">
+                        {HELP_OPTIONS.map((opt) => {
+                          const isSelected = formData.help_type === opt
+                          return (
+                            <button
+                              key={opt}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, help_type: opt })}
+                              className={`px-4 py-2.5 rounded-full text-sm font-semibold border-2 transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#232536] text-white border-[#232536] shadow-sm'
+                                  : 'bg-white text-[#5A5D70] border-[#F5ECDE] hover:border-[#5A5D70]'
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
 
-              <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
-                <Link
-                  href="/"
-                  className="px-6 py-2.5 rounded-full bg-black text-white text-sm font-medium hover:bg-gray-800 transition"
-                >
-                  Return to Homepage
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setFormData({
-                      name: '',
-                      email: '',
-                      organisation: '',
-                      problem: '',
-                      help_type: '',
-                      timing: '',
-                    })
-                    setStep(1)
-                  }}
-                  className="px-6 py-2.5 rounded-full border border-gray-200 text-gray-700 text-sm font-medium hover:border-black transition"
-                >
-                  Submit Another
-                </button>
+                    {/* Choice Pills: How soon */}
+                    <div>
+                      <label className="block text-sm font-bold text-[#232536] mb-2.5">
+                        How soon do you want to start?
+                      </label>
+                      <div className="flex flex-wrap gap-2.5">
+                        {TIMING_OPTIONS.map((t) => {
+                          const isSelected = formData.timing === t.value || formData.timing === t.label
+                          return (
+                            <button
+                              key={t.label}
+                              type="button"
+                              onClick={() => setFormData({ ...formData, timing: t.value })}
+                              className={`px-4 py-2.5 rounded-full text-sm font-semibold border-2 transition-all cursor-pointer ${
+                                isSelected
+                                  ? 'bg-[#232536] text-white border-[#232536] shadow-sm'
+                                  : 'bg-white text-[#5A5D70] border-[#F5ECDE] hover:border-[#5A5D70]'
+                              }`}
+                            >
+                              {t.label}
+                            </button>
+                          )
+                        })}
+                      </div>
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="pt-4 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => handleBack(2)}
+                        className="text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition flex items-center gap-1 cursor-pointer"
+                      >
+                        &larr; Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleNextStep(2)}
+                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                      >
+                        <span>Review</span>
+                        <span aria-hidden="true">&rarr;</span>
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ================= STEP 3: REVIEW ================= */}
+                {step === 3 && (
+                  <div className="space-y-6">
+                    <p className="font-bold text-base text-[#232536]">
+                      Quick check before it goes to my inbox:
+                    </p>
+
+                    {/* Review card */}
+                    <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-2xl p-5 sm:p-6 space-y-4">
+                      {/* Name */}
+                      <div className="border-b border-[#F5ECDE] pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
+                          Name
+                        </span>
+                        <p className="text-base text-[#232536] font-medium mt-0.5">{formData.name}</p>
+                        <button
+                          type="button"
+                          onClick={() => setStep(1)}
+                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+
+                      {/* Email */}
+                      <div className="border-b border-[#F5ECDE] pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
+                          Email
+                        </span>
+                        <p className="text-base text-[#232536] font-medium mt-0.5">{formData.email}</p>
+                        <button
+                          type="button"
+                          onClick={() => setStep(1)}
+                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+
+                      {/* Organisation */}
+                      <div className="border-b border-[#F5ECDE] pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
+                          Organisation
+                        </span>
+                        <p className="text-base text-[#232536] font-medium mt-0.5">
+                          {formData.organisation || '—'}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setStep(1)}
+                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+
+                      {/* What's not working */}
+                      <div className="border-b border-[#F5ECDE] pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
+                          What&rsquo;s not working
+                        </span>
+                        <p className="text-base text-[#232536] font-medium mt-0.5 whitespace-pre-wrap leading-relaxed">
+                          {formData.problem}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setStep(2)}
+                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+
+                      {/* Type of help */}
+                      <div className="border-b border-[#F5ECDE] pb-3">
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
+                          Type of help
+                        </span>
+                        <p className="text-base text-[#232536] font-medium mt-0.5">{formData.help_type}</p>
+                        <button
+                          type="button"
+                          onClick={() => setStep(2)}
+                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+
+                      {/* Timing */}
+                      <div>
+                        <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
+                          Timing
+                        </span>
+                        <p className="text-base text-[#232536] font-medium mt-0.5">{formData.timing}</p>
+                        <button
+                          type="button"
+                          onClick={() => setStep(2)}
+                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                        >
+                          Edit
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Navigation Buttons */}
+                    <div className="pt-2 flex items-center justify-between">
+                      <button
+                        type="button"
+                        onClick={() => handleBack(3)}
+                        disabled={isSubmitting}
+                        className="text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                      >
+                        &larr; Back
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleSubmit()}
+                        disabled={isSubmitting}
+                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
+                      >
+                        {isSubmitting ? (
+                          <>
+                            <svg
+                              className="animate-spin h-5 w-5 text-white"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                              />
+                              <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8v8H4z"
+                              />
+                            </svg>
+                            <span>Sending enquiry...</span>
+                          </>
+                        ) : (
+                          <>
+                            <span>Send enquiry</span>
+                            <span aria-hidden="true">&#128228;</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {/* ================= STEP 4: SUCCESS ================= */}
+                {step === 4 && (
+                  <div className="py-6 text-center space-y-6">
+                    {/* Big Check */}
+                    <div className="w-18 h-18 sm:w-20 sm:h-20 rounded-full bg-[#2AA198] text-white text-3xl sm:text-4xl flex items-center justify-center mx-auto shadow-md">
+                      ✓
+                    </div>
+
+                    <div className="space-y-2">
+                      <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
+                        Got it, {firstName}!
+                      </h2>
+                      <p className="text-base text-[#5A5D70] max-w-md mx-auto leading-relaxed">
+                        Your enquiry is in my inbox. A confirmation is on its way to{' '}
+                        <strong className="text-[#232536]">{formData.email}</strong>.
+                      </p>
+                    </div>
+
+                    {/* Next Steps Box */}
+                    <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-2xl p-6 sm:p-7 text-left space-y-4 mt-6">
+                      <p className="text-xs font-bold uppercase tracking-widest text-[#2AA198]">
+                        What happens next
+                      </p>
+
+                      <div className="space-y-4">
+                        <div className="flex items-start gap-3.5">
+                          <span className="text-xl flex-shrink-0">📧</span>
+                          <div>
+                            <h4 className="font-bold text-sm text-[#232536]">Within 2 business days</h4>
+                            <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
+                              A personal reply from me — with a couple of times for our 30-minute call.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3.5">
+                          <span className="text-xl flex-shrink-0">💬</span>
+                          <div>
+                            <h4 className="font-bold text-sm text-[#232536]">The call</h4>
+                            <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
+                              We dig into what&rsquo;s not working. Come as you are; no preparation needed.
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-start gap-3.5">
+                          <span className="text-xl flex-shrink-0">🧭</span>
+                          <div>
+                            <h4 className="font-bold text-sm text-[#232536]">Meanwhile</h4>
+                            <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
+                              If you&rsquo;d like a head start, my writing on systems and structure is a good place to begin.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Return buttons */}
+                    <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
+                      <Link
+                        href="/garden"
+                        className="inline-flex items-center justify-center font-bold text-sm px-6 py-3 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-sm transition-all"
+                      >
+                        Wander the Garden
+                      </Link>
+                      <Link
+                        href="/"
+                        className="inline-flex items-center justify-center font-bold text-sm px-6 py-3 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all"
+                      >
+                        Back to home
+                      </Link>
+                    </div>
+                  </div>
+                )}
+
               </div>
-            </div>
-          )}
+            </ScrollReveal>
+          </div>
+
         </div>
       </div>
     </div>

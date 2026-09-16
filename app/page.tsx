@@ -51,17 +51,15 @@ export default async function HomePage() {
 
               <ScrollReveal delayMs={80}>
                 <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
-                  Ambition is rarely the problem. <span className="text-[#EF5B45]">Structure usually is.</span>
+                  I&apos;m Ivan. I help founders and leaders turn operational chaos into{' '}
+                  <span className="text-[#EF5B45]">structure that works.</span>
                 </h1>
               </ScrollReveal>
 
               <ScrollReveal delayMs={140}>
                 <div className="space-y-4 text-lg sm:text-xl text-[#5A5D70] leading-relaxed">
                   <p className="font-medium text-[#232536]">
-                    I help organisations and individuals see their problem clearly, design the structure to solve it, and know what to do first.
-                  </p>
-                  <p className="text-base sm:text-lg text-[#5A5D70]">
-                    You have a vision. You have a team. You might even have the resources. But somewhere between where you are and where you want to be, there&apos;s a gap you can feel but haven&apos;t been able to name. That&apos;s where I start.
+                    I&apos;m a systems consultant, trainer, and writer. Whatever&apos;s not working in your business or organisation, my job is to help you see the problem clearly, design the structure to solve it, and know exactly what to do first.
                   </p>
                 </div>
               </ScrollReveal>
@@ -85,38 +83,19 @@ export default async function HomePage() {
               </ScrollReveal>
             </div>
 
-            {/* Right Portrait & Stickers Column */}
+            {/* Right Portrait Column (No stickers) */}
             <div className="lg:col-span-5 flex justify-center">
               <ScrollReveal delayMs={150} className="w-full max-w-sm sm:max-w-md">
-                <div className="relative mx-auto w-full pt-6 pb-8 px-4">
-                  {/* Sticker A - Top Left */}
-                  <div className="absolute top-4 -left-2 sm:-left-6 z-20 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.12)] text-xs font-bold text-[#232536] transform -rotate-6 flex items-center gap-2">
-                    <span className="text-base">&#129658;</span>
-                    <span>Diagnose</span>
-                  </div>
-
-                  {/* Main Portrait with Blob Shape */}
+                <div className="relative mx-auto w-full pt-4 pb-6 px-4">
                   <div className="relative z-10">
                     <Image
-                      src="/images/mockup_img_1_Ivan_Kabandize_smiling.jpg"
-                      alt="Ivan Kabandize smiling"
-                      width={400}
+                      src="/images/ivan-headshot.jpg"
+                      alt="Ivan Kabandize"
+                      width={420}
                       height={500}
                       priority
-                      className="w-full aspect-[4/5] object-cover object-top shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white animate-blob"
+                      className="w-full aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
                     />
-                  </div>
-
-                  {/* Sticker B - Bottom Right */}
-                  <div className="absolute bottom-12 -right-2 sm:-right-6 z-20 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.12)] text-xs font-bold text-[#2AA198] transform rotate-6 flex items-center gap-2">
-                    <span className="text-base">&#128506;&#65039;</span>
-                    <span>Sequence</span>
-                  </div>
-
-                  {/* Sticker C - Bottom Left */}
-                  <div className="absolute -bottom-3 left-4 z-20 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.12)] text-xs font-bold text-[#EF5B45] transform -rotate-3 flex items-center gap-2">
-                    <span className="text-base">&#127959;&#65039;</span>
-                    <span>Architect</span>
                   </div>
                 </div>
               </ScrollReveal>
@@ -170,7 +149,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* Provisional content - not yet in the approved Website Copy Document. Pending formal addition. */}
       {/* ================= HELP CARDS: HOW CAN I HELP YOU? ================= */}
       <section className="py-20 md:py-28 bg-white border-b border-[#F5ECDE]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
