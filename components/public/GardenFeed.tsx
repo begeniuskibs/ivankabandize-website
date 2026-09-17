@@ -253,14 +253,21 @@ export default function GardenFeed({
                             {typeInfo.label}
                           </span>
                         )}
-                        {tagNames.map((tag, tIdx) => (
-                          <span
-                            key={tIdx}
-                            className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#FDF8F1] text-[#2AA198] border border-[#F5ECDE]"
-                          >
-                            {tag}
-                          </span>
-                        ))}
+                        {tagNames
+                          .filter(
+                            (tag) =>
+                              !typeInfo ||
+                              !('label' in typeInfo) ||
+                              tag.toLowerCase() !== (typeInfo.label as string).toLowerCase()
+                          )
+                          .map((tag, tIdx) => (
+                            <span
+                              key={tIdx}
+                              className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#FDF8F1] text-[#2AA198] border border-[#F5ECDE]"
+                            >
+                              {tag}
+                            </span>
+                          ))}
                       </div>
 
                       <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-2">

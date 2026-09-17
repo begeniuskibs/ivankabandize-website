@@ -119,18 +119,24 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
             </Link>
           )}
 
-          {post.post_tags && post.post_tags.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {(post.post_tags as any[]).map((pt: any, idx: number) => (
-                <span
-                  key={idx}
-                  className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
-                >
-                  {pt.tag?.name}
-                </span>
-              ))}
-            </div>
-          )}
+          {post.post_tags && post.post_tags.length > 0 && (() => {
+            const secondaryTags = (post.post_tags as any[]).filter(
+              (pt: any) => pt.tag?.name && pt.tag.name.toLowerCase() !== typeInfo?.label.toLowerCase()
+            )
+            if (secondaryTags.length === 0) return null
+            return (
+              <div className="flex flex-wrap gap-2">
+                {secondaryTags.map((pt: any, idx: number) => (
+                  <span
+                    key={idx}
+                    className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
+                  >
+                    {pt.tag?.name}
+                  </span>
+                ))}
+              </div>
+            )
+          })()}
         </div>
 
         {/* 2. Main Headline */}
