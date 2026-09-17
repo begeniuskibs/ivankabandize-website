@@ -291,7 +291,7 @@ export default function LetsTalkPage() {
                       <input
                         id="tName"
                         type="text"
-                        placeholder="e.g. Jennifer Kiiza"
+                        placeholder="e.g. John Doe"
                         value={formData.name}
                         onChange={(e) => {
                           setFormData({ ...formData, name: e.target.value })

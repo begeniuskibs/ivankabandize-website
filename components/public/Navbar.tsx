@@ -29,7 +29,7 @@ export default function Navbar() {
           </Link>
           <Link
             href="/auth/login"
-            className="px-4 py-2 rounded-full border-2 border-[#F5ECDE] bg-white text-[#232536] hover:bg-[#F5ECDE] hover:border-[#5A5D70]/30 transition text-xs sm:text-sm font-bold shadow-sm"
+            className="text-[#EF5B45] hover:text-[#D94834] transition"
           >
             Sign-in
           </Link>
