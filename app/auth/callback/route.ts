@@ -30,5 +30,5 @@ export async function GET(request: Request) {
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/auth/login?error=Could+not+authenticate+user+with+OAuth+provider`)
+  return NextResponse.redirect(`${origin}/login?error=Could+not+authenticate+user+with+OAuth+provider`)
 }

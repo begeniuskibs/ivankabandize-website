@@ -167,7 +167,7 @@ export default async function HomePage() {
             {/* Card 1 */}
             <ScrollReveal delayMs={40}>
               <Link
-                href="/services"
+                href="/workwithme"
                 className="bg-[#FCEBE7] hover:bg-[#fad8d1] border border-[#EF5B45]/15 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
@@ -343,7 +343,7 @@ export default async function HomePage() {
           <ScrollReveal delayMs={240}>
             <div className="text-center mt-12">
               <Link
-                href="/services"
+                href="/workwithme"
                 className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>See how an engagement works</span>

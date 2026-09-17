@@ -14,10 +14,10 @@ export default function Footer() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-6 font-medium">
-          <Link href="/services" className="hover:text-white transition">
+          <Link href="/workwithme" className="hover:text-white transition">
             Work with Me
           </Link>
-          <Link href="/about" className="hover:text-white transition">
+          <Link href="/me" className="hover:text-white transition">
             Me
           </Link>
           <Link href="/garden" className="hover:text-white transition">
@@ -29,7 +29,7 @@ export default function Footer() {
           <Link href="/lets-talk" className="hover:text-white transition">
             Contact
           </Link>
-          <Link href="/auth/login" className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45]">
+          <Link href="/login" className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45]">
             Sign-in
           </Link>
         </div>

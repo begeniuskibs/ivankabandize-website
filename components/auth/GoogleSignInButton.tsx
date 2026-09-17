@@ -21,7 +21,7 @@ export default function GoogleSignInButton() {
 
       if (error) {
         console.error('Google auth error:', error.message)
-        window.location.href = `/auth/login?error=${encodeURIComponent(error.message)}`
+        window.location.href = `/login?error=${encodeURIComponent(error.message)}`
       }
     } catch (err) {
       console.error('Unexpected auth error:', err)

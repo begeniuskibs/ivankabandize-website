@@ -5,14 +5,14 @@ import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
 
-export default async function AboutPage() {
+export default async function MePage() {
   const supabase = await createClient()
 
-  // Fetch page content for about from Supabase pages table
+  // Fetch page content for me / about from Supabase pages table
   const { data: page } = await supabase
     .from('pages')
     .select('*')
-    .eq('slug', 'about')
+    .or('slug.eq.me,slug.eq.about')
     .maybeSingle()
 
   const headline = page?.hero_headline || 'Hey, I’m Ivan Kabandize'
@@ -42,7 +42,7 @@ export default async function AboutPage() {
     "If something in your organisation isn't working, I'd like to hear about it."
 
   const ctaText = page?.cta_text || 'Work With Me'
-  const ctaUrl = page?.cta_url || '/services'
+  const ctaUrl = page?.cta_url || '/workwithme'
   const testimonials = Array.isArray(page?.testimonials) ? page.testimonials : []
 
   return (
@@ -210,7 +210,7 @@ export default async function AboutPage() {
                 </div>
                 <div className="pt-6 mt-6 border-t border-[#EF5B45]/10">
                   <Link
-                    href="/services"
+                    href="/workwithme"
                     className="inline-flex items-center gap-1.5 text-sm font-bold text-[#EF5B45] hover:text-[#D94834] transition"
                   >
                     <span>Explore Advisory</span>
@@ -240,7 +240,7 @@ export default async function AboutPage() {
                 </div>
                 <div className="pt-6 mt-6 border-t border-[#2AA198]/10">
                   <Link
-                    href="/services"
+                    href="/workwithme"
                     className="inline-flex items-center gap-1.5 text-sm font-bold text-[#2AA198] hover:text-[#1D7A73] transition"
                   >
                     <span>Training Method</span>

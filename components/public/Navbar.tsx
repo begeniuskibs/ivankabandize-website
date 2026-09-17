@@ -15,10 +15,10 @@ export default function Navbar() {
 
         {/* Navigation links */}
         <nav className="flex items-center gap-5 sm:gap-7 text-sm sm:text-[15px] font-semibold text-[#5A5D70]">
-          <Link href="/services" className="hover:text-[#232536] transition">
+          <Link href="/workwithme" className="hover:text-[#232536] transition">
             Work with Me
           </Link>
-          <Link href="/about" className="hover:text-[#232536] transition">
+          <Link href="/me" className="hover:text-[#232536] transition">
             Me
           </Link>
           <Link href="/garden" className="hover:text-[#232536] transition">
@@ -28,7 +28,7 @@ export default function Navbar() {
             Now
           </Link>
           <Link
-            href="/auth/login"
+            href="/login"
             className="text-[#EF5B45] hover:text-[#D94834] transition"
           >
             Sign-in

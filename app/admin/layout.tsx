@@ -11,7 +11,7 @@ export default async function AdminLayout({
   const { user, isOwner } = await getAuthenticatedOwner()
 
   if (!user) {
-    redirect('/auth/login?error=Please+sign+in+to+access+the+Admin+Console')
+    redirect('/login?error=Please+sign+in+to+access+the+Admin+Console')
   }
 
   if (!isOwner) {

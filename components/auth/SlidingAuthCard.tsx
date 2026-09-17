@@ -46,7 +46,7 @@ export default function SlidingAuthCard({
         </div>
         <div className="pt-4 border-t border-[#F5ECDE]">
           <Link
-            href="/auth/login"
+            href="/login"
             className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black transition font-sans"
           >
             &larr; Back to Sign In

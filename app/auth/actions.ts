@@ -16,7 +16,7 @@ export async function signIn(formData: FormData) {
   })
 
   if (error) {
-    redirect(`/auth/login?error=${encodeURIComponent(error.message)}`)
+    redirect(`/login?error=${encodeURIComponent(error.message)}`)
   }
 
   revalidatePath('/', 'layout')
@@ -41,7 +41,7 @@ export async function signUp(formData: FormData) {
   })
 
   if (error) {
-    redirect(`/auth/login?error=${encodeURIComponent(error.message)}`)
+    redirect(`/login?error=${encodeURIComponent(error.message)}`)
   }
 
   if (data?.session) {
@@ -50,7 +50,7 @@ export async function signUp(formData: FormData) {
   }
 
   // Redirect to clear post-signup confirmation state
-  redirect(`/auth/login?mode=signup-success&email=${encodeURIComponent(email)}`)
+  redirect(`/login?mode=signup-success&email=${encodeURIComponent(email)}`)
 }
 
 export async function signOut() {
@@ -58,5 +58,5 @@ export async function signOut() {
   await supabase.auth.signOut()
 
   revalidatePath('/', 'layout')
-  redirect('/auth/login')
+  redirect('/login')
 }

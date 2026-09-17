@@ -5,14 +5,14 @@ import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
 
-export default async function ServicesPage() {
+export default async function WorkWithMePage() {
   const supabase = await createClient()
 
-  // Fetch page content for services from Supabase if present
+  // Fetch page content for workwithme / services from Supabase if present
   const { data: page } = await supabase
     .from('pages')
     .select('*')
-    .eq('slug', 'services')
+    .or('slug.eq.workwithme,slug.eq.services')
     .maybeSingle()
 
   const headline = page?.hero_headline || 'Ambition is rarely the problem. Structure usually is.'
