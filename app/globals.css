@@ -3,25 +3,8 @@
 /* Google Sans (Self-hosted) */
 @font-face {
   font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Variable.ttf') format('truetype-variations'),
+  src: url('/fonts/GoogleSans-Regular.woff2') format('woff2'),
        url('/fonts/GoogleSans-Regular.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-VariableItalic.ttf') format('truetype-variations'),
-       url('/fonts/GoogleSans-Italic.ttf') format('truetype');
-  font-weight: 100 900;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Regular.ttf') format('truetype');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -29,7 +12,8 @@
 
 @font-face {
   font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Medium.ttf') format('truetype');
+  src: url('/fonts/GoogleSans-Medium.woff2') format('woff2'),
+       url('/fonts/GoogleSans-Medium.ttf') format('truetype');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
@@ -37,7 +21,8 @@
 
 @font-face {
   font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-SemiBold.ttf') format('truetype');
+  src: url('/fonts/GoogleSans-SemiBold.woff2') format('woff2'),
+       url('/fonts/GoogleSans-SemiBold.ttf') format('truetype');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
@@ -45,9 +30,19 @@
 
 @font-face {
   font-family: 'Google Sans';
-  src: url('/fonts/GoogleSans-Bold.ttf') format('truetype');
+  src: url('/fonts/GoogleSans-Bold.woff2') format('woff2'),
+       url('/fonts/GoogleSans-Bold.ttf') format('truetype');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Google Sans';
+  src: url('/fonts/GoogleSans-Italic.woff2') format('woff2'),
+       url('/fonts/GoogleSans-Italic.ttf') format('truetype');
+  font-weight: 400;
+  font-style: italic;
   font-display: swap;
 }
 
