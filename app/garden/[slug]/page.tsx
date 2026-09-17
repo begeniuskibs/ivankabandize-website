@@ -203,9 +203,10 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
               />
             </div>
             {featuredImageCaption && (
-              <figcaption className="mt-2.5 text-center text-xs text-[#5A5D70]">
-                {featuredImageCaption}
-              </figcaption>
+              <figcaption
+                className="mt-2.5 text-center text-xs text-[#5A5D70]"
+                dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
+              />
             )}
           </figure>
         )}
