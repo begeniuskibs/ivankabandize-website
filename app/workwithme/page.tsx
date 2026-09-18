@@ -8,17 +8,20 @@ export const dynamic = 'force-dynamic'
 export default async function WorkWithMePage() {
   const supabase = await createClient()
 
-  // Fetch page content for workwithme / services from Supabase if present
+  // Fetch page content for workwithme from Supabase pages table
   const { data: page } = await supabase
     .from('pages')
     .select('*')
-    .or('slug.eq.workwithme,slug.eq.services')
+    .eq('slug', 'workwithme')
     .maybeSingle()
 
   const headline = page?.hero_headline || 'Ambition is rarely the problem. Structure usually is.'
   const subheadline =
     page?.hero_subheadline ||
     "Let's untangle your organisation — properly. Every engagement runs in the same 3-phased process; Diagnose → Architect → Sequence. No jargon, no 90-slide decks, no system your team can't run without me."
+  const ctaText = page?.cta_text || "Let's Talk"
+  const ctaUrl = page?.cta_url || '/lets-talk'
+  const closingCtaHeadline = page?.closing_cta_headline || 'Ready when you are.'
 
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
@@ -38,7 +41,14 @@ export default async function WorkWithMePage() {
 
               <ScrollReveal delayMs={80}>
                 <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.15]">
-                  Ambition is rarely the problem. <span className="text-[#EF5B45]">Structure usually is.</span>
+                  {headline.includes('Structure usually is.') ? (
+                    <>
+                      {headline.replace('Structure usually is.', '')}
+                      <span className="text-[#EF5B45]">Structure usually is.</span>
+                    </>
+                  ) : (
+                    headline
+                  )}
                 </h1>
               </ScrollReveal>
 
@@ -51,10 +61,10 @@ export default async function WorkWithMePage() {
               <ScrollReveal delayMs={200}>
                 <div className="pt-2">
                   <Link
-                    href="/lets-talk"
+                    href={ctaUrl}
                     className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
-                    <span>Let&apos;s Talk</span>
+                    <span>{ctaText}</span>
                     <span aria-hidden="true">&rarr;</span>
                   </Link>
                 </div>
@@ -220,7 +230,14 @@ export default async function WorkWithMePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
             <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] leading-tight">
-              Ready when <span className="text-[#EF5B45]">you are.</span>
+              {closingCtaHeadline.includes('you are.') ? (
+                <>
+                  {closingCtaHeadline.replace('you are.', '')}
+                  <span className="text-[#EF5B45]">you are.</span>
+                </>
+              ) : (
+                closingCtaHeadline
+              )}
             </h2>
           </ScrollReveal>
 
@@ -233,10 +250,10 @@ export default async function WorkWithMePage() {
           <ScrollReveal delayMs={140}>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
               <Link
-                href="/lets-talk"
+                href={ctaUrl}
                 className="inline-flex items-center justify-center gap-2 font-bold text-base px-9 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>Let&apos;s Talk</span>
+                <span>{ctaText}</span>
                 <span aria-hidden="true">&#128075;</span>
               </Link>
             </div>

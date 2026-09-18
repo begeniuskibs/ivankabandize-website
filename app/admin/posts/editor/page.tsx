@@ -270,6 +270,13 @@ function PostEditorContent() {
             <span>Garden</span>
           </Link>
           <div className="h-4 w-[1px] bg-gray-300" />
+          <Link
+            href="/admin/pages"
+            className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition"
+          >
+            Pages
+          </Link>
+          <div className="h-4 w-[1px] bg-gray-300" />
           <span className={`px-2.5 py-0.5 text-xs font-semibold rounded-full uppercase tracking-wider ${
             publishStatus === 'published'
               ? 'bg-green-100 text-green-800'
