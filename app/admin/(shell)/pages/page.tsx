@@ -19,17 +19,17 @@ const PAGE_META: Record<string, { path: string; description: string; badge: stri
   home: {
     path: '/',
     description: 'Main landing page — hero headline, subhead, trust bar narrative, and closing CTA.',
-    badge: 'Homepage',
+    badge: 'HOME',
   },
   workwithme: {
     path: '/workwithme',
     description: 'Advisory & consulting page — service positioning, diagnostic process, and contact CTA.',
-    badge: 'Services',
+    badge: 'WORK WITH ME',
   },
   me: {
     path: '/me',
     description: 'Bio & background page — narrative paragraphs, central pullquote, teaching & method context.',
-    badge: 'About',
+    badge: 'ME',
   },
 }
 
@@ -61,33 +61,30 @@ export default function AdminPagesListPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAF9] font-sans flex flex-col">
+    <div className="flex-1 flex flex-col min-h-screen">
       {/* Top Header */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 px-4 sm:px-8 py-3.5 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Link
-            href="/admin/posts/editor"
-            className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition flex items-center gap-1.5"
-          >
-            <span>&larr;</span>
-            <span>Posts Editor</span>
-          </Link>
-          <div className="h-4 w-[1px] bg-gray-300" />
-          <h1 className="text-sm font-bold text-gray-900">Website Pages</h1>
+      <header className="sticky top-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-200 px-6 sm:px-10 py-4 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <h1 className="text-base font-bold text-gray-900">Website Pages</h1>
+          <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+            {pages.length} structural
+          </span>
         </div>
 
         <div className="flex items-center gap-3">
-          <Link
-            href="/garden"
-            className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition"
+          <a
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition border border-gray-200"
           >
-            Garden ↗
-          </Link>
+            Live Site ↗
+          </a>
         </div>
       </header>
 
       {/* Main Content Area */}
-      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-8 flex-1">
+      <main className="max-w-5xl mx-auto w-full px-6 sm:px-10 py-8 flex-1">
         {/* Intro */}
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 tracking-tight">Structural Pages</h2>
@@ -120,7 +117,7 @@ export default function AdminPagesListPage() {
               const meta = PAGE_META[page.slug] || {
                 path: `/${page.slug}`,
                 description: 'Custom structural site page.',
-                badge: 'Page',
+                badge: page.slug.toUpperCase(),
               }
 
               return (
@@ -130,7 +127,7 @@ export default function AdminPagesListPage() {
                 >
                   <div className="space-y-2 flex-1 min-w-0">
                     <div className="flex items-center gap-3">
-                      <span className="px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider rounded-full bg-gray-100 text-gray-700">
+                      <span className="px-2.5 py-0.5 text-[11px] font-bold uppercase tracking-wider rounded-full bg-gray-100 text-gray-700 border border-gray-200/60">
                         {meta.badge}
                       </span>
                       <h3 className="text-lg font-bold text-gray-900 truncate">

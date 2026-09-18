@@ -263,11 +263,11 @@ function PostEditorContent() {
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-200 px-4 sm:px-8 py-3.5 flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Link
-            href="/garden"
+            href="/admin/posts"
             className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition flex items-center gap-1.5"
           >
             <span>&larr;</span>
-            <span>Garden</span>
+            <span>Posts</span>
           </Link>
           <div className="h-4 w-[1px] bg-gray-300" />
           <Link
