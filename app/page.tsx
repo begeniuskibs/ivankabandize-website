@@ -27,6 +27,32 @@ const featuredVideos: VideoItem[] = [
 export default async function HomePage() {
   const supabase = await createClient()
 
+  // Fetch page content for home from Supabase pages table
+  const { data: page } = await supabase
+    .from('pages')
+    .select('*')
+    .eq('slug', 'home')
+    .maybeSingle()
+
+  const headline =
+    page?.hero_headline ||
+    "I'm Ivan. I help founders and leaders turn operational chaos into structure that works."
+  const subheadline =
+    page?.hero_subheadline ||
+    "I'm a systems consultant, trainer, and writer. Whatever's not working in your business or organisation, my job is to help you see the problem clearly, design the structure to solve it, and know exactly what to do first."
+  const ctaText = page?.cta_text || "Let's Talk"
+  const ctaUrl = page?.cta_url || '/lets-talk'
+  const closingCtaHeadline =
+    page?.closing_cta_headline || "The problem has a name. Let's find it together."
+
+  const bodyParagraphs: string[] =
+    Array.isArray(page?.body_paragraphs) && page.body_paragraphs.length > 0
+      ? page.body_paragraphs
+      : [
+          "I've worked with pest control companies, international schools, children's nonprofits, logistics startups, and church ministries. The industries are different. The problem is the same: ambition and resources, but no structured path from where they are to where they want to be.",
+          "If you're a founder, director, or team leader building something you believe in - but the operational side isn't keeping up with the vision - we should talk.",
+        ]
+
   // Fetch latest public published posts (RLS enforces visibility='public' AND publish_status='published')
   const { data: posts } = await supabase
     .from('posts')
@@ -51,15 +77,21 @@ export default async function HomePage() {
 
               <ScrollReveal delayMs={80}>
                 <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
-                  I&apos;m Ivan. I help founders and leaders turn operational chaos into{' '}
-                  <span className="text-[#EF5B45]">structure that works.</span>
+                  {headline.includes('structure that works.') ? (
+                    <>
+                      {headline.replace('structure that works.', '')}
+                      <span className="text-[#EF5B45]">structure that works.</span>
+                    </>
+                  ) : (
+                    headline
+                  )}
                 </h1>
               </ScrollReveal>
 
               <ScrollReveal delayMs={140}>
                 <div className="space-y-4 text-lg sm:text-xl text-[#5A5D70] leading-relaxed">
                   <p className="font-medium text-[#232536]">
-                    I&apos;m a systems consultant, trainer, and writer. Whatever&apos;s not working in your business or organisation, my job is to help you see the problem clearly, design the structure to solve it, and know exactly what to do first.
+                    {subheadline}
                   </p>
                 </div>
               </ScrollReveal>
@@ -67,10 +99,10 @@ export default async function HomePage() {
               <ScrollReveal delayMs={200}>
                 <div className="flex flex-wrap items-center gap-4 pt-2">
                   <Link
-                    href="/lets-talk"
+                    href={ctaUrl}
                     className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
-                    <span>Let&apos;s Talk</span>
+                    <span>{ctaText}</span>
                     <span aria-hidden="true">&rarr;</span>
                   </Link>
                   <a
@@ -138,12 +170,9 @@ export default async function HomePage() {
             </div>
 
             <div className="space-y-4 text-base sm:text-lg text-[#5A5D70] leading-relaxed max-w-3xl mx-auto text-center sm:text-left">
-              <p>
-                I&apos;ve worked with pest control companies, international schools, children&apos;s nonprofits, logistics startups, and church ministries. The industries are different. The problem is the same: ambition and resources, but no structured path from where they are to where they want to be.
-              </p>
-              <p>
-                If you&apos;re a founder, director, or team leader building something you believe in - but the operational side isn&apos;t keeping up with the vision - we should talk.
-              </p>
+              {bodyParagraphs.map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
+              ))}
             </div>
           </ScrollReveal>
         </div>
@@ -495,7 +524,14 @@ export default async function HomePage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
             <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] leading-tight">
-              The problem has a name. <span className="text-[#EF5B45]">Let&apos;s find it together.</span>
+              {closingCtaHeadline.includes("Let's find it together.") ? (
+                <>
+                  {closingCtaHeadline.replace("Let's find it together.", '')}
+                  <span className="text-[#EF5B45]">Let&apos;s find it together.</span>
+                </>
+              ) : (
+                closingCtaHeadline
+              )}
             </h2>
           </ScrollReveal>
 
@@ -508,10 +544,10 @@ export default async function HomePage() {
           <ScrollReveal delayMs={140}>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
               <Link
-                href="/lets-talk"
+                href={ctaUrl}
                 className="inline-flex items-center justify-center gap-2 font-bold text-base px-9 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
-                <span>Let&apos;s Talk</span>
+                <span>{ctaText}</span>
                 <span aria-hidden="true">&#128075;</span>
               </Link>
             </div>
