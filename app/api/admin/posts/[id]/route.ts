@@ -41,6 +41,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       slug,
       excerpt,
       content,
+      featured_image_url,
       visibility,
       publish_status,
       content_type,
@@ -53,6 +54,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (slug !== undefined) updatePayload.slug = slug
     if (excerpt !== undefined) updatePayload.excerpt = excerpt
     if (content !== undefined) updatePayload.content = content
+    if (featured_image_url !== undefined) updatePayload.featured_image_url = featured_image_url
     if (visibility !== undefined) updatePayload.visibility = visibility
     if (content_type !== undefined) updatePayload.content_type = content_type
     if (publish_status !== undefined) {
