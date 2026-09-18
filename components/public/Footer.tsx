@@ -3,20 +3,40 @@ import { createClient } from '@/utils/supabase/server'
 import { signOut } from '@/app/auth/actions'
 
 export default async function Footer() {
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
   let displayName: string | null = null
-  if (user) {
-    const { data: profile } = await supabase
-      .from('users')
-      .select('full_name')
-      .eq('id', user.id)
-      .single()
+  let user = null
 
-    displayName = profile?.full_name?.trim() || (user.user_metadata?.full_name as string)?.trim() || 'Account'
+  try {
+    const supabase = await createClient()
+    const { data, error } = await supabase.auth.getUser()
+    user = error ? null : data?.user ?? null
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from('users')
+        .select('full_name')
+        .eq('id', user.id)
+        .maybeSingle()
+
+      displayName =
+        profile?.full_name?.trim() ||
+        (user.user_metadata?.full_name as string)?.trim() ||
+        'Account'
+    }
+  } catch (err: unknown) {
+    // Re-throw Next.js internal control flow errors (dynamic rendering / redirects)
+    if (
+      typeof err === 'object' &&
+      err !== null &&
+      'digest' in err &&
+      typeof (err as { digest?: unknown }).digest === 'string' &&
+      (err as { digest: string }).digest.startsWith('DYNAMIC_SERVER_USAGE')
+    ) {
+      throw err
+    }
+    // Fail gracefully to unauthenticated state on all runtime auth/network failures
+    user = null
+    displayName = null
   }
 
   return (
