@@ -1,8 +1,10 @@
 'use client'
 
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
+import { createClient } from '@/utils/supabase/client'
+import { signOut } from '@/app/auth/actions'
 
 interface SidebarItem {
   label: string
@@ -16,6 +18,79 @@ interface SidebarItem {
 
 export default function AdminSidebar() {
   const pathname = usePathname()
+  const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
+  const [userData, setUserData] = useState<{
+    fullName: string
+    email: string
+    initials: string
+    role: string
+  }>({
+    fullName: 'Ivan Kabandize',
+    email: 'ivan@ivankabandize.com',
+    initials: 'IK',
+    role: 'Owner',
+  })
+
+  const accountMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    async function loadUser() {
+      try {
+        const supabase = createClient()
+        const { data: { user } } = await supabase.auth.getUser()
+        if (user) {
+          const email = user.email || 'ivan@ivankabandize.com'
+          const { data: profile } = await supabase
+            .from('users')
+            .select('full_name, role')
+            .eq('id', user.id)
+            .maybeSingle()
+
+          const fullName =
+            profile?.full_name?.trim() ||
+            (user.user_metadata?.full_name as string)?.trim() ||
+            'Ivan Kabandize'
+
+          const initials = fullName
+            .split(' ')
+            .map((n: string) => n[0])
+            .join('')
+            .slice(0, 2)
+            .toUpperCase() || 'IK'
+
+          setUserData({
+            fullName,
+            email,
+            initials,
+            role: profile?.role === 'owner' ? 'Owner' : 'Owner',
+          })
+        }
+      } catch (err) {
+        console.error('Failed to load user in sidebar', err)
+      }
+    }
+
+    loadUser()
+  }, [])
+
+  // Close account popover on outside click
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (
+        accountMenuRef.current &&
+        !accountMenuRef.current.contains(e.target as Node)
+      ) {
+        setIsAccountMenuOpen(false)
+      }
+    }
+
+    if (isAccountMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isAccountMenuOpen])
 
   const mainNav: SidebarItem[] = [
     {
@@ -104,7 +179,7 @@ export default function AdminSidebar() {
   }
 
   return (
-    <aside className="w-64 bg-[#191A23] text-[#E0E2EC] flex flex-col shrink-0 border-r border-[#262837] select-none min-h-screen">
+    <aside className="w-64 bg-[#191A23] text-[#E0E2EC] flex flex-col shrink-0 border-r border-[#262837] select-none min-h-screen relative">
       {/* 1. Wordmark */}
       <div className="p-5 pb-4 border-b border-[#262837]/60 flex items-center justify-between">
         <Link href="/admin/pages" className="group flex items-center gap-1">
@@ -168,29 +243,120 @@ export default function AdminSidebar() {
         </div>
       </div>
 
-      {/* 7. Account Footer */}
-      <div className="p-3 border-t border-[#262837] bg-[#15161E]">
-        <div className="flex items-center justify-between p-2 rounded-xl hover:bg-[#222432] transition">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-full bg-[#EF5B45] text-white font-bold text-xs flex items-center justify-center shadow-sm">
-              IK
+      {/* 7. Clickable Account Footer & Popover Menu */}
+      <div className="p-3 border-t border-[#262837] bg-[#15161E] relative" ref={accountMenuRef}>
+        {/* Ghost-Style Popover Menu (Opens Upward) */}
+        {isAccountMenuOpen && (
+          <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#222432] border border-[#2D3042] rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
+            {/* Popover Header: Avatar, Name, Email */}
+            <div className="p-3.5 pb-3 border-b border-[#2D3042] flex items-center gap-3">
+              <div className="w-9 h-9 rounded-full bg-[#EF5B45] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
+                {userData.initials}
+              </div>
+              <div className="min-w-0">
+                <div className="text-xs font-bold text-white truncate">
+                  {userData.fullName}
+                </div>
+                <div className="text-[11px] text-[#8E92A6] truncate">
+                  {userData.email}
+                </div>
+              </div>
+            </div>
+
+            {/* Section 1: What's new? & Profile */}
+            <div className="p-1.5 space-y-0.5">
+              <Link
+                href="/admin/whats-new"
+                onClick={() => setIsAccountMenuOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
+              >
+                <span>✨</span>
+                <span>What&apos;s new?</span>
+              </Link>
+              <Link
+                href="/auth/account"
+                onClick={() => setIsAccountMenuOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
+              >
+                <span>👤</span>
+                <span>Your profile</span>
+              </Link>
+            </div>
+
+            <div className="h-[1px] bg-[#2D3042] mx-2" />
+
+            {/* Section 2: Resources & Appearance */}
+            <div className="p-1.5 space-y-0.5">
+              <Link
+                href="/admin/help"
+                onClick={() => setIsAccountMenuOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
+              >
+                <span>📖</span>
+                <span>Resources &amp; guides</span>
+              </Link>
+
+              {/* Appearance Mode (Visual-only indicator) */}
+              <div
+                className="flex items-center justify-between px-3 py-2 text-xs text-[#7A7E94] rounded-xl cursor-default select-none"
+                title="Theme switching is currently locked to Dark"
+              >
+                <div className="flex items-center gap-2.5">
+                  <span>🌙</span>
+                  <span>Appearance</span>
+                </div>
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#8E92A6]">
+                  <span>Dark</span>
+                  <span className="text-xs text-[#5D6176]">›</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="h-[1px] bg-[#2D3042] mx-2" />
+
+            {/* Section 3: Sign Out */}
+            <div className="p-1.5">
+              <form action={signOut} className="w-full">
+                <button
+                  type="submit"
+                  className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition cursor-pointer"
+                >
+                  <span>🚪</span>
+                  <span>Sign out</span>
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Trigger Button */}
+        <button
+          type="button"
+          onClick={() => setIsAccountMenuOpen(!isAccountMenuOpen)}
+          className={`w-full flex items-center justify-between p-2 rounded-xl transition text-left cursor-pointer ${
+            isAccountMenuOpen ? 'bg-[#222432]' : 'hover:bg-[#222432]'
+          }`}
+        >
+          <div className="flex items-center gap-2.5 min-w-0">
+            <div className="w-8 h-8 rounded-full bg-[#EF5B45] text-white font-bold text-xs flex items-center justify-center shadow-sm shrink-0">
+              {userData.initials}
             </div>
             <div className="min-w-0">
-              <div className="text-xs font-bold text-white truncate">Ivan Kabandize</div>
+              <div className="text-xs font-bold text-white truncate">
+                {userData.fullName}
+              </div>
               <div className="text-[11px] text-[#9A9DB2] flex items-center gap-1">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
-                <span>Owner</span>
+                <span>{userData.role}</span>
               </div>
             </div>
           </div>
-          <Link
-            href="/auth/account"
-            className="text-xs text-[#9A9DB2] hover:text-white p-1"
-            title="Account settings"
-          >
-            ⚙️
-          </Link>
-        </div>
+          <div className="text-xs text-[#82869C] px-1">
+            <span className={`inline-block transition-transform duration-200 ${isAccountMenuOpen ? 'rotate-180 text-white' : ''}`}>
+              ▲
+            </span>
+          </div>
+        </button>
       </div>
     </aside>
   )
