@@ -9,6 +9,8 @@ export async function signIn(formData: FormData) {
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const redirectTo = (formData.get('redirectTo') as string) || ''
+  const targetUrl = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/auth/account'
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -16,11 +18,15 @@ export async function signIn(formData: FormData) {
   })
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    redirect(
+      `/login?error=${encodeURIComponent(error.message)}${
+        redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+      }`
+    )
   }
 
   revalidatePath('/', 'layout')
-  redirect('/auth/account')
+  redirect(targetUrl)
 }
 
 export async function signUp(formData: FormData) {
@@ -29,6 +35,8 @@ export async function signUp(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = (formData.get('full_name') as string) || ''
+  const redirectTo = (formData.get('redirectTo') as string) || ''
+  const targetUrl = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/auth/account'
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -41,16 +49,24 @@ export async function signUp(formData: FormData) {
   })
 
   if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    redirect(
+      `/login?error=${encodeURIComponent(error.message)}${
+        redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+      }`
+    )
   }
 
   if (data?.session) {
     revalidatePath('/', 'layout')
-    redirect('/auth/account')
+    redirect(targetUrl)
   }
 
   // Redirect to clear post-signup confirmation state
-  redirect(`/login?mode=signup-success&email=${encodeURIComponent(email)}`)
+  redirect(
+    `/login?mode=signup-success&email=${encodeURIComponent(email)}${
+      redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+    }`
+  )
 }
 
 export async function signOut() {

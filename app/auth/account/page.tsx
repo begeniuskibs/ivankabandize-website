@@ -11,7 +11,7 @@ export default async function AccountPage() {
   } = await supabase.auth.getUser()
 
   if (userError || !user) {
-    redirect('/login?error=Please+sign+in+to+access+your+account')
+    redirect('/login?redirectTo=/auth/account&error=Please+sign+in+to+access+your+account')
   }
 
   // Query matching user profile and member record from database

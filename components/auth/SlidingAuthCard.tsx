@@ -14,6 +14,7 @@ interface AuthCardProps {
   isSignupSuccess?: boolean
   signupEmail?: string
   selectedImage?: AuthImage
+  redirectTo?: string
 }
 
 export default function SlidingAuthCard({
@@ -23,6 +24,7 @@ export default function SlidingAuthCard({
   isSignupSuccess = false,
   signupEmail = '',
   selectedImage = AUTH_IMAGE_POOL[0],
+  redirectTo,
 }: AuthCardProps) {
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup')
 
@@ -107,7 +109,7 @@ export default function SlidingAuthCard({
           )}
 
           {/* Google OAuth Button */}
-          <GoogleSignInButton />
+          <GoogleSignInButton redirectTo={redirectTo} />
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
@@ -123,6 +125,7 @@ export default function SlidingAuthCard({
           {/* Sign Up Form */}
           {isSignUp ? (
             <form className="space-y-4">
+              <input type="hidden" name="redirectTo" value={redirectTo || ''} />
               <div>
                 <label className="block text-xs font-semibold text-[#5A5D70] uppercase tracking-wider mb-1 font-sans" htmlFor="card-signup-name">
                   Full Name
@@ -174,6 +177,7 @@ export default function SlidingAuthCard({
             </form>
           ) : (
             <form className="space-y-4">
+              <input type="hidden" name="redirectTo" value={redirectTo || ''} />
               <div>
                 <label className="block text-xs font-semibold text-[#5A5D70] uppercase tracking-wider mb-1 font-sans" htmlFor="card-signin-email">
                   Email Address

@@ -3,25 +3,32 @@
 import { createClient } from '@/utils/supabase/client'
 import { useState } from 'react'
 
-export default function GoogleSignInButton() {
+interface GoogleSignInButtonProps {
+  redirectTo?: string
+}
+
+export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonProps) {
   const [loading, setLoading] = useState(false)
 
   const handleGoogleSignIn = async () => {
     try {
       setLoading(true)
       const supabase = createClient()
-      const redirectTo = `${window.location.origin}/auth/callback`
+      const callbackParam = redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''
+      const callbackUrl = `${window.location.origin}/auth/callback${callbackParam}`
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo,
+          redirectTo: callbackUrl,
         },
       })
 
       if (error) {
         console.error('Google auth error:', error.message)
-        window.location.href = `/login?error=${encodeURIComponent(error.message)}`
+        window.location.href = `/login?error=${encodeURIComponent(error.message)}${
+          redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+        }`
       }
     } catch (err) {
       console.error('Unexpected auth error:', err)

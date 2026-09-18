@@ -1,12 +1,11 @@
 import { NextResponse } from 'next/server'
-// The client you created in Step 2
 import { createClient } from '@/utils/supabase/server'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
   const code = searchParams.get('code')
-  // if "next" is in param, use it as the redirect URL
-  let next = searchParams.get('next') ?? '/auth/account'
+  // if "next" or "redirectTo" is in param, use it as the redirect URL
+  let next = searchParams.get('next') || searchParams.get('redirectTo') || '/auth/account'
   if (!next.startsWith('/')) {
     // protect against open redirect attacks
     next = '/auth/account'
@@ -30,5 +29,9 @@ export async function GET(request: Request) {
   }
 
   // return the user to an error page with instructions
-  return NextResponse.redirect(`${origin}/login?error=Could+not+authenticate+user+with+OAuth+provider`)
+  return NextResponse.redirect(
+    `${origin}/login?error=Could+not+authenticate+user+with+OAuth+provider${
+      next !== '/auth/account' ? `&redirectTo=${encodeURIComponent(next)}` : ''
+    }`
+  )
 }
