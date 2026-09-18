@@ -14,8 +14,21 @@ export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonPro
     try {
       setLoading(true)
       const supabase = createClient()
-      const callbackParam = redirectTo ? `?next=${encodeURIComponent(redirectTo)}` : ''
-      const callbackUrl = `${window.location.origin}/auth/callback${callbackParam}`
+
+      // If a redirectTo destination exists, write it to a short-lived client cookie
+      if (redirectTo && redirectTo.startsWith('/')) {
+        const isSecure = window.location.protocol === 'https:' ? '; Secure' : ''
+        document.cookie = `post_login_redirect=${encodeURIComponent(
+          redirectTo
+        )}; Path=/; Max-Age=300; SameSite=Lax${isSecure}`
+      } else {
+        // Clear any stale post_login_redirect cookie
+        const isSecure = window.location.protocol === 'https:' ? '; Secure' : ''
+        document.cookie = `post_login_redirect=; Path=/; Max-Age=0; SameSite=Lax${isSecure}`
+      }
+
+      // Always pass clean whitelisted callback URL without query strings
+      const callbackUrl = `${window.location.origin}/auth/callback`
 
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
