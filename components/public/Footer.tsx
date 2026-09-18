@@ -1,6 +1,24 @@
 import Link from 'next/link'
+import { createClient } from '@/utils/supabase/server'
+import { signOut } from '@/app/auth/actions'
 
-export default function Footer() {
+export default async function Footer() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let displayName: string | null = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from('users')
+      .select('full_name')
+      .eq('id', user.id)
+      .single()
+
+    displayName = profile?.full_name?.trim() || (user.user_metadata?.full_name as string)?.trim() || 'Account'
+  }
+
   return (
     <footer className="bg-[#232536] text-[#B8BAC9] py-14 mt-auto font-sans text-sm">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
@@ -29,9 +47,25 @@ export default function Footer() {
           <Link href="/lets-talk" className="hover:text-white transition">
             Contact
           </Link>
-          <Link href="/login" className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45]">
-            Sign-in
-          </Link>
+          {user ? (
+            <>
+              <Link href="/auth/account" className="hover:text-white transition">
+                {displayName}
+              </Link>
+              <form action={signOut} className="inline-flex items-center">
+                <button
+                  type="submit"
+                  className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45] cursor-pointer font-medium"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </>
+          ) : (
+            <Link href="/login" className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45]">
+              Sign-in
+            </Link>
+          )}
         </div>
       </div>
     </footer>

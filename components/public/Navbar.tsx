@@ -1,6 +1,24 @@
 import Link from 'next/link'
+import { createClient } from '@/utils/supabase/server'
+import { signOut } from '@/app/auth/actions'
 
-export default function Navbar() {
+export default async function Navbar() {
+  const supabase = await createClient()
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  let displayName: string | null = null
+  if (user) {
+    const { data: profile } = await supabase
+      .from('users')
+      .select('full_name')
+      .eq('id', user.id)
+      .single()
+
+    displayName = profile?.full_name?.trim() || (user.user_metadata?.full_name as string)?.trim() || 'Account'
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-[#FDF8F1]/90 backdrop-blur-md border-b border-[#F5ECDE] font-sans">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
@@ -27,12 +45,31 @@ export default function Navbar() {
           <Link href="/now" className="hover:text-[#232536] transition">
             Now
           </Link>
-          <Link
-            href="/login"
-            className="text-[#EF5B45] hover:text-[#D94834] transition"
-          >
-            Sign-in
-          </Link>
+          {user ? (
+            <div className="flex items-center gap-5 sm:gap-7">
+              <Link
+                href="/auth/account"
+                className="hover:text-[#232536] transition"
+              >
+                {displayName}
+              </Link>
+              <form action={signOut} className="inline-flex items-center">
+                <button
+                  type="submit"
+                  className="text-[#EF5B45] hover:text-[#D94834] transition font-semibold text-sm sm:text-[15px] cursor-pointer"
+                >
+                  Sign Out
+                </button>
+              </form>
+            </div>
+          ) : (
+            <Link
+              href="/login"
+              className="text-[#EF5B45] hover:text-[#D94834] transition"
+            >
+              Sign-in
+            </Link>
+          )}
         </nav>
       </div>
     </header>
