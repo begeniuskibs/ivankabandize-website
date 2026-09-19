@@ -6,25 +6,6 @@ import { Leaf } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
-interface VideoItem {
-  id: string
-  title: string
-  kind: string
-  url: string
-  thumbnailUrl: string
-}
-
-// Extensible video data list — seeded with real YouTube video
-const featuredVideos: VideoItem[] = [
-  {
-    id: 'g4C4cFIVMmU',
-    title: 'Analyzing the Free WiFi Project by the Ugandan Government',
-    kind: 'Analysis · Kabandize Ivan Begirira',
-    url: 'https://youtu.be/g4C4cFIVMmU',
-    thumbnailUrl: 'https://i.ytimg.com/vi/g4C4cFIVMmU/hqdefault.jpg',
-  },
-]
-
 export default async function HomePage() {
   const supabase = await createClient()
 
@@ -381,58 +362,6 @@ export default async function HomePage() {
               </Link>
             </div>
           </ScrollReveal>
-        </div>
-      </section>
-
-      {/* ================= VIDEOS SECTION: WATCH & LISTEN ================= */}
-      <section className="py-20 md:py-28 bg-white border-b border-[#F5ECDE]">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <ScrollReveal>
-            <div className="text-center max-w-2xl mx-auto mb-16">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
-                Watch &amp; <span className="text-[#EF5B45]">Listen</span>
-              </h2>
-              <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
-                Talks, radio segments, and walkthroughs — for when reading isn&rsquo;t your thing.
-              </p>
-            </div>
-          </ScrollReveal>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 justify-center">
-            {featuredVideos.map((video, idx) => (
-              <ScrollReveal key={video.id} delayMs={idx * 80}>
-                <a
-                  href={video.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl overflow-hidden flex flex-col shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.12)] hover:-translate-y-1.5 transition-all duration-300 group"
-                >
-                  <div className="relative aspect-video w-full overflow-hidden bg-black/5">
-                    <img
-                      src={video.thumbnailUrl}
-                      alt={video.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-                    />
-                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                      <div className="w-14 h-14 rounded-full bg-white/95 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                        <span className="w-0 h-0 border-y-[9px] border-y-transparent border-l-[15px] border-l-[#EF5B45] ml-1" />
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-6 flex flex-col flex-1 justify-between">
-                    <div>
-                      <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-2 block">
-                        {video.kind}
-                      </span>
-                      <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-semibold text-[#232536] leading-snug group-hover:text-[#EF5B45] transition-colors">
-                        {video.title}
-                      </h3>
-                    </div>
-                  </div>
-                </a>
-              </ScrollReveal>
-            ))}
-          </div>
         </div>
       </section>
 
