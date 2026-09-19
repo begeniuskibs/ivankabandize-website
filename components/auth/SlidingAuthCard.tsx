@@ -76,10 +76,10 @@ export default function SlidingAuthCard({
           {/* Header Branding */}
           <div className="mb-6">
             <Link
-              href="/"
+              href="/garden"
               className="inline-block font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536] hover:opacity-80 transition tracking-tight"
             >
-              Ivan Kabandize
+              The Garden
             </Link>
             <p className="text-xs uppercase tracking-widest font-semibold text-[#5A5D70] mt-1 font-sans">
               {isSignUp ? 'Join the community' : 'Member access'}
@@ -88,7 +88,7 @@ export default function SlidingAuthCard({
 
           {/* Dynamic Headline */}
           <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-2">
-            {isSignUp ? 'Create your account' : 'Welcome back'}
+            {isSignUp ? 'Create your account' : 'Sign In'}
           </h2>
           <p className="text-sm text-[#5A5D70] mb-6 font-sans">
             {isSignUp
@@ -273,7 +273,7 @@ export default function SlidingAuthCard({
             </h3>
             <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans">
               {isSignUp
-                ? 'Create an account to join discussions, bookmark seedlings, and follow my thinking as it grows.'
+                ? 'Create an account to join discussions, bookmark articles, download resources and follow my thinking as it grows.'
                 : 'Sign in to access your saved notes, follow threads in the garden, and manage your account.'}
             </p>
           </div>
