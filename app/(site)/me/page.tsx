@@ -21,13 +21,13 @@ export default async function MePage() {
     Array.isArray(page?.body_paragraphs) && page.body_paragraphs.length > 0
       ? page.body_paragraphs
       : [
-          'I’ve spent my career inside organisations — building training programmes, designing operational systems, and helping teams turn good intentions into working structure. These days I’m Training Lead at Watoto Church in Kampala, and alongside that role I run an independent consulting practice working with SMEs, schools, and nonprofits.',
-          'I also write, teach, and talk on the radio about systems, leadership, and doing work that matters. Different rooms, same conviction: most organisations don’t have a people problem — they have a structure problem, and structure can be designed.',
+          'I’ve spent my career inside organisations - building training programmes, designing operational systems, and helping teams turn good intentions into working structure. These days I’m Training Lead at Watoto Church in Kampala, and alongside that role I run an independent consulting practice working with SMEs, schools, and nonprofits.',
+          'I also write, teach, and talk on the radio about systems, leadership, and doing work that matters. Different rooms, same conviction: most organisations don’t have a people problem - they have a structure problem, and structure can be designed.',
         ]
 
   const pullquote =
     page?.pullquote ||
-    'Most organisations don’t have a people problem — they have a structure problem, and structure can be designed.'
+    'Most organisations don’t have a people problem - they have a structure problem, and structure can be designed.'
 
   const backgroundTeaching =
     page?.background_teaching ||
@@ -35,7 +35,7 @@ export default async function MePage() {
 
   const backgroundMethod =
     page?.background_method ||
-    "On the method: Every engagement I run — whether inside Watoto or independently — follows the same pattern: diagnose the real problem, architect the structure that solves it, sequence what happens first. It's not a framework I picked; it's the pattern I noticed after enough engagements looked the same underneath."
+    "On the method: Every engagement I run - whether inside Watoto or independently - follows the same pattern: diagnose the real problem, architect the structure that solves it, sequence what happens first. It's not a framework I picked; it's the pattern I noticed after enough engagements looked the same underneath."
 
   const closingCtaHeadline =
     page?.closing_cta_headline ||

@@ -41,7 +41,7 @@ export default function NowPage() {
               >
                 /now page movement
               </a>{' '}
-              — because &ldquo;what are you up to these days?&rdquo; deserves a better answer than a LinkedIn profile.
+              - because &ldquo;what are you up to these days?&rdquo; deserves a better answer than a LinkedIn profile.
             </p>
           </ScrollReveal>
         </div>
@@ -68,10 +68,10 @@ export default function NowPage() {
                     Turning this website into a garden
                   </h2>
                   <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    The big project of this season is the one you&rsquo;re standing in: rebuilding my website from a Ghost blog into a proper digital garden with a custom writing backend. The goal is a home where my consulting work, essays, notes, and tools all live together — structured the way I tell my clients to structure things. Physician, heal thyself.
+                    The big project of this season is the one you&rsquo;re standing in: rebuilding my website from a Ghost blog into a proper digital garden with a custom writing backend. The goal is a home where my consulting work, essays, notes, and tools all live together - structured the way I tell my clients to structure things. Physician, heal thyself.
                   </p>
                   <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    Alongside that, the consulting practice keeps growing — a handful of engagements with organisations getting their operations, systems, and teams in order. Different sectors, same three moves: diagnose, architect, sequence.
+                    Alongside that, the consulting practice keeps growing - a handful of engagements with organisations getting their operations, systems, and teams in order. Different sectors, same three moves: diagnose, architect, sequence.
                   </p>
 
                   {/* "Currently..." Card */}
@@ -83,13 +83,13 @@ export default function NowPage() {
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
                         <span className="text-lg flex-shrink-0">🔧</span>
                         <p>
-                          <strong className="text-[#232536]">Building:</strong> this website — a custom garden + CMS, designed to make publishing frictionless.
+                          <strong className="text-[#232536]">Building:</strong> this website - a custom garden + CMS, designed to make publishing frictionless.
                         </p>
                       </div>
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
                         <span className="text-lg flex-shrink-0">🎓</span>
                         <p>
-                          <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud — and publishing what I learn as I go.
+                          <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud - and publishing what I learn as I go.
                         </p>
                       </div>
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
@@ -126,7 +126,7 @@ export default function NowPage() {
                     Deep in the systems, quietly planning
                   </h2>
                   <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    A season of heads-down work: serving organisations through my consulting practice, leading training at Watoto Church, and quietly sketching what this website should become. I audited everything I&rsquo;ve published since 2022 and realised my writing already had a garden&rsquo;s shape — random thoughts, structured thoughts, tools for thought — it just needed a garden&rsquo;s home.
+                    A season of heads-down work: serving organisations through my consulting practice, leading training at Watoto Church, and quietly sketching what this website should become. I audited everything I&rsquo;ve published since 2022 and realised my writing already had a garden&rsquo;s shape - random thoughts, structured thoughts, tools for thought - it just needed a garden&rsquo;s home.
                   </p>
                   <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
                     The lesson of the quarter: content velocity beats infrastructure purity. Whatever I build next has to make publishing easier, not more impressive.
@@ -151,7 +151,7 @@ export default function NowPage() {
                     Started the Generative AI Leader series
                   </h2>
                   <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    Enrolled in Google Cloud&rsquo;s Generative AI Leader course and made myself a promise: don&rsquo;t just consume — interpret. The first two parts are planted in the garden: The AI You Already Use and The Research That Changed Everything. The aim of the whole series is translation — taking dense material and making it actionable for leaders who don&rsquo;t have time for the hype cycle.
+                    Enrolled in Google Cloud&rsquo;s Generative AI Leader course and made myself a promise: don&rsquo;t just consume - interpret. The first two parts are planted in the garden: The AI You Already Use and The Research That Changed Everything. The aim of the whole series is translation - taking dense material and making it actionable for leaders who don&rsquo;t have time for the hype cycle.
                   </p>
                 </div>
               </div>
@@ -173,7 +173,7 @@ export default function NowPage() {
                     Closed the #30in30 chapter
                   </h2>
                   <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    Turned 30, and finished what I started: thirty daily lessons in the final thirty days of my 29th year, capped with A Letter To My Younger Self. Personal, raw, honest — and the most consistent writing streak of my life. It taught me that reflection scales when you give it structure.
+                    Turned 30, and finished what I started: thirty daily lessons in the final thirty days of my 29th year, capped with A Letter To My Younger Self. Personal, raw, honest - and the most consistent writing streak of my life. It taught me that reflection scales when you give it structure.
                   </p>
                 </div>
               </div>
@@ -185,7 +185,7 @@ export default function NowPage() {
           <ScrollReveal delayMs={200}>
             <div className="mt-20 pt-10 border-t border-[#F5ECDE] text-center space-y-6">
               <p className="text-sm sm:text-base text-[#5A5D70]">
-                This page updates when life does — roughly every season. Last tended:{' '}
+                This page updates when life does - roughly every season. Last tended:{' '}
                 <strong className="text-[#232536]">July 2026</strong>.
               </p>
               <div>

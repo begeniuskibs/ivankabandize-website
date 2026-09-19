@@ -396,13 +396,13 @@ export default function PageEditPage({
                     value={pullquote}
                     onChange={(e) => setPullquote(e.target.value)}
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition resize-y italic"
-                    placeholder="e.g. Most organisations don’t have a people problem — they have a structure problem..."
+                    placeholder="e.g. Most organisations don’t have a people problem - they have a structure problem..."
                   />
                 </div>
 
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                    Background — On Teaching
+                    Background - On Teaching
                   </label>
                   <textarea
                     rows={3}
@@ -415,7 +415,7 @@ export default function PageEditPage({
 
                 <div>
                   <label className="block text-xs font-semibold uppercase tracking-wider text-gray-600 mb-1.5">
-                    Background — On Method
+                    Background - On Method
                   </label>
                   <textarea
                     rows={3}

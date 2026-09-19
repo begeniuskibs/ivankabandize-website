@@ -12,7 +12,7 @@ export const metadata = {
 export default async function GardenPage() {
   const supabase = await createClient()
 
-  // Query posts table directly — relying on Supabase RLS to filter to visibility='public' AND publish_status='published'
+  // Query posts table directly - relying on Supabase RLS to filter to visibility='public' AND publish_status='published'
   const { data: posts, error } = await supabase
     .from('posts')
     .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
@@ -26,7 +26,7 @@ export default async function GardenPage() {
     <GardenFeed
       title="The Garden"
       eyebrow="Digital Garden & Notebook"
-      description="A living repository of essays, sparks, reflections, and systems notes — tended across different streams of thought."
+      description="A living repository of essays, sparks, reflections, and systems notes - tended across different streams of thought."
       currentFilter="all"
       posts={posts || []}
     />

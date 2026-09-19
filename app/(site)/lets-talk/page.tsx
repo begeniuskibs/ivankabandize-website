@@ -159,7 +159,7 @@ export default function LetsTalkPage() {
 
             <ScrollReveal delayMs={140}>
               <p className="text-base sm:text-lg text-[#5A5D70] leading-relaxed">
-                Three quick steps, two minutes of your time. No obligation, no pressure — the first conversation is a diagnosis, not a pitch.
+                Three quick steps, two minutes of your time. No obligation, no pressure - the first conversation is a diagnosis, not a pitch.
               </p>
             </ScrollReveal>
 
@@ -176,7 +176,7 @@ export default function LetsTalkPage() {
                       I read every enquiry personally
                     </h3>
                     <p className="text-sm text-[#5A5D70] mt-1 leading-relaxed">
-                      You&rsquo;ll hear back from me within two business days — a real reply, not an autoresponder.
+                      You&rsquo;ll hear back from me within two business days - a real reply, not an autoresponder.
                     </p>
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default function LetsTalkPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-base text-[#232536]">
-                      A proposal — only if it fits
+                      A proposal - only if it fits
                     </h3>
                     <p className="text-sm text-[#5A5D70] mt-1 leading-relaxed">
                       If I can genuinely help, I&rsquo;ll propose an engagement scoped to your situation. If I can&rsquo;t, I&rsquo;ll say so and point you to someone who can.
@@ -366,7 +366,7 @@ export default function LetsTalkPage() {
                       <textarea
                         id="tProblem"
                         rows={4}
-                        placeholder="In your own words — the messier the better. e.g. 'We've grown to 15 staff and everything still lives in the founder's head. Nothing is documented, reporting is chaotic…'"
+                        placeholder="In your own words - the messier the better. e.g. 'We've grown to 15 staff and everything still lives in the founder's head. Nothing is documented, reporting is chaotic…'"
                         value={formData.problem}
                         onChange={(e) => {
                           setFormData({ ...formData, problem: e.target.value })
@@ -499,7 +499,7 @@ export default function LetsTalkPage() {
                           Organisation
                         </span>
                         <p className="text-base text-[#232536] font-medium mt-0.5">
-                          {formData.organisation || '—'}
+                          {formData.organisation || '-'}
                         </p>
                         <button
                           type="button"
@@ -639,7 +639,7 @@ export default function LetsTalkPage() {
                           <div>
                             <h4 className="font-bold text-sm text-[#232536]">Within 2 business days</h4>
                             <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
-                              A personal reply from me — with a couple of times for our 30-minute call.
+                              A personal reply from me - with a couple of times for our 30-minute call.
                             </p>
                           </div>
                         </div>

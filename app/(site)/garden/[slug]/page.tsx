@@ -66,7 +66,7 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
   const { slug } = await params
   const supabase = await createClient()
 
-  // Query post by slug — RLS restricts anon users to visibility='public' AND publish_status='published'
+  // Query post by slug - RLS restricts anon users to visibility='public' AND publish_status='published'
   const { data: post, error } = await supabase
     .from('posts')
     .select('id, title, slug, content, excerpt, published_at, content_type, featured_image_url, post_tags(tag:tags(name, slug))')

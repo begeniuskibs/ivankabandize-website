@@ -69,7 +69,7 @@ export default async function WorkWithMePage() {
                   </Link>
                 </div>
                 <p className="text-sm font-medium text-[#5A5D70] mt-4 max-w-xl">
-                  Engagements are scoped to your situation — pricing is discussed in the first conversation, never before we understand the problem.
+                  Engagements are scoped to your situation - pricing is discussed in the first conversation, never before we understand the problem.
                 </p>
               </ScrollReveal>
             </div>
@@ -147,7 +147,7 @@ export default async function WorkWithMePage() {
                   </p>
                   <ul className="space-y-3 text-base text-[#5A5D70] leading-relaxed list-disc list-inside">
                     <li>Systems, workflows, and tools designed for your context</li>
-                    <li>An implementation sequence — what&rsquo;s first, what waits</li>
+                    <li>An implementation sequence - what&rsquo;s first, what waits</li>
                     <li>Documentation your team can actually follow</li>
                   </ul>
                 </div>
@@ -201,7 +201,7 @@ export default async function WorkWithMePage() {
                 <ul className="space-y-4 text-base text-[#3A3D4E] leading-relaxed list-disc list-inside">
                   <li>You lead an SME, school, or nonprofit that’s outgrown gut instinct and heroics</li>
                   <li>You want to understand your systems, not just have them handed over</li>
-                  <li>You see structure as freedom — the thing that lets your team execute</li>
+                  <li>You see structure as freedom - the thing that lets your team execute</li>
                   <li>You’re willing to change how things work, not just how they look</li>
                 </ul>
               </div>
@@ -217,7 +217,7 @@ export default async function WorkWithMePage() {
                 <ul className="space-y-4 text-base text-[#3A3D4E] leading-relaxed list-disc list-inside">
                   <li>You want someone to &ldquo;just do it&rdquo; and hand off a black box</li>
                   <li>You’re after quick hacks rather than sustainable systems</li>
-                  <li>You need accounting, legal, or licensed counselling services — I’ll gladly refer you</li>
+                  <li>You need accounting, legal, or licensed counselling services - I’ll gladly refer you</li>
                 </ul>
               </div>
             </ScrollReveal>
@@ -243,7 +243,7 @@ export default async function WorkWithMePage() {
 
           <ScrollReveal delayMs={80}>
             <p className="text-lg sm:text-xl text-[#5A5D70] leading-relaxed max-w-2xl mx-auto">
-              A 30-minute conversation, no obligation. You’ll leave with a clearer picture of the problem — whether or not we work together.
+              A 30-minute conversation, no obligation. You’ll leave with a clearer picture of the problem - whether or not we work together.
             </p>
           </ScrollReveal>
 

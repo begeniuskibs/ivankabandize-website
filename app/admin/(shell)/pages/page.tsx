@@ -18,17 +18,17 @@ interface PageRecord {
 const PAGE_META: Record<string, { path: string; description: string; badge: string }> = {
   home: {
     path: '/',
-    description: 'Main landing page — hero headline, subhead, trust bar narrative, and closing CTA.',
+    description: 'Main landing page - hero headline, subhead, trust bar narrative, and closing CTA.',
     badge: 'HOME',
   },
   workwithme: {
     path: '/workwithme',
-    description: 'Advisory & consulting page — service positioning, diagnostic process, and contact CTA.',
+    description: 'Advisory & consulting page - service positioning, diagnostic process, and contact CTA.',
     badge: 'WORK WITH ME',
   },
   me: {
     path: '/me',
-    description: 'Bio & background page — narrative paragraphs, central pullquote, teaching & method context.',
+    description: 'Bio & background page - narrative paragraphs, central pullquote, teaching & method context.',
     badge: 'ME',
   },
 }

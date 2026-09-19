@@ -209,7 +209,7 @@ export default async function HomePage() {
                     Build Better Systems
                   </h3>
                   <p className="text-sm sm:text-base text-[#5A5D70] leading-relaxed">
-                    Personal productivity that doesn&rsquo;t depend on willpower — how to design defaults instead of chasing goals.
+                    Personal productivity that doesn&rsquo;t depend on willpower - how to design defaults instead of chasing goals.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#F7C55C]/25 font-bold text-sm text-[#C99424] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -253,7 +253,7 @@ export default async function HomePage() {
                     Make Sense of AI
                   </h3>
                   <p className="text-sm sm:text-base text-[#5A5D70] leading-relaxed">
-                    What actually changes for your work and your organisation — translated from the research, minus the hype.
+                    What actually changes for your work and your organisation - translated from the research, minus the hype.
                   </p>
                 </div>
                 <div className="mt-6 pt-4 border-t border-[#6B66C4]/15 font-bold text-sm text-[#6B66C4] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
@@ -275,7 +275,7 @@ export default async function HomePage() {
                 My 3-Step <span className="text-[#2AA198]">Method</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
-                Every engagement — an SME, a school, a nonprofit — follows the same three moves, in the same order. That&rsquo;s the whole trick.
+                Every engagement - an SME, a school, a nonprofit - follows the same three moves, in the same order. That&rsquo;s the whole trick.
               </p>
             </div>
           </ScrollReveal>
@@ -374,7 +374,7 @@ export default async function HomePage() {
                 Recent <span className="text-[#EF5B45]">Thinking</span>
               </h2>
               <p className="text-base sm:text-lg text-[#5A5D70] mt-4">
-                A digital garden of essays, notes, and tools — some polished, some still growing. Recently tended entries below.
+                A digital garden of essays, notes, and tools - some polished, some still growing. Recently tended entries below.
               </p>
             </div>
           </ScrollReveal>
@@ -444,7 +444,7 @@ export default async function HomePage() {
 
           <ScrollReveal delayMs={80}>
             <p className="text-lg sm:text-xl text-[#5A5D70] leading-relaxed max-w-2xl mx-auto">
-              Tell me about it. A 30-minute conversation, no obligation — you&apos;ll leave with a clearer picture of the problem, whether or not we work together.
+              Tell me about it. A 30-minute conversation, no obligation - you&apos;ll leave with a clearer picture of the problem, whether or not we work together.
             </p>
           </ScrollReveal>
 
