@@ -8,11 +8,11 @@ export const dynamic = 'force-dynamic'
 export default async function MePage() {
   const supabase = await createClient()
 
-  // Fetch page content for me / about from Supabase pages table
+  // Fetch page content for me from Supabase pages table
   const { data: page } = await supabase
     .from('pages')
     .select('*')
-    .or('slug.eq.me,slug.eq.about')
+    .eq('slug', 'me')
     .maybeSingle()
 
   const headline = page?.hero_headline || 'Hey, I’m Ivan Kabandize'

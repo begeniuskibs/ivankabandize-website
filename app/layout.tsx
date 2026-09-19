@@ -7,9 +7,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-import Navbar from "@/components/public/Navbar";
-import Footer from "@/components/public/Footer";
-
 export const metadata: Metadata = {
   title: "Ivan Kabandize",
   description: "Personal website, articles, and services by Ivan Kabandize",
@@ -26,11 +23,8 @@ export default function RootLayout({
       className={`${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-white text-gray-900 font-sans">
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        {children}
       </body>
     </html>
   );
 }
-
