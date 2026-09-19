@@ -33,7 +33,7 @@ export default function TipTapEditor({
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 underline',
+          class: 'text-[#D94834] underline hover:text-[#B93A2A] visited:text-[#D94834]',
         },
       }),
       Image.configure({

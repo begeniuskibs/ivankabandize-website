@@ -132,7 +132,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
               href={String(mark.attrs?.href || '#')}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-600 hover:underline"
+              className="text-[#D94834] underline hover:text-[#B93A2A] visited:text-[#D94834]"
             >
               {element}
             </a>

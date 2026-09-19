@@ -147,4 +147,17 @@ body {
   animation: blob-morph 12s ease-in-out infinite;
 }
 
+.prose a {
+  color: #D94834;
+  text-decoration: underline;
+}
+
+.prose a:visited {
+  color: #D94834;
+}
+
+.prose a:hover {
+  color: #B93A2A;
+}
+
 
