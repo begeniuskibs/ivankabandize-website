@@ -18,7 +18,7 @@ export default async function WorkWithMePage() {
   const headline = page?.hero_headline || 'Ambition is rarely the problem. Structure usually is.'
   const subheadline =
     page?.hero_subheadline ||
-    "Let's untangle your organisation — properly. Every engagement runs in the same 3-phased process; Diagnose → Architect → Sequence. No jargon, no 90-slide decks, no system your team can't run without me."
+    "Let's untangle your organisation - properly. Every engagement runs in the same three phases: Audit → Build → Support. No jargon, no 90-slide decks, no system your team can't run without me."
   const ctaText = page?.cta_text || "Let's Talk"
   const ctaUrl = page?.cta_url || '/lets-talk'
   const closingCtaHeadline = page?.closing_cta_headline || 'Ready when you are.'
