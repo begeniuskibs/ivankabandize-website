@@ -18,6 +18,7 @@ const HELP_OPTIONS = [
   'Operations & systems',
   'Training my team',
   'Strategy & planning',
+  'Make sense of AI',
   'Not sure yet',
 ]
 
