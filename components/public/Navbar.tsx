@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
-import { signOut } from '@/app/auth/actions'
+import NavLinks from './NavLinks'
 
 export default async function Navbar() {
   let displayName: string | null = null
@@ -52,51 +52,7 @@ export default async function Navbar() {
         </Link>
 
         {/* Navigation links */}
-        <nav className="flex items-center gap-5 sm:gap-7 text-sm sm:text-[15px] font-semibold text-[#5A5D70]">
-          <Link href="/workwithme" className="hover:text-[#232536] transition">
-            Work with Me
-          </Link>
-          <Link href="/me" className="hover:text-[#232536] transition">
-            Me
-          </Link>
-          <Link href="/garden" className="hover:text-[#232536] transition">
-            The Garden
-          </Link>
-          <Link href="/now" className="hover:text-[#232536] transition">
-            Now
-          </Link>
-          {user ? (
-            <div className="flex items-center gap-5 sm:gap-7">
-              <Link
-                href="/admin/posts/editor"
-                className="text-[#EF5B45] hover:text-[#D94834] transition font-semibold"
-              >
-                Write
-              </Link>
-              <Link
-                href="/auth/account"
-                className="hover:text-[#232536] transition"
-              >
-                {displayName}
-              </Link>
-              <form action={signOut} className="inline-flex items-center">
-                <button
-                  type="submit"
-                  className="text-[#5A5D70] hover:text-[#232536] transition font-semibold text-sm sm:text-[15px] cursor-pointer"
-                >
-                  Sign Out
-                </button>
-              </form>
-            </div>
-          ) : (
-            <Link
-              href="/login"
-              className="text-[#EF5B45] hover:text-[#D94834] transition"
-            >
-              Sign-in
-            </Link>
-          )}
-        </nav>
+        <NavLinks user={user} displayName={displayName} />
       </div>
     </header>
   )
