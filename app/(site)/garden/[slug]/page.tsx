@@ -145,12 +145,6 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
             {post.title}
           </h1>
 
-          {post.excerpt && (
-            <p className="text-lg sm:text-xl text-[#5A5D70] leading-relaxed font-normal mb-8">
-              {post.excerpt}
-            </p>
-          )}
-
           {/* 3. Combined Byline + Dynamic Read Time row */}
           <div className="flex items-center gap-3.5 text-sm text-[#5A5D70] pb-8 border-b border-[#F5ECDE]">
             <Image
