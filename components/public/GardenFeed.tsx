@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import { Leaf } from 'lucide-react'
 
 export interface PostItem {
   id: string
@@ -10,6 +11,7 @@ export interface PostItem {
   excerpt?: string | null
   published_at?: string | null
   content_type?: 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought' | string
+  featured_image_url?: string | null
   post_tags?: { tag?: { name?: string; slug?: string } | null }[] | any[]
 }
 
@@ -226,79 +228,31 @@ export default function GardenFeed({
       <section className="py-12 md:py-16 bg-[#FDF8F1] flex-1">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           {filteredPosts && filteredPosts.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPosts.map((post) => {
-                const tagNames: string[] =
-                  (post.post_tags as any[])
-                    ?.map((pt: any) => pt.tag?.name)
-                    .filter(Boolean) || []
-                const typeInfo =
-                  post.content_type && TYPE_CONFIG[post.content_type as keyof typeof TYPE_CONFIG]
-                    ? TYPE_CONFIG[post.content_type as keyof typeof TYPE_CONFIG]
-                    : null
-
-                return (
-                  <Link
-                    key={post.id}
-                    href={`/garden/${post.slug}`}
-                    className="bg-white border border-[#F5ECDE] rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
-                  >
-                    <div>
-                      {/* Classification & Topic Badges */}
-                      <div className="flex flex-wrap items-center gap-2 mb-3">
-                        {typeInfo && 'badgeColor' in typeInfo && (
-                          <span
-                            className={`text-[11px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${typeInfo.badgeColor}`}
-                          >
-                            {typeInfo.label}
-                          </span>
-                        )}
-                        {tagNames
-                          .filter(
-                            (tag) =>
-                              !typeInfo ||
-                              !('label' in typeInfo) ||
-                              tag.toLowerCase() !== (typeInfo.label as string).toLowerCase()
-                          )
-                          .map((tag, tIdx) => (
-                            <span
-                              key={tIdx}
-                              className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-[#FDF8F1] text-[#2AA198] border border-[#F5ECDE]"
-                            >
-                              {tag}
-                            </span>
-                          ))}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {filteredPosts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/garden/${post.slug}`}
+                  className="group flex flex-col space-y-4"
+                >
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[20px] bg-[#FDF3DC] border border-[#F5ECDE] shadow-[0_4px_20px_rgba(35,37,54,0.04)]">
+                    {post.featured_image_url ? (
+                      <img
+                        src={post.featured_image_url}
+                        alt=""
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Leaf className="w-10 h-10 text-[#1F7A72]" />
                       </div>
-
-                      <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-2">
-                        {post.title}
-                      </h2>
-
-                      {post.excerpt && (
-                        <p className="text-[#5A5D70] text-sm leading-relaxed line-clamp-3">
-                          {post.excerpt}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-[#F5ECDE] flex items-center justify-between text-xs text-[#5A5D70] font-semibold">
-                      <time dateTime={post.published_at || ''}>
-                        {post.published_at
-                          ? new Date(post.published_at).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })
-                          : 'Recently published'}
-                      </time>
-                      <span className="font-bold text-[#EF5B45] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
-                        <span>Read</span>
-                        <span aria-hidden="true">&rarr;</span>
-                      </span>
-                    </div>
-                  </Link>
-                )
-              })}
+                    )}
+                  </div>
+                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
+                    {post.title}
+                  </h2>
+                </Link>
+              ))}
             </div>
           ) : (
             <div className="py-20 text-center bg-white rounded-3xl border border-[#F5ECDE] max-w-2xl mx-auto px-6 shadow-sm">

@@ -15,7 +15,7 @@ export default async function GardenPage() {
   // Query posts table directly — relying on Supabase RLS to filter to visibility='public' AND publish_status='published'
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
     .order('published_at', { ascending: false })
 
   if (error) {

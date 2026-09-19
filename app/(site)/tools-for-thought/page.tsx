@@ -16,7 +16,7 @@ export default async function ToolsForThoughtPage() {
 
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
     .eq('content_type', 'tools_for_thought')
     .order('published_at', { ascending: false })
 

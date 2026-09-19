@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { Leaf } from 'lucide-react'
 
 export const dynamic = 'force-dynamic'
 
@@ -56,7 +57,7 @@ export default async function HomePage() {
   // Fetch latest public published posts (RLS enforces visibility='public' AND publish_status='published')
   const { data: posts } = await supabase
     .from('posts')
-    .select('id, title, slug, excerpt, published_at, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, excerpt, published_at, featured_image_url, post_tags(tag:tags(name, slug))')
     .order('published_at', { ascending: false })
     .limit(3)
 
@@ -451,54 +452,31 @@ export default async function HomePage() {
 
           {posts && posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {posts.map((post, idx) => {
-                const tagNames: string[] = (post.post_tags as any[])?.map((pt: any) => pt.tag?.name).filter(Boolean) || []
-                return (
-                  <ScrollReveal key={post.id} delayMs={idx * 80}>
-                    <Link
-                      href={`/garden/${post.slug}`}
-                      className="bg-white border border-[#F5ECDE] rounded-3xl p-8 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300 group"
-                    >
-                      <div>
-                        {tagNames.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mb-3">
-                            {tagNames.map((tag, tIdx) => (
-                              <span
-                                key={tIdx}
-                                className="text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#FDF8F1] text-[#2AA198] border border-[#F5ECDE]"
-                              >
-                                {tag}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-3">
-                          {post.title}
-                        </h3>
-                        {post.excerpt && (
-                          <p className="text-[#5A5D70] text-sm sm:text-base leading-relaxed line-clamp-3">
-                            {post.excerpt}
-                          </p>
-                        )}
-                      </div>
-                      <div className="mt-6 pt-4 border-t border-[#F5ECDE] flex items-center justify-between text-xs text-[#5A5D70] font-semibold">
-                        <span>
-                          {post.published_at
-                            ? new Date(post.published_at).toLocaleDateString('en-US', {
-                                month: 'short',
-                                day: 'numeric',
-                                year: 'numeric',
-                              })
-                            : 'Recent'}
-                        </span>
-                        <span className="font-bold text-[#EF5B45] group-hover:translate-x-0.5 transition-transform">
-                          Read article &rarr;
-                        </span>
-                      </div>
-                    </Link>
-                  </ScrollReveal>
-                )
-              })}
+              {posts.map((post, idx) => (
+                <ScrollReveal key={post.id} delayMs={idx * 80}>
+                  <Link
+                    href={`/garden/${post.slug}`}
+                    className="group flex flex-col space-y-4"
+                  >
+                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[20px] bg-[#FDF3DC] border border-[#F5ECDE] shadow-[0_4px_20px_rgba(35,37,54,0.04)]">
+                      {post.featured_image_url ? (
+                        <img
+                          src={post.featured_image_url}
+                          alt=""
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Leaf className="w-10 h-10 text-[#1F7A72]" />
+                        </div>
+                      )}
+                    </div>
+                    <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
+                      {post.title}
+                    </h3>
+                  </Link>
+                </ScrollReveal>
+              ))}
             </div>
           ) : (
             <div className="py-12 text-center bg-white rounded-3xl border border-[#F5ECDE] text-[#5A5D70] text-base">
