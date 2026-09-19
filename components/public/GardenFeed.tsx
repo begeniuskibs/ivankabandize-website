@@ -56,7 +56,9 @@ export default function GardenFeed({
 }: GardenFeedProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
 
-  // Extract unique tags present in posts
+  const CATEGORY_NAMES = ['random thoughts', 'structured thoughts', 'tools for thought']
+
+  // Extract unique tags present in posts, strictly excluding stream/category names
   const allTags = Array.from(
     new Set(
       posts.flatMap((post) =>
@@ -65,7 +67,7 @@ export default function GardenFeed({
           .filter(Boolean) || []
       )
     )
-  )
+  ).filter((tag) => !CATEGORY_NAMES.includes(tag.toLowerCase().trim()))
 
   const filteredPosts = posts.filter((post) => {
     if (!selectedTag) return true
