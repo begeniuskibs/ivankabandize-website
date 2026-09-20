@@ -23,8 +23,9 @@ export async function POST(request: Request) {
     const { name, email, organisation, problem, help_type, timing, isSpam } =
       validation.data!
 
-    // If honeypot caught spam, return benign 200 without sending email or executing further
+    // If honeypot caught spam, log with NO personal data and return benign 200
     if (isSpam) {
+      console.log('[inquiries] honeypot triggered')
       return NextResponse.json(
         {
           success: true,

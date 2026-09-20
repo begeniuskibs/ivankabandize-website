@@ -13,7 +13,7 @@ interface FormData {
   problem: string
   help_type: string
   timing: string
-  website?: string
+  contact_ref_code?: string
 }
 
 export default function LetsTalkPage() {
@@ -25,7 +25,7 @@ export default function LetsTalkPage() {
     problem: '',
     help_type: 'Not sure yet',
     timing: 'Just exploring',
-    website: '',
+    contact_ref_code: '',
   })
 
   const [errors, setErrors] = useState<{ name?: string; email?: string; problem?: string }>({})
@@ -74,7 +74,7 @@ export default function LetsTalkPage() {
 
     try {
       // Honeypot spam check - if filled, silently succeed without DB insert or email
-      if (formData.website && formData.website.trim()) {
+      if (formData.contact_ref_code && formData.contact_ref_code.trim()) {
         setStep(4)
         return
       }
@@ -112,7 +112,7 @@ export default function LetsTalkPage() {
           problem: formData.problem.trim(),
           help_type: formData.help_type || null,
           timing: formData.timing || null,
-          website: formData.website || '',
+          contact_ref_code: formData.contact_ref_code || '',
         }),
       }).catch((err) => {
         console.error('Server notification error (non-fatal):', err)
@@ -285,15 +285,15 @@ export default function LetsTalkPage() {
                   tabIndex={-1}
                   style={{ display: 'none' }}
                 >
-                  <label htmlFor="website_hp">Leave this field empty</label>
+                  <label htmlFor="contact_ref_code">Leave this field empty</label>
                   <input
-                    id="website_hp"
+                    id="contact_ref_code"
                     type="text"
-                    name="website"
+                    name="contact_ref_code"
                     tabIndex={-1}
                     autoComplete="off"
-                    value={formData.website || ''}
-                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                    value={formData.contact_ref_code || ''}
+                    onChange={(e) => setFormData({ ...formData, contact_ref_code: e.target.value })}
                   />
                 </div>
 

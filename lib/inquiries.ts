@@ -42,6 +42,7 @@ export interface InquiryInput {
   problem?: unknown
   help_type?: unknown
   timing?: unknown
+  contact_ref_code?: unknown
   website?: unknown
   honeypot?: unknown
 }
@@ -93,8 +94,10 @@ export function validateInquiryPayload(body: unknown): ValidationResult {
 
   const input = body as InquiryInput
 
-  // Check honeypot spam guard first
-  const honeypotVal = (typeof input.website === 'string' ? input.website : '') ||
+  // Check honeypot spam guard first (using contact_ref_code)
+  const honeypotVal =
+    (typeof input.contact_ref_code === 'string' ? input.contact_ref_code : '') ||
+    (typeof input.website === 'string' ? input.website : '') ||
     (typeof input.honeypot === 'string' ? input.honeypot : '')
   if (honeypotVal.trim().length > 0) {
     return {
