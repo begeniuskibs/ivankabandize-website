@@ -35,10 +35,13 @@ export default async function HomePage() {
           "If you're a founder, director, or team leader building something you believe in - but the operational side isn't keeping up with the vision - we should talk.",
         ]
 
-  // Fetch latest public published posts (RLS enforces visibility='public' AND publish_status='published')
+  // Fetch latest public published posts with explicit published filters
   const { data: posts } = await supabase
     .from('posts')
     .select('id, title, slug, excerpt, published_at, featured_image_url, post_tags(tag:tags(name, slug))')
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
     .limit(3)
 

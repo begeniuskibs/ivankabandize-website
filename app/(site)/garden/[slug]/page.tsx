@@ -15,6 +15,9 @@ export async function generateMetadata({ params }: GardenPostPageProps) {
     .from('posts')
     .select('title, excerpt')
     .eq('slug', slug)
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', new Date().toISOString())
     .maybeSingle()
 
   if (!post) {
@@ -36,6 +39,9 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
     .from('posts')
     .select('id, title, slug, content, excerpt, published_at, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
     .eq('slug', slug)
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', new Date().toISOString())
     .maybeSingle()
 
   if (error || !post) {
@@ -47,6 +53,9 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
     .from('posts')
     .select('id, title, slug, excerpt, content_type, featured_image_url')
     .neq('slug', slug)
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
     .limit(1)
 
