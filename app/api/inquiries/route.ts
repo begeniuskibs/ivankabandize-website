@@ -133,11 +133,11 @@ export async function POST(request: Request) {
       data: resendData,
     })
   } catch (err: any) {
-    console.error('Inquiry notification error:', err)
+    console.error('[inquiries] error:', err?.message || err)
     return NextResponse.json(
       {
         success: false,
-        error: err.message || 'An unexpected error occurred.',
+        error: 'Something went wrong. Please try again in a moment.',
       },
       { status: 500 }
     )
