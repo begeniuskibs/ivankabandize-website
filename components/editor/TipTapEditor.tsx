@@ -47,7 +47,7 @@ export default function TipTapEditor({
     editorProps: {
       attributes: {
         class:
-          'prose prose-lg max-w-none min-h-[380px] focus:outline-none p-6 text-gray-900',
+          'min-h-[380px] focus:outline-none p-6 text-gray-900',
       },
     },
     onUpdate: ({ editor }) => {
@@ -116,7 +116,146 @@ export default function TipTapEditor({
   }
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm focus-within:ring-2 focus-within:ring-black focus-within:border-transparent">
+    <div className="tiptap-editor-scope border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm focus-within:ring-2 focus-within:ring-black focus-within:border-transparent relative">
+      <style>{`
+        .tiptap-editor-scope .ProseMirror {
+          outline: none;
+          min-height: 380px;
+          padding: 1.5rem;
+          color: #111827;
+          font-family: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        .tiptap-editor-scope .ProseMirror h1 {
+          font-family: 'MTN Brighter Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 1.875rem;
+          line-height: 2.25rem;
+          font-weight: 700;
+          color: #111827;
+          margin-top: 2.5rem;
+          margin-bottom: 1rem;
+          letter-spacing: -0.025em;
+        }
+        .tiptap-editor-scope .ProseMirror h2 {
+          font-family: 'MTN Brighter Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 1.5rem;
+          line-height: 2rem;
+          font-weight: 700;
+          color: #111827;
+          margin-top: 2rem;
+          margin-bottom: 1rem;
+          letter-spacing: -0.025em;
+        }
+        .tiptap-editor-scope .ProseMirror h3 {
+          font-family: 'MTN Brighter Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 1.25rem;
+          line-height: 1.75rem;
+          font-weight: 600;
+          color: #111827;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+        }
+        .tiptap-editor-scope .ProseMirror p {
+          color: #1f2937;
+          line-height: 1.625;
+          margin-bottom: 1.5rem;
+          font-size: 1.125rem;
+        }
+        .tiptap-editor-scope .ProseMirror blockquote {
+          border-left: 4px solid #EF5B45;
+          padding-left: 1.5rem;
+          padding-top: 0.5rem;
+          padding-bottom: 0.5rem;
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+          color: #232536;
+          background-color: #FDF8F1;
+          border-top-right-radius: 1rem;
+          border-bottom-right-radius: 1rem;
+          font-size: 1.125rem;
+          font-weight: 500;
+        }
+        .tiptap-editor-scope .ProseMirror ul {
+          list-style-type: disc;
+          padding-left: 1.5rem;
+          margin-bottom: 1.5rem;
+          color: #1f2937;
+          font-size: 1.125rem;
+        }
+        .tiptap-editor-scope .ProseMirror ol {
+          list-style-type: decimal;
+          padding-left: 1.5rem;
+          margin-bottom: 1.5rem;
+          color: #1f2937;
+          font-size: 1.125rem;
+        }
+        .tiptap-editor-scope .ProseMirror li {
+          margin-top: 0.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .tiptap-editor-scope .ProseMirror li p {
+          margin-bottom: 0.25rem;
+        }
+        .tiptap-editor-scope .ProseMirror code:not(pre code) {
+          background-color: #f3f4f6;
+          color: #dc2626;
+          padding: 0.125rem 0.25rem;
+          border-radius: 0.25rem;
+          font-size: 0.875rem;
+          font-family: monospace;
+        }
+        .tiptap-editor-scope .ProseMirror pre {
+          background-color: #232536;
+          color: #f3f4f6;
+          padding: 1rem;
+          border-radius: 1rem;
+          overflow-x: auto;
+          font-size: 0.875rem;
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+          font-family: monospace;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        .tiptap-editor-scope .ProseMirror pre code {
+          background-color: transparent;
+          color: inherit;
+          padding: 0;
+          border-radius: 0;
+          font-size: inherit;
+          font-family: inherit;
+        }
+        .tiptap-editor-scope .ProseMirror hr {
+          margin-top: 2rem;
+          margin-bottom: 2rem;
+          border: 0;
+          border-top: 1px solid #e5e7eb;
+        }
+        .tiptap-editor-scope .ProseMirror img {
+          width: 100%;
+          max-width: 100%;
+          height: auto;
+          border-radius: 1rem;
+          border: 1px solid #F5ECDE;
+          box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+          object-fit: cover;
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+        }
+        .tiptap-editor-scope .ProseMirror a {
+          color: #D94834;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+        .tiptap-editor-scope .ProseMirror a:hover {
+          color: #B93A2A;
+        }
+        .tiptap-editor-scope .ProseMirror p.is-editor-empty:first-child::before {
+          color: #9ca3af;
+          content: attr(data-placeholder);
+          float: left;
+          height: 0;
+          pointer-events: none;
+        }
+      `}</style>
       {/* Hidden file input for image upload */}
       <input
         ref={fileInputRef}
