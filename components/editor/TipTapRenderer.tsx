@@ -31,27 +31,27 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         const headingText = node.content?.map(renderInline)
         if (level === 1) {
           return (
-            <h1 key={index} className="text-3xl font-bold text-gray-900 mt-10 mb-4 tracking-tight">
+            <h1 key={index} className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl font-bold text-gray-900 mt-10 mb-4 tracking-tight">
               {headingText}
             </h1>
           )
         }
         if (level === 2) {
           return (
-            <h2 key={index} className="text-2xl font-bold text-gray-900 mt-8 mb-4 tracking-tight">
+            <h2 key={index} className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-gray-900 mt-8 mb-4 tracking-tight">
               {headingText}
             </h2>
           )
         }
         return (
-          <h3 key={index} className="text-xl font-semibold text-gray-900 mt-6 mb-3">
+          <h3 key={index} className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-semibold text-gray-900 mt-6 mb-3">
             {headingText}
           </h3>
         )
       }
       case 'bulletList':
         return (
-          <ul key={index} className="list-disc list-inside space-y-2 mb-6 text-gray-800 text-lg">
+          <ul key={index} className="list-disc list-outside pl-6 space-y-2 mb-6 text-gray-800 text-lg">
             {node.content?.map((item, i) => (
               <li key={i}>{item.content?.map(renderNode)}</li>
             ))}
@@ -59,7 +59,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         )
       case 'orderedList':
         return (
-          <ol key={index} className="list-decimal list-inside space-y-2 mb-6 text-gray-800 text-lg">
+          <ol key={index} className="list-decimal list-outside pl-6 space-y-2 mb-6 text-gray-800 text-lg">
             {node.content?.map((item, i) => (
               <li key={i}>{item.content?.map(renderNode)}</li>
             ))}
