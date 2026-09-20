@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { HELP_OPTIONS, TIMING_OPTIONS } from '@/lib/inquiries'
 
 interface FormData {
   name: string
@@ -12,21 +13,8 @@ interface FormData {
   problem: string
   help_type: string
   timing: string
+  website?: string
 }
-
-const HELP_OPTIONS = [
-  'Operations & systems',
-  'Training my team',
-  'Strategy & planning',
-  'Make sense of AI',
-  'Not sure yet',
-]
-
-const TIMING_OPTIONS = [
-  { label: 'ASAP', value: 'As soon as possible' },
-  { label: '1–3 months', value: 'In the next 1–3 months' },
-  { label: 'Just exploring', value: 'Just exploring' },
-]
 
 export default function LetsTalkPage() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1)
@@ -37,6 +25,7 @@ export default function LetsTalkPage() {
     problem: '',
     help_type: 'Not sure yet',
     timing: 'Just exploring',
+    website: '',
   })
 
   const [errors, setErrors] = useState<{ name?: string; email?: string; problem?: string }>({})
@@ -84,6 +73,12 @@ export default function LetsTalkPage() {
     setSubmitError(null)
 
     try {
+      // Honeypot spam check - if filled, silently succeed without DB insert or email
+      if (formData.website && formData.website.trim()) {
+        setStep(4)
+        return
+      }
+
       const supabase = createClient()
 
       // 1. Primary insert into live inquiries table
@@ -117,6 +112,7 @@ export default function LetsTalkPage() {
           problem: formData.problem.trim(),
           help_type: formData.help_type || null,
           timing: formData.timing || null,
+          website: formData.website || '',
         }),
       }).catch((err) => {
         console.error('Server notification error (non-fatal):', err)
@@ -281,6 +277,25 @@ export default function LetsTalkPage() {
                     {submitError}
                   </div>
                 )}
+
+                {/* Visually hidden honeypot spam guard */}
+                <div
+                  aria-hidden="true"
+                  className="opacity-0 absolute top-0 left-0 h-0 w-0 z-[-1] pointer-events-none overflow-hidden"
+                  tabIndex={-1}
+                  style={{ display: 'none' }}
+                >
+                  <label htmlFor="website_hp">Leave this field empty</label>
+                  <input
+                    id="website_hp"
+                    type="text"
+                    name="website"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formData.website || ''}
+                    onChange={(e) => setFormData({ ...formData, website: e.target.value })}
+                  />
+                </div>
 
                 {/* ================= STEP 1: ABOUT YOU ================= */}
                 {step === 1 && (
