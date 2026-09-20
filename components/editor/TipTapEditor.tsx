@@ -5,7 +5,8 @@ import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
-import { useEffect, useRef } from 'react'
+import CharacterCount from '@tiptap/extension-character-count'
+import { useEffect, useRef, useState } from 'react'
 
 interface TipTapEditorProps {
   content?: Record<string, unknown> | string
@@ -19,6 +20,7 @@ export default function TipTapEditor({
   placeholder = 'Write your post content here...',
 }: TipTapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const [wordCount, setWordCount] = useState(0)
 
   const editor = useEditor({
     extensions: [
@@ -42,6 +44,7 @@ export default function TipTapEditor({
           class: 'rounded-2xl max-w-full my-6 shadow-sm border border-gray-100',
         },
       }),
+      CharacterCount.configure(),
     ],
     content: typeof content === 'object' && content !== null ? content : {},
     editorProps: {
@@ -52,6 +55,10 @@ export default function TipTapEditor({
     },
     onUpdate: ({ editor }) => {
       onChange(editor.getJSON() as Record<string, unknown>)
+      setWordCount(editor.storage.characterCount?.words() ?? 0)
+    },
+    onCreate: ({ editor }) => {
+      setWordCount(editor.storage.characterCount?.words() ?? 0)
     },
     immediatelyRender: false,
   })
@@ -64,6 +71,7 @@ export default function TipTapEditor({
         editor.commands.setContent(
           typeof content === 'object' && content !== null ? content : {}
         )
+        setWordCount(editor.storage.characterCount?.words() ?? 0)
       }
     }
   }, [content, editor])
@@ -376,6 +384,13 @@ export default function TipTapEditor({
 
       {/* Editor Body */}
       <EditorContent editor={editor} />
+
+      {/* Editor Status Footer - Word Counter */}
+      <div className="flex items-center justify-end px-6 py-2.5 bg-gray-50/70 border-t border-gray-100 text-xs text-[#5A5D70] select-none">
+        <span className="font-medium tracking-wide">
+          {wordCount} {wordCount === 1 ? 'word' : 'words'}
+        </span>
+      </div>
     </div>
   )
 }
