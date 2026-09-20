@@ -2,14 +2,21 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { signOut } from '@/app/auth/actions'
+import UserAccountMenu from './UserAccountMenu'
 
 interface NavLinksProps {
   user: any
   displayName: string | null
+  email?: string | null
+  isOwner?: boolean
 }
 
-export default function NavLinks({ user, displayName }: NavLinksProps) {
+export default function NavLinks({
+  user,
+  displayName,
+  email = null,
+  isOwner = false,
+}: NavLinksProps) {
   const pathname = usePathname()
 
   const isWorkActive = pathname === '/workwithme' || pathname.startsWith('/workwithme/')
@@ -79,29 +86,11 @@ export default function NavLinks({ user, displayName }: NavLinksProps) {
         Now
       </Link>
       {user ? (
-        <div className="flex items-center gap-5 sm:gap-7">
-          <Link
-            href="/admin/posts/editor"
-            className="text-[#EF5B45] hover:text-[#D94834] transition font-semibold"
-          >
-            Write
-          </Link>
-          <Link
-            href="/auth/account"
-            className={standardLinkClass(pathname.startsWith('/auth/account'))}
-            {...(pathname.startsWith('/auth/account') ? { 'aria-current': 'page' } : {})}
-          >
-            {displayName}
-          </Link>
-          <form action={signOut} className="inline-flex items-center">
-            <button
-              type="submit"
-              className="text-[#5A5D70] hover:text-[#232536] transition font-semibold text-sm sm:text-[15px] cursor-pointer"
-            >
-              Sign Out
-            </button>
-          </form>
-        </div>
+        <UserAccountMenu
+          displayName={displayName}
+          email={email}
+          isOwner={isOwner}
+        />
       ) : (
         <Link
           href="/login"
@@ -114,3 +103,4 @@ export default function NavLinks({ user, displayName }: NavLinksProps) {
     </nav>
   )
 }
+

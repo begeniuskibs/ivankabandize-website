@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import TipTapRenderer from '@/components/editor/TipTapRenderer'
+import ReadingProgressBar from '@/components/public/ReadingProgressBar'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -96,7 +97,9 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
   const featuredImageCaption = (post.content as any)?.featured_image_caption || null
 
   return (
-    <article className="min-h-full font-sans py-16 md:py-24 bg-[#FDF8F1]">
+    <>
+      <ReadingProgressBar targetSelector="#article-body" />
+      <article className="min-h-full font-sans py-16 md:py-24 bg-[#FDF8F1]">
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Navigation Breadcrumb */}
         <div className="mb-10">
@@ -212,7 +215,7 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
         )}
 
         {/* 6. Post TipTap Content */}
-        <main className="text-[#232536] leading-relaxed prose max-w-none">
+        <main id="article-body" className="text-[#232536] leading-relaxed prose max-w-none">
           <TipTapRenderer content={post.content || {}} />
         </main>
 
@@ -257,5 +260,6 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
         )}
       </div>
     </article>
+    </>
   )
 }

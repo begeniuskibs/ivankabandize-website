@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { Leaf } from 'lucide-react'
+import PostCard from './PostCard'
 
 export interface PostItem {
   id: string
@@ -232,28 +233,7 @@ export default function GardenFeed({
           {filteredPosts && filteredPosts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPosts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/garden/${post.slug}`}
-                  className="group flex flex-col space-y-4"
-                >
-                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[20px] bg-[#FDF3DC] border border-[#F5ECDE] shadow-[0_4px_20px_rgba(35,37,54,0.04)]">
-                    {post.featured_image_url ? (
-                      <img
-                        src={post.featured_image_url}
-                        alt=""
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Leaf className="w-10 h-10 text-[#1F7A72]" />
-                      </div>
-                    )}
-                  </div>
-                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
-                    {post.title}
-                  </h2>
-                </Link>
+                <PostCard key={post.id} post={post} />
               ))}
             </div>
           ) : (
