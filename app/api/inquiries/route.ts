@@ -3,6 +3,7 @@ import {
   validateInquiryPayload,
   escapeHtml,
   formatMessageForEmail,
+  sanitizeSubjectHeader,
 } from '@/lib/inquiries'
 
 export async function POST(request: Request) {
@@ -112,7 +113,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         from: fromEmail,
         to: [toEmail],
-        subject: `New inquiry from ${escapedName}`,
+        subject: sanitizeSubjectHeader(name),
         html: emailHtml,
       }),
     })

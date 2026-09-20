@@ -64,6 +64,17 @@ export interface ValidationResult {
 }
 
 /**
+ * Sanitizes a string for plain-text email subjects:
+ * removes CR, LF and other control characters, collapses repeated whitespace, trims, and caps at 100 chars.
+ */
+export function sanitizeSubjectHeader(name: string): string {
+  const cleaned = (name || '').replace(/[\x00-\x1F\x7F]/g, ' ')
+  const collapsed = cleaned.replace(/\s+/g, ' ').trim()
+  const subject = `New inquiry from ${collapsed}`
+  return subject.slice(0, 100)
+}
+
+/**
  * Escapes HTML characters in user-provided input to prevent injection in HTML emails
  */
 export function escapeHtml(str: string): string {
