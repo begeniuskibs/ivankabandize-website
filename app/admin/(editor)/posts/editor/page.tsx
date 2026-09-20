@@ -382,9 +382,17 @@ function PostEditorContent() {
                 <button
                   type="button"
                   onClick={() => setIsUnsplashOpen(true)}
-                  className="px-4 py-2 bg-gray-100 hover:bg-gray-200 text-gray-800 text-xs font-semibold rounded-xl transition"
+                  aria-label="Insert photo from Unsplash"
+                  title="Insert photo from Unsplash"
+                  className="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition flex items-center justify-center"
                 >
-                  🔍 Search Unsplash
+                  <svg
+                    className="w-4 h-4 fill-current"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                  >
+                    <path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" />
+                  </svg>
                 </button>
                 <button
                   type="button"
