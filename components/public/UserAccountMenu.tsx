@@ -26,13 +26,13 @@ export function getInitials(name?: string | null, email?: string | null): string
 interface UserAccountMenuProps {
   displayName: string | null
   email: string | null
-  isAdminOrAuthor: boolean
+  isOwner: boolean
 }
 
 export default function UserAccountMenu({
   displayName,
   email,
-  isAdminOrAuthor,
+  isOwner,
 }: UserAccountMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -136,7 +136,7 @@ export default function UserAccountMenu({
 
           {/* Role-based Links */}
           <div className="py-1">
-            {isAdminOrAuthor && (
+            {isOwner && (
               <>
                 <Link
                   href="/admin"

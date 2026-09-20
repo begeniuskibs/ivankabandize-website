@@ -1,6 +1,5 @@
 import { createClient } from '@/utils/supabase/server'
 import TipTapRenderer from '@/components/editor/TipTapRenderer'
-import ReadingProgressBar from '@/components/public/ReadingProgressBar'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -97,127 +96,125 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
   const featuredImageCaption = (post.content as any)?.featured_image_caption || null
 
   return (
-    <>
-      <ReadingProgressBar targetSelector="#article-body" />
-      <article className="min-h-full font-sans py-16 md:py-24 bg-[#FDF8F1]">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Navigation Breadcrumb */}
-          <div className="mb-10">
+    <article className="min-h-full font-sans py-16 md:py-24 bg-[#FDF8F1]">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Navigation Breadcrumb */}
+        <div className="mb-10">
+          <Link
+            href="/garden"
+            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
+          >
+            <span>&larr; Back to The Garden</span>
+          </Link>
+        </div>
+
+        {/* 1. Primary Tag & Categories ABOVE Headline */}
+        <div className="flex flex-wrap items-center gap-2.5 text-xs mb-4">
+          {typeInfo && (
             <Link
-              href="/garden"
-              className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
+              href={typeInfo.href}
+              className={`font-bold uppercase tracking-wider px-3.5 py-1 rounded-full border text-[11px] hover:opacity-80 transition ${typeInfo.badgeColor}`}
             >
-              <span>&larr; Back to The Garden</span>
+              {typeInfo.label}
             </Link>
-          </div>
-
-          {/* 1. Primary Tag & Categories ABOVE Headline */}
-          <div className="flex flex-wrap items-center gap-2.5 text-xs mb-4">
-            {typeInfo && (
-              <Link
-                href={typeInfo.href}
-                className={`font-bold uppercase tracking-wider px-3.5 py-1 rounded-full border text-[11px] hover:opacity-80 transition ${typeInfo.badgeColor}`}
-              >
-                {typeInfo.label}
-              </Link>
-            )}
-
-            {post.post_tags && post.post_tags.length > 0 && (() => {
-              const secondaryTags = (post.post_tags as any[]).filter(
-                (pt: any) => pt.tag?.name && pt.tag.name.toLowerCase() !== typeInfo?.label.toLowerCase()
-              )
-              if (secondaryTags.length === 0) return null
-              return (
-                <div className="flex flex-wrap gap-2">
-                  {secondaryTags.map((pt: any, idx: number) => (
-                    <span
-                      key={idx}
-                      className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
-                    >
-                      {pt.tag?.name}
-                    </span>
-                  ))}
-                </div>
-              )
-            })()}
-          </div>
-
-          {/* 2. Main Headline */}
-          <header className="mb-6">
-            <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl font-bold text-[#232536] leading-[1.18] mb-6 tracking-tight">
-              {post.title}
-            </h1>
-
-            {/* 3. Combined Byline + Dynamic Read Time row */}
-            <div className="flex items-center gap-3.5 text-sm text-[#5A5D70] pb-8 border-b border-[#F5ECDE]">
-              <Image
-                src="/images/ivan-portrait.jpg"
-                alt="Ivan Kabandize"
-                width={42}
-                height={42}
-                className="w-10 h-10 rounded-full object-cover border border-[#F5ECDE] shadow-sm"
-              />
-              <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                <span className="font-bold text-[#232536]">Ivan Kabandize</span>
-                <span className="text-[#5A5D70]/50">•</span>
-                <time dateTime={post.published_at || ''}>
-                  {post.published_at
-                    ? new Date(post.published_at).toLocaleDateString('en-US', {
-                        month: 'long',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })
-                    : 'Recently published'}
-                </time>
-                <span className="text-[#5A5D70]/50">•</span>
-                <span className="font-bold text-[#2AA198]">{readTime} min read</span>
-              </div>
-            </div>
-          </header>
-
-          {/* 4. Optional Series Callout Box */}
-          {seriesInfo && (
-            <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] flex items-start gap-3.5">
-              <span className="text-2xl" aria-hidden="true">📖</span>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-0.5">
-                  Series {seriesInfo.part ? `· Part ${seriesInfo.part}` : ''}
-                </p>
-                <p className="font-bold text-base text-[#232536]">
-                  {seriesInfo.title}
-                </p>
-                {seriesInfo.href && (
-                  <Link href={seriesInfo.href} className="text-xs font-semibold text-[#2AA198] hover:underline mt-1 inline-block">
-                    View full series &rarr;
-                  </Link>
-                )}
-              </div>
-            </div>
           )}
 
-          {/* 5. Header Image rendered AFTER Byline */}
-          {post.featured_image_url && (
-            <figure className="mb-10">
-              <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)]">
-                <img
-                  src={post.featured_image_url}
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                />
+          {post.post_tags && post.post_tags.length > 0 && (() => {
+            const secondaryTags = (post.post_tags as any[]).filter(
+              (pt: any) => pt.tag?.name && pt.tag.name.toLowerCase() !== typeInfo?.label.toLowerCase()
+            )
+            if (secondaryTags.length === 0) return null
+            return (
+              <div className="flex flex-wrap gap-2">
+                {secondaryTags.map((pt: any, idx: number) => (
+                  <span
+                    key={idx}
+                    className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
+                  >
+                    {pt.tag?.name}
+                  </span>
+                ))}
               </div>
-              {featuredImageCaption && (
-                <figcaption
-                  className="mt-2.5 text-center text-xs text-[#5A5D70]"
-                  dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
-                />
+            )
+          })()}
+        </div>
+
+        {/* 2. Main Headline */}
+        <header className="mb-6">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl font-bold text-[#232536] leading-[1.18] mb-6 tracking-tight">
+            {post.title}
+          </h1>
+
+          {/* 3. Combined Byline + Dynamic Read Time row */}
+          <div className="flex items-center gap-3.5 text-sm text-[#5A5D70] pb-8 border-b border-[#F5ECDE]">
+            <Image
+              src="/images/ivan-portrait.jpg"
+              alt="Ivan Kabandize"
+              width={42}
+              height={42}
+              className="w-10 h-10 rounded-full object-cover border border-[#F5ECDE] shadow-sm"
+            />
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+              <span className="font-bold text-[#232536]">Ivan Kabandize</span>
+              <span className="text-[#5A5D70]/50">•</span>
+              <time dateTime={post.published_at || ''}>
+                {post.published_at
+                  ? new Date(post.published_at).toLocaleDateString('en-US', {
+                      month: 'long',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  : 'Recently published'}
+              </time>
+              <span className="text-[#5A5D70]/50">•</span>
+              <span className="font-bold text-[#2AA198]">{readTime} min read</span>
+            </div>
+          </div>
+        </header>
+
+        {/* 4. Optional Series Callout Box */}
+        {seriesInfo && (
+          <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] flex items-start gap-3.5">
+            <span className="text-2xl" aria-hidden="true">📖</span>
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-0.5">
+                Series {seriesInfo.part ? `· Part ${seriesInfo.part}` : ''}
+              </p>
+              <p className="font-bold text-base text-[#232536]">
+                {seriesInfo.title}
+              </p>
+              {seriesInfo.href && (
+                <Link href={seriesInfo.href} className="text-xs font-semibold text-[#2AA198] hover:underline mt-1 inline-block">
+                  View full series &rarr;
+                </Link>
               )}
-            </figure>
-          )}
+            </div>
+          </div>
+        )}
 
-          {/* 6. Post TipTap Content */}
-          <main id="article-body" className="text-[#232536] leading-relaxed prose max-w-none">
-            <TipTapRenderer content={post.content || {}} />
-          </main>
+        {/* 5. Header Image rendered AFTER Byline */}
+        {post.featured_image_url && (
+          <figure className="mb-10">
+            <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)]">
+              <img
+                src={post.featured_image_url}
+                alt={post.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            {featuredImageCaption && (
+              <figcaption
+                className="mt-2.5 text-center text-xs text-[#5A5D70]"
+                dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
+              />
+            )}
+          </figure>
+        )}
+
+        {/* 6. Post TipTap Content */}
+        <main className="text-[#232536] leading-relaxed prose max-w-none">
+          <TipTapRenderer content={post.content || {}} />
+        </main>
 
         {/* 7. Optional "You Might Have Missed" Bookmark-Style Card */}
         {relatedPost && (
@@ -260,6 +257,5 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
         )}
       </div>
     </article>
-    </>
   )
 }

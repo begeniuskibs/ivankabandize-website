@@ -8,14 +8,14 @@ interface NavLinksProps {
   user: any
   displayName: string | null
   email?: string | null
-  isAdminOrAuthor?: boolean
+  isOwner?: boolean
 }
 
 export default function NavLinks({
   user,
   displayName,
   email = null,
-  isAdminOrAuthor = false,
+  isOwner = false,
 }: NavLinksProps) {
   const pathname = usePathname()
 
@@ -89,7 +89,7 @@ export default function NavLinks({
         <UserAccountMenu
           displayName={displayName}
           email={email}
-          isAdminOrAuthor={isAdminOrAuthor}
+          isOwner={isOwner}
         />
       ) : (
         <Link

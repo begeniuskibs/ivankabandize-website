@@ -5,7 +5,7 @@ import NavLinks from './NavLinks'
 export default async function Navbar() {
   let displayName: string | null = null
   let email: string | null = null
-  let isAdminOrAuthor = false
+  let isOwner = false
   let user = null
 
   try {
@@ -26,12 +26,9 @@ export default async function Navbar() {
         (user.user_metadata?.full_name as string)?.trim() ||
         null
 
-      const userRole = profile?.role?.toLowerCase() || ''
-      isAdminOrAuthor = Boolean(
+      isOwner = Boolean(
         profile?.is_owner ||
-        userRole === 'owner' ||
-        userRole === 'admin' ||
-        userRole === 'author'
+        profile?.role?.toLowerCase() === 'owner'
       )
     }
   } catch (err: unknown) {
@@ -67,7 +64,7 @@ export default async function Navbar() {
           user={user}
           displayName={displayName}
           email={email}
-          isAdminOrAuthor={isAdminOrAuthor}
+          isOwner={isOwner}
         />
       </div>
     </header>
