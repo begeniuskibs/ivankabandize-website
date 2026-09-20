@@ -8,7 +8,10 @@ export interface PostTagItem {
   tag?: {
     name?: string
     slug?: string
-  } | null
+  } | Array<{
+    name?: string
+    slug?: string
+  }> | null
 }
 
 export interface PostData {
@@ -20,7 +23,7 @@ export interface PostData {
   published_at?: string | null
   content_type?: string | null
   featured_image_url?: string | null
-  post_tags?: PostTagItem[] | null
+  post_tags?: PostTagItem[] | any[] | null
 }
 
 export interface RelatedPostData {
@@ -119,19 +122,25 @@ export default function ArticleView({
 
             {post.post_tags && post.post_tags.length > 0 && (() => {
               const secondaryTags = (post.post_tags as any[]).filter(
-                (pt: any) => pt.tag?.name && pt.tag.name.toLowerCase() !== typeInfo?.label.toLowerCase()
+                (pt: any) => {
+                  const tagObj = Array.isArray(pt.tag) ? pt.tag[0] : pt.tag
+                  return tagObj?.name && tagObj.name.toLowerCase() !== typeInfo?.label.toLowerCase()
+                }
               )
               if (secondaryTags.length === 0) return null
               return (
                 <div className="flex flex-wrap gap-2">
-                  {secondaryTags.map((pt: any, idx: number) => (
-                    <span
-                      key={idx}
-                      className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
-                    >
-                      {pt.tag?.name}
-                    </span>
-                  ))}
+                  {secondaryTags.map((pt: any, idx: number) => {
+                    const tagObj = Array.isArray(pt.tag) ? pt.tag[0] : pt.tag
+                    return (
+                      <span
+                        key={idx}
+                        className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
+                      >
+                        {tagObj?.name}
+                      </span>
+                    )
+                  })}
                 </div>
               )
             })()}
