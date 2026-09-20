@@ -4,9 +4,9 @@ import {
   validateInquiryPayload,
   escapeHtml,
   formatMessageForEmail,
+  sanitizeSubjectHeader,
   HELP_OPTIONS,
   TIMING_OPTIONS,
-  VALID_TIMING_VALUES,
 } from '../lib/inquiries.ts'
 
 console.log('=== LET\'S TALK HARDENING UNIT TESTS (No DB, No Email) ===\n')

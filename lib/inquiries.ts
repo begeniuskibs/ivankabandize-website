@@ -16,15 +16,10 @@ export const TIMING_OPTIONS = [
   { label: 'Just exploring', value: 'Just exploring' },
 ] as const
 
-export const VALID_TIMING_VALUES: readonly string[] = [
-  'As soon as possible',
-  'In the next 1–3 months',
-  'In the next 1-3 months',
-  'Just exploring',
-  'ASAP',
-  '1–3 months',
-  '1-3 months',
-]
+export const ALLOWED_TIMING_VALUES: readonly string[] = TIMING_OPTIONS.flatMap((opt) => [
+  opt.value as string,
+  opt.label as string,
+])
 
 export const INQUIRY_LIMITS = {
   NAME_MAX: 100,
@@ -190,11 +185,11 @@ export function validateInquiryPayload(body: unknown): ValidationResult {
     help_type = htTrimmed
   }
 
-  // 6. Validate Timing (must be in whitelist if provided)
+  // 6. Validate Timing (must be in whitelist derived from TIMING_OPTIONS if provided)
   let timing: string | null = null
   if (typeof input.timing === 'string' && input.timing.trim()) {
     const timingTrimmed = input.timing.trim()
-    if (!VALID_TIMING_VALUES.includes(timingTrimmed)) {
+    if (!ALLOWED_TIMING_VALUES.includes(timingTrimmed)) {
       return {
         isValid: false,
         error: `Please select a valid timing option from the list.`,
