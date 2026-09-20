@@ -4,6 +4,8 @@ import NavLinks from './NavLinks'
 
 export default async function Navbar() {
   let displayName: string | null = null
+  let email: string | null = null
+  let isAdminOrAuthor = false
   let user = null
 
   try {
@@ -12,16 +14,25 @@ export default async function Navbar() {
     user = error ? null : data?.user ?? null
 
     if (user) {
+      email = user.email || null
       const { data: profile } = await supabase
         .from('users')
-        .select('full_name')
+        .select('full_name, role, is_owner')
         .eq('id', user.id)
         .maybeSingle()
 
       displayName =
         profile?.full_name?.trim() ||
         (user.user_metadata?.full_name as string)?.trim() ||
-        'Account'
+        null
+
+      const userRole = profile?.role?.toLowerCase() || ''
+      isAdminOrAuthor = Boolean(
+        profile?.is_owner ||
+        userRole === 'owner' ||
+        userRole === 'admin' ||
+        userRole === 'author'
+      )
     }
   } catch (err: unknown) {
     // Re-throw Next.js internal control flow errors (dynamic rendering / redirects)
@@ -52,7 +63,12 @@ export default async function Navbar() {
         </Link>
 
         {/* Navigation links */}
-        <NavLinks user={user} displayName={displayName} />
+        <NavLinks
+          user={user}
+          displayName={displayName}
+          email={email}
+          isAdminOrAuthor={isAdminOrAuthor}
+        />
       </div>
     </header>
   )
