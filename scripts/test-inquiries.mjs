@@ -1,4 +1,4 @@
-// Vanilla JS test runner for Let's Talk hardening logic
+// Unit tests for Let's Talk inquiries hardening logic (No DB, No Resend)
 
 import {
   validateInquiryPayload,
@@ -6,107 +6,119 @@ import {
   formatMessageForEmail,
   HELP_OPTIONS,
   TIMING_OPTIONS,
+  VALID_TIMING_VALUES,
 } from '../lib/inquiries.ts'
 
 console.log('=== LET\'S TALK HARDENING UNIT TESTS (No DB, No Email) ===\n')
 
-// Test Case 1: Valid payload
-console.log('--- Test Case 1: Valid Payload ---')
-const payload1 = {
-  name: 'Jane Doe',
-  email: 'jane@example.com',
-  organisation: 'Acme School',
-  problem: 'We need help restructuring our operations and leadership reporting.',
-  help_type: 'Operations & systems',
-  timing: 'As soon as possible',
-  website: '',
+// 1. Comprehensive Chip Options Verification (Every single option rendered by the form)
+console.log('--- 1. Testing ALL Form-Rendered Help Type Options ---')
+for (const helpOpt of HELP_OPTIONS) {
+  const payload = {
+    name: 'Test User',
+    email: 'user@example.com',
+    problem: 'Testing help type: ' + helpOpt,
+    help_type: helpOpt,
+    timing: 'Just exploring',
+    contact_ref_code: '',
+  }
+  const res = validateInquiryPayload(payload)
+  console.log(`Help Option [${helpOpt}]: ${res.isValid ? 'ACCEPTED' : 'REJECTED - ' + res.error}`)
+  if (!res.isValid) throw new Error(`Option rejected unexpectedly: ${helpOpt}`)
 }
-const result1 = validateInquiryPayload(payload1)
-console.log('Input:', JSON.stringify(payload1, null, 2))
-console.log('Result isValid:', result1.isValid)
-console.log('Sanitized Data:', JSON.stringify(result1.data, null, 2))
-console.log('Verdict: ACCEPTED\n')
 
-// Test Case 2: Unknown help type
-console.log('--- Test Case 2: Unknown Help Type ---')
-const payload2 = {
+console.log('\n--- 2. Testing ALL Form-Rendered Timing Options (Values & Labels) ---')
+for (const timingOpt of TIMING_OPTIONS) {
+  // Test value (as set by clicking the chip in the UI)
+  const payloadValue = {
+    name: 'Test User',
+    email: 'user@example.com',
+    problem: 'Testing timing value: ' + timingOpt.value,
+    help_type: 'Operations & systems',
+    timing: timingOpt.value,
+    contact_ref_code: '',
+  }
+  const resVal = validateInquiryPayload(payloadValue)
+  console.log(`Timing Value [${timingOpt.value}]: ${resVal.isValid ? 'ACCEPTED' : 'REJECTED - ' + resVal.error}`)
+  if (!resVal.isValid) throw new Error(`Timing value rejected: ${timingOpt.value}`)
+
+  // Test label (if sent as label e.g. "1–3 months")
+  const payloadLabel = {
+    name: 'Test User',
+    email: 'user@example.com',
+    problem: 'Testing timing label: ' + timingOpt.label,
+    help_type: 'Operations & systems',
+    timing: timingOpt.label,
+    contact_ref_code: '',
+  }
+  const resLabel = validateInquiryPayload(payloadLabel)
+  console.log(`Timing Label [${timingOpt.label}]: ${resLabel.isValid ? 'ACCEPTED' : 'REJECTED - ' + resLabel.error}`)
+  if (!resLabel.isValid) throw new Error(`Timing label rejected: ${timingOpt.label}`)
+}
+
+// 3. Testing Unknown Options
+console.log('\n--- 3. Testing Invalid Options (Rejections) ---')
+const invalidHelpPayload = {
   name: 'John Doe',
   email: 'john@example.com',
-  organisation: 'Initech',
-  problem: 'Need some general consulting.',
-  help_type: 'Custom Unapproved Option 123',
+  problem: 'Need consulting',
+  help_type: 'Unknown Help Option XYZ',
   timing: 'Just exploring',
 }
-const result2 = validateInquiryPayload(payload2)
-console.log('Input:', JSON.stringify(payload2, null, 2))
-console.log('Result isValid:', result2.isValid)
-console.log('Error Message:', result2.error)
-console.log('Verdict: REJECTED (400)\n')
+const resInvalidHelp = validateInquiryPayload(invalidHelpPayload)
+console.log('Unknown Help Type result:', resInvalidHelp.isValid ? 'ACCEPTED' : `REJECTED (400) -> "${resInvalidHelp.error}"`)
 
-// Test Case 3: <script>alert(1)</script> inside the message
-console.log('--- Test Case 3: Script Tag in Message (HTML Escaping) ---')
-const payload3 = {
-  name: 'Security Tester',
-  email: 'sec@test.org',
-  organisation: 'AppSec Inc',
-  problem: 'Testing message with malicious payload: <script>alert(1)</script>\nLine 2 payload: <img src=x onerror=alert(2) />',
+const invalidTimingPayload = {
+  name: 'John Doe',
+  email: 'john@example.com',
+  problem: 'Need consulting',
+  help_type: 'Operations & systems',
+  timing: 'Next year sometime',
+}
+const resInvalidTiming = validateInquiryPayload(invalidTimingPayload)
+console.log('Unknown Timing result:', resInvalidTiming.isValid ? 'ACCEPTED' : `REJECTED (400) -> "${resInvalidTiming.error}"`)
+
+// 4. HTML Escaping Tests
+console.log('\n--- 4. Testing HTML Escaping for Email ---')
+const scriptPayload = {
+  name: '<a href="https://example.com">Jane & Co</a>',
+  email: 'jane@example.com',
+  problem: 'Line 1: <script>alert("XSS")</script>\nLine 2: <b>Bold text</b> & "quotes"',
   help_type: 'Make sense of AI',
   timing: 'Just exploring',
 }
-const result3 = validateInquiryPayload(payload3)
-console.log('Input Problem:', payload3.problem)
-console.log('Validation isValid:', result3.isValid)
-if (result3.isValid && result3.data) {
-  const formattedProblem = formatMessageForEmail(result3.data.problem)
-  console.log('Formatted for Email HTML:\n' + formattedProblem)
+const resScript = validateInquiryPayload(scriptPayload)
+console.log('Script Payload Validation isValid:', resScript.isValid)
+if (resScript.isValid && resScript.data) {
+  const escapedName = escapeHtml(resScript.data.name)
+  const formattedProblem = formatMessageForEmail(resScript.data.problem)
+  console.log('Escaped Name for Email:', escapedName)
+  console.log('Formatted Problem for Email:\n' + formattedProblem)
 }
-console.log('Verdict: ACCEPTED & SAFELY ESCAPED\n')
 
-// Test Case 4: <a href="https://example.com">click</a> inside the name
-console.log('--- Test Case 4: HTML in Name (HTML Escaping) ---')
-const payload4 = {
-  name: '<a href="https://example.com">click</a> & "test" \'name\'',
-  email: 'attacker@evil.com',
-  problem: 'Testing HTML in name field.',
-  help_type: 'Strategy & planning',
-  timing: 'Just exploring',
-}
-const result4 = validateInquiryPayload(payload4)
-console.log('Input Name:', payload4.name)
-console.log('Validation isValid:', result4.isValid)
-if (result4.isValid && result4.data) {
-  const escapedName = escapeHtml(result4.data.name)
-  console.log('Escaped Name for Email HTML:', escapedName)
-}
-console.log('Verdict: ACCEPTED & SAFELY ESCAPED\n')
-
-// Test Case 5: Message over length limit
-console.log('--- Test Case 5: Message Over Length Limit (3000 chars) ---')
-const payload5 = {
-  name: 'Long Winded',
-  email: 'long@example.com',
-  problem: 'A'.repeat(3050),
+// 5. Length Limits Tests
+console.log('\n--- 5. Testing Length Limits ---')
+const longMessagePayload = {
+  name: 'Valid Name',
+  email: 'valid@example.com',
+  problem: 'X'.repeat(3050),
   help_type: 'Training my team',
   timing: 'ASAP',
 }
-const result5 = validateInquiryPayload(payload5)
-console.log('Input Message Length:', payload5.problem.length)
-console.log('Result isValid:', result5.isValid)
-console.log('Error Message:', result5.error)
-console.log('Verdict: REJECTED (400)\n')
+const resLong = validateInquiryPayload(longMessagePayload)
+console.log('Over 3000 chars message result:', resLong.isValid ? 'ACCEPTED' : `REJECTED (400) -> "${resLong.error}"`)
 
-// Test Case 6: Honeypot filled
-console.log('--- Test Case 6: Honeypot Filled (Spam Guard) ---')
-const payload6 = {
-  name: 'Spam Bot 3000',
-  email: 'spammer@darkweb.io',
-  problem: 'Buy cheap watches and crypto now!',
+// 6. Honeypot Spam Guard Test (contact_ref_code)
+console.log('\n--- 6. Testing Honeypot Spam Guard (contact_ref_code) ---')
+const spamPayload = {
+  name: 'Spam Bot',
+  email: 'bot@spam.io',
+  problem: 'Buy luxury watches!',
   help_type: 'Operations & systems',
   timing: 'ASAP',
-  website: 'https://spam-domain.xyz/buy-now',
+  contact_ref_code: 'spam-bot-value-12345',
 }
-const result6 = validateInquiryPayload(payload6)
-console.log('Input:', JSON.stringify(payload6, null, 2))
-console.log('Result isValid:', result6.isValid)
-console.log('Is Spam flag:', result6.data?.isSpam)
+const resSpam = validateInquiryPayload(spamPayload)
+console.log('Honeypot filled result isValid:', resSpam.isValid)
+console.log('Honeypot isSpam flag:', resSpam.data?.isSpam)
 console.log('Verdict: ACCEPTED AS 200 BENIGN BUT DROPPED (No DB insert, No Email)\n')
