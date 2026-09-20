@@ -2,7 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
 import ScrollReveal from '@/components/public/ScrollReveal'
-import { Leaf } from 'lucide-react'
+import PostCard from '@/components/public/PostCard'
 
 export const dynamic = 'force-dynamic'
 
@@ -382,28 +382,8 @@ export default async function HomePage() {
           {posts && posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {posts.map((post, idx) => (
-                <ScrollReveal key={post.id} delayMs={idx * 80}>
-                  <Link
-                    href={`/garden/${post.slug}`}
-                    className="group flex flex-col space-y-4"
-                  >
-                    <div className="relative aspect-[16/9] w-full overflow-hidden rounded-[20px] bg-[#FDF3DC] border border-[#F5ECDE] shadow-[0_4px_20px_rgba(35,37,54,0.04)]">
-                      {post.featured_image_url ? (
-                        <img
-                          src={post.featured_image_url}
-                          alt=""
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Leaf className="w-10 h-10 text-[#1F7A72]" />
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
-                      {post.title}
-                    </h3>
-                  </Link>
+                <ScrollReveal key={post.id} delayMs={idx * 80} className="h-full">
+                  <PostCard post={post} />
                 </ScrollReveal>
               ))}
             </div>
