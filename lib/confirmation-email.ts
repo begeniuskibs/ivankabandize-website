@@ -1,4 +1,21 @@
-import { HELP_OPTIONS, type HelpOption, escapeHtml } from '@/lib/inquiries'
+export const HELP_OPTIONS = [
+  'Operations & systems',
+  'Training my team',
+  'Strategy & planning',
+  'Make sense of AI',
+  'Not sure yet',
+] as const
+
+export type HelpOption = (typeof HELP_OPTIONS)[number]
+
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
 
 export interface RecommendedRead {
   title: string
