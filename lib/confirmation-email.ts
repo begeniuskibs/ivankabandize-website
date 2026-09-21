@@ -1,14 +1,8 @@
-import { INQUIRY_RATE_LIMITS } from './inquiries.ts'
-
-export const HELP_OPTIONS = [
-  'Operations & systems',
-  'Training my team',
-  'Strategy & planning',
-  'Make sense of AI',
-  'Not sure yet',
-] as const
-
-export type HelpOption = (typeof HELP_OPTIONS)[number]
+import {
+  HELP_OPTIONS,
+  type HelpOption,
+  INQUIRY_RATE_LIMITS,
+} from './inquiries.ts'
 
 function escapeHtml(str: string): string {
   return str
