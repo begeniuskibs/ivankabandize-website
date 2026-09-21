@@ -289,6 +289,28 @@ function PostEditorContent() {
         </div>
 
         <div className="flex items-center gap-3">
+          {postId ? (
+            <Link
+              href={`/admin/posts/${postId}/preview`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center gap-1.5 border border-gray-200"
+            >
+              <span>Preview</span>
+              <span className="text-gray-400">&#8599;</span>
+            </Link>
+          ) : (
+            <button
+              type="button"
+              disabled
+              title="Save first"
+              className="px-3.5 py-2 text-xs font-semibold text-gray-400 bg-gray-50 border border-gray-200 rounded-lg cursor-not-allowed opacity-60 flex items-center gap-1.5"
+            >
+              <span>Preview</span>
+              <span className="text-gray-300">&#8599;</span>
+            </button>
+          )}
+
           <button
             type="button"
             disabled={loading}

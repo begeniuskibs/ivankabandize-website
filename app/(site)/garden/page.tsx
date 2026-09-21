@@ -12,10 +12,13 @@ export const metadata = {
 export default async function GardenPage() {
   const supabase = await createClient()
 
-  // Query posts table directly - relying on Supabase RLS to filter to visibility='public' AND publish_status='published'
+  // Query posts table directly with explicit published-only filters
   const { data: posts, error } = await supabase
     .from('posts')
     .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
 
   if (error) {

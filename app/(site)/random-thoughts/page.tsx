@@ -18,6 +18,9 @@ export default async function RandomThoughtsPage() {
     .from('posts')
     .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
     .eq('content_type', 'random_thoughts')
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
 
   if (error) {
