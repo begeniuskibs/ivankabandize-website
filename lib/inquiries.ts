@@ -31,6 +31,15 @@ export const INQUIRY_LIMITS = {
   MESSAGE_MAX: 3000,
 } as const
 
+export const INQUIRY_RATE_LIMITS = {
+  MAX_REQUEST_BODY_CHARS: 20000,
+  EMAIL_LIMIT_MAX: 3,
+  EMAIL_LIMIT_WINDOW_MINUTES: 60,
+  GLOBAL_LIMIT_MAX: 20,
+  GLOBAL_LIMIT_WINDOW_SECONDS: 60,
+  RESEND_TIMEOUT_MS: 8000,
+} as const
+
 export const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 export interface InquiryInput {

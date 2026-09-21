@@ -1,9 +1,8 @@
 import React from 'react'
 import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
-import { Analytics } from '@vercel/analytics/next'
 
-export default function SiteLayout({
+export default function PreviewLayout({
   children,
 }: {
   children: React.ReactNode
@@ -13,7 +12,6 @@ export default function SiteLayout({
       <Navbar />
       <main className="flex-1">{children}</main>
       <Footer />
-      <Analytics />
     </>
   )
 }

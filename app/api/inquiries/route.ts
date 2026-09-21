@@ -4,14 +4,35 @@ import {
   escapeHtml,
   formatMessageForEmail,
   sanitizeSubjectHeader,
+  INQUIRY_RATE_LIMITS,
 } from '@/lib/inquiries'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { sendConfirmationEmail } from '@/lib/confirmation-email'
+
+export const maxDuration = 30
 
 export async function POST(request: Request) {
   try {
+    // 1. Size guard: Content-Length header & raw body limit (max 20,000 chars)
+    const contentLength = request.headers.get('content-length')
+    if (contentLength && parseInt(contentLength, 10) > INQUIRY_RATE_LIMITS.MAX_REQUEST_BODY_CHARS) {
+      return NextResponse.json(
+        { ok: false, error: 'That message is too large.' },
+        { status: 413 }
+      )
+    }
+
+    const rawBody = await request.text()
+    if (rawBody.length > INQUIRY_RATE_LIMITS.MAX_REQUEST_BODY_CHARS) {
+      return NextResponse.json(
+        { ok: false, error: 'That message is too large.' },
+        { status: 413 }
+      )
+    }
+
     let body: unknown
     try {
-      body = await request.json()
+      body = JSON.parse(rawBody)
     } catch {
       return NextResponse.json(
         { ok: false, error: 'Invalid JSON payload.' },
@@ -40,8 +61,65 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true }, { status: 200 })
     }
 
-    // Insert row using server-only privileged client
     const adminClient = createAdminClient()
+
+    // 2. Abuse limits: check email (3 in 60 min) and global (20 in 60 sec)
+    try {
+      const escapedEmail = email.replace(/[%_\\]/g, '\\$&')
+      const emailWindowStart = new Date(
+        Date.now() - INQUIRY_RATE_LIMITS.EMAIL_LIMIT_WINDOW_MINUTES * 60 * 1000
+      ).toISOString()
+
+      const globalWindowStart = new Date(
+        Date.now() - INQUIRY_RATE_LIMITS.GLOBAL_LIMIT_WINDOW_SECONDS * 1000
+      ).toISOString()
+
+      const [emailCheck, globalCheck] = await Promise.all([
+        adminClient
+          .from('inquiries')
+          .select('*', { count: 'exact', head: true })
+          .ilike('email', escapedEmail)
+          .gte('created_at', emailWindowStart),
+        adminClient
+          .from('inquiries')
+          .select('*', { count: 'exact', head: true })
+          .gte('created_at', globalWindowStart),
+      ])
+
+      if (emailCheck.error) {
+        console.error('[inquiries] email rate check error:', emailCheck.error.message)
+      } else if (
+        typeof emailCheck.count === 'number' &&
+        emailCheck.count >= INQUIRY_RATE_LIMITS.EMAIL_LIMIT_MAX
+      ) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Too many enquiries just now. Please try again in a little while.',
+          },
+          { status: 429 }
+        )
+      }
+
+      if (globalCheck.error) {
+        console.error('[inquiries] global rate check error:', globalCheck.error.message)
+      } else if (
+        typeof globalCheck.count === 'number' &&
+        globalCheck.count >= INQUIRY_RATE_LIMITS.GLOBAL_LIMIT_MAX
+      ) {
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Too many enquiries just now. Please try again in a little while.',
+          },
+          { status: 429 }
+        )
+      }
+    } catch (rateErr: any) {
+      console.error('[inquiries] rate check error:', rateErr?.message || rateErr)
+    }
+
+    // 3. Insert row using server-only privileged client
     const { data: insertedRow, error: insertError } = await adminClient
       .from('inquiries')
       .insert({
@@ -66,7 +144,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // Row successfully saved. Now attempt email notification.
+    // Row successfully saved. Now attempt Ivan's email notification.
     let notified = false
     let notifyError: string | null = null
 
@@ -139,9 +217,11 @@ export async function POST(request: Request) {
           body: JSON.stringify({
             from: fromEmail,
             to: [toEmail],
+            reply_to: email,
             subject: sanitizeSubjectHeader(name),
             html: emailHtml,
           }),
+          signal: AbortSignal.timeout(INQUIRY_RATE_LIMITS.RESEND_TIMEOUT_MS),
         })
 
         const resendData = await resendRes.json().catch(() => ({}))
@@ -158,8 +238,12 @@ export async function POST(request: Request) {
         }
       } catch (err: any) {
         console.error('[inquiries] resend error:', err?.message || err)
-        const errorMsg = err?.message || 'Email delivery failed'
-        notifyError = errorMsg.slice(0, 300)
+        if (err?.name === 'TimeoutError' || err?.name === 'AbortError') {
+          notifyError = 'Email timed out'
+        } else {
+          const errorMsg = err?.message || 'Email delivery failed'
+          notifyError = errorMsg.slice(0, 300)
+        }
       }
     }
 
@@ -174,6 +258,25 @@ export async function POST(request: Request) {
         await adminClient
           .from('inquiries')
           .update({ notify_error: notifyError })
+          .eq('id', insertedRow.id)
+      }
+
+      // Attempt visitor confirmation email (only active if CONFIRMATION_EMAIL_ENABLED === 'true')
+      const confirmationResult = await sendConfirmationEmail({
+        toEmail: email,
+        name,
+        helpType: help_type,
+      })
+
+      if (confirmationResult.sent) {
+        await adminClient
+          .from('inquiries')
+          .update({ confirmation_sent_at: new Date().toISOString() })
+          .eq('id', insertedRow.id)
+      } else if (confirmationResult.error) {
+        await adminClient
+          .from('inquiries')
+          .update({ confirmation_error: confirmationResult.error })
           .eq('id', insertedRow.id)
       }
     }
