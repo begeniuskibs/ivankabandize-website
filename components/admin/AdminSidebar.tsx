@@ -19,6 +19,7 @@ interface SidebarItem {
 export default function AdminSidebar() {
   const pathname = usePathname()
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
+  const [newInquiriesCount, setNewInquiriesCount] = useState<number>(0)
   const [userData, setUserData] = useState<{
     fullName: string
     email: string
@@ -64,6 +65,15 @@ export default function AdminSidebar() {
             initials,
             role: profile?.role === 'owner' ? 'Owner' : 'Owner',
           })
+
+          const { count } = await supabase
+            .from('inquiries')
+            .select('*', { count: 'exact', head: true })
+            .eq('status', 'new')
+
+          if (typeof count === 'number') {
+            setNewInquiriesCount(count)
+          }
         }
       } catch (err) {
         console.error('Failed to load user in sidebar', err)
@@ -143,6 +153,12 @@ export default function AdminSidebar() {
       href: '/admin/comments',
       icon: '💬',
     },
+    {
+      label: 'Enquiries',
+      href: '/admin/enquiries',
+      icon: '📬',
+      badge: newInquiriesCount > 0 ? String(newInquiriesCount) : undefined,
+    },
   ]
 
   const automationsNav: SidebarItem[] = [
@@ -174,6 +190,9 @@ export default function AdminSidebar() {
     }
     if (item.href === '/admin/pages') {
       return pathname.startsWith('/admin/pages') && !pathname.includes('/edit')
+    }
+    if (item.href === '/admin/enquiries') {
+      return pathname.startsWith('/admin/enquiries')
     }
     return pathname === item.href
   }

@@ -1,5 +1,8 @@
 // Shared constants and validation utilities for Let's Talk inquiries
 
+export const INQUIRY_STATUSES = ['new', 'replied', 'closed'] as const
+export type InquiryStatus = (typeof INQUIRY_STATUSES)[number]
+
 export const HELP_OPTIONS = [
   'Operations & systems',
   'Training my team',

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClient } from '@/utils/supabase/client'
 import Link from 'next/link'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { HELP_OPTIONS, TIMING_OPTIONS } from '@/lib/inquiries'
@@ -73,34 +72,7 @@ export default function LetsTalkPage() {
     setSubmitError(null)
 
     try {
-      // Honeypot spam check - if filled, silently succeed without DB insert or email
-      if (formData.contact_ref_code && formData.contact_ref_code.trim()) {
-        setStep(4)
-        return
-      }
-
-      const supabase = createClient()
-
-      // 1. Primary insert into live inquiries table
-      const { error: dbError } = await supabase.from('inquiries').insert([
-        {
-          name: formData.name.trim(),
-          email: formData.email.trim(),
-          organisation: formData.organisation.trim() || null,
-          problem: formData.problem.trim(),
-          help_type: formData.help_type || null,
-          timing: formData.timing || null,
-          status: 'new',
-        },
-      ])
-
-      if (dbError) {
-        console.error('Database insert error:', dbError)
-        throw new Error(dbError.message || 'Failed to submit inquiry')
-      }
-
-      // 2. Server-side notification trigger (non-blocking)
-      fetch('/api/inquiries', {
+      const res = await fetch('/api/inquiries', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -114,15 +86,20 @@ export default function LetsTalkPage() {
           timing: formData.timing || null,
           contact_ref_code: formData.contact_ref_code || '',
         }),
-      }).catch((err) => {
-        console.error('Server notification error (non-fatal):', err)
       })
 
-      // 3. Move to success step
-      setStep(4)
+      const data = await res.json().catch(() => ({}))
+
+      if (res.ok && data?.ok === true) {
+        setStep(4)
+      } else {
+        setSubmitError(
+          data?.error || 'Something went wrong. Please try again in a moment.'
+        )
+      }
     } catch (err: any) {
       console.error('Submission failed:', err)
-      setSubmitError(err.message || 'Something went wrong. Please try again.')
+      setSubmitError('Something went wrong. Please try again in a moment.')
     } finally {
       setIsSubmitting(false)
     }
