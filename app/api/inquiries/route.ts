@@ -9,6 +9,8 @@ import {
 import { createAdminClient } from '@/utils/supabase/admin'
 import { sendConfirmationEmail } from '@/lib/confirmation-email'
 
+export const maxDuration = 30
+
 export async function POST(request: Request) {
   try {
     // 1. Size guard: Content-Length header & raw body limit (max 20,000 chars)

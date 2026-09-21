@@ -1,3 +1,5 @@
+import { INQUIRY_RATE_LIMITS } from './inquiries.ts'
+
 export const HELP_OPTIONS = [
   'Operations & systems',
   'Training my team',
@@ -289,7 +291,7 @@ export async function sendConfirmationEmail({
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-      signal: AbortSignal.timeout(8000),
+      signal: AbortSignal.timeout(INQUIRY_RATE_LIMITS.RESEND_TIMEOUT_MS),
     })
 
     const resendData = await resendRes.json().catch(() => ({}))
