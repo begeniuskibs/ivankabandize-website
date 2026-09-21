@@ -195,7 +195,7 @@ P.S. If one of those reads makes you want to argue back - good. That's the conve
       </p>
       
       <p style="font-size: 14px; color: #5A5D70; background-color: #FDF8F1; padding: 14px 16px; border-radius: 8px; border: 1px solid #F5ECDE;">
-        A quick honesty note &ndash; this message is an automatic confirmation. The real reply, from me (a human with opinions), follows within two business days, with a couple of times for a 30-minute call.
+        A quick honesty note - this message is an automatic confirmation. The real reply, from me (a human with opinions), follows within two business days, with a couple of times for a 30-minute call.
       </p>
       
       <div style="margin: 24px 0;">
@@ -208,7 +208,7 @@ P.S. If one of those reads makes you want to argue back - good. That's the conve
       <div style="margin: 24px 0; padding-top: 16px; border-top: 1px solid #f3f4f6;">
         <p style="font-size: 14px; font-weight: 700; color: #232536; margin-bottom: 8px;">What happens next:</p>
         <ol style="padding-left: 20px; margin: 0; font-size: 14px; color: #5A5D70; line-height: 1.6;">
-          <li>I read your enquiry &ndash; every word.</li>
+          <li>I read your enquiry - every word.</li>
           <li>I reply with times that suit a conversation.</li>
           <li>We dig into what&rsquo;s not working. Come as you are; no slides required.</li>
         </ol>
@@ -225,7 +225,7 @@ P.S. If one of those reads makes you want to argue back - good. That's the conve
       </p>
 
       <p style="font-size: 12px; color: #82869C; font-style: italic; margin-top: 24px; padding-top: 16px; border-top: 1px solid #f3f4f6;">
-        P.S. If one of those reads makes you want to argue back &ndash; good. That&rsquo;s the conversation I&rsquo;m hoping for.
+        P.S. If one of those reads makes you want to argue back - good. That&rsquo;s the conversation I&rsquo;m hoping for.
       </p>
     </div>
   `

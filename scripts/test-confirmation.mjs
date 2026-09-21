@@ -71,6 +71,20 @@ for (const ht of testHelpTypes) {
     }
   }
 
+  // e) Neither text nor HTML contains en/em dashes (–, —, &ndash;, &mdash;)
+  const forbiddenDashes = ['–', '—', '&ndash;', '&mdash;']
+  for (const dash of forbiddenDashes) {
+    if (emailData.textContent.includes(dash)) {
+      throw new Error(`Forbidden dash "${dash}" found in textContent for helpType: ${ht}`)
+    }
+    if (emailData.htmlContent.includes(dash)) {
+      throw new Error(`Forbidden dash "${dash}" found in htmlContent for helpType: ${ht}`)
+    }
+    if (emailData.subject.includes(dash)) {
+      throw new Error(`Forbidden dash "${dash}" found in subject for helpType: ${ht}`)
+    }
+  }
+
   console.log(`Help type [${ht}]: Generated valid subject: "${emailData.subject}" -> PASS`)
 }
 
