@@ -15,6 +15,8 @@ interface InquiryRecord {
   created_at: string
   notified_at: string | null
   notify_error: string | null
+  confirmation_sent_at: string | null
+  confirmation_error: string | null
 }
 
 type StatusTab = 'all' | InquiryStatus
@@ -101,6 +103,10 @@ export default function AdminEnquiriesPage() {
         )
         setSelectedInquiry(updated)
         setEditStatus(updated.status)
+        // Notify sidebar to refresh count immediately
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('inquiries-updated'))
+        }
       } else {
         const data = await res.json().catch(() => ({}))
         alert(data.error || 'Failed to update status')
@@ -244,7 +250,7 @@ export default function AdminEnquiriesPage() {
               <div className="divide-y divide-gray-100">
                 {filteredEnquiries.map((inq) => {
                   const isSelected = selectedInquiry?.id === inq.id
-                  const isEmailMissing = !inq.notified_at
+                  const hasEmailError = Boolean(inq.notify_error)
 
                   return (
                     <div
@@ -271,8 +277,8 @@ export default function AdminEnquiriesPage() {
                             {inq.status}
                           </span>
 
-                          {/* Email warning badge */}
-                          {isEmailMissing && (
+                          {/* Email warning badge: ONLY when notify_error is set */}
+                          {hasEmailError && (
                             <span
                               title={inq.notify_error || 'Email notification failed'}
                               className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-red-100 text-red-800 border border-red-200 flex items-center gap-1"
@@ -400,22 +406,24 @@ export default function AdminEnquiriesPage() {
             </div>
 
             {/* Notification Status Alert */}
-            {!selectedInquiry.notified_at ? (
+            {selectedInquiry.notify_error ? (
               <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-red-800">
                   <span>⚠️</span>
-                  <span>Email Notification Not Sent</span>
+                  <span>Email Notification Error</span>
                 </div>
-                {selectedInquiry.notify_error && (
-                  <p className="text-[11px] text-red-700 font-mono break-words">
-                    {selectedInquiry.notify_error}
-                  </p>
-                )}
+                <p className="text-[11px] text-red-700 font-mono break-words">
+                  {selectedInquiry.notify_error}
+                </p>
               </div>
-            ) : (
+            ) : selectedInquiry.notified_at ? (
               <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium flex items-center gap-1.5">
                 <span>✓</span>
                 <span>Notified on {new Date(selectedInquiry.notified_at).toLocaleDateString()}</span>
+              </div>
+            ) : (
+              <div className="p-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-500 font-medium">
+                Not tracked (received before email tracking began)
               </div>
             )}
 
@@ -459,6 +467,25 @@ export default function AdminEnquiriesPage() {
                 </span>
                 <p className="text-gray-700 mt-0.5" title={selectedInquiry.created_at}>
                   {new Date(selectedInquiry.created_at).toLocaleString()} ({formatRelativeTime(selectedInquiry.created_at)})
+                </p>
+              </div>
+
+              <div className="pt-1">
+                <span className="font-bold text-gray-400 uppercase tracking-wider block text-[10px]">
+                  Confirmation Email
+                </span>
+                <p className="text-gray-700 mt-0.5">
+                  {selectedInquiry.confirmation_sent_at ? (
+                    <span className="text-emerald-700 font-medium">
+                      ✓ Sent on {new Date(selectedInquiry.confirmation_sent_at).toLocaleDateString()}
+                    </span>
+                  ) : selectedInquiry.confirmation_error ? (
+                    <span className="text-red-600 font-medium" title={selectedInquiry.confirmation_error}>
+                      ⚠️ {selectedInquiry.confirmation_error}
+                    </span>
+                  ) : (
+                    <span className="text-gray-500">Not sent</span>
+                  )}
                 </p>
               </div>
             </div>

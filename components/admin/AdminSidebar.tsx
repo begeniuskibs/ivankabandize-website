@@ -83,6 +83,32 @@ export default function AdminSidebar() {
     loadUser()
   }, [])
 
+  // Auto-refresh new inquiries count on focus or status update event
+  useEffect(() => {
+    async function refreshInquiriesCount() {
+      try {
+        const supabase = createClient()
+        const { count } = await supabase
+          .from('inquiries')
+          .select('*', { count: 'exact', head: true })
+          .eq('status', 'new')
+
+        if (typeof count === 'number') {
+          setNewInquiriesCount(count)
+        }
+      } catch (err) {
+        console.error('Failed to refresh inquiries count', err)
+      }
+    }
+
+    window.addEventListener('inquiries-updated', refreshInquiriesCount)
+    window.addEventListener('focus', refreshInquiriesCount)
+    return () => {
+      window.removeEventListener('inquiries-updated', refreshInquiriesCount)
+      window.removeEventListener('focus', refreshInquiriesCount)
+    }
+  }, [])
+
   // Close account popover on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
