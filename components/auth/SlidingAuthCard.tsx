@@ -193,9 +193,17 @@ export default function SlidingAuthCard({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#5A5D70] uppercase tracking-wider mb-1 font-sans" htmlFor="card-signin-password">
-                  Password
-                </label>
+                <div className="flex items-center justify-between mb-1">
+                  <label className="block text-xs font-semibold text-[#5A5D70] uppercase tracking-wider font-sans" htmlFor="card-signin-password">
+                    Password
+                  </label>
+                  <Link
+                    href="/forgot-password"
+                    className="text-xs font-semibold text-[#EF5B45] hover:underline font-sans"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
                 <input
                   id="card-signin-password"
                   name="password"
@@ -204,6 +212,18 @@ export default function SlidingAuthCard({
                   placeholder="••••••••"
                   className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
+              </div>
+
+              <div className="flex items-center">
+                <label className="flex items-center gap-2 cursor-pointer text-xs text-[#5A5D70] font-sans select-none" htmlFor="card-signin-remember">
+                  <input
+                    id="card-signin-remember"
+                    name="remember"
+                    type="checkbox"
+                    className="rounded border-[#F5ECDE] text-[#232536] focus:ring-[#232536] h-4 w-4 accent-[#232536] cursor-pointer"
+                  />
+                  <span>Keep me signed in</span>
+                </label>
               </div>
 
               <button
