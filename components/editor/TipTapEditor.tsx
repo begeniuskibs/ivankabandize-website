@@ -11,6 +11,7 @@ import { ReactRenderer } from '@tiptap/react'
 import { useEffect, useRef, useState } from 'react'
 import { Video, Gallery, YouTube, Callout, validateYouTubeUrl } from './customNodes'
 import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
+import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 
 export function sanitizeUrl(input: string): string | null {
   let url = (input || '').trim()
@@ -49,6 +50,12 @@ export default function TipTapEditor({
   const [wordCount, setWordCount] = useState(0)
   const [isEditingLink, setIsEditingLink] = useState(false)
   const [linkInputVal, setLinkInputVal] = useState('')
+  const [singleUpload, setSingleUpload] = useState<{
+    filename: string
+    percent: number
+    loadedText?: string
+    totalText?: string
+  } | null>(null)
 
   const editor = useEditor({
     extensions: [
@@ -364,27 +371,32 @@ export default function TipTapEditor({
     const file = e.target.files?.[0]
     if (!file || !editor) return
 
+    setSingleUpload({
+      filename: file.name,
+      percent: 0,
+      loadedText: '0 B',
+      totalText: formatBytes(file.size),
+    })
+
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+      const res = await uploadFileDirect({
+        file,
+        bucket: 'post-images',
+        onProgress: (p) => {
+          setSingleUpload({
+            filename: file.name,
+            percent: p.percent,
+            loadedText: p.formattedLoaded,
+            totalText: p.formattedTotal,
+          })
+        },
       })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (data.url) {
-          editor.chain().focus().setImage({ src: data.url, alt: file.name }).run()
-        }
-      } else {
-        alert('Failed to upload image')
-      }
-    } catch (err) {
-      console.error('Image upload error:', err)
-      alert('Error uploading image to server')
+      editor.chain().focus().setImage({ src: res.url, alt: file.name }).run()
+    } catch (err: any) {
+      console.error('Image direct upload error:', err)
+      alert(`Failed to upload image: ${err?.message || 'Unknown error'}`)
     } finally {
+      setSingleUpload(null)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -403,35 +415,38 @@ export default function TipTapEditor({
     const file = e.target.files?.[0]
     if (!file || !editor) return
 
+    setSingleUpload({
+      filename: file.name,
+      percent: 0,
+      loadedText: '0 B',
+      totalText: formatBytes(file.size),
+    })
+
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('bucket', 'post-videos')
-
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+      const res = await uploadFileDirect({
+        file,
+        bucket: 'post-videos',
+        onProgress: (p) => {
+          setSingleUpload({
+            filename: file.name,
+            percent: p.percent,
+            loadedText: p.formattedLoaded,
+            totalText: p.formattedTotal,
+          })
+        },
       })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (data.url) {
-          editor.chain().focus().insertContent({
-            type: 'video',
-            attrs: {
-              url: data.url,
-              caption: '',
-            },
-          }).run()
-        }
-      } else {
-        const errData = await res.json().catch(() => null)
-        alert(`Failed to upload video: ${errData?.error || 'Unknown error'}`)
-      }
-    } catch (err) {
-      console.error('Video upload error:', err)
-      alert('Error uploading video to server')
+      editor.chain().focus().insertContent({
+        type: 'video',
+        attrs: {
+          url: res.url,
+          caption: '',
+        },
+      }).run()
+    } catch (err: any) {
+      console.error('Video direct upload error:', err)
+      alert(`Failed to upload video: ${err?.message || 'Unknown error'}`)
     } finally {
+      setSingleUpload(null)
       if (videoInputRef.current) {
         videoInputRef.current.value = ''
       }
@@ -1023,6 +1038,18 @@ export default function TipTapEditor({
           )}
         </div>
       </BubbleMenu>
+
+      {/* Single Upload Progress Card */}
+      {singleUpload && (
+        <div className="py-6 px-4 bg-gray-50/80 border-b border-gray-200 flex flex-col items-center justify-center">
+          <UploadProgressCard
+            filename={singleUpload.filename}
+            percent={singleUpload.percent}
+            loadedText={singleUpload.loadedText}
+            totalText={singleUpload.totalText}
+          />
+        </div>
+      )}
 
       {/* Editor Body */}
       <EditorContent editor={editor} />

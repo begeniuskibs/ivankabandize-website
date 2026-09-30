@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
+import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 
 export interface GalleryImageEntry {
   url: string
@@ -64,23 +65,93 @@ export function getYouTubeEmbedUrl(input: string): string | null {
 function VideoComponent({ node, updateAttributes, deleteNode }: any) {
   const url = node.attrs.url || ''
   const caption = node.attrs.caption || ''
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploadProgress, setUploadProgress] = useState<{
+    filename: string
+    percent: number
+    loadedText?: string
+    totalText?: string
+  } | null>(null)
+
+  const handleVideoFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadProgress({
+      filename: file.name,
+      percent: 0,
+      loadedText: '0 B',
+      totalText: formatBytes(file.size),
+    })
+
+    try {
+      const res = await uploadFileDirect({
+        file,
+        bucket: 'post-videos',
+        onProgress: (p) => {
+          setUploadProgress({
+            filename: file.name,
+            percent: p.percent,
+            loadedText: p.formattedLoaded,
+            totalText: p.formattedTotal,
+          })
+        },
+      })
+      updateAttributes({ url: res.url })
+    } catch (err: any) {
+      console.error('Video direct upload error:', err)
+      alert(`Video upload failed: ${err?.message || 'Unknown error'}`)
+    } finally {
+      setUploadProgress(null)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
 
   return (
     <NodeViewWrapper className="video-node-view my-6 p-3 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="video/*"
+        onChange={handleVideoFile}
+        className="hidden"
+      />
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-200/80 text-xs text-gray-500">
         <span className="font-semibold text-gray-700 flex items-center gap-1.5">
           <span>Video Block</span>
         </span>
-        <button
-          type="button"
-          onClick={deleteNode}
-          className="text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50 text-xs transition"
-          title="Remove video"
-        >
-          Remove
-        </button>
+        <div className="flex items-center gap-2">
+          {!uploadProgress && (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="text-blue-600 hover:text-blue-800 px-2 py-0.5 rounded hover:bg-blue-50 text-xs font-medium transition"
+            >
+              {url ? 'Replace Video' : 'Upload Video'}
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={deleteNode}
+            className="text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50 text-xs transition"
+            title="Remove video"
+          >
+            Remove
+          </button>
+        </div>
       </div>
-      {url ? (
+      {uploadProgress ? (
+        <div className="p-6 flex flex-col items-center justify-center">
+          <UploadProgressCard
+            filename={uploadProgress.filename}
+            percent={uploadProgress.percent}
+            loadedText={uploadProgress.loadedText}
+            totalText={uploadProgress.totalText}
+          />
+        </div>
+      ) : url ? (
         <video
           src={url}
           controls
@@ -88,8 +159,15 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
           className="w-full rounded-xl border border-gray-200 bg-black/5"
         />
       ) : (
-        <div className="p-8 text-center text-sm text-gray-400 bg-gray-100 rounded-xl">
-          No video URL provided
+        <div className="p-8 text-center text-sm text-gray-400 bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-2">
+          <span>No video URL provided</span>
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="mt-1 px-3 py-1 bg-[#EF5B45] text-white rounded-lg text-xs font-medium hover:bg-[#d84a35] transition"
+          >
+            Upload Video File
+          </button>
         </div>
       )}
       <input
@@ -104,57 +182,98 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
 }
 
 // React NodeView: Gallery
+interface ActiveUploadItem {
+  id: string
+  filename: string
+  percent: number
+  loadedText?: string
+  totalText?: string
+}
+
 function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
   const images: GalleryImageEntry[] = Array.isArray(node.attrs.images) ? node.attrs.images : []
   const caption = node.attrs.caption || ''
-  const fileInputRef = React.useRef<HTMLInputElement>(null)
-  const [uploading, setUploading] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [activeUploads, setActiveUploads] = useState<Record<string, ActiveUploadItem>>({})
+  const imagesRef = useRef(images)
 
-  const handleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    imagesRef.current = images
+  }, [images])
+
+  const handleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
-    setUploading(true)
-    const newEntries: GalleryImageEntry[] = []
+    const fileList = Array.from(files)
+    const initialUploads: Record<string, ActiveUploadItem> = {}
+    const fileTasks: { id: string; file: File }[] = []
 
-    try {
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i]
-        const formData = new FormData()
-        formData.append('file', file)
-        formData.append('bucket', 'post-images')
+    fileList.forEach((file, index) => {
+      const id = `${Date.now()}-${index}-${Math.random().toString(36).substring(2, 7)}`
+      initialUploads[id] = {
+        id,
+        filename: file.name,
+        percent: 0,
+        loadedText: '0 B',
+        totalText: formatBytes(file.size),
+      }
+      fileTasks.push({ id, file })
+    })
 
-        const res = await fetch('/api/admin/upload', {
-          method: 'POST',
-          body: formData,
-        })
+    setActiveUploads((prev) => ({ ...prev, ...initialUploads }))
 
-        if (res.ok) {
-          const data = await res.json()
-          if (data.url) {
-            newEntries.push({
-              url: data.url,
+    // Fire all uploads concurrently directly to Supabase storage
+    fileTasks.forEach(({ id, file }) => {
+      uploadFileDirect({
+        file,
+        bucket: 'post-images',
+        onProgress: (p) => {
+          setActiveUploads((prev) => {
+            if (!prev[id]) return prev
+            return {
+              ...prev,
+              [id]: {
+                ...prev[id],
+                percent: p.percent,
+                loadedText: p.formattedLoaded,
+                totalText: p.formattedTotal,
+              },
+            }
+          })
+        },
+      })
+        .then((res) => {
+          // 1. Remove this completed file's progress card
+          setActiveUploads((prev) => {
+            const next = { ...prev }
+            delete next[id]
+            return next
+          })
+          // 2. Add completed thumbnail into gallery immediately in place
+          const nextImages = [
+            ...imagesRef.current,
+            {
+              url: res.url,
               caption: file.name.replace(/\.[^/.]+$/, ''),
-            })
-          }
-        } else {
-          console.error(`Failed to upload ${file.name}`)
-        }
-      }
-
-      if (newEntries.length > 0) {
-        updateAttributes({
-          images: [...images, ...newEntries],
+            },
+          ]
+          imagesRef.current = nextImages
+          updateAttributes({ images: nextImages })
         })
-      }
-    } catch (err) {
-      console.error('Gallery image upload error:', err)
-      alert('Error uploading images to gallery')
-    } finally {
-      setUploading(false)
-      if (fileInputRef.current) {
-        fileInputRef.current.value = ''
-      }
+        .catch((err: any) => {
+          console.error(`Gallery direct upload failed for ${file.name}:`, err)
+          setActiveUploads((prev) => {
+            const next = { ...prev }
+            delete next[id]
+            return next
+          })
+          alert(`Failed to upload ${file.name}: ${err?.message || 'Upload error'}`)
+        })
+    })
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
     }
   }
 
@@ -174,6 +293,7 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
     updateAttributes({ images: nextImages })
   }
 
+  const hasActiveUploads = Object.keys(activeUploads).length > 0
   const gridClass =
     images.length === 1
       ? 'grid-cols-1'
@@ -200,18 +320,17 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
           <span>Gallery Block ({images.length} {images.length === 1 ? 'image' : 'images'})</span>
         </span>
         <div className="flex items-center gap-2">
-          {uploading && (
-            <span className="text-xs text-blue-600 font-medium animate-pulse">
-              Uploading...
+          {hasActiveUploads && (
+            <span className="text-xs text-[#EF5B45] font-medium animate-pulse">
+              Uploading {Object.keys(activeUploads).length} {Object.keys(activeUploads).length === 1 ? 'image' : 'images'}...
             </span>
           )}
           <button
             type="button"
-            disabled={uploading}
             onClick={() => fileInputRef.current?.click()}
-            className="text-blue-600 hover:text-blue-800 disabled:opacity-50 px-2 py-0.5 rounded hover:bg-blue-50 text-xs font-medium transition"
+            className="text-blue-600 hover:text-blue-800 px-2 py-0.5 rounded hover:bg-blue-50 text-xs font-medium transition"
           >
-            + Add Image
+            + Add Images
           </button>
           <button
             type="button"
@@ -224,13 +343,26 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
         </div>
       </div>
 
-      {images.length === 0 ? (
-        <div className="p-8 text-center text-sm text-gray-400 bg-gray-100 rounded-xl">
-          {uploading
-            ? 'Uploading selected images...'
-            : 'Gallery is empty. Click "+ Add Image" above to upload photos.'}
+      {/* Multi-upload circular progress rings: side by side in a wrapping row */}
+      {hasActiveUploads && (
+        <div className="flex flex-wrap gap-3 items-center justify-start my-3 p-3 bg-gray-100/80 rounded-xl border border-gray-200/80">
+          {Object.values(activeUploads).map((item) => (
+            <UploadProgressCard
+              key={item.id}
+              filename={item.filename}
+              percent={item.percent}
+              loadedText={item.loadedText}
+              totalText={item.totalText}
+            />
+          ))}
         </div>
-      ) : (
+      )}
+
+      {images.length === 0 && !hasActiveUploads ? (
+        <div className="p-8 text-center text-sm text-gray-400 bg-gray-100 rounded-xl">
+          Gallery is empty. Click "+ Add Images" above to upload photos.
+        </div>
+      ) : images.length > 0 ? (
         <div className={`grid ${gridClass} gap-2.5`}>
           {images.map((img, i) => (
             <div key={i} className="relative group/img rounded-xl overflow-hidden border border-gray-200 bg-white aspect-square shadow-sm">
@@ -268,7 +400,7 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
             </div>
           ))}
         </div>
-      )}
+      ) : null}
 
       <input
         type="text"
