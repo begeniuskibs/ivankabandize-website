@@ -7,7 +7,11 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
+import { ReactRenderer } from '@tiptap/react'
 import { useEffect, useRef, useState } from 'react'
+import { Video, Gallery, YouTube, Callout, validateYouTubeUrl } from './customNodes'
+import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
+import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 
 export function sanitizeUrl(input: string): string | null {
   let url = (input || '').trim()
@@ -29,6 +33,25 @@ export function sanitizeUrl(input: string): string | null {
   }
 }
 
+export function YoutubeIcon({ className = 'w-4 h-4', ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <polygon points="10 15 15 12 10 9 10 15" fill="currentColor" />
+    </svg>
+  )
+}
+
 interface TipTapEditorProps {
   content?: Record<string, unknown> | string
   onChange: (json: Record<string, unknown>) => void
@@ -41,10 +64,85 @@ export default function TipTapEditor({
   placeholder = 'Write your post content here...',
 }: TipTapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
   const linkInputRef = useRef<HTMLInputElement>(null)
   const [wordCount, setWordCount] = useState(0)
   const [isEditingLink, setIsEditingLink] = useState(false)
   const [linkInputVal, setLinkInputVal] = useState('')
+  const [singleUpload, setSingleUpload] = useState<{
+    filename: string
+    percent: number
+    loadedText?: string
+    totalText?: string
+  } | null>(null)
+
+  const handleToggleHeading1 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 1 }).run()
+  const handleToggleHeading2 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 2 }).run()
+  const handleToggleHeading3 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 3 }).run()
+  const handleToggleBulletList = (ed?: any) => (ed || editor)?.chain().focus().toggleBulletList().run()
+  const handleToggleOrderedList = (ed?: any) => (ed || editor)?.chain().focus().toggleOrderedList().run()
+  const handleToggleQuote = (ed?: any) => (ed || editor)?.chain().focus().toggleBlockquote().run()
+  const handleToggleCallout = (ed?: any) => (ed || editor)?.chain().focus().toggleCallout().run()
+  const handleToggleCode = (ed?: any) => (ed || editor)?.chain().focus().toggleCodeBlock().run()
+  const handleTriggerImageUpload = () => fileInputRef.current?.click()
+  const handleTriggerVideoUpload = () => videoInputRef.current?.click()
+
+  function handleInsertImageUrl(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    const url = window.prompt('Enter image URL:')
+    if (url && url.trim()) {
+      targetEditor.chain().focus().setImage({ src: url.trim() }).run()
+    }
+  }
+
+  function handleInsertVideoUrl(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    const url = window.prompt('Enter video URL (e.g. Supabase storage or durable mp4 host):')
+    if (url && url.trim()) {
+      const caption = window.prompt('Enter video caption (optional):') || ''
+      targetEditor.chain().focus().insertContent({
+        type: 'video',
+        attrs: {
+          url: url.trim(),
+          caption: caption.trim(),
+        },
+      }).run()
+    }
+  }
+
+  function handleInsertGallery(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    targetEditor.chain().focus().insertContent({
+      type: 'gallery',
+      attrs: {
+        images: [],
+        caption: '',
+      },
+    }).run()
+  }
+
+  function handleInsertYouTube(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    const url = window.prompt('Enter YouTube URL (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...):')
+    if (!url || !url.trim()) return
+
+    const validation = validateYouTubeUrl(url.trim())
+    if (!validation.valid) {
+      alert(validation.error || 'Invalid YouTube URL. Only youtube.com and youtu.be addresses are allowed.')
+      return
+    }
+
+    targetEditor.chain().focus().insertContent({
+      type: 'youtube',
+      attrs: {
+        url: url.trim(),
+      },
+    }).run()
+  }
 
   const editor = useEditor({
     extensions: [
@@ -75,12 +173,201 @@ export default function TipTapEditor({
         },
       }),
       CharacterCount.configure(),
+      Video,
+      Gallery,
+      YouTube,
+      Callout,
+      SlashCommands.configure({
+        suggestion: {
+          char: '/',
+          items: ({ query }: { query: string }) => {
+            const allItems: SlashItem[] = [
+              {
+                title: 'Heading 1',
+                icon: 'H1',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleHeading1(ed)
+                },
+              },
+              {
+                title: 'Heading 2',
+                icon: 'H2',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleHeading2(ed)
+                },
+              },
+              {
+                title: 'Heading 3',
+                icon: 'H3',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleHeading3(ed)
+                },
+              },
+              {
+                title: 'Bullet list',
+                icon: '•',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleBulletList(ed)
+                },
+              },
+              {
+                title: 'Ordered list',
+                icon: '1.',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleOrderedList(ed)
+                },
+              },
+              {
+                title: 'Quote',
+                icon: '”',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleQuote(ed)
+                },
+              },
+              {
+                title: 'Callout',
+                icon: '💬',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleCallout(ed)
+                },
+              },
+              {
+                title: 'Code',
+                icon: '</>',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleCode(ed)
+                },
+              },
+              {
+                title: 'Image (upload)',
+                icon: '📷',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleTriggerImageUpload()
+                },
+              },
+              {
+                title: 'Image (URL)',
+                icon: '🔗',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertImageUrl(ed)
+                },
+              },
+              {
+                title: 'Video (upload)',
+                icon: '🎥',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleTriggerVideoUpload()
+                },
+              },
+              {
+                title: 'Video (URL)',
+                icon: '🎬',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertVideoUrl(ed)
+                },
+              },
+              {
+                title: 'Gallery',
+                icon: '🖼️',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertGallery(ed)
+                },
+              },
+              {
+                title: 'YouTube',
+                icon: <YoutubeIcon className="w-3.5 h-3.5 text-red-500" />,
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertYouTube(ed)
+                },
+              },
+            ]
+            const q = (query || '').toLowerCase().trim()
+            if (!q) return allItems
+            return allItems.filter((item) => item.title.toLowerCase().includes(q))
+          },
+          render: () => {
+            let component: ReactRenderer<any> | null = null
+            let popup: HTMLDivElement | null = null
+
+            return {
+              onStart: (props: any) => {
+                component = new ReactRenderer(SlashMenuList, {
+                  props,
+                  editor: props.editor,
+                })
+
+                popup = document.createElement('div')
+                popup.className = 'slash-command-popup-container'
+                popup.style.position = 'fixed'
+                popup.style.zIndex = '99999'
+                document.body.appendChild(popup)
+                popup.appendChild(component.element)
+
+                const rect = props.clientRect?.()
+                if (rect && popup) {
+                  const top = rect.bottom + 8
+                  const left = Math.min(window.innerWidth - 275, Math.max(16, rect.left))
+                  popup.style.top = `${top}px`
+                  popup.style.left = `${left}px`
+                }
+              },
+
+              onUpdate: (props: any) => {
+                component?.updateProps(props)
+
+                const rect = props.clientRect?.()
+                if (rect && popup) {
+                  const top = rect.bottom + 8
+                  const left = Math.min(window.innerWidth - 275, Math.max(16, rect.left))
+                  popup.style.top = `${top}px`
+                  popup.style.left = `${left}px`
+                }
+              },
+
+              onKeyDown: (props: any) => {
+                if (props.event.key === 'Escape') {
+                  if (popup) {
+                    popup.remove()
+                    popup = null
+                  }
+                  component?.destroy()
+                  component = null
+                  return true
+                }
+                return component?.ref?.onKeyDown(props) || false
+              },
+
+              onExit: () => {
+                if (popup) {
+                  popup.remove()
+                  popup = null
+                }
+                component?.destroy()
+                component = null
+              },
+            }
+          },
+        },
+      }),
     ],
     content: typeof content === 'object' && content !== null ? content : {},
     editorProps: {
       attributes: {
-        class:
-          'min-h-[380px] focus:outline-none p-6 text-gray-900',
+        class: 'min-h-[380px] focus:outline-none p-6 text-gray-900',
       },
       handleKeyDown: (view, event) => {
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
@@ -177,40 +464,83 @@ export default function TipTapEditor({
     const file = e.target.files?.[0]
     if (!file || !editor) return
 
+    setSingleUpload({
+      filename: file.name,
+      percent: 0,
+      loadedText: '0 B',
+      totalText: formatBytes(file.size),
+    })
+
     try {
-      const formData = new FormData()
-      formData.append('file', file)
-
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+      const res = await uploadFileDirect({
+        file,
+        bucket: 'post-images',
+        onProgress: (p) => {
+          setSingleUpload({
+            filename: file.name,
+            percent: p.percent,
+            loadedText: p.formattedLoaded,
+            totalText: p.formattedTotal,
+          })
+        },
       })
-
-      if (res.ok) {
-        const data = await res.json()
-        if (data.url) {
-          editor.chain().focus().setImage({ src: data.url, alt: file.name }).run()
-        }
-      } else {
-        alert('Failed to upload image')
-      }
-    } catch (err) {
-      console.error('Image upload error:', err)
-      alert('Error uploading image to server')
+      editor.chain().focus().setImage({ src: res.url, alt: file.name }).run()
+    } catch (err: any) {
+      console.error('Image direct upload error:', err)
+      alert(`Failed to upload image: ${err?.message || 'Unknown error'}`)
     } finally {
+      setSingleUpload(null)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
     }
   }
 
-  function handleInsertImageUrl() {
-    if (!editor) return
-    const url = window.prompt('Enter image URL:')
-    if (url && url.trim()) {
-      editor.chain().focus().setImage({ src: url.trim() }).run()
+
+
+  async function handleVideoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !editor) return
+
+    setSingleUpload({
+      filename: file.name,
+      percent: 0,
+      loadedText: '0 B',
+      totalText: formatBytes(file.size),
+    })
+
+    try {
+      const res = await uploadFileDirect({
+        file,
+        bucket: 'post-videos',
+        onProgress: (p) => {
+          setSingleUpload({
+            filename: file.name,
+            percent: p.percent,
+            loadedText: p.formattedLoaded,
+            totalText: p.formattedTotal,
+          })
+        },
+      })
+      editor.chain().focus().insertContent({
+        type: 'video',
+        attrs: {
+          url: res.url,
+          caption: '',
+        },
+      }).run()
+    } catch (err: any) {
+      console.error('Video direct upload error:', err)
+      alert(`Failed to upload video: ${err?.message || 'Unknown error'}`)
+    } finally {
+      setSingleUpload(null)
+      if (videoInputRef.current) {
+        videoInputRef.current.value = ''
+      }
     }
   }
+
+
 
   if (!editor) {
     return (
@@ -265,19 +595,60 @@ export default function TipTapEditor({
           margin-bottom: 1.5rem;
           font-size: 1.125rem;
         }
+        /* Restyled Quote (blockquote) */
         .tiptap-editor-scope .ProseMirror blockquote {
-          border-left: 4px solid #EF5B45;
-          padding-left: 1.5rem;
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
+          text-align: center;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 1.5;
+          border-left: none;
+          background-color: transparent;
+          padding: 8px 24px;
           margin-top: 1.5rem;
           margin-bottom: 1.5rem;
           color: #232536;
-          background-color: #FDF8F1;
-          border-top-right-radius: 1rem;
-          border-bottom-right-radius: 1rem;
-          font-size: 1.125rem;
+          position: relative;
+        }
+        .tiptap-editor-scope .ProseMirror blockquote::before {
+          content: "";
+          display: block;
+          width: 22px;
+          height: 22px;
+          margin: 0 auto 0.75rem auto;
+          background-color: #EF5B45;
+          -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3Cpath d='M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3Cpath d='M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+          mask-size: contain;
+          -webkit-mask-size: contain;
+        }
+        .tiptap-editor-scope .ProseMirror blockquote p {
+          text-align: center;
+          font-size: 20px;
           font-weight: 500;
+          line-height: 1.5;
+          margin-bottom: 0.5rem;
+        }
+        /* Callout Block */
+        .tiptap-editor-scope .ProseMirror div[data-type="callout"],
+        .tiptap-editor-scope .ProseMirror .callout-block {
+          background-color: #FAECE7 !important;
+          border: 1px solid #D85A30 !important;
+          border-radius: 10px !important;
+          padding: 16px 18px !important;
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+          color: #1f2937;
+        }
+        .tiptap-editor-scope .ProseMirror div[data-type="callout"] p,
+        .tiptap-editor-scope .ProseMirror .callout-block p {
+          color: #1f2937;
+          font-size: 1.125rem;
+          line-height: 1.625;
+          margin-bottom: 0.75rem;
+        }
+        .tiptap-editor-scope .ProseMirror div[data-type="callout"] p:last-child,
+        .tiptap-editor-scope .ProseMirror .callout-block p:last-child {
+          margin-bottom: 0;
         }
         .tiptap-editor-scope .ProseMirror ul {
           list-style-type: disc;
@@ -361,12 +732,22 @@ export default function TipTapEditor({
           pointer-events: none;
         }
       `}</style>
+
       {/* Hidden file input for image upload */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={handleImageUpload}
+        className="hidden"
+      />
+
+      {/* Hidden file input for video upload */}
+      <input
+        ref={videoInputRef}
+        type="file"
+        accept="video/mp4,video/webm,video/ogg,video/*"
+        onChange={handleVideoUpload}
         className="hidden"
       />
 
@@ -394,7 +775,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() => handleToggleHeading1()}
           className={`px-2.5 py-1 rounded font-bold transition ${
             editor.isActive('heading', { level: 1 }) ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -404,7 +785,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() => handleToggleHeading2()}
           className={`px-2.5 py-1 rounded font-bold transition ${
             editor.isActive('heading', { level: 2 }) ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -414,7 +795,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() => handleToggleHeading3()}
           className={`px-2.5 py-1 rounded font-bold transition ${
             editor.isActive('heading', { level: 3 }) ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -425,7 +806,7 @@ export default function TipTapEditor({
         <div className="w-[1px] h-5 bg-gray-300 mx-1.5 self-center" />
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={() => handleToggleBulletList()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('bulletList') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -434,7 +815,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={() => handleToggleOrderedList()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('orderedList') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -443,16 +824,27 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          onClick={() => handleToggleQuote()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('blockquote') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
+          title="Centered Quote"
         >
           Quote
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          onClick={() => handleToggleCallout()}
+          className={`px-2.5 py-1 rounded transition text-xs font-medium ${
+            editor.isActive('callout') ? 'bg-[#D85A30] text-white' : 'hover:bg-gray-200 text-gray-700'
+          }`}
+          title="Callout Box"
+        >
+          Callout
+        </button>
+        <button
+          type="button"
+          onClick={() => handleToggleCode()}
           className={`px-2.5 py-1 rounded font-mono transition text-xs font-medium ${
             editor.isActive('codeBlock') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -463,7 +855,7 @@ export default function TipTapEditor({
         {/* Insert Image Controls */}
         <button
           type="button"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleTriggerImageUpload}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
           title="Upload image into post body"
         >
@@ -471,11 +863,49 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={handleInsertImageUrl}
+          onClick={() => handleInsertImageUrl()}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700"
           title="Insert image by web URL"
         >
           Image URL
+        </button>
+        <div className="w-[1px] h-5 bg-gray-300 mx-1.5 self-center" />
+        {/* Insert Video Controls */}
+        <button
+          type="button"
+          onClick={handleTriggerVideoUpload}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          title="Upload video into post body"
+        >
+          <span>🎥 Upload Video</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => handleInsertVideoUrl()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700"
+          title="Insert video by URL"
+        >
+          Video URL
+        </button>
+        <div className="w-[1px] h-5 bg-gray-300 mx-1.5 self-center" />
+        {/* Insert Gallery Control */}
+        <button
+          type="button"
+          onClick={() => handleInsertGallery()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          title="Insert image gallery"
+        >
+          <span>🖼️ Gallery</span>
+        </button>
+        {/* Insert YouTube Control */}
+        <button
+          type="button"
+          onClick={() => handleInsertYouTube()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
+          title="Insert YouTube embed"
+        >
+          <YoutubeIcon className="w-3.5 h-3.5 text-red-600" />
+          <span>YouTube</span>
         </button>
       </div>
 
@@ -595,6 +1025,17 @@ export default function TipTapEditor({
               >
                 Quote
               </button>
+              <button
+                type="button"
+                onClick={handleToggleCallout}
+                aria-label="Callout"
+                aria-pressed={editor.isActive('callout')}
+                className={`px-2 py-1 rounded transition ${
+                  editor.isActive('callout') ? 'bg-white text-black' : 'hover:bg-white/15 text-gray-200'
+                }`}
+              >
+                Callout
+              </button>
               <div className="w-[1px] h-4 bg-white/20 mx-0.5 self-center" />
               {editor.isActive('link') ? (
                 <div className="flex items-center gap-1">
@@ -637,6 +1078,18 @@ export default function TipTapEditor({
           )}
         </div>
       </BubbleMenu>
+
+      {/* Single Upload Progress Card */}
+      {singleUpload && (
+        <div className="py-6 px-4 bg-gray-50/80 border-b border-gray-200 flex flex-col items-center justify-center">
+          <UploadProgressCard
+            filename={singleUpload.filename}
+            percent={singleUpload.percent}
+            loadedText={singleUpload.loadedText}
+            totalText={singleUpload.totalText}
+          />
+        </div>
+      )}
 
       {/* Editor Body */}
       <EditorContent editor={editor} />

@@ -19,11 +19,7 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const requestedBucket = formData.get('bucket') as string | null
-    const isVideo = file.type.startsWith('video/') || requestedBucket === 'post-videos'
-    const bucket = requestedBucket || (isVideo ? 'post-videos' : 'post-images')
-
-    const ext = file.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg')
+    const ext = file.name.split('.').pop() || 'mp4'
     const cleanFileName = file.name
       .replace(/\.[^/.]+$/, '')
       .toLowerCase()
@@ -32,9 +28,9 @@ export async function POST(request: NextRequest) {
     const path = `${Date.now()}-${cleanFileName || 'upload'}.${ext}`
 
     const { data, error: uploadError } = await supabase.storage
-      .from(bucket)
+      .from('post-videos')
       .upload(path, buffer, {
-        contentType: file.type || (isVideo ? 'video/mp4' : 'image/jpeg'),
+        contentType: file.type || 'video/mp4',
         upsert: true,
       })
 
@@ -44,9 +40,9 @@ export async function POST(request: NextRequest) {
 
     const {
       data: { publicUrl },
-    } = supabase.storage.from(bucket).getPublicUrl(data.path)
+    } = supabase.storage.from('post-videos').getPublicUrl(data.path)
 
-    return NextResponse.json({ url: publicUrl, path: data.path, bucket }, { status: 201 })
+    return NextResponse.json({ url: publicUrl, path: data.path, bucket: 'post-videos' }, { status: 201 })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Upload failed'
     return NextResponse.json({ error: message }, { status: 500 })
