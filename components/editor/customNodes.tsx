@@ -107,14 +107,55 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
 function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
   const images: GalleryImageEntry[] = Array.isArray(node.attrs.images) ? node.attrs.images : []
   const caption = node.attrs.caption || ''
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [uploading, setUploading] = useState(false)
 
-  const handleAddImage = () => {
-    const url = window.prompt('Enter image URL for gallery:')
-    if (!url || !url.trim()) return
-    const imgCaption = window.prompt('Enter image caption/alt (optional):') || ''
-    updateAttributes({
-      images: [...images, { url: url.trim(), caption: imgCaption.trim() }],
-    })
+  const handleFilesUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+
+    setUploading(true)
+    const newEntries: GalleryImageEntry[] = []
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i]
+        const formData = new FormData()
+        formData.append('file', file)
+        formData.append('bucket', 'post-images')
+
+        const res = await fetch('/api/admin/upload', {
+          method: 'POST',
+          body: formData,
+        })
+
+        if (res.ok) {
+          const data = await res.json()
+          if (data.url) {
+            newEntries.push({
+              url: data.url,
+              caption: file.name.replace(/\.[^/.]+$/, ''),
+            })
+          }
+        } else {
+          console.error(`Failed to upload ${file.name}`)
+        }
+      }
+
+      if (newEntries.length > 0) {
+        updateAttributes({
+          images: [...images, ...newEntries],
+        })
+      }
+    } catch (err) {
+      console.error('Gallery image upload error:', err)
+      alert('Error uploading images to gallery')
+    } finally {
+      setUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
   const handleRemoveImage = (indexToRemove: number) => {
@@ -144,15 +185,31 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
 
   return (
     <NodeViewWrapper className="gallery-node-view my-6 p-3 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
+      {/* Hidden native multi-file input */}
+      <input
+        ref={fileInputRef}
+        type="file"
+        multiple
+        accept="image/*"
+        onChange={handleFilesUpload}
+        className="hidden"
+      />
+
       <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-200/80 text-xs text-gray-500">
         <span className="font-semibold text-gray-700 flex items-center gap-1.5">
           <span>Gallery Block ({images.length} {images.length === 1 ? 'image' : 'images'})</span>
         </span>
         <div className="flex items-center gap-2">
+          {uploading && (
+            <span className="text-xs text-blue-600 font-medium animate-pulse">
+              Uploading...
+            </span>
+          )}
           <button
             type="button"
-            onClick={handleAddImage}
-            className="text-blue-600 hover:text-blue-800 px-2 py-0.5 rounded hover:bg-blue-50 text-xs font-medium transition"
+            disabled={uploading}
+            onClick={() => fileInputRef.current?.click()}
+            className="text-blue-600 hover:text-blue-800 disabled:opacity-50 px-2 py-0.5 rounded hover:bg-blue-50 text-xs font-medium transition"
           >
             + Add Image
           </button>
@@ -169,7 +226,9 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
 
       {images.length === 0 ? (
         <div className="p-8 text-center text-sm text-gray-400 bg-gray-100 rounded-xl">
-          Gallery is empty. Click "+ Add Image" above to add image URLs.
+          {uploading
+            ? 'Uploading selected images...'
+            : 'Gallery is empty. Click "+ Add Image" above to upload photos.'}
         </div>
       ) : (
         <div className={`grid ${gridClass} gap-2.5`}>

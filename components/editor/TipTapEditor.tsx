@@ -7,8 +7,10 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
+import { ReactRenderer } from '@tiptap/react'
 import { useEffect, useRef, useState } from 'react'
 import { Video, Gallery, YouTube, Callout, validateYouTubeUrl } from './customNodes'
+import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
 
 export function sanitizeUrl(input: string): string | null {
   let url = (input || '').trim()
@@ -81,6 +83,186 @@ export default function TipTapEditor({
       Gallery,
       YouTube,
       Callout,
+      SlashCommands.configure({
+        suggestion: {
+          char: '/',
+          items: ({ query }: { query: string }) => {
+            const allItems: SlashItem[] = [
+              {
+                title: 'Heading 1',
+                icon: 'H1',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).setHeading({ level: 1 }).run()
+                },
+              },
+              {
+                title: 'Heading 2',
+                icon: 'H2',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).setHeading({ level: 2 }).run()
+                },
+              },
+              {
+                title: 'Heading 3',
+                icon: 'H3',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run()
+                },
+              },
+              {
+                title: 'Bullet list',
+                icon: '•',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).toggleBulletList().run()
+                },
+              },
+              {
+                title: 'Ordered list',
+                icon: '1.',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).toggleOrderedList().run()
+                },
+              },
+              {
+                title: 'Quote',
+                icon: '”',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).toggleBlockquote().run()
+                },
+              },
+              {
+                title: 'Callout',
+                icon: '💬',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).toggleCallout().run()
+                },
+              },
+              {
+                title: 'Code',
+                icon: '</>',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).toggleCodeBlock().run()
+                },
+              },
+              {
+                title: 'Image (upload)',
+                icon: '📷',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).run()
+                  fileInputRef.current?.click()
+                },
+              },
+              {
+                title: 'Image (URL)',
+                icon: '🔗',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).run()
+                  handleInsertImageUrl()
+                },
+              },
+              {
+                title: 'Video (upload)',
+                icon: '🎥',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).run()
+                  videoInputRef.current?.click()
+                },
+              },
+              {
+                title: 'Video (URL)',
+                icon: '🎬',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).run()
+                  handleInsertVideoUrl()
+                },
+              },
+              {
+                title: 'Gallery',
+                icon: '🖼️',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).insertContent({
+                    type: 'gallery',
+                    attrs: { images: [], caption: '' },
+                  }).run()
+                },
+              },
+              {
+                title: 'YouTube',
+                icon: '▶️',
+                command: ({ editor, range }) => {
+                  editor.chain().focus().deleteRange(range).run()
+                  handleInsertYouTube()
+                },
+              },
+            ]
+            const q = (query || '').toLowerCase().trim()
+            if (!q) return allItems
+            return allItems.filter((item) => item.title.toLowerCase().includes(q))
+          },
+          render: () => {
+            let component: ReactRenderer<any> | null = null
+            let popup: HTMLDivElement | null = null
+
+            return {
+              onStart: (props: any) => {
+                component = new ReactRenderer(SlashMenuList, {
+                  props,
+                  editor: props.editor,
+                })
+
+                popup = document.createElement('div')
+                popup.className = 'slash-command-popup-container'
+                popup.style.position = 'fixed'
+                popup.style.zIndex = '99999'
+                document.body.appendChild(popup)
+                popup.appendChild(component.element)
+
+                const rect = props.clientRect?.()
+                if (rect && popup) {
+                  const top = rect.bottom + 8
+                  const left = Math.min(window.innerWidth - 275, Math.max(16, rect.left))
+                  popup.style.top = `${top}px`
+                  popup.style.left = `${left}px`
+                }
+              },
+
+              onUpdate: (props: any) => {
+                component?.updateProps(props)
+
+                const rect = props.clientRect?.()
+                if (rect && popup) {
+                  const top = rect.bottom + 8
+                  const left = Math.min(window.innerWidth - 275, Math.max(16, rect.left))
+                  popup.style.top = `${top}px`
+                  popup.style.left = `${left}px`
+                }
+              },
+
+              onKeyDown: (props: any) => {
+                if (props.event.key === 'Escape') {
+                  if (popup) {
+                    popup.remove()
+                    popup = null
+                  }
+                  component?.destroy()
+                  component = null
+                  return true
+                }
+                return component?.ref?.onKeyDown(props) || false
+              },
+
+              onExit: () => {
+                if (popup) {
+                  popup.remove()
+                  popup = null
+                }
+                component?.destroy()
+                component = null
+              },
+            }
+          },
+        },
+      }),
     ],
     content: typeof content === 'object' && content !== null ? content : {},
     editorProps: {
