@@ -7,7 +7,7 @@ import { ReactRenderer } from '@tiptap/react'
 
 export interface SlashItem {
   title: string
-  icon?: string
+  icon?: React.ReactNode | string
   command: (params: { editor: any; range: any }) => void
 }
 
@@ -83,7 +83,11 @@ export const SlashMenuList = forwardRef<any, SlashMenuListProps>((props, ref) =>
             }`}
           >
             <span className="flex items-center gap-2">
-              {item.icon && <span className="text-xs w-4 text-center opacity-90">{item.icon}</span>}
+              {item.icon && (
+                <span className="text-xs w-4 h-4 flex items-center justify-center shrink-0 opacity-90">
+                  {item.icon}
+                </span>
+              )}
               <span>{item.title}</span>
             </span>
           </button>

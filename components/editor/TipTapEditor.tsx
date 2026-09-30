@@ -33,6 +33,25 @@ export function sanitizeUrl(input: string): string | null {
   }
 }
 
+export function YoutubeIcon({ className = 'w-4 h-4', ...props }: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      {...props}
+    >
+      <path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17" />
+      <polygon points="10 15 15 12 10 9 10 15" fill="currentColor" />
+    </svg>
+  )
+}
+
 interface TipTapEditorProps {
   content?: Record<string, unknown> | string
   onChange: (json: Record<string, unknown>) => void
@@ -56,6 +75,74 @@ export default function TipTapEditor({
     loadedText?: string
     totalText?: string
   } | null>(null)
+
+  const handleToggleHeading1 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 1 }).run()
+  const handleToggleHeading2 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 2 }).run()
+  const handleToggleHeading3 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 3 }).run()
+  const handleToggleBulletList = (ed?: any) => (ed || editor)?.chain().focus().toggleBulletList().run()
+  const handleToggleOrderedList = (ed?: any) => (ed || editor)?.chain().focus().toggleOrderedList().run()
+  const handleToggleQuote = (ed?: any) => (ed || editor)?.chain().focus().toggleBlockquote().run()
+  const handleToggleCallout = (ed?: any) => (ed || editor)?.chain().focus().toggleCallout().run()
+  const handleToggleCode = (ed?: any) => (ed || editor)?.chain().focus().toggleCodeBlock().run()
+  const handleTriggerImageUpload = () => fileInputRef.current?.click()
+  const handleTriggerVideoUpload = () => videoInputRef.current?.click()
+
+  function handleInsertImageUrl(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    const url = window.prompt('Enter image URL:')
+    if (url && url.trim()) {
+      targetEditor.chain().focus().setImage({ src: url.trim() }).run()
+    }
+  }
+
+  function handleInsertVideoUrl(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    const url = window.prompt('Enter video URL (e.g. Supabase storage or durable mp4 host):')
+    if (url && url.trim()) {
+      const caption = window.prompt('Enter video caption (optional):') || ''
+      targetEditor.chain().focus().insertContent({
+        type: 'video',
+        attrs: {
+          url: url.trim(),
+          caption: caption.trim(),
+        },
+      }).run()
+    }
+  }
+
+  function handleInsertGallery(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    targetEditor.chain().focus().insertContent({
+      type: 'gallery',
+      attrs: {
+        images: [],
+        caption: '',
+      },
+    }).run()
+  }
+
+  function handleInsertYouTube(ed?: any) {
+    const targetEditor = ed || editor
+    if (!targetEditor) return
+    const url = window.prompt('Enter YouTube URL (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...):')
+    if (!url || !url.trim()) return
+
+    const validation = validateYouTubeUrl(url.trim())
+    if (!validation.valid) {
+      alert(validation.error || 'Invalid YouTube URL. Only youtube.com and youtu.be addresses are allowed.')
+      return
+    }
+
+    targetEditor.chain().focus().insertContent({
+      type: 'youtube',
+      attrs: {
+        url: url.trim(),
+      },
+    }).run()
+  }
 
   const editor = useEditor({
     extensions: [
@@ -98,107 +185,113 @@ export default function TipTapEditor({
               {
                 title: 'Heading 1',
                 icon: 'H1',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).setHeading({ level: 1 }).run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleHeading1(ed)
                 },
               },
               {
                 title: 'Heading 2',
                 icon: 'H2',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).setHeading({ level: 2 }).run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleHeading2(ed)
                 },
               },
               {
                 title: 'Heading 3',
                 icon: 'H3',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).setHeading({ level: 3 }).run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleHeading3(ed)
                 },
               },
               {
                 title: 'Bullet list',
                 icon: '•',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).toggleBulletList().run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleBulletList(ed)
                 },
               },
               {
                 title: 'Ordered list',
                 icon: '1.',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).toggleOrderedList().run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleOrderedList(ed)
                 },
               },
               {
                 title: 'Quote',
                 icon: '”',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).toggleBlockquote().run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleQuote(ed)
                 },
               },
               {
                 title: 'Callout',
                 icon: '💬',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).toggleCallout().run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleCallout(ed)
                 },
               },
               {
                 title: 'Code',
                 icon: '</>',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).toggleCodeBlock().run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleToggleCode(ed)
                 },
               },
               {
                 title: 'Image (upload)',
                 icon: '📷',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).run()
-                  fileInputRef.current?.click()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleTriggerImageUpload()
                 },
               },
               {
                 title: 'Image (URL)',
                 icon: '🔗',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).run()
-                  handleInsertImageUrl()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertImageUrl(ed)
                 },
               },
               {
                 title: 'Video (upload)',
                 icon: '🎥',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).run()
-                  videoInputRef.current?.click()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleTriggerVideoUpload()
                 },
               },
               {
                 title: 'Video (URL)',
                 icon: '🎬',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).run()
-                  handleInsertVideoUrl()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertVideoUrl(ed)
                 },
               },
               {
                 title: 'Gallery',
                 icon: '🖼️',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).insertContent({
-                    type: 'gallery',
-                    attrs: { images: [], caption: '' },
-                  }).run()
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertGallery(ed)
                 },
               },
               {
                 title: 'YouTube',
-                icon: '▶️',
-                command: ({ editor, range }) => {
-                  editor.chain().focus().deleteRange(range).run()
-                  handleInsertYouTube()
+                icon: <YoutubeIcon className="w-3.5 h-3.5 text-red-500" />,
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertYouTube(ed)
                 },
               },
             ]
@@ -403,13 +496,7 @@ export default function TipTapEditor({
     }
   }
 
-  function handleInsertImageUrl() {
-    if (!editor) return
-    const url = window.prompt('Enter image URL:')
-    if (url && url.trim()) {
-      editor.chain().focus().setImage({ src: url.trim() }).run()
-    }
-  }
+
 
   async function handleVideoUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -453,55 +540,7 @@ export default function TipTapEditor({
     }
   }
 
-  function handleInsertVideoUrl() {
-    if (!editor) return
-    const url = window.prompt('Enter video URL (e.g. Supabase storage or durable mp4 host):')
-    if (url && url.trim()) {
-      const caption = window.prompt('Enter video caption (optional):') || ''
-      editor.chain().focus().insertContent({
-        type: 'video',
-        attrs: {
-          url: url.trim(),
-          caption: caption.trim(),
-        },
-      }).run()
-    }
-  }
 
-  function handleInsertGallery() {
-    if (!editor) return
-    editor.chain().focus().insertContent({
-      type: 'gallery',
-      attrs: {
-        images: [],
-        caption: '',
-      },
-    }).run()
-  }
-
-  function handleInsertYouTube() {
-    if (!editor) return
-    const url = window.prompt('Enter YouTube URL (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...):')
-    if (!url || !url.trim()) return
-
-    const validation = validateYouTubeUrl(url.trim())
-    if (!validation.valid) {
-      alert(validation.error || 'Invalid YouTube URL. Only youtube.com and youtu.be addresses are allowed.')
-      return
-    }
-
-    editor.chain().focus().insertContent({
-      type: 'youtube',
-      attrs: {
-        url: url.trim(),
-      },
-    }).run()
-  }
-
-  function handleToggleCallout() {
-    if (!editor) return
-    editor.chain().focus().toggleCallout().run()
-  }
 
   if (!editor) {
     return (
@@ -736,7 +775,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
+          onClick={() => handleToggleHeading1()}
           className={`px-2.5 py-1 rounded font-bold transition ${
             editor.isActive('heading', { level: 1 }) ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -746,7 +785,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
+          onClick={() => handleToggleHeading2()}
           className={`px-2.5 py-1 rounded font-bold transition ${
             editor.isActive('heading', { level: 2 }) ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -756,7 +795,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
+          onClick={() => handleToggleHeading3()}
           className={`px-2.5 py-1 rounded font-bold transition ${
             editor.isActive('heading', { level: 3 }) ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -767,7 +806,7 @@ export default function TipTapEditor({
         <div className="w-[1px] h-5 bg-gray-300 mx-1.5 self-center" />
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleBulletList().run()}
+          onClick={() => handleToggleBulletList()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('bulletList') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -776,7 +815,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleOrderedList().run()}
+          onClick={() => handleToggleOrderedList()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('orderedList') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -785,7 +824,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          onClick={() => handleToggleQuote()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('blockquote') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -795,7 +834,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={handleToggleCallout}
+          onClick={() => handleToggleCallout()}
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('callout') ? 'bg-[#D85A30] text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -805,7 +844,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          onClick={() => handleToggleCode()}
           className={`px-2.5 py-1 rounded font-mono transition text-xs font-medium ${
             editor.isActive('codeBlock') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
@@ -816,7 +855,7 @@ export default function TipTapEditor({
         {/* Insert Image Controls */}
         <button
           type="button"
-          onClick={() => fileInputRef.current?.click()}
+          onClick={handleTriggerImageUpload}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
           title="Upload image into post body"
         >
@@ -824,7 +863,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={handleInsertImageUrl}
+          onClick={() => handleInsertImageUrl()}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700"
           title="Insert image by web URL"
         >
@@ -834,7 +873,7 @@ export default function TipTapEditor({
         {/* Insert Video Controls */}
         <button
           type="button"
-          onClick={() => videoInputRef.current?.click()}
+          onClick={handleTriggerVideoUpload}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
           title="Upload video into post body"
         >
@@ -842,7 +881,7 @@ export default function TipTapEditor({
         </button>
         <button
           type="button"
-          onClick={handleInsertVideoUrl}
+          onClick={() => handleInsertVideoUrl()}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700"
           title="Insert video by URL"
         >
@@ -852,7 +891,7 @@ export default function TipTapEditor({
         {/* Insert Gallery Control */}
         <button
           type="button"
-          onClick={handleInsertGallery}
+          onClick={() => handleInsertGallery()}
           className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
           title="Insert image gallery"
         >
@@ -861,11 +900,12 @@ export default function TipTapEditor({
         {/* Insert YouTube Control */}
         <button
           type="button"
-          onClick={handleInsertYouTube}
-          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          onClick={() => handleInsertYouTube()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
           title="Insert YouTube embed"
         >
-          <span>▶️ YouTube</span>
+          <YoutubeIcon className="w-3.5 h-3.5 text-red-600" />
+          <span>YouTube</span>
         </button>
       </div>
 
