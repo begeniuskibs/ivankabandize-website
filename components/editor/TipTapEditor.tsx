@@ -8,6 +8,7 @@ import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
 import { useEffect, useRef, useState } from 'react'
+import { Video, Gallery, YouTube, Callout, validateYouTubeUrl } from './customNodes'
 
 export function sanitizeUrl(input: string): string | null {
   let url = (input || '').trim()
@@ -41,6 +42,7 @@ export default function TipTapEditor({
   placeholder = 'Write your post content here...',
 }: TipTapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const videoInputRef = useRef<HTMLInputElement>(null)
   const linkInputRef = useRef<HTMLInputElement>(null)
   const [wordCount, setWordCount] = useState(0)
   const [isEditingLink, setIsEditingLink] = useState(false)
@@ -75,12 +77,15 @@ export default function TipTapEditor({
         },
       }),
       CharacterCount.configure(),
+      Video,
+      Gallery,
+      YouTube,
+      Callout,
     ],
     content: typeof content === 'object' && content !== null ? content : {},
     editorProps: {
       attributes: {
-        class:
-          'min-h-[380px] focus:outline-none p-6 text-gray-900',
+        class: 'min-h-[380px] focus:outline-none p-6 text-gray-900',
       },
       handleKeyDown: (view, event) => {
         if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k') {
@@ -212,6 +217,95 @@ export default function TipTapEditor({
     }
   }
 
+  async function handleVideoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file || !editor) return
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('bucket', 'post-videos')
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      if (res.ok) {
+        const data = await res.json()
+        if (data.url) {
+          editor.chain().focus().insertContent({
+            type: 'video',
+            attrs: {
+              url: data.url,
+              caption: '',
+            },
+          }).run()
+        }
+      } else {
+        const errData = await res.json().catch(() => null)
+        alert(`Failed to upload video: ${errData?.error || 'Unknown error'}`)
+      }
+    } catch (err) {
+      console.error('Video upload error:', err)
+      alert('Error uploading video to server')
+    } finally {
+      if (videoInputRef.current) {
+        videoInputRef.current.value = ''
+      }
+    }
+  }
+
+  function handleInsertVideoUrl() {
+    if (!editor) return
+    const url = window.prompt('Enter video URL (e.g. Supabase storage or durable mp4 host):')
+    if (url && url.trim()) {
+      const caption = window.prompt('Enter video caption (optional):') || ''
+      editor.chain().focus().insertContent({
+        type: 'video',
+        attrs: {
+          url: url.trim(),
+          caption: caption.trim(),
+        },
+      }).run()
+    }
+  }
+
+  function handleInsertGallery() {
+    if (!editor) return
+    editor.chain().focus().insertContent({
+      type: 'gallery',
+      attrs: {
+        images: [],
+        caption: '',
+      },
+    }).run()
+  }
+
+  function handleInsertYouTube() {
+    if (!editor) return
+    const url = window.prompt('Enter YouTube URL (e.g. https://www.youtube.com/watch?v=... or https://youtu.be/...):')
+    if (!url || !url.trim()) return
+
+    const validation = validateYouTubeUrl(url.trim())
+    if (!validation.valid) {
+      alert(validation.error || 'Invalid YouTube URL. Only youtube.com and youtu.be addresses are allowed.')
+      return
+    }
+
+    editor.chain().focus().insertContent({
+      type: 'youtube',
+      attrs: {
+        url: url.trim(),
+      },
+    }).run()
+  }
+
+  function handleToggleCallout() {
+    if (!editor) return
+    editor.chain().focus().toggleCallout().run()
+  }
+
   if (!editor) {
     return (
       <div className="border border-gray-200 rounded-xl p-8 bg-gray-50 min-h-[380px] flex items-center justify-center text-gray-400">
@@ -265,19 +359,60 @@ export default function TipTapEditor({
           margin-bottom: 1.5rem;
           font-size: 1.125rem;
         }
+        /* Restyled Quote (blockquote) */
         .tiptap-editor-scope .ProseMirror blockquote {
-          border-left: 4px solid #EF5B45;
-          padding-left: 1.5rem;
-          padding-top: 0.5rem;
-          padding-bottom: 0.5rem;
+          text-align: center;
+          font-size: 20px;
+          font-weight: 500;
+          line-height: 1.5;
+          border-left: none;
+          background-color: transparent;
+          padding: 8px 24px;
           margin-top: 1.5rem;
           margin-bottom: 1.5rem;
           color: #232536;
-          background-color: #FDF8F1;
-          border-top-right-radius: 1rem;
-          border-bottom-right-radius: 1rem;
-          font-size: 1.125rem;
+          position: relative;
+        }
+        .tiptap-editor-scope .ProseMirror blockquote::before {
+          content: "";
+          display: block;
+          width: 22px;
+          height: 22px;
+          margin: 0 auto 0.75rem auto;
+          background-color: #EF5B45;
+          -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3Cpath d='M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3Cpath d='M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5'%3E%3C/path%3E%3C/svg%3E") no-repeat center;
+          mask-size: contain;
+          -webkit-mask-size: contain;
+        }
+        .tiptap-editor-scope .ProseMirror blockquote p {
+          text-align: center;
+          font-size: 20px;
           font-weight: 500;
+          line-height: 1.5;
+          margin-bottom: 0.5rem;
+        }
+        /* Callout Block */
+        .tiptap-editor-scope .ProseMirror div[data-type="callout"],
+        .tiptap-editor-scope .ProseMirror .callout-block {
+          background-color: #FAECE7 !important;
+          border: 1px solid #D85A30 !important;
+          border-radius: 10px !important;
+          padding: 16px 18px !important;
+          margin-top: 1.5rem;
+          margin-bottom: 1.5rem;
+          color: #1f2937;
+        }
+        .tiptap-editor-scope .ProseMirror div[data-type="callout"] p,
+        .tiptap-editor-scope .ProseMirror .callout-block p {
+          color: #1f2937;
+          font-size: 1.125rem;
+          line-height: 1.625;
+          margin-bottom: 0.75rem;
+        }
+        .tiptap-editor-scope .ProseMirror div[data-type="callout"] p:last-child,
+        .tiptap-editor-scope .ProseMirror .callout-block p:last-child {
+          margin-bottom: 0;
         }
         .tiptap-editor-scope .ProseMirror ul {
           list-style-type: disc;
@@ -361,12 +496,22 @@ export default function TipTapEditor({
           pointer-events: none;
         }
       `}</style>
+
       {/* Hidden file input for image upload */}
       <input
         ref={fileInputRef}
         type="file"
         accept="image/*"
         onChange={handleImageUpload}
+        className="hidden"
+      />
+
+      {/* Hidden file input for video upload */}
+      <input
+        ref={videoInputRef}
+        type="file"
+        accept="video/mp4,video/webm,video/ogg,video/*"
+        onChange={handleVideoUpload}
         className="hidden"
       />
 
@@ -447,8 +592,19 @@ export default function TipTapEditor({
           className={`px-2.5 py-1 rounded transition text-xs font-medium ${
             editor.isActive('blockquote') ? 'bg-black text-white' : 'hover:bg-gray-200 text-gray-700'
           }`}
+          title="Centered Quote"
         >
           Quote
+        </button>
+        <button
+          type="button"
+          onClick={handleToggleCallout}
+          className={`px-2.5 py-1 rounded transition text-xs font-medium ${
+            editor.isActive('callout') ? 'bg-[#D85A30] text-white' : 'hover:bg-gray-200 text-gray-700'
+          }`}
+          title="Callout Box"
+        >
+          Callout
         </button>
         <button
           type="button"
@@ -476,6 +632,43 @@ export default function TipTapEditor({
           title="Insert image by web URL"
         >
           Image URL
+        </button>
+        <div className="w-[1px] h-5 bg-gray-300 mx-1.5 self-center" />
+        {/* Insert Video Controls */}
+        <button
+          type="button"
+          onClick={() => videoInputRef.current?.click()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          title="Upload video into post body"
+        >
+          <span>🎥 Upload Video</span>
+        </button>
+        <button
+          type="button"
+          onClick={handleInsertVideoUrl}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700"
+          title="Insert video by URL"
+        >
+          Video URL
+        </button>
+        <div className="w-[1px] h-5 bg-gray-300 mx-1.5 self-center" />
+        {/* Insert Gallery Control */}
+        <button
+          type="button"
+          onClick={handleInsertGallery}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          title="Insert image gallery"
+        >
+          <span>🖼️ Gallery</span>
+        </button>
+        {/* Insert YouTube Control */}
+        <button
+          type="button"
+          onClick={handleInsertYouTube}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          title="Insert YouTube embed"
+        >
+          <span>▶️ YouTube</span>
         </button>
       </div>
 
@@ -594,6 +787,17 @@ export default function TipTapEditor({
                 }`}
               >
                 Quote
+              </button>
+              <button
+                type="button"
+                onClick={handleToggleCallout}
+                aria-label="Callout"
+                aria-pressed={editor.isActive('callout')}
+                className={`px-2 py-1 rounded transition ${
+                  editor.isActive('callout') ? 'bg-white text-black' : 'hover:bg-white/15 text-gray-200'
+                }`}
+              >
+                Callout
               </button>
               <div className="w-[1px] h-4 bg-white/20 mx-0.5 self-center" />
               {editor.isActive('link') ? (

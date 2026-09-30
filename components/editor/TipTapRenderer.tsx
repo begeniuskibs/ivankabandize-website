@@ -1,4 +1,5 @@
 import React from 'react'
+import { getYouTubeEmbedUrl } from './customNodes'
 
 interface TipTapNode {
   type: string
@@ -80,15 +81,165 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
           </figure>
         )
       }
-      case 'blockquote':
+      case 'video': {
+        const url = String(node.attrs?.url || node.attrs?.src || '')
+        const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
+        if (!url) return null
         return (
-          <blockquote
+          <figure key={index} className="my-8">
+            <video
+              src={url}
+              controls
+              preload="metadata"
+              className="w-full rounded-2xl border border-[#F5ECDE] shadow-sm bg-black/5"
+            />
+            {caption && (
+              <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
+                {caption}
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
+      case 'gallery': {
+        const images = Array.isArray(node.attrs?.images) ? (node.attrs.images as Array<{ url: string; caption?: string }>) : []
+        const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
+        if (images.length === 0) return null
+
+        const gridClass =
+          images.length === 1
+            ? 'grid-cols-1'
+            : images.length === 2
+            ? 'grid-cols-2'
+            : images.length === 3
+            ? 'grid-cols-2 sm:grid-cols-3'
+            : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
+
+        return (
+          <figure key={index} className="my-8">
+            <div className={`grid ${gridClass} gap-3 sm:gap-4`}>
+              {images.map((img, i) => (
+                <a
+                  key={i}
+                  href={img.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group block overflow-hidden rounded-xl border border-[#F5ECDE] shadow-sm aspect-square bg-gray-50 hover:shadow-md transition"
+                  title={img.caption || 'View full-size image'}
+                >
+                  <img
+                    src={img.url}
+                    alt={img.caption || 'Gallery image'}
+                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  />
+                </a>
+              ))}
+            </div>
+            {caption && (
+              <figcaption className="mt-3 text-center text-xs sm:text-sm text-[#5A5D70]">
+                {caption}
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
+      case 'youtube': {
+        const url = String(node.attrs?.url || '')
+        const embedUrl = getYouTubeEmbedUrl(url)
+        if (!embedUrl) return null
+        return (
+          <figure key={index} className="my-8">
+            <div className="aspect-video w-full overflow-hidden rounded-2xl border border-[#F5ECDE] shadow-sm bg-black/5">
+              <iframe
+                src={embedUrl}
+                title="YouTube video player"
+                allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+                className="w-full h-full border-0"
+              />
+            </div>
+          </figure>
+        )
+      }
+      case 'callout': {
+        return (
+          <div
             key={index}
-            className="border-l-4 border-[#EF5B45] pl-6 py-2 my-6 text-[#232536] bg-[#FDF8F1] rounded-r-2xl text-lg font-medium"
+            style={{
+              backgroundColor: '#FAECE7',
+              border: '1px solid #D85A30',
+              borderRadius: '10px',
+              padding: '16px 18px',
+            }}
+            className="my-6 text-gray-800 text-lg leading-relaxed callout-block"
           >
             {node.content?.map(renderNode)}
-          </blockquote>
+          </div>
         )
+      }
+      case 'blockquote': {
+        let quoteNodes = node.content || []
+        let attributionText: string | null = node.attrs?.attribution ? String(node.attrs.attribution) : null
+
+        if (!attributionText && quoteNodes.length > 1) {
+          const lastChild = quoteNodes[quoteNodes.length - 1]
+          if (lastChild.type === 'paragraph' && lastChild.content && lastChild.content.length > 0) {
+            const rawText = lastChild.content.map((c) => c.text || '').join('')
+            // Check for attribution prefix: " - ", "- ", "-- ", or dashes
+            if (/^(\s*(-|\u2013|\u2014){1,2}\s*)/.test(rawText)) {
+              attributionText = rawText.replace(/^(\s*(-|\u2013|\u2014){1,2}\s*)/, '- ')
+              quoteNodes = quoteNodes.slice(0, -1)
+            }
+          }
+        }
+
+        return (
+          <figure key={index} className="my-8 text-center" style={{ padding: '8px 24px' }}>
+            <div className="flex justify-center mb-3">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#EF5B45"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="ti-quote inline-block"
+                style={{ fontSize: '22px', color: '#EF5B45' }}
+                aria-hidden="true"
+              >
+                <path d="M10 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5" />
+                <path d="M19 11h-4a1 1 0 0 1 -1 -1v-3a1 1 0 0 1 1 -1h3a1 1 0 0 1 1 1v2c0 2.667 -1.333 4.333 -4 5" />
+              </svg>
+            </div>
+            <blockquote
+              style={{
+                textAlign: 'center',
+                fontSize: '20px',
+                fontWeight: 500,
+                lineHeight: 1.5,
+                borderLeft: 'none',
+                backgroundColor: 'transparent',
+                padding: 0,
+                margin: 0,
+              }}
+              className="text-[#232536]"
+            >
+              {quoteNodes.map(renderNode)}
+            </blockquote>
+            {attributionText && (
+              <figcaption
+                style={{ fontSize: '14px' }}
+                className="mt-3 text-center text-[#5A5D70] font-normal"
+              >
+                {attributionText}
+              </figcaption>
+            )}
+          </figure>
+        )
+      }
       case 'codeBlock':
         return (
           <pre
@@ -98,6 +249,8 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             <code>{node.content?.map(n => n.text).join('')}</code>
           </pre>
         )
+      case 'horizontalRule':
+        return <hr key={index} className="my-8 border-0 border-t border-gray-200" />
       default:
         return (
           <div key={index} className="mb-4">
