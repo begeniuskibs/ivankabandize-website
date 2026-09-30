@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
 
 export async function signIn(formData: FormData) {
@@ -74,6 +75,14 @@ export async function signOut() {
   const supabase = await createClient()
   await supabase.auth.signOut()
 
+  try {
+    const cookieStore = await cookies()
+    cookieStore.delete('sb-remember')
+  } catch {
+    // ignore if cookie store cannot be mutated
+  }
+
   revalidatePath('/', 'layout')
   redirect('/login')
 }
+
