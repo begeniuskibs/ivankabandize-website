@@ -169,7 +169,7 @@ export default function TipTapEditor({
       Image.configure({
         allowBase64: true,
         HTMLAttributes: {
-          class: 'rounded-2xl max-w-full my-6 shadow-sm border border-gray-100',
+          class: 'rounded-[5px] max-w-full my-6 shadow-sm border border-gray-100',
         },
       }),
       CharacterCount.configure(),
@@ -709,7 +709,7 @@ export default function TipTapEditor({
           width: 100%;
           max-width: 100%;
           height: auto;
-          border-radius: 1rem;
+          border-radius: 5px;
           border: 1px solid #F5ECDE;
           box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
           object-fit: cover;

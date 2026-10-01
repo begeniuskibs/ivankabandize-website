@@ -10,61 +10,15 @@ export interface GalleryImageEntry {
   caption?: string
 }
 
-export function validateYouTubeUrl(input: string): { valid: boolean; embedUrl?: string; error?: string } {
-  const trimmed = (input || '').trim()
-  if (!trimmed) {
-    return { valid: false, error: 'YouTube URL cannot be empty.' }
-  }
-
-  try {
-    const parsed = new URL(trimmed.startsWith('http://') || trimmed.startsWith('https://') ? trimmed : `https://${trimmed}`)
-    const host = parsed.hostname.toLowerCase().replace(/^www\./, '').replace(/^m\./, '')
-
-    if (host !== 'youtube.com' && host !== 'youtu.be') {
-      return { valid: false, error: 'Only youtube.com and youtu.be addresses are allowed.' }
-    }
-
-    let videoId: string | null = null
-
-    if (host === 'youtu.be') {
-      videoId = parsed.pathname.slice(1).split('/')[0] || null
-    } else if (host === 'youtube.com') {
-      if (parsed.pathname === '/watch') {
-        videoId = parsed.searchParams.get('v')
-      } else if (parsed.pathname.startsWith('/embed/')) {
-        videoId = parsed.pathname.replace('/embed/', '').split('/')[0] || null
-      } else if (parsed.pathname.startsWith('/shorts/')) {
-        videoId = parsed.pathname.replace('/shorts/', '').split('/')[0] || null
-      }
-    }
-
-    if (!videoId) {
-      return { valid: false, error: 'Could not extract YouTube video ID from the provided URL.' }
-    }
-
-    const cleanId = videoId.replace(/[^a-zA-Z0-9_-]/g, '')
-    if (!cleanId) {
-      return { valid: false, error: 'Invalid YouTube video ID format.' }
-    }
-
-    return {
-      valid: true,
-      embedUrl: `https://www.youtube.com/embed/${cleanId}`,
-    }
-  } catch {
-    return { valid: false, error: 'Invalid URL format.' }
-  }
-}
-
-export function getYouTubeEmbedUrl(input: string): string | null {
-  const res = validateYouTubeUrl(input)
-  return res.valid && res.embedUrl ? res.embedUrl : null
-}
+export { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
+import { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
 
 // React NodeView: Video
 function VideoComponent({ node, updateAttributes, deleteNode }: any) {
   const url = node.attrs.url || ''
   const caption = node.attrs.caption || ''
+  const playAsGif = Boolean(node.attrs.playAsGif)
+  const flushBackground = Boolean(node.attrs.flushBackground)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [uploadProgress, setUploadProgress] = useState<{
     filename: string
@@ -109,6 +63,10 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
     }
   }
 
+  const videoClass = flushBackground
+    ? 'w-full'
+    : 'w-full rounded-[5px] border border-gray-200 bg-black/5'
+
   return (
     <NodeViewWrapper className="video-node-view my-6 p-3 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
       <input
@@ -152,12 +110,24 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
           />
         </div>
       ) : url ? (
-        <video
-          src={url}
-          controls
-          preload="metadata"
-          className="w-full rounded-xl border border-gray-200 bg-black/5"
-        />
+        playAsGif ? (
+          <video
+            src={url}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            className={videoClass}
+          />
+        ) : (
+          <video
+            src={url}
+            controls
+            preload="metadata"
+            className={videoClass}
+          />
+        )
       ) : (
         <div className="p-8 text-center text-sm text-gray-400 bg-gray-100 rounded-xl flex flex-col items-center justify-center gap-2">
           <span>No video URL provided</span>
@@ -170,6 +140,26 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
           </button>
         </div>
       )}
+      <div className="flex flex-wrap items-center gap-4 mt-2 px-1 text-xs text-gray-600">
+        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={playAsGif}
+            onChange={(e) => updateAttributes({ playAsGif: e.target.checked })}
+            className="rounded border-gray-300 text-[#EF5B45] focus:ring-[#EF5B45]"
+          />
+          <span>Play as GIF (autoplay, loop, muted, no controls)</span>
+        </label>
+        <label className="flex items-center gap-1.5 cursor-pointer select-none">
+          <input
+            type="checkbox"
+            checked={flushBackground}
+            onChange={(e) => updateAttributes({ flushBackground: e.target.checked })}
+            className="rounded border-gray-300 text-[#EF5B45] focus:ring-[#EF5B45]"
+          />
+          <span>Flush background</span>
+        </label>
+      </div>
       <input
         type="text"
         value={caption}
@@ -365,7 +355,7 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
       ) : images.length > 0 ? (
         <div className={`grid ${gridClass} gap-2.5`}>
           {images.map((img, i) => (
-            <div key={i} className="relative group/img rounded-xl overflow-hidden border border-gray-200 bg-white aspect-square shadow-sm">
+            <div key={i} className="relative group/img rounded-[4px] overflow-hidden border border-gray-200 bg-white aspect-square shadow-sm">
               <img src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
                 {i > 0 && (
@@ -477,7 +467,7 @@ function YouTubeComponent({ node, updateAttributes, deleteNode }: any) {
           </button>
         </div>
       ) : embedUrl ? (
-        <div className="aspect-video w-full overflow-hidden rounded-xl border border-gray-200 bg-black">
+        <div className="aspect-video w-full overflow-hidden rounded-[5px] border border-gray-200 bg-black">
           <iframe
             src={embedUrl}
             title="YouTube video player"
@@ -510,6 +500,12 @@ export const Video = Node.create({
       caption: {
         default: '',
       },
+      playAsGif: {
+        default: false,
+      },
+      flushBackground: {
+        default: false,
+      },
     }
   },
 
@@ -521,9 +517,13 @@ export const Video = Node.create({
           const el = element as HTMLElement
           const video = el.querySelector('video')
           const figcaption = el.querySelector('figcaption')
+          const isGif = video?.hasAttribute('autoplay') || video?.hasAttribute('loop')
+          const isFlush = video ? !video.classList.contains('border') : false
           return {
             url: video?.getAttribute('src') || '',
             caption: figcaption?.textContent || '',
+            playAsGif: Boolean(isGif),
+            flushBackground: Boolean(isFlush),
           }
         },
       },
@@ -531,8 +531,12 @@ export const Video = Node.create({
         tag: 'video',
         getAttrs: (element) => {
           const el = element as HTMLElement
+          const isGif = el.hasAttribute('autoplay') || el.hasAttribute('loop')
+          const isFlush = !el.classList.contains('border')
           return {
             url: el.getAttribute('src') || '',
+            playAsGif: Boolean(isGif),
+            flushBackground: Boolean(isFlush),
           }
         },
       },
@@ -540,18 +544,28 @@ export const Video = Node.create({
   },
 
   renderHTML({ HTMLAttributes }) {
+    const isFlush = Boolean(HTMLAttributes.flushBackground)
+    const isGif = Boolean(HTMLAttributes.playAsGif)
+    const videoAttrs: Record<string, string> = {
+      src: HTMLAttributes.url,
+      preload: isGif ? 'auto' : 'metadata',
+      class: isFlush
+        ? 'w-full'
+        : 'w-full rounded-[5px] border border-[#F5ECDE] shadow-sm',
+    }
+    if (isGif) {
+      videoAttrs.autoplay = 'true'
+      videoAttrs.muted = 'true'
+      videoAttrs.loop = 'true'
+      videoAttrs.playsinline = 'true'
+    } else {
+      videoAttrs.controls = 'true'
+    }
+
     return [
       'figure',
       mergeAttributes({ 'data-type': 'video', class: 'video-block my-8' }),
-      [
-        'video',
-        {
-          src: HTMLAttributes.url,
-          controls: 'true',
-          preload: 'metadata',
-          class: 'w-full rounded-2xl border border-[#F5ECDE] shadow-sm',
-        },
-      ],
+      ['video', videoAttrs],
       HTMLAttributes.caption
         ? [
             'figcaption',
@@ -679,7 +693,7 @@ export const YouTube = Node.create({
       mergeAttributes({
         'data-type': 'youtube',
         'data-url': HTMLAttributes.url,
-        class: 'youtube-block my-8 aspect-video w-full rounded-2xl overflow-hidden border border-[#F5ECDE]',
+        class: 'youtube-block my-8 aspect-video w-full rounded-[5px] overflow-hidden border border-[#F5ECDE]',
       }),
       [
         'iframe',
