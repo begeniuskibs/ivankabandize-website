@@ -25,7 +25,7 @@ export default function PostCard({ post, className = '' }: PostCardProps) {
   return (
     <Link
       href={`/garden/${post.slug}`}
-      className={`group flex flex-col h-full bg-white border border-[#F0E6D6] rounded-[20px] shadow-[0_6px_24px_rgba(35,37,54,0.06)] overflow-hidden transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_10px_30px_rgba(35,37,54,0.1)] motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${className}`}
+      className={`group flex flex-col h-full bg-white rounded-[5px] overflow-hidden transition-all duration-300 hover:-translate-y-0.5 motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${className}`}
     >
       {/* 16:9 Image Area sitting flush at the top edge */}
       <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FDF3DC] shrink-0">

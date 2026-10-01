@@ -1,5 +1,5 @@
 import React from 'react'
-import { getYouTubeEmbedUrl } from './customNodes'
+import { getYouTubeEmbedUrl } from '@/lib/youtube'
 
 interface TipTapNode {
   type: string
@@ -72,7 +72,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : (node.attrs?.title ? String(node.attrs?.title) : null)
         return (
           <figure key={index} className="my-8">
-            <img src={src} alt={alt} className="w-full rounded-2xl border border-[#F5ECDE] shadow-sm object-cover" />
+            <img src={src} alt={alt} className="w-full rounded-[5px] object-cover" />
             {caption && (
               <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
                 {caption}
@@ -84,15 +84,33 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
       case 'video': {
         const url = String(node.attrs?.url || node.attrs?.src || '')
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
+        const playAsGif = Boolean(node.attrs?.playAsGif)
+        const flushBackground = Boolean(node.attrs?.flushBackground)
         if (!url) return null
+
+        const videoClassName = flushBackground
+          ? 'w-full block'
+          : 'w-full rounded-[5px] border border-[#F5ECDE] shadow-sm bg-black/5 block'
+
         return (
           <figure key={index} className="my-8">
-            <video
-              src={url}
-              controls
-              preload="metadata"
-              className="w-full rounded-2xl border border-[#F5ECDE] shadow-sm bg-black/5"
-            />
+            {playAsGif ? (
+              <video
+                src={url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className={videoClassName}
+              />
+            ) : (
+              <video
+                src={url}
+                controls
+                preload="metadata"
+                className={videoClassName}
+              />
+            )}
             {caption && (
               <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
                 {caption}
@@ -124,7 +142,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                   href={img.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block overflow-hidden rounded-xl border border-[#F5ECDE] shadow-sm aspect-square bg-gray-50 hover:shadow-md transition"
+                  className="group block overflow-hidden rounded-[4px] aspect-square bg-gray-50 transition"
                   title={img.caption || 'View full-size image'}
                 >
                   <img
@@ -149,7 +167,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         if (!embedUrl) return null
         return (
           <figure key={index} className="my-8">
-            <div className="aspect-video w-full overflow-hidden rounded-2xl border border-[#F5ECDE] shadow-sm bg-black/5">
+            <div className="aspect-video w-full overflow-hidden rounded-[5px] border border-[#F5ECDE] shadow-sm bg-black/5">
               <iframe
                 src={embedUrl}
                 title="YouTube video player"

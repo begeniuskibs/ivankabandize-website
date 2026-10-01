@@ -85,7 +85,7 @@ export default async function LibraryPage() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col h-full bg-white rounded-2xl border border-[#F5ECDE] overflow-hidden shadow-[0_4px_14px_rgba(35,37,54,0.04)] hover:shadow-[0_12px_28px_rgba(35,37,54,0.1)] hover:-translate-y-1 transition-all duration-300"
+                  className="group flex flex-col h-full bg-white rounded-[5px] overflow-hidden hover:-translate-y-1 transition-all duration-300"
                 >
                   {/* Thumbnail */}
                   <div className="relative aspect-video w-full bg-[#FAF3E8] overflow-hidden">
@@ -151,11 +151,11 @@ export default async function LibraryPage() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col h-full bg-white rounded-2xl border border-[#F5ECDE] p-5 shadow-[0_4px_14px_rgba(35,37,54,0.04)] hover:shadow-[0_12px_28px_rgba(35,37,54,0.1)] hover:-translate-y-1 transition-all duration-300"
+                  className="group flex flex-col h-full bg-white rounded-[5px] p-5 hover:-translate-y-1 transition-all duration-300"
                 >
                   <div className="flex flex-col sm:flex-row gap-5 items-start flex-grow">
                     {/* Book Cover */}
-                    <div className="relative w-28 sm:w-32 flex-shrink-0 aspect-[2/3] bg-[#FAF3E8] rounded-lg overflow-hidden border border-[#F5ECDE] shadow-[0_6px_16px_rgba(35,37,54,0.08)] group-hover:shadow-[0_10px_22px_rgba(35,37,54,0.14)] transition-all">
+                    <div className="relative w-28 sm:w-32 flex-shrink-0 aspect-[2/3] bg-[#FAF3E8] rounded-[5px] overflow-hidden transition-all">
                       {item.thumbnail_url ? (
                         <img
                           src={item.thumbnail_url}
@@ -219,7 +219,7 @@ export default async function LibraryPage() {
                   href={item.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex flex-col h-full bg-white rounded-2xl border border-[#F5ECDE] overflow-hidden shadow-[0_4px_14px_rgba(35,37,54,0.04)] hover:shadow-[0_12px_28px_rgba(35,37,54,0.1)] hover:-translate-y-1 transition-all duration-300"
+                  className="group flex flex-col h-full bg-white rounded-[5px] overflow-hidden hover:-translate-y-1 transition-all duration-300"
                 >
                   {/* Thumbnail / Header Graphic */}
                   <div className="relative aspect-[16/9] w-full bg-[#FAF3E8] overflow-hidden">

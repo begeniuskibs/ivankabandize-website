@@ -202,7 +202,7 @@ export default function ArticleView({
           {/* 5. Header Image rendered AFTER Byline */}
           {post.featured_image_url && (
             <figure className="mb-10">
-              <div className="relative aspect-[16/9] w-full rounded-3xl overflow-hidden border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)]">
+              <div className="relative aspect-[16/9] w-full rounded-[5px] overflow-hidden">
                 <img
                   src={post.featured_image_url}
                   alt={post.title}
@@ -247,7 +247,7 @@ export default function ArticleView({
                   )}
                 </div>
                 {relatedPost.featured_image_url ? (
-                  <div className="w-full sm:w-36 h-28 flex-shrink-0 rounded-2xl overflow-hidden bg-black/5 border border-[#F5ECDE]">
+                  <div className="w-full sm:w-36 h-28 flex-shrink-0 rounded-[5px] overflow-hidden">
                     <img
                       src={relatedPost.featured_image_url}
                       alt={relatedPost.title}
