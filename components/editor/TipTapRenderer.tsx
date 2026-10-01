@@ -124,31 +124,23 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
         if (images.length === 0) return null
 
-        const gridClass =
-          images.length === 1
-            ? 'grid-cols-1'
-            : images.length === 2
-            ? 'grid-cols-2'
-            : images.length === 3
-            ? 'grid-cols-2 sm:grid-cols-3'
-            : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-
         return (
           <figure key={index} className="my-8">
-            <div className={`grid ${gridClass} gap-3 sm:gap-4`}>
+            <div className="flex flex-wrap gap-3 sm:gap-4">
               {images.map((img, i) => (
                 <a
                   key={i}
                   href={img.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group block overflow-hidden rounded-[4px] aspect-square bg-gray-50 transition"
+                  className="group block overflow-hidden rounded-[4px] border border-[#F5ECDE] shadow-sm bg-gray-50 hover:shadow-md transition max-w-full shrink-0"
                   title={img.caption || 'View full-size image'}
                 >
                   <img
                     src={img.url}
                     alt={img.caption || 'Gallery image'}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    className="h-[220px] sm:h-[280px] w-auto max-w-full block transition-transform duration-300 group-hover:scale-105"
+                    loading="lazy"
                   />
                 </a>
               ))}
