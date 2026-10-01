@@ -192,14 +192,14 @@ function PostEditorContent() {
       targetPublishedAt = new Date(scheduledDate).toISOString()
     }
 
-    // Embed featured_image_caption and header_image_width into content JSONB object
+    // Embed featured_image_caption into content JSONB object
     const finalContent = { ...(content || {}) }
     if (featuredImageCaption) {
       (finalContent as any).featured_image_caption = featuredImageCaption
     } else {
       delete (finalContent as any).featured_image_caption
     }
-    (finalContent as any).header_image_width = headerImageWidth
+    delete (finalContent as any).header_image_width
 
     const payload = {
       title,
