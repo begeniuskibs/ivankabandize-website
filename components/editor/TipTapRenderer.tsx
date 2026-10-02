@@ -167,7 +167,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                               <img
                                 src={img.url}
                                 alt={img.caption || 'Gallery image'}
-                                className="w-full h-full block transition-transform duration-300 group-hover:scale-105"
+                                className="w-full h-full block object-cover transition-transform duration-300 group-hover:scale-105"
                                 loading="lazy"
                               />
                             </a>
@@ -196,7 +196,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                         <img
                           src={img.url}
                           alt={img.caption || 'Gallery image'}
-                          className="w-full h-full block transition-transform duration-300 group-hover:scale-105"
+                          className="w-full h-full block object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                         />
                       </a>
