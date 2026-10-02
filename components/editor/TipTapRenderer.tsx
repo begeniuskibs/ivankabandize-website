@@ -1,6 +1,7 @@
 import React from 'react'
 import { getYouTubeEmbedUrl } from '@/lib/youtube'
 import WideContainer from '@/components/public/WideContainer'
+import BookmarkCard from './BookmarkCard'
 
 interface TipTapNode {
   type: string
@@ -229,6 +230,31 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
               />
             </div>
           </figure>
+        )
+      }
+      case 'bookmark': {
+        const url = String(node.attrs?.url || '')
+        const title = String(node.attrs?.title || '')
+        const description = String(node.attrs?.description || '')
+        const author = String(node.attrs?.author || '')
+        const publisher = String(node.attrs?.publisher || '')
+        const thumbnail = String(node.attrs?.thumbnail || '')
+        const icon = String(node.attrs?.icon || '')
+        const caption = String(node.attrs?.caption || '')
+        if (!url && !title) return null
+
+        return (
+          <BookmarkCard
+            key={index}
+            url={url}
+            title={title}
+            description={description}
+            author={author}
+            publisher={publisher}
+            thumbnail={thumbnail}
+            icon={icon}
+            caption={caption}
+          />
         )
       }
       case 'callout': {

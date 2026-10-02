@@ -9,7 +9,7 @@ import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
 import { ReactRenderer } from '@tiptap/react'
 import { useEffect, useRef, useState } from 'react'
-import { Video, Gallery, YouTube, Callout, validateYouTubeUrl } from './customNodes'
+import { Video, Gallery, YouTube, Bookmark, Callout, validateYouTubeUrl } from './customNodes'
 import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 
@@ -144,6 +144,26 @@ export default function TipTapEditor({
     }).run()
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function handleInsertBookmark(ed?: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const targetEditor = (ed || editor) as any
+    if (!targetEditor) return
+    targetEditor.chain().focus().insertContent({
+      type: 'bookmark',
+      attrs: {
+        url: '',
+        title: '',
+        description: '',
+        author: '',
+        publisher: '',
+        thumbnail: '',
+        icon: '',
+        caption: '',
+      },
+    }).run()
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -176,6 +196,7 @@ export default function TipTapEditor({
       Video,
       Gallery,
       YouTube,
+      Bookmark,
       Callout,
       SlashCommands.configure({
         suggestion: {
@@ -292,6 +313,14 @@ export default function TipTapEditor({
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
                   handleInsertYouTube(ed)
+                },
+              },
+              {
+                title: 'Bookmark',
+                icon: '🔖',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).run()
+                  handleInsertBookmark(ed)
                 },
               },
             ]
@@ -906,6 +935,15 @@ export default function TipTapEditor({
         >
           <YoutubeIcon className="w-3.5 h-3.5 text-red-600" />
           <span>YouTube</span>
+        </button>
+        {/* Insert Bookmark Control */}
+        <button
+          type="button"
+          onClick={() => handleInsertBookmark()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          title="Insert web bookmark card"
+        >
+          <span>🔖 Bookmark</span>
         </button>
       </div>
 
