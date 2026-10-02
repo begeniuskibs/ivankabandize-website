@@ -121,31 +121,88 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         )
       }
       case 'gallery': {
-        const images = Array.isArray(node.attrs?.images) ? (node.attrs.images as Array<{ url: string; caption?: string }>) : []
+        interface GalleryItem {
+          url: string
+          caption?: string
+          width?: number
+          height?: number
+        }
+        const images = Array.isArray(node.attrs?.images) ? (node.attrs.images as GalleryItem[]) : []
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
         if (images.length === 0) return null
+
+        // Group images into pairs of 2, with the odd one out as a group of 1
+        const groups: GalleryItem[][] = []
+        for (let i = 0; i < images.length; i += 2) {
+          groups.push(images.slice(i, i + 2))
+        }
 
         return (
           <WideContainer key={index} className="my-10">
             <figure>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
-                {images.map((img, i) => (
-                  <a
-                    key={i}
-                    href={img.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] aspect-[4/3] shadow-sm hover:shadow-md transition"
-                    title={img.caption || 'View full-size image'}
-                  >
-                    <img
-                      src={img.url}
-                      alt={img.caption || 'Gallery image'}
-                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      loading="lazy"
-                    />
-                  </a>
-                ))}
+              <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 w-full">
+                {groups.map((group, groupIdx) => {
+                  if (group.length === 2) {
+                    return (
+                      <div key={groupIdx} className="flex flex-row gap-3 sm:gap-4 md:gap-5 w-full items-start">
+                        {group.map((img, i) => {
+                          const w = img.width && img.width > 0 ? img.width : 4
+                          const h = img.height && img.height > 0 ? img.height : 3
+                          const ratio = w / h
+                          return (
+                            <a
+                              key={i}
+                              href={img.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
+                              style={{
+                                flexGrow: ratio,
+                                flexBasis: 0,
+                                minWidth: 0,
+                                aspectRatio: `${w} / ${h}`,
+                              }}
+                              title={img.caption || 'View full-size image'}
+                            >
+                              <img
+                                src={img.url}
+                                alt={img.caption || 'Gallery image'}
+                                className="w-full h-full block transition-transform duration-300 group-hover:scale-105"
+                                loading="lazy"
+                              />
+                            </a>
+                          )
+                        })}
+                      </div>
+                    )
+                  }
+
+                  // Odd one out: single full-width image with natural height
+                  const img = group[0]
+                  const w = img.width && img.width > 0 ? img.width : 4
+                  const h = img.height && img.height > 0 ? img.height : 3
+                  return (
+                    <div key={groupIdx} className="w-full">
+                      <a
+                        href={img.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group block w-full overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
+                        style={{
+                          aspectRatio: `${w} / ${h}`,
+                        }}
+                        title={img.caption || 'View full-size image'}
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.caption || 'Gallery image'}
+                          className="w-full h-full block transition-transform duration-300 group-hover:scale-105"
+                          loading="lazy"
+                        />
+                      </a>
+                    </div>
+                  )
+                })}
               </div>
               {caption && (
                 <figcaption className="mt-3 text-center text-xs sm:text-sm text-[#5A5D70]">

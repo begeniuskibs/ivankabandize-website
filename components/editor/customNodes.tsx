@@ -8,6 +8,8 @@ import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgr
 export interface GalleryImageEntry {
   url: string
   caption?: string
+  width?: number
+  height?: number
 }
 
 export { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
@@ -171,6 +173,46 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
   )
 }
 
+// Image dimension extraction helpers
+export function getImageDimensionsFromFile(file: File): Promise<{ width: number; height: number }> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined') {
+      return resolve({ width: 800, height: 600 })
+    }
+    const url = URL.createObjectURL(file)
+    const img = new Image()
+    img.onload = () => {
+      const w = img.naturalWidth || 800
+      const h = img.naturalHeight || 600
+      URL.revokeObjectURL(url)
+      resolve({ width: w, height: h })
+    }
+    img.onerror = () => {
+      URL.revokeObjectURL(url)
+      resolve({ width: 800, height: 600 })
+    }
+    img.src = url
+  })
+}
+
+export function getImageDimensionsFromUrl(url: string): Promise<{ width: number; height: number }> {
+  return new Promise((resolve) => {
+    if (typeof window === 'undefined' || !url) {
+      return resolve({ width: 800, height: 600 })
+    }
+    const img = new Image()
+    img.onload = () => {
+      const w = img.naturalWidth || 800
+      const h = img.naturalHeight || 600
+      resolve({ width: w, height: h })
+    }
+    img.onerror = () => {
+      resolve({ width: 800, height: 600 })
+    }
+    img.src = url
+  })
+}
+
 // React NodeView: Gallery
 interface ActiveUploadItem {
   id: string
@@ -191,13 +233,41 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
     imagesRef.current = images
   }, [images])
 
+  // Self-heal: If any existing image is missing dimensions, measure natural dimensions client-side and backfill
+  useEffect(() => {
+    const missingDims = images.some((img) => !img.width || !img.height)
+    if (!missingDims) return
+
+    let isMounted = true
+    Promise.all(
+      images.map(async (img) => {
+        if (img.width && img.height && img.width > 0 && img.height > 0) return img
+        try {
+          const dims = await getImageDimensionsFromUrl(img.url)
+          return { ...img, width: dims.width, height: dims.height }
+        } catch {
+          return { ...img, width: 800, height: 600 }
+        }
+      })
+    ).then((healedImages) => {
+      if (isMounted) {
+        imagesRef.current = healedImages
+        updateAttributes({ images: healedImages })
+      }
+    })
+
+    return () => {
+      isMounted = false
+    }
+  }, [images, updateAttributes])
+
   const handleFilesUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files
     if (!files || files.length === 0) return
 
     const fileList = Array.from(files)
     const initialUploads: Record<string, ActiveUploadItem> = {}
-    const fileTasks: { id: string; file: File }[] = []
+    const fileTasks: { id: string; file: File; dimsPromise: Promise<{ width: number; height: number }> }[] = []
 
     fileList.forEach((file, index) => {
       const id = `${Date.now()}-${index}-${Math.random().toString(36).substring(2, 7)}`
@@ -208,13 +278,17 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
         loadedText: '0 B',
         totalText: formatBytes(file.size),
       }
-      fileTasks.push({ id, file })
+      fileTasks.push({
+        id,
+        file,
+        dimsPromise: getImageDimensionsFromFile(file),
+      })
     })
 
     setActiveUploads((prev) => ({ ...prev, ...initialUploads }))
 
     // Fire all uploads concurrently directly to Supabase storage
-    fileTasks.forEach(({ id, file }) => {
+    fileTasks.forEach(({ id, file, dimsPromise }) => {
       uploadFileDirect({
         file,
         bucket: 'post-images',
@@ -233,19 +307,28 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
           })
         },
       })
-        .then((res) => {
+        .then(async (res) => {
           // 1. Remove this completed file's progress card
           setActiveUploads((prev) => {
             const next = { ...prev }
             delete next[id]
             return next
           })
-          // 2. Add completed thumbnail into gallery immediately in place
+          // 2. Measure real natural dimensions and add completed thumbnail into gallery immediately
+          let dims = { width: 800, height: 600 }
+          try {
+            dims = await dimsPromise
+          } catch (e) {
+            console.warn('Could not read image dimensions:', e)
+          }
+
           const nextImages = [
             ...imagesRef.current,
             {
               url: res.url,
               caption: file.name.replace(/\.[^/.]+$/, ''),
+              width: dims.width,
+              height: dims.height,
             },
           ]
           imagesRef.current = nextImages
@@ -267,6 +350,24 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
     }
   }
 
+  const handleAddByUrl = async () => {
+    const url = window.prompt('Enter image URL:')
+    if (!url || !url.trim()) return
+    const cleanUrl = url.trim()
+    const dims = await getImageDimensionsFromUrl(cleanUrl)
+    const nextImages = [
+      ...imagesRef.current,
+      {
+        url: cleanUrl,
+        caption: '',
+        width: dims.width,
+        height: dims.height,
+      },
+    ]
+    imagesRef.current = nextImages
+    updateAttributes({ images: nextImages })
+  }
+
   const handleRemoveImage = (indexToRemove: number) => {
     updateAttributes({
       images: images.filter((_, i) => i !== indexToRemove),
@@ -284,6 +385,19 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
   }
 
   const hasActiveUploads = Object.keys(activeUploads).length > 0
+
+  // Group images into justified pairs of 2, odd image as group of 1
+  const groups: { item: GalleryImageEntry; index: number }[][] = []
+  for (let i = 0; i < images.length; i += 2) {
+    if (i + 1 < images.length) {
+      groups.push([
+        { item: images[i], index: i },
+        { item: images[i + 1], index: i + 1 },
+      ])
+    } else {
+      groups.push([{ item: images[i], index: i }])
+    }
+  }
 
   return (
     <NodeViewWrapper className="gallery-node-view my-6 p-3 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
@@ -316,6 +430,13 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
           </button>
           <button
             type="button"
+            onClick={handleAddByUrl}
+            className="text-gray-600 hover:text-gray-800 px-2 py-0.5 rounded hover:bg-gray-100 text-xs font-medium transition"
+          >
+            + Add via URL
+          </button>
+          <button
+            type="button"
             onClick={deleteNode}
             className="text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50 text-xs transition"
             title="Remove gallery"
@@ -345,42 +466,119 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
           Gallery is empty. Click "+ Add Images" above to upload photos.
         </div>
       ) : images.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
-          {images.map((img, i) => (
-            <div key={i} className="relative group/img rounded-[4px] overflow-hidden border border-[#F5ECDE] bg-[#FAF5EC] aspect-[4/3] shadow-sm">
-              <img src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
-              <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
-                {i > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => handleMove(i, 'left')}
-                    className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
-                    title="Move Left"
-                  >
-                    &larr;
-                  </button>
-                )}
-                {i < images.length - 1 && (
-                  <button
-                    type="button"
-                    onClick={() => handleMove(i, 'right')}
-                    className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
-                    title="Move Right"
-                  >
-                    &rarr;
-                  </button>
-                )}
-                <button
-                  type="button"
-                  onClick={() => handleRemoveImage(i)}
-                  className="p-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
-                  title="Remove image"
+        <div className="flex flex-col gap-3 sm:gap-4 md:gap-5 w-full">
+          {groups.map((group, groupIdx) => {
+            if (group.length === 2) {
+              return (
+                <div key={groupIdx} className="flex flex-row gap-3 sm:gap-4 md:gap-5 w-full items-start">
+                  {group.map(({ item: img, index: i }) => {
+                    const w = img.width && img.width > 0 ? img.width : 4
+                    const h = img.height && img.height > 0 ? img.height : 3
+                    const ratio = w / h
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          flexGrow: ratio,
+                          flexBasis: 0,
+                          minWidth: 0,
+                          aspectRatio: `${w} / ${h}`,
+                        }}
+                        className="relative group/img rounded-[4px] overflow-hidden border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
+                      >
+                        <img
+                          src={img.url}
+                          alt={img.caption || ''}
+                          className="w-full h-full block"
+                        />
+                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                          {i > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => handleMove(i, 'left')}
+                              className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                              title="Move Left"
+                            >
+                              &larr;
+                            </button>
+                          )}
+                          {i < images.length - 1 && (
+                            <button
+                              type="button"
+                              onClick={() => handleMove(i, 'right')}
+                              className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                              title="Move Right"
+                            >
+                              &rarr;
+                            </button>
+                          )}
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(i)}
+                            className="p-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+                            title="Remove image"
+                          >
+                            &times;
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              )
+            }
+
+            // Group of 1 (odd one out)
+            const { item: img, index: i } = group[0]
+            const w = img.width && img.width > 0 ? img.width : 4
+            const h = img.height && img.height > 0 ? img.height : 3
+            return (
+              <div key={groupIdx} className="w-full">
+                <div
+                  style={{
+                    aspectRatio: `${w} / ${h}`,
+                  }}
+                  className="relative group/img rounded-[4px] overflow-hidden border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition w-full"
                 >
-                  &times;
-                </button>
+                  <img
+                    src={img.url}
+                    alt={img.caption || ''}
+                    className="w-full h-full block"
+                  />
+                  <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
+                    {i > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => handleMove(i, 'left')}
+                        className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                        title="Move Left"
+                      >
+                        &larr;
+                      </button>
+                    )}
+                    {i < images.length - 1 && (
+                      <button
+                        type="button"
+                        onClick={() => handleMove(i, 'right')}
+                        className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                        title="Move Right"
+                      >
+                        &rarr;
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveImage(i)}
+                      className="p-1 bg-red-600 text-white rounded hover:bg-red-700 text-xs"
+                      title="Remove image"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            )
+          })}
         </div>
       ) : null}
 
@@ -597,10 +795,15 @@ export const Gallery = Node.create({
         tag: 'figure[data-type="gallery"]',
         getAttrs: (element) => {
           const el = element as HTMLElement
-          const imgs = Array.from(el.querySelectorAll('img')).map((img) => ({
-            url: img.getAttribute('src') || '',
-            caption: img.getAttribute('alt') || '',
-          }))
+          const imgs = Array.from(el.querySelectorAll('img')).map((img) => {
+            const w = parseInt(img.getAttribute('data-width') || img.getAttribute('width') || '', 10)
+            const h = parseInt(img.getAttribute('data-height') || img.getAttribute('height') || '', 10)
+            return {
+              url: img.getAttribute('src') || '',
+              caption: img.getAttribute('alt') || '',
+              ...(w > 0 && h > 0 ? { width: w, height: h } : {}),
+            }
+          })
           const figcaption = el.querySelector('figcaption')
           return {
             images: imgs,
@@ -613,23 +816,81 @@ export const Gallery = Node.create({
 
   renderHTML({ HTMLAttributes }) {
     const images: GalleryImageEntry[] = Array.isArray(HTMLAttributes.images) ? HTMLAttributes.images : []
-    return [
-      'figure',
-      mergeAttributes({ 'data-type': 'gallery', class: 'gallery-block my-8' }),
-      [
+    const groups: GalleryImageEntry[][] = []
+    for (let i = 0; i < images.length; i += 2) {
+      if (i + 1 < images.length) {
+        groups.push([images[i], images[i + 1]])
+      } else {
+        groups.push([images[i]])
+      }
+    }
+
+    const groupElements = groups.map((group) => {
+      if (group.length === 2) {
+        return [
+          'div',
+          { class: 'flex flex-row gap-3 sm:gap-4 md:gap-5 w-full items-start' },
+          ...group.map((img) => {
+            const w = img.width && img.width > 0 ? img.width : 4
+            const h = img.height && img.height > 0 ? img.height : 3
+            const ratio = w / h
+            return [
+              'a',
+              {
+                href: img.url,
+                target: '_blank',
+                rel: 'noopener noreferrer',
+                class: 'group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm',
+                style: `flex-grow: ${ratio}; flex-basis: 0; min-width: 0; aspect-ratio: ${w} / ${h};`,
+              },
+              [
+                'img',
+                {
+                  src: img.url,
+                  alt: img.caption || '',
+                  class: 'w-full h-full block',
+                  'data-width': String(w),
+                  'data-height': String(h),
+                },
+              ],
+            ]
+          }),
+        ]
+      }
+
+      const img = group[0]
+      const w = img.width && img.width > 0 ? img.width : 4
+      const h = img.height && img.height > 0 ? img.height : 3
+      return [
         'div',
-        { class: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4' },
-        ...images.map((img) => [
+        { class: 'w-full' },
+        [
           'a',
           {
             href: img.url,
             target: '_blank',
             rel: 'noopener noreferrer',
-            class: 'group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] aspect-[4/3] shadow-sm',
+            class: 'group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm w-full',
+            style: `aspect-ratio: ${w} / ${h};`,
           },
-          ['img', { src: img.url, alt: img.caption || '', class: 'w-full h-full object-cover' }],
-        ]),
-      ],
+          [
+            'img',
+            {
+              src: img.url,
+              alt: img.caption || '',
+              class: 'w-full h-full block',
+              'data-width': String(w),
+              'data-height': String(h),
+            },
+          ],
+        ],
+      ]
+    })
+
+    return [
+      'figure',
+      mergeAttributes({ 'data-type': 'gallery', class: 'gallery-block my-8' }),
+      ['div', { class: 'flex flex-col gap-3 sm:gap-4 md:gap-5 w-full' }, ...groupElements],
       HTMLAttributes.caption
         ? [
             'figcaption',
