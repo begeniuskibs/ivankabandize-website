@@ -25,6 +25,7 @@ function PostEditorContent() {
   const [content, setContent] = useState<Record<string, unknown>>({})
   const [featuredImageUrl, setFeaturedImageUrl] = useState<string | null>(null)
   const [featuredImageCaption, setFeaturedImageCaption] = useState<string | null>(null)
+  const [headerImageWidth, setHeaderImageWidth] = useState<'standard' | 'wide'>('standard')
 
   // Drawer Settings (Who & Classification)
   const [visibility, setVisibility] = useState<'public' | 'free' | 'paid' | 'comped'>('public')
@@ -76,6 +77,7 @@ function PostEditorContent() {
         setContent(post.content || {})
         setFeaturedImageUrl(post.featured_image_url || null)
         setFeaturedImageCaption((post.content as any)?.featured_image_caption || null)
+        setHeaderImageWidth(post.header_image_width || (post.content as any)?.header_image_width || 'standard')
         setVisibility(post.visibility || 'public')
         setContentType(post.content_type || 'structured_thoughts')
         setPublishStatus(post.publish_status || 'draft')
@@ -139,6 +141,7 @@ function PostEditorContent() {
   function handleRemoveFeatureImage() {
     setFeaturedImageUrl(null)
     setFeaturedImageCaption(null)
+    setHeaderImageWidth('standard')
   }
 
   async function handleCreateTag() {
@@ -196,6 +199,7 @@ function PostEditorContent() {
     } else {
       delete (finalContent as any).featured_image_caption
     }
+    delete (finalContent as any).header_image_width
 
     const payload = {
       title,
@@ -203,6 +207,7 @@ function PostEditorContent() {
       excerpt,
       content: finalContent,
       featured_image_url: featuredImageUrl || null,
+      header_image_width: headerImageWidth,
       visibility,
       content_type: contentType,
       publish_status: status,
@@ -423,6 +428,40 @@ function PostEditorContent() {
                   className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 text-xs font-semibold rounded-xl transition disabled:opacity-50"
                 >
                   {uploadingFeatureImage ? 'Uploading...' : '📁 Upload Image'}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Header Image Width Setting (Standard vs Wide) */}
+          {featuredImageUrl && (
+            <div className="mt-3 flex items-center justify-between text-xs bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5">
+              <div>
+                <span className="font-semibold text-gray-800">Header Image Width</span>
+                <p className="text-[11px] text-gray-500">Standard stays within reading column; Wide expands across desktop and tablet</p>
+              </div>
+              <div className="inline-flex rounded-lg bg-gray-200/80 p-0.5 border border-gray-200 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setHeaderImageWidth('standard')}
+                  className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+                    headerImageWidth === 'standard'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  Standard
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setHeaderImageWidth('wide')}
+                  className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+                    headerImageWidth === 'wide'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-500 hover:text-gray-800'
+                  }`}
+                >
+                  Wide
                 </button>
               </div>
             </div>

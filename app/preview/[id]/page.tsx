@@ -26,7 +26,7 @@ export default async function PreviewPage({ params }: PreviewPageProps) {
   // Owner is authenticated: fetch post by ID in ANY status (draft, scheduled, published)
   const { data: post, error } = await supabase
     .from('posts')
-    .select('id, title, slug, content, excerpt, published_at, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, content, excerpt, published_at, content_type, featured_image_url, header_image_width, post_tags(tag:tags(name, slug))')
     .eq('id', id)
     .maybeSingle()
 

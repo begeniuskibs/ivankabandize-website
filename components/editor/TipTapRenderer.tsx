@@ -1,5 +1,6 @@
 import React from 'react'
 import { getYouTubeEmbedUrl } from '@/lib/youtube'
+import WideContainer from '@/components/public/WideContainer'
 
 interface TipTapNode {
   type: string
@@ -124,41 +125,35 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
         if (images.length === 0) return null
 
-        const gridClass =
-          images.length === 1
-            ? 'grid-cols-1'
-            : images.length === 2
-            ? 'grid-cols-2'
-            : images.length === 3
-            ? 'grid-cols-2 sm:grid-cols-3'
-            : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
-
         return (
-          <figure key={index} className="my-8">
-            <div className={`grid ${gridClass} gap-3 sm:gap-4`}>
-              {images.map((img, i) => (
-                <a
-                  key={i}
-                  href={img.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group block overflow-hidden rounded-[4px] aspect-square bg-gray-50 transition"
-                  title={img.caption || 'View full-size image'}
-                >
-                  <img
-                    src={img.url}
-                    alt={img.caption || 'Gallery image'}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                  />
-                </a>
-              ))}
-            </div>
-            {caption && (
-              <figcaption className="mt-3 text-center text-xs sm:text-sm text-[#5A5D70]">
-                {caption}
-              </figcaption>
-            )}
-          </figure>
+          <WideContainer key={index} className="my-10">
+            <figure>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-5">
+                {images.map((img, i) => (
+                  <a
+                    key={i}
+                    href={img.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] aspect-[4/3] shadow-sm hover:shadow-md transition"
+                    title={img.caption || 'View full-size image'}
+                  >
+                    <img
+                      src={img.url}
+                      alt={img.caption || 'Gallery image'}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                  </a>
+                ))}
+              </div>
+              {caption && (
+                <figcaption className="mt-3 text-center text-xs sm:text-sm text-[#5A5D70]">
+                  {caption}
+                </figcaption>
+              )}
+            </figure>
+          </WideContainer>
         )
       }
       case 'youtube': {

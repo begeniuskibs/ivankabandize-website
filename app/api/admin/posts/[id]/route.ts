@@ -42,6 +42,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       excerpt,
       content,
       featured_image_url,
+      header_image_width,
       visibility,
       publish_status,
       content_type,
@@ -55,6 +56,9 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (excerpt !== undefined) updatePayload.excerpt = excerpt
     if (content !== undefined) updatePayload.content = content
     if (featured_image_url !== undefined) updatePayload.featured_image_url = featured_image_url
+    if (header_image_width !== undefined) {
+      updatePayload.header_image_width = header_image_width === 'wide' ? 'wide' : 'standard'
+    }
     if (visibility !== undefined) updatePayload.visibility = visibility
     if (content_type !== undefined) updatePayload.content_type = content_type
     if (publish_status !== undefined) {

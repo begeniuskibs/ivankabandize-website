@@ -284,14 +284,6 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
   }
 
   const hasActiveUploads = Object.keys(activeUploads).length > 0
-  const gridClass =
-    images.length === 1
-      ? 'grid-cols-1'
-      : images.length === 2
-      ? 'grid-cols-2'
-      : images.length === 3
-      ? 'grid-cols-2 sm:grid-cols-3'
-      : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4'
 
   return (
     <NodeViewWrapper className="gallery-node-view my-6 p-3 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
@@ -353,9 +345,9 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
           Gallery is empty. Click "+ Add Images" above to upload photos.
         </div>
       ) : images.length > 0 ? (
-        <div className={`grid ${gridClass} gap-2.5`}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
           {images.map((img, i) => (
-            <div key={i} className="relative group/img rounded-[4px] overflow-hidden border border-gray-200 bg-white aspect-square shadow-sm">
+            <div key={i} className="relative group/img rounded-[4px] overflow-hidden border border-[#F5ECDE] bg-[#FAF5EC] aspect-[4/3] shadow-sm">
               <img src={img.url} alt={img.caption || ''} className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center gap-1.5 p-1">
                 {i > 0 && (
@@ -626,11 +618,16 @@ export const Gallery = Node.create({
       mergeAttributes({ 'data-type': 'gallery', class: 'gallery-block my-8' }),
       [
         'div',
-        { class: 'grid grid-cols-2 md:grid-cols-4 gap-3' },
+        { class: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4' },
         ...images.map((img) => [
           'a',
-          { href: img.url, target: '_blank', rel: 'noopener noreferrer' },
-          ['img', { src: img.url, alt: img.caption || '' }],
+          {
+            href: img.url,
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            class: 'group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] aspect-[4/3] shadow-sm',
+          },
+          ['img', { src: img.url, alt: img.caption || '', class: 'w-full h-full object-cover' }],
         ]),
       ],
       HTMLAttributes.caption

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import TipTapRenderer from '@/components/editor/TipTapRenderer'
 import ReadingProgressBar from '@/components/public/ReadingProgressBar'
+import WideContainer from '@/components/public/WideContainer'
 
 export interface PostTagItem {
   tag?: {
@@ -23,6 +24,7 @@ export interface PostData {
   published_at?: string | null
   content_type?: string | null
   featured_image_url?: string | null
+  header_image_width?: 'standard' | 'wide' | null
   post_tags?: PostTagItem[] | any[] | null
 }
 
@@ -87,6 +89,10 @@ export default function ArticleView({
 
   // Extract optional featured image caption if present in content
   const featuredImageCaption = (post.content as any)?.featured_image_caption || null
+
+  // Header image width: 'standard' (default) vs 'wide' (breakout container)
+  const headerImageWidth: 'standard' | 'wide' =
+    post.header_image_width || (post.content as any)?.header_image_width || 'standard'
 
   return (
     <>
@@ -200,23 +206,30 @@ export default function ArticleView({
           )}
 
           {/* 5. Header Image rendered AFTER Byline */}
-          {post.featured_image_url && (
-            <figure className="mb-10">
-              <div className="relative aspect-[16/9] w-full rounded-[5px] overflow-hidden">
-                <img
-                  src={post.featured_image_url}
-                  alt={post.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {featuredImageCaption && (
-                <figcaption
-                  className="mt-2.5 text-center text-xs text-[#5A5D70]"
-                  dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
-                />
-              )}
-            </figure>
-          )}
+          {post.featured_image_url && (() => {
+            const figureElement = (
+              <figure className={headerImageWidth === 'wide' ? '' : 'mb-10'}>
+                <div className="relative aspect-[16/9] w-full rounded-[5px] overflow-hidden">
+                  <img
+                    src={post.featured_image_url}
+                    alt={post.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                {featuredImageCaption && (
+                  <figcaption
+                    className="mt-2.5 text-center text-xs text-[#5A5D70]"
+                    dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
+                  />
+                )}
+              </figure>
+            )
+
+            if (headerImageWidth === 'wide') {
+              return <WideContainer className="mb-10">{figureElement}</WideContainer>
+            }
+            return figureElement
+          })()}
 
           {/* 6. Post TipTap Content */}
           <main id="article-body" className="text-[#232536] leading-relaxed prose max-w-none">
