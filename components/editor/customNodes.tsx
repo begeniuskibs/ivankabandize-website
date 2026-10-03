@@ -713,26 +713,72 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
   const handleFetchMetadata = async (targetUrl: string) => {
     const trimmed = targetUrl.trim()
     if (!trimmed) {
-      setErrorMessage('Please enter a URL.')
+      const msg = 'Please enter a URL.'
+      console.error('[bookmark-metadata]', msg)
+      setErrorMessage(msg)
       return
     }
 
     setIsLoading(true)
     setErrorMessage(null)
 
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => {
+      controller.abort()
+    }, 30000)
+
     try {
       const res = await fetch('/api/admin/bookmark-metadata', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ url: trimmed }),
+        signal: controller.signal,
       })
 
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}))
-        throw new Error(errorData.error || `HTTP ${res.status}: Failed to fetch metadata`)
+      let data: {
+        url?: string
+        title?: string
+        description?: string
+        author?: string
+        publisher?: string
+        thumbnail?: string
+        icon?: string
+        error?: string
+      } | null = null
+      let isJson = false
+      const contentType = res.headers.get('content-type') || ''
+      if (contentType.includes('application/json')) {
+        try {
+          data = await res.json()
+          isJson = true
+        } catch {
+          isJson = false
+          data = null
+        }
       }
 
-      const data = await res.json()
+      if (!isJson) {
+        const errorMsg = `The server took too long or failed (HTTP ${res.status}). Try again.`
+        console.error('[bookmark-metadata]', errorMsg)
+        setErrorMessage(errorMsg)
+        return
+      }
+
+      if (!res.ok) {
+        const errorMsg =
+          data?.error || `The server took too long or failed (HTTP ${res.status}). Try again.`
+        console.error('[bookmark-metadata]', errorMsg)
+        setErrorMessage(errorMsg)
+        return
+      }
+
+      if (!data) {
+        const errorMsg = `The server took too long or failed (HTTP ${res.status}). Try again.`
+        console.error('[bookmark-metadata]', errorMsg)
+        setErrorMessage(errorMsg)
+        return
+      }
+
       updateAttributes({
         url: data.url || trimmed,
         title: data.title || trimmed,
@@ -745,9 +791,16 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
       setIsEditingUrl(false)
       setIsManualEditing(false)
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : 'Failed to fetch bookmark metadata'
+      let message = ''
+      if (err instanceof Error && err.name === 'AbortError') {
+        message = 'The server took too long or failed (HTTP 504). Try again.'
+      } else {
+        message = err instanceof Error ? err.message : 'Failed to fetch bookmark metadata'
+      }
+      console.error('[bookmark-metadata]', message)
       setErrorMessage(message)
     } finally {
+      clearTimeout(timeoutId)
       setIsLoading(false)
     }
   }

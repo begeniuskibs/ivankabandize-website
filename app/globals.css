@@ -160,4 +160,11 @@ body {
   color: #B93A2A;
 }
 
+.prose .kg-bookmark-card a.kg-bookmark-container,
+.prose .kg-bookmark-card a.kg-bookmark-container:visited,
+.prose .kg-bookmark-card a.kg-bookmark-container:hover {
+  color: #232536;
+  text-decoration: none;
+}
+
 
