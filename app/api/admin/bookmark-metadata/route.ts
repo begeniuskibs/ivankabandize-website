@@ -1,6 +1,8 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
-import { safeFetchHtml, rehostBookmarkImage } from '@/lib/urlSafety'
+import { safeFetchHtml, rehostBookmarkImage, BookmarkFetchError } from '@/lib/urlSafety'
+
+export const maxDuration = 30
 
 function decodeHtmlEntities(str: string): string {
   return str
@@ -79,21 +81,27 @@ function resolveUrl(relativeOrAbsolute: string | null | undefined, baseUrl: stri
 }
 
 export async function POST(request: NextRequest) {
-  const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
+  const { supabase, error: authError } = await getAuthenticatedOwner()
 
   if (authError) {
-    return NextResponse.json({ error: authError }, { status: authStatus })
+    console.error('[bookmark-metadata] not signed in')
+    return NextResponse.json(
+      { error: 'Your sign-in has expired. Reload the page and sign in again.' },
+      { status: 401 }
+    )
   }
 
   let body: { url?: unknown } | null = null
   try {
     body = (await request.json()) as { url?: unknown }
   } catch {
+    console.error('[bookmark-metadata] bad address: invalid JSON body')
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 })
   }
 
   const { url } = body || {}
   if (!url || typeof url !== 'string' || !url.trim()) {
+    console.error('[bookmark-metadata] bad address: missing URL')
     return NextResponse.json({ error: 'A valid URL is required' }, { status: 400 })
   }
 
@@ -145,9 +153,12 @@ export async function POST(request: NextRequest) {
     const resolvedIcon = resolveUrl(rawIcon, finalUrl)
 
     // 7. Storage re-hosting (ON by default; disabled only when ENABLE_BOOKMARK_STORAGE_REHOST === 'false')
+    // Download thumbnail and icon in parallel via Promise.all
     const shouldExecuteUpload = process.env.ENABLE_BOOKMARK_STORAGE_REHOST !== 'false'
-    const finalThumbnail = await rehostBookmarkImage(supabase, resolvedThumbnail, shouldExecuteUpload)
-    const finalIcon = await rehostBookmarkImage(supabase, resolvedIcon, shouldExecuteUpload)
+    const [finalThumbnail, finalIcon] = await Promise.all([
+      rehostBookmarkImage(supabase, resolvedThumbnail, shouldExecuteUpload),
+      rehostBookmarkImage(supabase, resolvedIcon, shouldExecuteUpload),
+    ])
 
     return NextResponse.json({
       url: finalUrl,
@@ -159,7 +170,66 @@ export async function POST(request: NextRequest) {
       icon: finalIcon,
     })
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : 'Failed to fetch bookmark metadata'
-    return NextResponse.json({ error: message }, { status: 422 })
+    if (err instanceof BookmarkFetchError) {
+      switch (err.code) {
+        case 'BAD_ADDRESS': {
+          console.error('[bookmark-metadata] bad address')
+          return NextResponse.json(
+            { error: 'The address could not be reached or is invalid.' },
+            { status: 400 }
+          )
+        }
+        case 'TIMEOUT': {
+          console.error('[bookmark-metadata] the site took too long')
+          return NextResponse.json(
+            { error: 'The site took too long to respond.' },
+            { status: 504 }
+          )
+        }
+        case 'PAGE_TOO_LARGE': {
+          console.error('[bookmark-metadata] the page is too large')
+          return NextResponse.json(
+            { error: 'The page is too large to load (exceeds 1 MB limit).' },
+            { status: 413 }
+          )
+        }
+        case 'NOT_HTML': {
+          console.error('[bookmark-metadata] not an HTML page')
+          return NextResponse.json(
+            { error: 'The requested address is not an HTML page.' },
+            { status: 415 }
+          )
+        }
+        case 'SITE_REFUSED': {
+          const status = err.httpStatus || 502
+          console.error(`[bookmark-metadata] the site refused (${status})`)
+          return NextResponse.json(
+            { error: `The site refused the request (HTTP ${status}).` },
+            { status: 502 }
+          )
+        }
+      }
+    }
+
+    const message = err instanceof Error ? err.message : String(err)
+    if (message.includes('took too long') || message.includes('timed out')) {
+      console.error('[bookmark-metadata] the site took too long')
+      return NextResponse.json({ error: 'The site took too long to respond.' }, { status: 504 })
+    }
+    if (message.includes('too large') || message.includes('limit')) {
+      console.error('[bookmark-metadata] the page is too large')
+      return NextResponse.json({ error: 'The page is too large to load (exceeds 1 MB limit).' }, { status: 413 })
+    }
+    if (message.includes('not an HTML page') || message.includes('content-type')) {
+      console.error('[bookmark-metadata] not an HTML page')
+      return NextResponse.json({ error: 'The requested address is not an HTML page.' }, { status: 415 })
+    }
+    if (message.includes('SSRF') || message.includes('URL') || message.includes('DNS')) {
+      console.error('[bookmark-metadata] bad address')
+      return NextResponse.json({ error: 'The address could not be reached or is invalid.' }, { status: 400 })
+    }
+
+    console.error('[bookmark-metadata] unexpected error')
+    return NextResponse.json({ error: 'Failed to fetch bookmark metadata' }, { status: 500 })
   }
 }

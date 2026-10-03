@@ -164,6 +164,22 @@ export async function validateUrlSafety(inputUrl: string): Promise<UrlSafetyResu
   }
 }
 
+export class BookmarkFetchError extends Error {
+  code: 'BAD_ADDRESS' | 'TIMEOUT' | 'PAGE_TOO_LARGE' | 'NOT_HTML' | 'SITE_REFUSED' | 'GENERIC'
+  httpStatus?: number
+
+  constructor(
+    message: string,
+    code: 'BAD_ADDRESS' | 'TIMEOUT' | 'PAGE_TOO_LARGE' | 'NOT_HTML' | 'SITE_REFUSED' | 'GENERIC',
+    httpStatus?: number
+  ) {
+    super(message)
+    this.name = 'BookmarkFetchError'
+    this.code = code
+    this.httpStatus = httpStatus
+  }
+}
+
 export interface SafeFetchHtmlResult {
   html: string
   finalUrl: string
@@ -178,7 +194,7 @@ export async function safeFetchHtml(initialUrl: string): Promise<SafeFetchHtmlRe
   while (true) {
     const safetyCheck = await validateUrlSafety(currentUrl)
     if (!safetyCheck.safe) {
-      throw new Error(`SSRF validation failed: ${safetyCheck.reason}`)
+      throw new BookmarkFetchError(`SSRF validation failed: ${safetyCheck.reason}`, 'BAD_ADDRESS')
     }
 
     const controller = new AbortController()
@@ -198,10 +214,10 @@ export async function safeFetchHtml(initialUrl: string): Promise<SafeFetchHtmlRe
       })
     } catch (err: unknown) {
       if (err instanceof Error && err.name === 'AbortError') {
-        throw new Error('Request timed out after 8 seconds')
+        throw new BookmarkFetchError('Request timed out after 8 seconds', 'TIMEOUT')
       }
       const message = err instanceof Error ? err.message : 'Network error'
-      throw new Error(`Failed to fetch page: ${message}`)
+      throw new BookmarkFetchError(`Failed to fetch page: ${message}`, 'BAD_ADDRESS')
     } finally {
       clearTimeout(timeoutId)
     }
@@ -210,34 +226,34 @@ export async function safeFetchHtml(initialUrl: string): Promise<SafeFetchHtmlRe
     if ([301, 302, 303, 307, 308].includes(res.status)) {
       redirectCount++
       if (redirectCount > maxRedirects) {
-        throw new Error(`Too many redirects (maximum ${maxRedirects} allowed)`)
+        throw new BookmarkFetchError(`Too many redirects (maximum ${maxRedirects} allowed)`, 'BAD_ADDRESS')
       }
       const location = res.headers.get('location')
       if (!location) {
-        throw new Error(`Redirect status ${res.status} returned without a location header`)
+        throw new BookmarkFetchError(`Redirect status ${res.status} returned without a location header`, 'BAD_ADDRESS')
       }
       currentUrl = new URL(location, currentUrl).href
       continue
     }
 
     if (!res.ok) {
-      throw new Error(`HTTP error ${res.status}: ${res.statusText}`)
+      throw new BookmarkFetchError(`HTTP error ${res.status}: ${res.statusText}`, 'SITE_REFUSED', res.status)
     }
 
     const contentType = res.headers.get('content-type') || ''
     if (!contentType.includes('text/html') && !contentType.includes('application/xhtml+xml')) {
-      throw new Error(`Invalid content-type: ${contentType}. Only HTML responses are accepted.`)
+      throw new BookmarkFetchError(`Invalid content-type: ${contentType}. Only HTML responses are accepted.`, 'NOT_HTML')
     }
 
     // Read at most 1 MB
     const contentLength = res.headers.get('content-length')
     if (contentLength && parseInt(contentLength, 10) > maxBytes) {
-      throw new Error(`Page size exceeds 1 MB limit (${contentLength} bytes)`)
+      throw new BookmarkFetchError(`Page size exceeds 1 MB limit (${contentLength} bytes)`, 'PAGE_TOO_LARGE')
     }
 
     const reader = res.body?.getReader()
     if (!reader) {
-      throw new Error('Response body is empty or not readable')
+      throw new BookmarkFetchError('Response body is empty or not readable', 'BAD_ADDRESS')
     }
 
     const chunks: Uint8Array[] = []
@@ -250,7 +266,7 @@ export async function safeFetchHtml(initialUrl: string): Promise<SafeFetchHtmlRe
         totalBytes += value.length
         if (totalBytes > maxBytes) {
           reader.cancel()
-          throw new Error('Page size exceeded 1 MB limit during download')
+          throw new BookmarkFetchError('Page size exceeded 1 MB limit during download', 'PAGE_TOO_LARGE')
         }
         chunks.push(value)
       }
@@ -350,11 +366,8 @@ export async function rehostBookmarkImage(
           return imageUrl
         }
 
-        const ext =
-          allowedMimes[rawContentType] ||
-          currentUrl.split('?')[0].split('.').pop()?.toLowerCase() ||
-          'jpg'
-        if (!['png', 'jpg', 'jpeg', 'webp', 'gif', 'ico'].includes(ext)) {
+        const ext = allowedMimes[rawContentType]
+        if (!ext) {
           return imageUrl
         }
 
@@ -419,7 +432,7 @@ export async function rehostBookmarkImage(
         } catch {}
 
         const path = `${Date.now()}-${cleanFileName || 'bookmark'}.${ext}`
-        const contentType = rawContentType || `image/${ext === 'jpg' ? 'jpeg' : ext}`
+        const contentType = rawContentType === 'image/jpg' ? 'image/jpeg' : rawContentType
 
         const { data, error } = await client.storage
           .from('post-images')

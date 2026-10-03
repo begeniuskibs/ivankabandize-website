@@ -753,6 +753,34 @@ export default function TipTapEditor({
         .tiptap-editor-scope .ProseMirror a:hover {
           color: #B93A2A;
         }
+        .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container,
+        .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container:hover,
+        .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container:visited {
+          color: #232536;
+          text-decoration: none;
+        }
+        .tiptap-editor-scope .ProseMirror .kg-bookmark-card img {
+          margin: 0;
+          border: 0;
+          box-shadow: none;
+          border-radius: 0;
+        }
+        .tiptap-editor-scope .ProseMirror .kg-bookmark-card .kg-bookmark-icon {
+          width: 20px;
+          height: 20px;
+          max-width: 20px;
+          border-radius: 2px;
+          object-fit: contain;
+        }
+        .tiptap-editor-scope .ProseMirror .kg-bookmark-card .kg-bookmark-thumbnail img {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          max-width: none;
+          object-fit: cover;
+        }
         .tiptap-editor-scope .ProseMirror p.is-editor-empty:first-child::before {
           color: #9ca3af;
           content: attr(data-placeholder);
