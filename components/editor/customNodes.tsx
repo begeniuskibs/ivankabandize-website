@@ -1332,12 +1332,13 @@ export const Bookmark = Node.create({
           const iconEl = el.querySelector('.kg-bookmark-icon') as HTMLImageElement | null
           const thumbEl = el.querySelector('.kg-bookmark-thumbnail img') as HTMLImageElement | null
           const figcaption = el.querySelector('figcaption')
+          // Ghost inverted author/publisher: .kg-bookmark-author has publisher text, .kg-bookmark-publisher has author text
           return {
             url: a?.getAttribute('href') || '',
             title: titleEl?.textContent || '',
             description: descEl?.textContent || '',
-            author: authorEl?.textContent || '',
-            publisher: pubEl?.textContent || '',
+            author: pubEl?.textContent || '',
+            publisher: authorEl?.textContent || '',
             thumbnail: thumbEl?.getAttribute('src') || '',
             icon: iconEl?.getAttribute('src') || '',
             caption: figcaption?.textContent || '',

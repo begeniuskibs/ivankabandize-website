@@ -4,27 +4,69 @@ import { safeFetchHtml, rehostBookmarkImage } from '@/lib/urlSafety'
 
 function decodeHtmlEntities(str: string): string {
   return str
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/&#x2F;/gi, '/')
-    .replace(/&#(\d+);/g, (_, dec) => String.fromCharCode(Number(dec)))
+    .replace(/&#x([0-9a-fA-F]+);/gi, (_, hex) => {
+      try {
+        const code = parseInt(hex, 16)
+        return String.fromCodePoint(code)
+      } catch {
+        return _
+      }
+    })
+    .replace(/&#(\d+);/g, (_, dec) => {
+      try {
+        const code = parseInt(dec, 10)
+        return String.fromCodePoint(code)
+      } catch {
+        return _
+      }
+    })
+    .replace(/&quot;/gi, '"')
+    .replace(/&apos;/gi, "'")
+    .replace(/&amp;/gi, '&')
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&nbsp;/gi, ' ')
 }
 
 function extractMetaContent(html: string, keyName: string, keyValue: string): string | null {
-  const regex = new RegExp(
-    `<meta\\s+[^>]*?${keyName}=["']${keyValue}["'][^>]*?content=["']([^"']*)["']`,
-    'i'
-  )
-  const regexReverse = new RegExp(
-    `<meta\\s+[^>]*?content=["']([^"']*)["'][^>]*?${keyName}=["']${keyValue}["']`,
-    'i'
-  )
-  const match = html.match(regex) || html.match(regexReverse)
-  return match ? decodeHtmlEntities(match[1].trim()) : null
+  const metaTagRegex = /<meta\b[^>]*>/gi
+  let tagMatch: RegExpExecArray | null
+  while ((tagMatch = metaTagRegex.exec(html)) !== null) {
+    const tag = tagMatch[0]
+    const keyRegex = new RegExp(`\\b${keyName}=(?:"${keyValue}"|'${keyValue}')`, 'i')
+    if (keyRegex.test(tag)) {
+      const doubleQuoteMatch = tag.match(/\bcontent="([^"]*)"/i)
+      if (doubleQuoteMatch) {
+        return decodeHtmlEntities(doubleQuoteMatch[1].trim())
+      }
+      const singleQuoteMatch = tag.match(/\bcontent='([^']*)'/i)
+      if (singleQuoteMatch) {
+        return decodeHtmlEntities(singleQuoteMatch[1].trim())
+      }
+    }
+  }
+  return null
+}
+
+function extractLinkHref(html: string, relPattern: RegExp): string | null {
+  const linkTagRegex = /<link\b[^>]*>/gi
+  let tagMatch: RegExpExecArray | null
+  while ((tagMatch = linkTagRegex.exec(html)) !== null) {
+    const tag = tagMatch[0]
+    const relMatch = tag.match(/\brel=(?:"([^"]*)"|'([^']*)')/i)
+    const relValue = relMatch ? (relMatch[1] ?? relMatch[2] ?? '') : ''
+    if (relValue && relPattern.test(relValue.trim())) {
+      const doubleQuoteHref = tag.match(/\bhref="([^"]*)"/i)
+      if (doubleQuoteHref) {
+        return decodeHtmlEntities(doubleQuoteHref[1].trim())
+      }
+      const singleQuoteHref = tag.match(/\bhref='([^']*)'/i)
+      if (singleQuoteHref) {
+        return decodeHtmlEntities(singleQuoteHref[1].trim())
+      }
+    }
+  }
+  return null
 }
 
 function resolveUrl(relativeOrAbsolute: string | null | undefined, baseUrl: string): string {
@@ -98,17 +140,12 @@ export async function POST(request: NextRequest) {
     const resolvedThumbnail = resolveUrl(ogImage || twitterImage, finalUrl)
 
     // 6. Icon: link rel="icon" | rel="shortcut icon" | rel="apple-touch-icon" | /favicon.ico
-    const iconMatch =
-      html.match(/<link\s+[^>]*?rel=["'](?:shortcut )?icon["'][^>]*?href=["']([^"']*)["']/i) ||
-      html.match(/<link\s+[^>]*?href=["']([^"']*)["'][^>]*?rel=["'](?:shortcut )?icon["']/i) ||
-      html.match(/<link\s+[^>]*?rel=["']apple-touch-icon["'][^>]*?href=["']([^"']*)["']/i) ||
-      html.match(/<link\s+[^>]*?href=["']([^"']*)["'][^>]*?rel=["']apple-touch-icon["']/i)
-
-    const rawIcon = iconMatch ? iconMatch[1].trim() : '/favicon.ico'
+    const iconHref = extractLinkHref(html, /^(?:shortcut\s+)?icon$|^apple-touch-icon$/i)
+    const rawIcon = iconHref || '/favicon.ico'
     const resolvedIcon = resolveUrl(rawIcon, finalUrl)
 
-    // 7. Storage re-hosting (defined and wired, real uploads bypassed during test batches)
-    const shouldExecuteUpload = process.env.ENABLE_BOOKMARK_STORAGE_REHOST === 'true'
+    // 7. Storage re-hosting (ON by default; disabled only when ENABLE_BOOKMARK_STORAGE_REHOST === 'false')
+    const shouldExecuteUpload = process.env.ENABLE_BOOKMARK_STORAGE_REHOST !== 'false'
     const finalThumbnail = await rehostBookmarkImage(supabase, resolvedThumbnail, shouldExecuteUpload)
     const finalIcon = await rehostBookmarkImage(supabase, resolvedIcon, shouldExecuteUpload)
 

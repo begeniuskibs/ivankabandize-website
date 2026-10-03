@@ -263,100 +263,185 @@ export async function safeFetchHtml(initialUrl: string): Promise<SafeFetchHtmlRe
 }
 
 /**
- * Re-hosting helper: downloads image, validates type & size, and uploads to storage.
- * NOTE: As per batch rules, real storage uploads are not executed during testing.
+ * Re-hosting helper: downloads image with SSRF checks, redirects, streaming size limit,
+ * and uploads to 'post-images' bucket matching the app/api/admin/upload convention.
+ * Falls back to original imageUrl on any error.
  */
 export async function rehostBookmarkImage(
   supabase: unknown,
   imageUrl: string,
-  executeUpload: boolean = false
+  executeUpload: boolean = true
 ): Promise<string> {
   if (!imageUrl || !executeUpload) {
     return imageUrl
   }
 
-  const safetyCheck = await validateUrlSafety(imageUrl)
-  if (!safetyCheck.safe) {
-    return imageUrl
-  }
-
-  const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), 8000)
-
-  let res: Response
   try {
-    res = await fetch(imageUrl, {
-      method: 'GET',
-      signal: controller.signal,
-      headers: {
-        'User-Agent': 'IvanKabandizeBot/1.0',
-      },
-    })
+    let currentUrl = imageUrl
+    let redirectCount = 0
+    const maxRedirects = 3
+    const maxBytes = 5 * 1024 * 1024 // 5 MB limit
+
+    const controller = new AbortController()
+    // The 8-second timeout covers both request headers and reading the streaming body.
+    const timeoutId = setTimeout(() => controller.abort(), 8000)
+
+    try {
+      while (true) {
+        const safetyCheck = await validateUrlSafety(currentUrl)
+        if (!safetyCheck.safe) {
+          return imageUrl
+        }
+
+        let res: Response
+        try {
+          res = await fetch(currentUrl, {
+            method: 'GET',
+            redirect: 'manual',
+            signal: controller.signal,
+            headers: {
+              'User-Agent':
+                'Mozilla/5.0 (compatible; IvanKabandizeBot/1.0; +https://ivankabandize.com)',
+              Accept: 'image/png,image/jpeg,image/webp,image/gif,image/x-icon,*/*',
+            },
+          })
+        } catch {
+          return imageUrl
+        }
+
+        // Handle redirects
+        if ([301, 302, 303, 307, 308].includes(res.status)) {
+          redirectCount++
+          if (redirectCount > maxRedirects) {
+            return imageUrl
+          }
+          const location = res.headers.get('location')
+          if (!location) {
+            return imageUrl
+          }
+          currentUrl = new URL(location, currentUrl).href
+          continue
+        }
+
+        if (!res.ok) {
+          return imageUrl
+        }
+
+        const rawContentType = (res.headers.get('content-type') || '')
+          .toLowerCase()
+          .split(';')[0]
+          .trim()
+        const allowedMimes: Record<string, string> = {
+          'image/png': 'png',
+          'image/jpeg': 'jpg',
+          'image/jpg': 'jpg',
+          'image/webp': 'webp',
+          'image/gif': 'gif',
+          'image/x-icon': 'ico',
+          'image/vnd.microsoft.icon': 'ico',
+        }
+
+        // Refuse svg
+        if (
+          rawContentType === 'image/svg+xml' ||
+          currentUrl.toLowerCase().endsWith('.svg') ||
+          imageUrl.toLowerCase().endsWith('.svg')
+        ) {
+          return imageUrl
+        }
+
+        const ext =
+          allowedMimes[rawContentType] ||
+          currentUrl.split('?')[0].split('.').pop()?.toLowerCase() ||
+          'jpg'
+        if (!['png', 'jpg', 'jpeg', 'webp', 'gif', 'ico'].includes(ext)) {
+          return imageUrl
+        }
+
+        // Refuse early if content-length is over 5 MB
+        const contentLength = res.headers.get('content-length')
+        if (contentLength && parseInt(contentLength, 10) > maxBytes) {
+          return imageUrl
+        }
+
+        // Stream read up to 5 MB limit
+        const reader = res.body?.getReader()
+        if (!reader) {
+          return imageUrl
+        }
+
+        const chunks: Uint8Array[] = []
+        let totalBytes = 0
+
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          if (value) {
+            totalBytes += value.length
+            if (totalBytes > maxBytes) {
+              await reader.cancel()
+              return imageUrl
+            }
+            chunks.push(value)
+          }
+        }
+
+        const buffer = Buffer.concat(chunks)
+        if (buffer.length === 0 || buffer.length > maxBytes) {
+          return imageUrl
+        }
+
+        // Upload to storage bucket 'post-images' matching app/api/admin/upload pattern
+        const client = supabase as {
+          storage: {
+            from: (bucket: string) => {
+              upload: (
+                path: string,
+                buffer: Buffer,
+                options: { contentType: string; upsert: boolean }
+              ) => Promise<{ data: { path: string } | null; error: unknown }>
+              getPublicUrl: (path: string) => { data: { publicUrl: string } }
+            }
+          }
+        }
+
+        let cleanFileName = 'bookmark'
+        try {
+          const parsedUrl = new URL(currentUrl)
+          const seg = parsedUrl.pathname.split('/').filter(Boolean).pop()
+          if (seg) {
+            cleanFileName = seg
+              .replace(/\.[^/.]+$/, '')
+              .toLowerCase()
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-|-$/g, '')
+          }
+        } catch {}
+
+        const path = `${Date.now()}-${cleanFileName || 'bookmark'}.${ext}`
+        const contentType = rawContentType || `image/${ext === 'jpg' ? 'jpeg' : ext}`
+
+        const { data, error } = await client.storage
+          .from('post-images')
+          .upload(path, buffer, {
+            contentType,
+            upsert: true,
+          })
+
+        if (error || !data) {
+          return imageUrl
+        }
+
+        const {
+          data: { publicUrl },
+        } = client.storage.from('post-images').getPublicUrl(data.path)
+
+        return publicUrl || imageUrl
+      }
+    } finally {
+      clearTimeout(timeoutId)
+    }
   } catch {
     return imageUrl
-  } finally {
-    clearTimeout(timeoutId)
   }
-
-  if (!res.ok) return imageUrl
-
-  const contentType = (res.headers.get('content-type') || '').toLowerCase().split(';')[0].trim()
-  const allowedMimes: Record<string, string> = {
-    'image/png': 'png',
-    'image/jpeg': 'jpg',
-    'image/jpg': 'jpg',
-    'image/webp': 'webp',
-    'image/gif': 'gif',
-    'image/x-icon': 'ico',
-    'image/vnd.microsoft.icon': 'ico',
-  }
-
-  // Explicitly refuse svg
-  if (contentType === 'image/svg+xml' || imageUrl.toLowerCase().endsWith('.svg')) {
-    return imageUrl
-  }
-
-  const ext = allowedMimes[contentType] || imageUrl.split('.').pop()?.toLowerCase() || 'jpg'
-  if (!['png', 'jpg', 'jpeg', 'webp', 'gif', 'ico'].includes(ext)) {
-    return imageUrl
-  }
-
-  const arrayBuffer = await res.arrayBuffer()
-  const buffer = Buffer.from(arrayBuffer)
-
-  // Max 5 MB limit
-  if (buffer.length > 5 * 1024 * 1024) {
-    return imageUrl
-  }
-
-  const client = supabase as {
-    storage: {
-      from: (bucket: string) => {
-        upload: (
-          path: string,
-          buffer: Buffer,
-          options: { contentType: string; upsert: boolean }
-        ) => Promise<{ data: { path: string } | null; error: unknown }>
-        getPublicUrl: (path: string) => { data: { publicUrl: string } }
-      }
-    }
-  }
-
-  const path = `bookmarks/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-  const { data, error } = await client.storage
-    .from('post-images')
-    .upload(path, buffer, {
-      contentType: contentType || 'image/jpeg',
-      upsert: true,
-    })
-
-  if (error || !data) {
-    return imageUrl
-  }
-
-  const {
-    data: { publicUrl },
-  } = client.storage.from('post-images').getPublicUrl(data.path)
-
-  return publicUrl || imageUrl
 }
