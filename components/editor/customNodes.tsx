@@ -4,6 +4,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
+import BookmarkCard from './BookmarkCard'
 
 export interface GalleryImageEntry {
   url: string
@@ -675,6 +676,308 @@ function YouTubeComponent({ node, updateAttributes, deleteNode }: any) {
   )
 }
 
+// React NodeView: Bookmark
+interface BookmarkComponentProps {
+  node: {
+    attrs: {
+      url?: string
+      title?: string
+      description?: string
+      author?: string
+      publisher?: string
+      thumbnail?: string
+      icon?: string
+      caption?: string
+    }
+  }
+  updateAttributes: (attrs: Record<string, unknown>) => void
+  deleteNode: () => void
+}
+
+function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkComponentProps) {
+  const url = node.attrs.url || ''
+  const title = node.attrs.title || ''
+  const description = node.attrs.description || ''
+  const author = node.attrs.author || ''
+  const publisher = node.attrs.publisher || ''
+  const thumbnail = node.attrs.thumbnail || ''
+  const icon = node.attrs.icon || ''
+  const caption = node.attrs.caption || ''
+
+  const [isEditingUrl, setIsEditingUrl] = useState(!url)
+  const [inputUrl, setInputUrl] = useState(url)
+  const [isLoading, setIsLoading] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isManualEditing, setIsManualEditing] = useState(false)
+
+  const handleFetchMetadata = async (targetUrl: string) => {
+    const trimmed = targetUrl.trim()
+    if (!trimmed) {
+      setErrorMessage('Please enter a URL.')
+      return
+    }
+
+    setIsLoading(true)
+    setErrorMessage(null)
+
+    try {
+      const res = await fetch('/api/admin/bookmark-metadata', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: trimmed }),
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        throw new Error(errorData.error || `HTTP ${res.status}: Failed to fetch metadata`)
+      }
+
+      const data = await res.json()
+      updateAttributes({
+        url: data.url || trimmed,
+        title: data.title || trimmed,
+        description: data.description || '',
+        author: data.author || '',
+        publisher: data.publisher || '',
+        thumbnail: data.thumbnail || '',
+        icon: data.icon || '',
+      })
+      setIsEditingUrl(false)
+      setIsManualEditing(false)
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to fetch bookmark metadata'
+      setErrorMessage(message)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleFallbackUseUrl = () => {
+    const trimmed = inputUrl.trim()
+    if (!trimmed) return
+    updateAttributes({
+      url: trimmed,
+      title: trimmed,
+      description: '',
+      author: '',
+      publisher: '',
+      thumbnail: '',
+      icon: '',
+    })
+    setIsEditingUrl(false)
+    setIsManualEditing(true)
+    setErrorMessage(null)
+  }
+
+  return (
+    <NodeViewWrapper className="bookmark-node-view my-6 p-3 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
+      {/* Top action bar */}
+      <div className="flex items-center justify-between pb-2 mb-2 border-b border-gray-200/80 text-xs text-gray-500">
+        <span className="font-semibold text-gray-700 flex items-center gap-1.5">
+          <span>Bookmark Block</span>
+        </span>
+        <div className="flex items-center gap-2">
+          {url && !isEditingUrl && (
+            <>
+              <button
+                type="button"
+                onClick={() => {
+                  setInputUrl(url)
+                  setIsEditingUrl(true)
+                  setErrorMessage(null)
+                }}
+                className="text-gray-600 hover:text-gray-900 px-2 py-0.5 rounded hover:bg-gray-200 text-xs transition"
+              >
+                Replace URL
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsManualEditing(!isManualEditing)}
+                className="text-blue-600 hover:text-blue-800 px-2 py-0.5 rounded hover:bg-blue-50 text-xs font-medium transition"
+              >
+                {isManualEditing ? 'Close Details' : 'Edit Details'}
+              </button>
+            </>
+          )}
+          <button
+            type="button"
+            onClick={deleteNode}
+            className="text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50 text-xs transition"
+            title="Remove bookmark"
+          >
+            Remove
+          </button>
+        </div>
+      </div>
+
+      {/* URL Input Form (on insert or when replacing URL) */}
+      {isEditingUrl || !url ? (
+        <div className="p-4 bg-white rounded-xl border border-gray-200 space-y-3">
+          <label className="block text-xs font-semibold text-gray-700">
+            Paste a URL to add a bookmark
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              type="url"
+              value={inputUrl}
+              onChange={(e) => setInputUrl(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault()
+                  handleFetchMetadata(inputUrl)
+                }
+              }}
+              placeholder="https://example.com/article"
+              disabled={isLoading}
+              className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232536]"
+              autoFocus
+            />
+            <button
+              type="button"
+              onClick={() => handleFetchMetadata(inputUrl)}
+              disabled={isLoading || !inputUrl.trim()}
+              className="px-3 py-1.5 bg-[#232536] text-white text-xs font-medium rounded-lg hover:bg-black transition disabled:opacity-50"
+            >
+              {isLoading ? 'Fetching...' : 'Add Bookmark'}
+            </button>
+            {url && (
+              <button
+                type="button"
+                onClick={() => {
+                  setIsEditingUrl(false)
+                  setErrorMessage(null)
+                }}
+                className="px-2 py-1.5 text-gray-500 hover:text-gray-700 text-xs"
+              >
+                Cancel
+              </button>
+            )}
+          </div>
+
+          {isLoading && (
+            <div className="flex items-center gap-2 text-xs text-gray-500 animate-pulse pt-1">
+              <span className="inline-block w-3 h-3 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+              <span>Fetching page metadata...</span>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="p-2.5 bg-red-50 border border-red-200 rounded-lg text-xs space-y-2">
+              <p className="text-red-700 font-medium">{errorMessage}</p>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleFallbackUseUrl}
+                  className="px-2.5 py-1 bg-white border border-gray-300 rounded shadow-xs text-gray-700 hover:bg-gray-50 font-medium transition"
+                >
+                  Use URL anyway (edit manually)
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        <div>
+          {/* Card Presentation */}
+          <BookmarkCard
+            url={url}
+            title={title}
+            description={description}
+            author={author}
+            publisher={publisher}
+            thumbnail={thumbnail}
+            icon={icon}
+            isEditor={true}
+          />
+
+          {/* Editable Caption */}
+          <input
+            type="text"
+            value={caption}
+            onChange={(e) => updateAttributes({ caption: e.target.value })}
+            placeholder="Add a caption (optional)..."
+            className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
+          />
+
+          {/* Manual editing drawer */}
+          {isManualEditing && (
+            <div className="mt-4 p-4 bg-white rounded-xl border border-gray-200 space-y-3 text-xs">
+              <div className="font-semibold text-gray-800 pb-1 border-b border-gray-100">
+                Edit Bookmark Details
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-gray-600 font-medium mb-1">Title</label>
+                  <input
+                    type="text"
+                    value={title}
+                    onChange={(e) => updateAttributes({ title: e.target.value })}
+                    className="w-full px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-600 font-medium mb-1">Publisher</label>
+                  <input
+                    type="text"
+                    value={publisher}
+                    onChange={(e) => updateAttributes({ publisher: e.target.value })}
+                    className="w-full px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-600 font-medium mb-1">Author</label>
+                  <input
+                    type="text"
+                    value={author}
+                    onChange={(e) => updateAttributes({ author: e.target.value })}
+                    className="w-full px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+                <div>
+                  <label className="block text-gray-600 font-medium mb-1">Icon URL</label>
+                  <input
+                    type="text"
+                    value={icon}
+                    onChange={(e) => updateAttributes({ icon: e.target.value })}
+                    className="w-full px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-gray-600 font-medium mb-1">Description</label>
+                  <textarea
+                    rows={2}
+                    value={description}
+                    onChange={(e) => updateAttributes({ description: e.target.value })}
+                    className="w-full px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="block text-gray-600 font-medium mb-1">Thumbnail URL</label>
+                  <input
+                    type="text"
+                    value={thumbnail}
+                    onChange={(e) => updateAttributes({ thumbnail: e.target.value })}
+                    className="w-full px-2.5 py-1 border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-black"
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end pt-1">
+                <button
+                  type="button"
+                  onClick={() => setIsManualEditing(false)}
+                  className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded font-medium transition"
+                >
+                  Done
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </NodeViewWrapper>
+  )
+}
+
 // 1. TipTap Video Node
 export const Video = Node.create({
   name: 'video',
@@ -968,6 +1271,151 @@ export const YouTube = Node.create({
 
   addNodeView() {
     return ReactNodeViewRenderer(YouTubeComponent)
+  },
+})
+
+// 3.5. TipTap Bookmark Node
+export const Bookmark = Node.create({
+  name: 'bookmark',
+  group: 'block',
+  atom: true,
+  draggable: true,
+
+  addAttributes() {
+    return {
+      url: { default: '' },
+      title: { default: '' },
+      description: { default: '' },
+      author: { default: '' },
+      publisher: { default: '' },
+      thumbnail: { default: '' },
+      icon: { default: '' },
+      caption: { default: '' },
+    }
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'figure[data-type="bookmark"]',
+        getAttrs: (element) => {
+          const el = element as HTMLElement
+          const a = el.querySelector('a.kg-bookmark-container') || el.querySelector('a')
+          const titleEl = el.querySelector('.kg-bookmark-title')
+          const descEl = el.querySelector('.kg-bookmark-description')
+          const authorEl = el.querySelector('.kg-bookmark-author')
+          const pubEl = el.querySelector('.kg-bookmark-publisher')
+          const iconEl = el.querySelector('.kg-bookmark-icon') as HTMLImageElement | null
+          const thumbEl = el.querySelector('.kg-bookmark-thumbnail img') as HTMLImageElement | null
+          const figcaption = el.querySelector('figcaption')
+          return {
+            url: el.getAttribute('data-url') || a?.getAttribute('href') || '',
+            title: el.getAttribute('data-title') || titleEl?.textContent || '',
+            description: el.getAttribute('data-description') || descEl?.textContent || '',
+            author: el.getAttribute('data-author') || authorEl?.textContent || '',
+            publisher: el.getAttribute('data-publisher') || pubEl?.textContent || '',
+            thumbnail: el.getAttribute('data-thumbnail') || thumbEl?.getAttribute('src') || '',
+            icon: el.getAttribute('data-icon') || iconEl?.getAttribute('src') || '',
+            caption: figcaption?.textContent || '',
+          }
+        },
+      },
+      {
+        tag: 'figure.kg-bookmark-card',
+        getAttrs: (element) => {
+          const el = element as HTMLElement
+          const a = el.querySelector('a.kg-bookmark-container') || el.querySelector('a')
+          const titleEl = el.querySelector('.kg-bookmark-title')
+          const descEl = el.querySelector('.kg-bookmark-description')
+          const authorEl = el.querySelector('.kg-bookmark-author')
+          const pubEl = el.querySelector('.kg-bookmark-publisher')
+          const iconEl = el.querySelector('.kg-bookmark-icon') as HTMLImageElement | null
+          const thumbEl = el.querySelector('.kg-bookmark-thumbnail img') as HTMLImageElement | null
+          const figcaption = el.querySelector('figcaption')
+          // Ghost inverted author/publisher: .kg-bookmark-author has publisher text, .kg-bookmark-publisher has author text
+          return {
+            url: a?.getAttribute('href') || '',
+            title: titleEl?.textContent || '',
+            description: descEl?.textContent || '',
+            author: pubEl?.textContent || '',
+            publisher: authorEl?.textContent || '',
+            thumbnail: thumbEl?.getAttribute('src') || '',
+            icon: iconEl?.getAttribute('src') || '',
+            caption: figcaption?.textContent || '',
+          }
+        },
+      },
+    ]
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    return [
+      'figure',
+      mergeAttributes({
+        'data-type': 'bookmark',
+        'data-url': HTMLAttributes.url,
+        'data-title': HTMLAttributes.title,
+        'data-description': HTMLAttributes.description,
+        'data-author': HTMLAttributes.author,
+        'data-publisher': HTMLAttributes.publisher,
+        'data-thumbnail': HTMLAttributes.thumbnail,
+        'data-icon': HTMLAttributes.icon,
+        class: 'kg-card kg-bookmark-card my-8 w-full',
+      }),
+      [
+        'a',
+        {
+          href: HTMLAttributes.url || '#',
+          class: 'kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-[5px] border border-[#F5ECDE] shadow-sm hover:border-[#EF5B45]/40 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]',
+          target: '_blank',
+          rel: 'noopener noreferrer',
+        },
+        [
+          'div',
+          { class: 'kg-bookmark-content flex flex-col justify-between flex-1 min-w-0 p-5 overflow-hidden' },
+          [
+            'div',
+            { class: 'w-full' },
+            ['div', { class: 'kg-bookmark-title font-[\'MTN_Brighter_Sans\',_sans-serif] text-[15px] font-semibold text-[#232536] leading-[1.4] line-clamp-2 break-words' }, HTMLAttributes.title || HTMLAttributes.url],
+            HTMLAttributes.description
+              ? ['div', { class: 'kg-bookmark-description mt-1 text-[14px] text-[#5A5D70] leading-[1.5] line-clamp-2 break-words opacity-80' }, HTMLAttributes.description]
+              : '',
+          ],
+          (HTMLAttributes.icon || HTMLAttributes.publisher || HTMLAttributes.author)
+            ? [
+                'div',
+                { class: 'kg-bookmark-metadata flex items-center gap-1.5 mt-5 text-[14px] text-[#5A5D70] font-medium whitespace-nowrap overflow-hidden text-ellipsis' },
+                HTMLAttributes.icon
+                  ? ['img', { class: 'kg-bookmark-icon w-5 h-5 object-contain rounded-xs shrink-0', src: HTMLAttributes.icon, alt: '' }]
+                  : '',
+                HTMLAttributes.publisher
+                  ? ['span', { class: 'kg-bookmark-publisher truncate max-w-[240px] text-[#232536]/80 font-medium' }, HTMLAttributes.publisher]
+                  : '',
+                HTMLAttributes.publisher && HTMLAttributes.author
+                  ? ['span', { class: 'text-[#5A5D70]/60 select-none' }, '•']
+                  : '',
+                HTMLAttributes.author
+                  ? ['span', { class: 'kg-bookmark-author truncate text-[#5A5D70] font-normal' }, HTMLAttributes.author]
+                  : '',
+              ]
+            : '',
+        ],
+        HTMLAttributes.thumbnail
+          ? [
+              'div',
+              { class: 'kg-bookmark-thumbnail relative shrink-0 w-1/3 min-w-[33%] max-w-[40%] bg-[#FAF5EC] overflow-hidden' },
+              ['img', { class: 'absolute inset-0 w-full h-full object-cover', src: HTMLAttributes.thumbnail, alt: '' }],
+            ]
+          : '',
+      ],
+      HTMLAttributes.caption
+        ? ['figcaption', { class: 'mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]' }, HTMLAttributes.caption]
+        : '',
+    ]
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(BookmarkComponent)
   },
 })
 
