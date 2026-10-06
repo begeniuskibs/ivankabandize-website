@@ -710,6 +710,11 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isManualEditing, setIsManualEditing] = useState(false)
 
+  useEffect(() => {
+    console.info('[bookmark] BookmarkComponent mount', { url: node.attrs?.url || '' })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const handleFetchMetadata = async (targetUrl: string) => {
     const trimmed = targetUrl.trim()
     if (!trimmed) {
@@ -719,6 +724,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
       return
     }
 
+    console.info('[bookmark] fetch start', { url: trimmed })
     setIsLoading(true)
     setErrorMessage(null)
 
@@ -760,6 +766,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
       if (!isJson) {
         const errorMsg = `The server took too long or failed (HTTP ${res.status}). Try again.`
         console.error('[bookmark-metadata]', errorMsg)
+        console.info('[bookmark] fetch failure', { reason: 'non-json', status: res.status })
         setErrorMessage(errorMsg)
         return
       }
@@ -768,6 +775,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
         const errorMsg =
           data?.error || `The server took too long or failed (HTTP ${res.status}). Try again.`
         console.error('[bookmark-metadata]', errorMsg)
+        console.info('[bookmark] fetch failure', { reason: 'not-ok', status: res.status, error: errorMsg })
         setErrorMessage(errorMsg)
         return
       }
@@ -775,6 +783,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
       if (!data) {
         const errorMsg = `The server took too long or failed (HTTP ${res.status}). Try again.`
         console.error('[bookmark-metadata]', errorMsg)
+        console.info('[bookmark] fetch failure', { reason: 'empty-data', status: res.status })
         setErrorMessage(errorMsg)
         return
       }
@@ -790,6 +799,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
       })
       setIsEditingUrl(false)
       setIsManualEditing(false)
+      console.info('[bookmark] fetch success', { url: data.url || trimmed })
     } catch (err: unknown) {
       let message = ''
       if (err instanceof Error && err.name === 'AbortError') {
@@ -798,6 +808,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
         message = err instanceof Error ? err.message : 'Failed to fetch bookmark metadata'
       }
       console.error('[bookmark-metadata]', message)
+      console.info('[bookmark] fetch failure', { reason: 'exception', error: message })
       setErrorMessage(message)
     } finally {
       clearTimeout(timeoutId)
