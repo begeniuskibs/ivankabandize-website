@@ -16,19 +16,6 @@ export interface BookmarkCardProps {
   className?: string
 }
 
-export function isInternalBookmarkUrl(url?: string): boolean {
-  if (!url) return false
-  const trimmed = url.trim()
-  if (trimmed.startsWith('/') || trimmed.startsWith('#')) return true
-  try {
-    const parsed = new URL(trimmed)
-    const host = parsed.hostname.toLowerCase()
-    return host === 'ivankabandize.com' || host === 'www.ivankabandize.com'
-  } catch {
-    return false
-  }
-}
-
 export default function BookmarkCard({
   url = '',
   title = '',
@@ -41,15 +28,14 @@ export default function BookmarkCard({
   isEditor = false,
   className = '',
 }: BookmarkCardProps) {
-  const isInternal = isInternalBookmarkUrl(url)
   const displayTitle = title || url || 'Bookmark'
 
   return (
     <figure className={`kg-card kg-bookmark-card my-8 w-full ${className}`}>
       <a
         href={url || '#'}
-        target={isInternal ? undefined : '_blank'}
-        rel={isInternal ? undefined : 'noopener noreferrer'}
+        target="_blank"
+        rel="noopener noreferrer"
         aria-label={displayTitle}
         onClick={isEditor ? (e) => e.preventDefault() : undefined}
         className="kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-[5px] border border-[#F5ECDE] shadow-sm hover:border-[#EF5B45]/40 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]"
