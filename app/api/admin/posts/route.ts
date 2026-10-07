@@ -10,7 +10,7 @@ export async function GET() {
 
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('*, post_tags(tag:tags(*))')
+    .select('*, post_tags(tag:tags(*)), series:series(*)')
     .order('created_at', { ascending: false })
 
   if (error) {
@@ -41,10 +41,15 @@ export async function POST(request: NextRequest) {
       content_type = 'structured_thoughts',
       published_at,
       tag_ids = [],
+      series_id = null,
     } = body
 
     if (!title) {
       return NextResponse.json({ error: 'Title is required' }, { status: 400 })
+    }
+
+    if (slug && slug.trim().toLowerCase() === 'series') {
+      return NextResponse.json({ error: "The slug 'series' is reserved" }, { status: 400 })
     }
 
     const generatedSlug =
@@ -53,6 +58,10 @@ export async function POST(request: NextRequest) {
         .toLowerCase()
         .replace(/[^a-z0-9]+/g, '-')
         .replace(/^-|-$/g, '') + `-${Date.now()}`
+
+    if (generatedSlug.toLowerCase() === 'series') {
+      return NextResponse.json({ error: "The slug 'series' is reserved" }, { status: 400 })
+    }
 
     // Insert post under active user session (RLS enforces is_owner)
     const { data: post, error: postError } = await supabase
@@ -67,6 +76,7 @@ export async function POST(request: NextRequest) {
         visibility,
         publish_status,
         content_type,
+        series_id: series_id || null,
         published_at:
           publish_status === 'published' && !published_at
             ? new Date().toISOString()
