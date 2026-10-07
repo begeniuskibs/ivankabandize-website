@@ -144,6 +144,25 @@ export default function AdminSeriesListPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    // Validate: image types only
+    if (!file.type.startsWith('image/')) {
+      setError('Please select a valid image file (PNG, JPG, WebP).')
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
+    // Validate: max 10 MB
+    const maxSizeBytes = 10 * 1024 * 1024 // 10 MB
+    if (file.size > maxSizeBytes) {
+      setError('Image file size exceeds the 10 MB limit.')
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+      return
+    }
+
     setUploadProgress({
       filename: file.name,
       percent: 0,
@@ -168,10 +187,14 @@ export default function AdminSeriesListPage() {
 
       if (res.url) {
         setHeaderImageUrl(res.url)
+        setError(null)
+      } else {
+        throw new Error('Upload succeeded but no image URL was returned')
       }
     } catch (err) {
       console.error('Image upload failed', err)
-      setError('Error uploading header image')
+      const message = err instanceof Error ? err.message : 'Error uploading header image'
+      setError(message)
     } finally {
       setUploadProgress(null)
       if (fileInputRef.current) {
@@ -670,28 +693,51 @@ export default function AdminSeriesListPage() {
                     />
                   </div>
                 ) : headerImageUrl ? (
-                  <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-gray-200 group">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={headerImageUrl}
-                      alt="Series header preview"
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
-                      <button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="px-3 py-1.5 bg-white text-gray-800 rounded-lg text-xs font-semibold hover:bg-gray-100 cursor-pointer"
-                      >
-                        Replace
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setHeaderImageUrl(null)}
-                        className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 cursor-pointer"
-                      >
-                        Remove
-                      </button>
+                  <div className="space-y-2">
+                    <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-gray-200 group bg-gray-50">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={headerImageUrl}
+                        alt="Series header preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="px-3 py-1.5 bg-white text-gray-800 rounded-lg text-xs font-semibold hover:bg-gray-100 cursor-pointer"
+                        >
+                          Replace
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setHeaderImageUrl(null)}
+                          className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 cursor-pointer"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between text-xs text-gray-500 px-1">
+                      <span className="text-[11px] text-gray-400 font-mono truncate max-w-[220px]">
+                        Header image preview
+                      </span>
+                      <div className="flex items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => fileInputRef.current?.click()}
+                          className="text-xs font-medium text-gray-600 hover:text-black cursor-pointer underline"
+                        >
+                          Replace image
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setHeaderImageUrl(null)}
+                          className="text-xs font-medium text-red-600 hover:text-red-700 cursor-pointer underline"
+                        >
+                          Remove
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ) : (
