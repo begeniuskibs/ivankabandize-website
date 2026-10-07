@@ -2,6 +2,11 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import {
+  uploadFileDirect,
+  UploadProgressCard,
+  formatBytes,
+} from '@/components/editor/UploadProgress'
 
 interface SeriesPostItem {
   id: string
@@ -52,7 +57,12 @@ export default function AdminSeriesListPage() {
   const [headerImageUrl, setHeaderImageUrl] = useState<string | null>(null)
   const [sortOrder, setSortOrder] = useState<number>(0)
   const [saving, setSaving] = useState(false)
-  const [uploadingImage, setUploadingImage] = useState(false)
+  const [uploadProgress, setUploadProgress] = useState<{
+    filename: string
+    percent: number
+    loadedText: string
+    totalText: string
+  } | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -92,6 +102,7 @@ export default function AdminSeriesListPage() {
     setSortOrder(seriesList.length)
     setError(null)
     setSuccess(null)
+    setUploadProgress(null)
     setIsModalOpen(true)
   }
 
@@ -109,6 +120,7 @@ export default function AdminSeriesListPage() {
     setSortOrder(item.sort_order || 0)
     setError(null)
     setSuccess(null)
+    setUploadProgress(null)
     setIsModalOpen(true)
   }
 
@@ -132,32 +144,36 @@ export default function AdminSeriesListPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    setUploadingImage(true)
+    setUploadProgress({
+      filename: file.name,
+      percent: 0,
+      loadedText: '0 B',
+      totalText: formatBytes(file.size),
+    })
     setError(null)
-    try {
-      const formData = new FormData()
-      formData.append('file', file)
-      formData.append('bucket', 'post-images')
 
-      const res = await fetch('/api/admin/upload', {
-        method: 'POST',
-        body: formData,
+    try {
+      const res = await uploadFileDirect({
+        file,
+        bucket: 'post-images',
+        onProgress: (p) => {
+          setUploadProgress({
+            filename: file.name,
+            percent: p.percent,
+            loadedText: p.formattedLoaded,
+            totalText: p.formattedTotal,
+          })
+        },
       })
 
-      if (res.ok) {
-        const data = await res.json()
-        if (data.url) {
-          setHeaderImageUrl(data.url)
-        }
-      } else {
-        const data = await res.json()
-        setError(data.error || 'Failed to upload header image')
+      if (res.url) {
+        setHeaderImageUrl(res.url)
       }
     } catch (err) {
       console.error('Image upload failed', err)
       setError('Error uploading header image')
     } finally {
-      setUploadingImage(false)
+      setUploadProgress(null)
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -644,7 +660,16 @@ export default function AdminSeriesListPage() {
                   className="hidden"
                 />
 
-                {headerImageUrl ? (
+                {uploadProgress ? (
+                  <div className="w-full py-6 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center bg-gray-50/50">
+                    <UploadProgressCard
+                      filename={uploadProgress.filename}
+                      percent={uploadProgress.percent}
+                      loadedText={uploadProgress.loadedText}
+                      totalText={uploadProgress.totalText}
+                    />
+                  </div>
+                ) : headerImageUrl ? (
                   <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden border border-gray-200 group">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
@@ -672,13 +697,12 @@ export default function AdminSeriesListPage() {
                 ) : (
                   <button
                     type="button"
-                    disabled={uploadingImage}
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full py-6 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:border-gray-400 transition cursor-pointer text-gray-500 hover:text-gray-700"
                   >
                     <span className="text-xl">🖼️</span>
                     <span className="text-xs font-semibold">
-                      {uploadingImage ? 'Uploading image...' : 'Upload Header Image'}
+                      Upload Header Image
                     </span>
                     <span className="text-[10px] text-gray-400">PNG, JPG, WebP up to 10MB</span>
                   </button>
@@ -696,7 +720,7 @@ export default function AdminSeriesListPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={saving}
+                  disabled={saving || Boolean(uploadProgress)}
                   className="px-5 py-2 bg-black hover:bg-gray-800 text-white text-xs font-bold rounded-xl transition disabled:opacity-50 cursor-pointer"
                 >
                   {saving ? 'Saving...' : editingSeries ? 'Update Series' : 'Create Series'}
