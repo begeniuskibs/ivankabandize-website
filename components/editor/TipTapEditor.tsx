@@ -145,11 +145,17 @@ export default function TipTapEditor({
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  function handleInsertBookmark(ed?: any) {
+  function handleInsertBookmark(ed?: any, range?: any) {
+    console.info('[bookmark] handleInsertBookmark', { hasEd: !!ed, hasRange: !!range })
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const targetEditor = (ed || editor) as any
     if (!targetEditor) return
-    targetEditor.chain().focus().insertContent({
+
+    let chain = targetEditor.chain().focus()
+    if (range) {
+      chain = chain.deleteRange(range)
+    }
+    chain.insertContent({
       type: 'bookmark',
       attrs: {
         url: '',
@@ -319,8 +325,7 @@ export default function TipTapEditor({
                 title: 'Bookmark',
                 icon: '🔖',
                 command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleInsertBookmark(ed)
+                  handleInsertBookmark(ed, range)
                 },
               },
             ]
@@ -442,6 +447,7 @@ export default function TipTapEditor({
       const currentJson = JSON.stringify(editor.getJSON())
       const nextJson = JSON.stringify(content)
       if (currentJson !== nextJson) {
+        console.info('[editor] syncing content from parent')
         editor.commands.setContent(
           typeof content === 'object' && content !== null ? content : {}
         )
