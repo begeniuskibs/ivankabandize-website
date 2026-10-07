@@ -10,19 +10,6 @@ export interface ButtonCardProps {
   className?: string
 }
 
-export function isInternalButtonUrl(url?: string): boolean {
-  if (!url) return false
-  const trimmed = url.trim()
-  if (trimmed.startsWith('/') || trimmed.startsWith('#')) return true
-  try {
-    const parsed = new URL(trimmed)
-    const host = parsed.hostname.toLowerCase()
-    return host === 'ivankabandize.com' || host === 'www.ivankabandize.com'
-  } catch {
-    return false
-  }
-}
-
 export function isValidButtonUrl(url?: string): boolean {
   if (!url) return false
   const trimmed = url.trim()
@@ -54,8 +41,8 @@ export default function ButtonCard({
   isEditor = false,
   className = '',
 }: ButtonCardProps) {
-  const isInternal = isInternalButtonUrl(url)
   const safeUrl = sanitizeButtonUrl(url)
+  const isRealLink = safeUrl !== '#'
   const displayLabel = label || 'Button'
   const isCenter = alignment === 'center'
 
@@ -67,8 +54,8 @@ export default function ButtonCard({
     >
       <a
         href={safeUrl}
-        target={isInternal ? undefined : '_blank'}
-        rel={isInternal ? undefined : 'noopener noreferrer'}
+        target={isRealLink ? '_blank' : undefined}
+        rel={isRealLink ? 'noopener noreferrer' : undefined}
         onClick={isEditor ? (e) => e.preventDefault() : undefined}
         className="kg-btn kg-btn-accent inline-flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-[15px] px-7 py-3 rounded-full bg-[#EF5B45] text-white hover:bg-[#D94834] active:bg-[#B93A2A] shadow-sm hover:shadow-md transition-all duration-200 no-underline cursor-pointer select-none"
       >

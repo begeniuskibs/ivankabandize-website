@@ -5,8 +5,8 @@ import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 import BookmarkCard from './BookmarkCard'
-import ButtonCard, { isValidButtonUrl, sanitizeButtonUrl, isInternalButtonUrl } from './ButtonCard'
-export { ButtonCard, isValidButtonUrl, sanitizeButtonUrl, isInternalButtonUrl }
+import ButtonCard, { isValidButtonUrl, sanitizeButtonUrl } from './ButtonCard'
+export { ButtonCard, isValidButtonUrl, sanitizeButtonUrl }
 
 export interface GalleryImageEntry {
   url: string
@@ -1724,13 +1724,12 @@ export const Button = Node.create({
     const alignClass = isCenter ? 'kg-align-center' : 'kg-align-left'
     const url = HTMLAttributes.url || ''
     const safeUrl = sanitizeButtonUrl(url)
-    const isInternal = isInternalButtonUrl(url)
 
     const anchorAttrs: Record<string, string> = {
       href: safeUrl,
       class: 'kg-btn kg-btn-accent',
     }
-    if (!isInternal && safeUrl !== '#') {
+    if (safeUrl !== '#') {
       anchorAttrs.target = '_blank'
       anchorAttrs.rel = 'noopener noreferrer'
     }
