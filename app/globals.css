@@ -167,4 +167,11 @@ body {
   text-decoration: none;
 }
 
+.prose .kg-button-card a.kg-btn,
+.prose .kg-button-card a.kg-btn:visited,
+.prose .kg-button-card a.kg-btn:hover {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
 
