@@ -5,6 +5,8 @@ import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 import BookmarkCard from './BookmarkCard'
+import ButtonCard, { isValidButtonUrl, sanitizeButtonUrl, isInternalButtonUrl } from './ButtonCard'
+export { ButtonCard, isValidButtonUrl, sanitizeButtonUrl, isInternalButtonUrl }
 
 export interface GalleryImageEntry {
   url: string
@@ -1537,3 +1539,219 @@ export const Callout = Node.create({
     }
   },
 })
+
+// 5. TipTap Button Node (Ghost-style button card)
+interface ButtonComponentProps {
+  node: {
+    attrs: {
+      label?: string
+      url?: string
+      alignment?: 'left' | 'center'
+    }
+  }
+  updateAttributes: (attrs: Record<string, unknown>) => void
+  deleteNode: () => void
+}
+
+function ButtonComponent({ node, updateAttributes, deleteNode }: ButtonComponentProps) {
+  const label = node.attrs.label ?? 'Click here'
+  const url = node.attrs.url ?? ''
+  const alignment = (node.attrs.alignment === 'center' ? 'center' : 'left') as 'left' | 'center'
+
+  useEffect(() => {
+    console.info('[button] ButtonComponent mount', { label, url, alignment })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  const urlIsInvalid = Boolean(url && !isValidButtonUrl(url))
+
+  return (
+    <NodeViewWrapper className="button-node-view my-6 p-4 rounded-2xl border border-gray-200 bg-gray-50/50 relative group">
+      {/* Top action bar */}
+      <div className="flex items-center justify-between pb-2 mb-3 border-b border-gray-200/80 text-xs text-gray-500">
+        <span className="font-semibold text-gray-700 flex items-center gap-1.5">
+          <span>🔘 Button Block</span>
+        </span>
+        <button
+          type="button"
+          onClick={deleteNode}
+          className="text-red-500 hover:text-red-700 px-2 py-0.5 rounded hover:bg-red-50 text-xs transition cursor-pointer"
+          title="Remove button"
+        >
+          Remove
+        </button>
+      </div>
+
+      {/* Inline editing form */}
+      <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center bg-white p-3 rounded-xl border border-gray-200">
+        {/* Label field */}
+        <div className="sm:col-span-5">
+          <label className="block text-[11px] font-semibold text-gray-600 mb-1">Button Text</label>
+          <input
+            type="text"
+            value={label}
+            onChange={(e) => updateAttributes({ label: e.target.value })}
+            placeholder="e.g. Download Template"
+            className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232536]"
+          />
+        </div>
+
+        {/* URL field */}
+        <div className="sm:col-span-5">
+          <label className="block text-[11px] font-semibold text-gray-600 mb-1">Button Link</label>
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => updateAttributes({ url: e.target.value })}
+            placeholder="https://example.com or /garden"
+            className={`w-full px-3 py-1.5 text-xs border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#232536] ${
+              urlIsInvalid ? 'border-red-400 bg-red-50/30' : 'border-gray-300'
+            }`}
+          />
+        </div>
+
+        {/* Alignment toggle */}
+        <div className="sm:col-span-2">
+          <label className="block text-[11px] font-semibold text-gray-600 mb-1">Alignment</label>
+          <div className="inline-flex rounded-lg border border-gray-300 p-0.5 bg-gray-100">
+            <button
+              type="button"
+              onClick={() => updateAttributes({ alignment: 'left' })}
+              className={`px-2.5 py-1 text-xs rounded-md font-medium transition cursor-pointer ${
+                alignment === 'left'
+                  ? 'bg-white text-gray-900 shadow-xs'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+              title="Align left"
+            >
+              Left
+            </button>
+            <button
+              type="button"
+              onClick={() => updateAttributes({ alignment: 'center' })}
+              className={`px-2.5 py-1 text-xs rounded-md font-medium transition cursor-pointer ${
+                alignment === 'center'
+                  ? 'bg-white text-gray-900 shadow-xs'
+                  : 'text-gray-500 hover:text-gray-900'
+              }`}
+              title="Align center"
+            >
+              Center
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {urlIsInvalid && (
+        <p className="mt-2 text-xs text-red-600 font-medium">
+          Invalid link. URLs must start with http://, https://, or / (e.g. /blog)
+        </p>
+      )}
+
+      {/* Button Preview */}
+      <div className="mt-4 pt-3 border-t border-gray-200/60">
+        <div className="text-[11px] font-medium text-gray-400 uppercase tracking-wider mb-2">
+          Preview
+        </div>
+        <div className="bg-white/60 p-4 rounded-xl border border-dashed border-gray-200">
+          <ButtonCard
+            label={label || 'Button text'}
+            url={url}
+            alignment={alignment}
+            isEditor={true}
+          />
+        </div>
+      </div>
+    </NodeViewWrapper>
+  )
+}
+
+export const Button = Node.create({
+  name: 'button',
+  group: 'block',
+  atom: true,
+  draggable: true,
+
+  addAttributes() {
+    return {
+      label: {
+        default: 'Click here',
+      },
+      url: {
+        default: '',
+      },
+      alignment: {
+        default: 'left',
+      },
+    }
+  },
+
+  parseHTML() {
+    return [
+      {
+        tag: 'div.kg-button-card',
+        getAttrs: (element) => {
+          const el = element as HTMLElement
+          const a = el.querySelector('a.kg-btn') || el.querySelector('a')
+          const isCenter = el.classList.contains('kg-align-center')
+          const alignment = isCenter ? 'center' : 'left'
+          return {
+            label: a?.textContent?.trim() || '',
+            url: a?.getAttribute('href') || '',
+            alignment,
+          }
+        },
+      },
+      {
+        tag: 'div[data-type="button"]',
+        getAttrs: (element) => {
+          const el = element as HTMLElement
+          const a = el.querySelector('a')
+          const alignment = el.getAttribute('data-alignment') === 'center' ? 'center' : 'left'
+          return {
+            label: el.getAttribute('data-label') || a?.textContent?.trim() || '',
+            url: el.getAttribute('data-url') || a?.getAttribute('href') || '',
+            alignment,
+          }
+        },
+      },
+    ]
+  },
+
+  renderHTML({ HTMLAttributes }) {
+    const alignment = HTMLAttributes.alignment === 'center' ? 'center' : 'left'
+    const isCenter = alignment === 'center'
+    const alignClass = isCenter ? 'kg-align-center' : 'kg-align-left'
+    const url = HTMLAttributes.url || ''
+    const safeUrl = sanitizeButtonUrl(url)
+    const isInternal = isInternalButtonUrl(url)
+
+    const anchorAttrs: Record<string, string> = {
+      href: safeUrl,
+      class: 'kg-btn kg-btn-accent',
+    }
+    if (!isInternal && safeUrl !== '#') {
+      anchorAttrs.target = '_blank'
+      anchorAttrs.rel = 'noopener noreferrer'
+    }
+
+    return [
+      'div',
+      mergeAttributes({
+        class: `kg-card kg-button-card ${alignClass}`,
+        'data-type': 'button',
+        'data-alignment': alignment,
+      }),
+      [
+        'a',
+        anchorAttrs,
+        HTMLAttributes.label || 'Button',
+      ],
+    ]
+  },
+
+  addNodeView() {
+    return ReactNodeViewRenderer(ButtonComponent)
+  },
+})
+
