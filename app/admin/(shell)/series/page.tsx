@@ -64,6 +64,7 @@ export default function AdminSeriesListPage() {
     totalText: string
   } | null>(null)
   const [imageError, setImageError] = useState<string | null>(null)
+  const [modalError, setModalError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -103,6 +104,7 @@ export default function AdminSeriesListPage() {
     setSortOrder(seriesList.length)
     setError(null)
     setImageError(null)
+    setModalError(null)
     setSuccess(null)
     setUploadProgress(null)
     setIsModalOpen(true)
@@ -122,6 +124,7 @@ export default function AdminSeriesListPage() {
     setSortOrder(item.sort_order || 0)
     setError(null)
     setImageError(null)
+    setModalError(null)
     setSuccess(null)
     setUploadProgress(null)
     setIsModalOpen(true)
@@ -130,6 +133,7 @@ export default function AdminSeriesListPage() {
   function handleCloseModal() {
     setIsModalOpen(false)
     setImageError(null)
+    setModalError(null)
   }
 
   function handleTitleChange(val: string) {
@@ -213,18 +217,19 @@ export default function AdminSeriesListPage() {
 
   async function handleSaveSeries(e: React.FormEvent) {
     e.preventDefault()
+    setModalError(null)
+
     if (!title.trim()) {
-      setError('Series title is required')
+      setModalError('Series title is required')
       return
     }
 
     if (slug.trim().toLowerCase() === 'series') {
-      setError("The slug 'series' is reserved")
+      setModalError("The slug 'series' is reserved")
       return
     }
 
     setSaving(true)
-    setError(null)
 
     const payload = {
       title: title.trim(),
@@ -259,7 +264,7 @@ export default function AdminSeriesListPage() {
       fetchSeries()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error saving series'
-      setError(message)
+      setModalError(message)
     } finally {
       setSaving(false)
     }
@@ -789,6 +794,20 @@ export default function AdminSeriesListPage() {
                   </button>
                 )}
               </div>
+
+              {/* Modal Error */}
+              {modalError && (
+                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs flex items-center justify-between">
+                  <span>{modalError}</span>
+                  <button
+                    type="button"
+                    onClick={() => setModalError(null)}
+                    className="text-red-500 hover:text-red-800 font-bold ml-2 cursor-pointer"
+                  >
+                    &times;
+                  </button>
+                </div>
+              )}
 
               {/* Modal Footer */}
               <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
