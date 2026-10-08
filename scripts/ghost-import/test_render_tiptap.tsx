@@ -89,7 +89,12 @@ async function runTest() {
     const nodeTypesFound = new Set<string>()
     const unknownNodes: string[] = []
 
-    function scanNodes(n: any) {
+    interface NodeItem {
+      type?: string
+      content?: NodeItem[]
+    }
+
+    function scanNodes(n: NodeItem) {
       if (!n) return
       if (n.type) {
         nodeTypesFound.add(n.type)
@@ -101,7 +106,7 @@ async function runTest() {
         n.content.forEach(scanNodes)
       }
     }
-    scanNodes(doc)
+    scanNodes(doc as NodeItem)
 
     console.log(`Original format in Ghost: ${format}`)
     console.log(`Top-level nodes count: ${doc.content?.length || 0}`)
@@ -127,8 +132,9 @@ async function runTest() {
       console.log(`Rendered HTML length: ${renderedHtml.length} characters`)
       console.log(`Sample rendered HTML snippet (first 350 chars):`)
       console.log(`  ${renderedHtml.slice(0, 350)}...`)
-    } catch (renderErr: any) {
-      console.error(`RENDERER FAILURE for ${slug}:`, renderErr.message)
+    } catch (renderErr) {
+      const msg = renderErr instanceof Error ? renderErr.message : String(renderErr)
+      console.error(`RENDERER FAILURE for ${slug}:`, msg)
       throw renderErr
     }
   }

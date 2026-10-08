@@ -44,7 +44,6 @@ function loadEnvLocal() {
 export function parseArgs(argv) {
   const args = argv.slice(2)
   const isApply = args.includes('--apply')
-  const isDryRun = !isApply || args.includes('--dry-run')
 
   let onlySlugs = null
   const onlyIdx = args.indexOf('--only')

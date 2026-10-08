@@ -2,7 +2,7 @@
 // Performs read-only analysis and live network checks for all 52 posts
 
 import fs from 'node:fs'
-import { APPROVED_MAPPINGS, EXCLUDED_SLUGS } from './mapping.mjs'
+import { APPROVED_MAPPINGS } from './mapping.mjs'
 import { convertGhostPostToTipTap, rewriteBookmarkUrl } from './converter.mjs'
 import { isGhostMedia, toAbsoluteGhostMediaUrl, MAX_IMAGE_BYTES, MAX_VIDEO_BYTES } from './rehost.mjs'
 
