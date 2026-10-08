@@ -67,6 +67,20 @@ export default function AdminSeriesListPage() {
   const [modalError, setModalError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const imageErrorRef = useRef<HTMLDivElement>(null)
+  const modalErrorRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (imageError && imageErrorRef.current) {
+      imageErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [imageError])
+
+  useEffect(() => {
+    if (modalError && modalErrorRef.current) {
+      modalErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [modalError])
 
   useEffect(() => {
     fetchSeries()
@@ -697,7 +711,10 @@ export default function AdminSeriesListPage() {
                 />
 
                 {imageError ? (
-                  <div className="relative w-full py-5 px-4 border border-red-200 bg-red-50 rounded-xl flex flex-col items-center justify-center text-center gap-2">
+                  <div
+                    ref={imageErrorRef}
+                    className="relative w-full py-5 px-4 border border-red-200 bg-red-50 rounded-xl flex flex-col items-center justify-center text-center gap-2"
+                  >
                     <button
                       type="button"
                       onClick={() => setImageError(null)}
@@ -797,7 +814,10 @@ export default function AdminSeriesListPage() {
 
               {/* Modal Error */}
               {modalError && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs flex items-center justify-between">
+                <div
+                  ref={modalErrorRef}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs flex items-center justify-between"
+                >
                   <span>{modalError}</span>
                   <button
                     type="button"
