@@ -20,6 +20,20 @@ export function normalizeEmbedUrl(url) {
   return trimmed
 }
 
+export function dedupeMarks(marks) {
+  if (!marks || marks.length === 0) return []
+  const seen = new Set()
+  const out = []
+  for (const m of marks) {
+    if (!m || !m.type) continue
+    if (!seen.has(m.type)) {
+      seen.add(m.type)
+      out.push(m)
+    }
+  }
+  return out
+}
+
 export function rewriteBookmarkUrl(rawUrl, uuidToSlugMap, allGhostSlugs) {
   if (!rawUrl) return ''
   const u = String(rawUrl).trim()
@@ -99,26 +113,54 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
       if ((format & 2) === 2) marks.push({ type: 'italic' })
       if ((format & 16) === 16) marks.push({ type: 'code' })
 
+      const cleanMarks = dedupeMarks(marks)
+
+      if (text.includes('\n')) {
+        const parts = text.split('\n')
+        const nodes = []
+        for (let i = 0; i < parts.length; i++) {
+          if (i > 0) nodes.push({ type: 'hardBreak' })
+          if (parts[i].length > 0) {
+            nodes.push({
+              type: 'text',
+              text: parts[i],
+              ...(cleanMarks.length > 0 ? { marks: cleanMarks } : {}),
+            })
+          }
+        }
+        return nodes
+      }
+
       return {
         type: 'text',
         text,
-        ...(marks.length > 0 ? { marks } : {}),
+        ...(cleanMarks.length > 0 ? { marks: cleanMarks } : {}),
       }
     }
 
-    if (inlineNode.type === 'link') {
+    if (inlineNode.type === 'link' || inlineNode.type === 'extended-link') {
       const href = rewriteBookmarkUrl(inlineNode.url, uuidToSlugMap, allGhostSlugs)
       const children = (inlineNode.children || []).map(convertInline).filter(Boolean)
-      // Apply link mark to all inline text children
-      return children.map(c => {
-        const marks = c.marks ? [...c.marks] : []
-        marks.push({ type: 'link', attrs: { href } })
-        return { ...c, marks }
+      return children.flatMap(c => {
+        if (Array.isArray(c)) {
+          return c.map(item => {
+            if (item.type === 'text') {
+              const marks = dedupeMarks([...(item.marks || []), { type: 'link', attrs: { href } }])
+              return { ...item, marks }
+            }
+            return item
+          })
+        }
+        if (c.type === 'text') {
+          const marks = dedupeMarks([...(c.marks || []), { type: 'link', attrs: { href } }])
+          return [{ ...c, marks }]
+        }
+        return [c]
       })
     }
 
     if (inlineNode.type === 'linebreak') {
-      return { type: 'text', text: '\n' }
+      return { type: 'hardBreak' }
     }
 
     return null
@@ -327,7 +369,7 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
       case 'aside': {
         const inlines = convertInlines(child.children)
         nodes.push({
-          type: 'callout',
+          type: 'blockquote',
           content: [
             {
               type: 'paragraph',
@@ -374,6 +416,7 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
 // ----------------------------------------------------
 
 export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhostSlugs, mediaUrlMap, unmappedCards = [] } = {}) {
+  const atoms = mobiledocObj?.atoms || []
   const markups = mobiledocObj?.markups || []
   const cards = mobiledocObj?.cards || []
   const sections = mobiledocObj?.sections || []
@@ -385,9 +428,10 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
 
     for (const marker of markers) {
       if (!Array.isArray(marker)) continue
-      // Mobiledoc 0.3.1 marker: [type, openMarkupIndices, closedMarkupCount, text]
-      const [markerType, openedIndices = [], closedCount = 0, text = ''] = marker
-      if (markerType !== 0 && !text) continue
+      // Mobiledoc 0.3.1 marker:
+      // Type 0 (Text): [0, openMarkupIndices, closedMarkupCount, text]
+      // Type 1 (Atom): [1, openMarkupIndices, closedMarkupCount, atomIndex]
+      const [markerType, openedIndices = [], closedCount = 0, payload] = marker
 
       if (Array.isArray(openedIndices)) {
         for (const idx of openedIndices) {
@@ -418,12 +462,49 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
         }
       }
 
-      if (text) {
-        result.push({
-          type: 'text',
-          text,
-          ...(activeMarks.length > 0 ? { marks: [...activeMarks] } : {}),
-        })
+      const currentMarks = dedupeMarks(activeMarks)
+
+      if (markerType === 1) {
+        // Atom marker
+        const atomIndex = typeof payload === 'number' ? payload : parseInt(payload, 10)
+        const atom = atoms[atomIndex]
+        const atomName = atom ? String(atom[0]).toLowerCase() : ''
+        if (atomName === 'soft-return' || atomName === 'soft-break') {
+          result.push({ type: 'hardBreak' })
+        } else if (atom && typeof atom[1] === 'string' && atom[1].length > 0) {
+          result.push({
+            type: 'text',
+            text: atom[1],
+            ...(currentMarks.length > 0 ? { marks: currentMarks } : {}),
+          })
+        }
+      } else if (markerType === 0) {
+        // Text marker
+        const rawText = typeof payload === 'string' ? payload : ''
+        if (rawText.length > 0) {
+          if (rawText.includes('\n')) {
+            const parts = rawText.split('\n')
+            for (let i = 0; i < parts.length; i++) {
+              if (i > 0) {
+                result.push({ type: 'hardBreak' })
+              }
+              const part = parts[i]
+              if (part.length > 0) {
+                result.push({
+                  type: 'text',
+                  text: part,
+                  ...(currentMarks.length > 0 ? { marks: currentMarks } : {}),
+                })
+              }
+            }
+          } else {
+            result.push({
+              type: 'text',
+              text: rawText,
+              ...(currentMarks.length > 0 ? { marks: currentMarks } : {}),
+            })
+          }
+        }
       }
 
       for (let c = 0; c < closedCount; c++) {
@@ -459,19 +540,9 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
           attrs: { level },
           content: inlines,
         })
-      } else if (tagName === 'blockquote') {
+      } else if (tagName === 'blockquote' || tagName === 'aside') {
         nodes.push({
           type: 'blockquote',
-          content: [
-            {
-              type: 'paragraph',
-              content: inlines,
-            },
-          ],
-        })
-      } else if (tagName === 'aside') {
-        nodes.push({
-          type: 'callout',
           content: [
             {
               type: 'paragraph',
@@ -569,6 +640,47 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
               caption: stripHtml(cardPayload?.caption) || '',
             },
           })
+          break
+        }
+        case 'callout': {
+          const plainText = stripHtml(cardPayload?.calloutText || cardPayload?.text || '')
+          const inlines = []
+          if (cardPayload?.calloutEmoji) {
+            inlines.push({ type: 'text', text: `${cardPayload.calloutEmoji} ` })
+          }
+          if (plainText) {
+            inlines.push({ type: 'text', text: plainText })
+          }
+          if (inlines.length > 0) {
+            nodes.push({
+              type: 'callout',
+              content: [
+                {
+                  type: 'paragraph',
+                  content: inlines,
+                },
+              ],
+            })
+          }
+          break
+        }
+        case 'html': {
+          const rawHtml = cardPayload?.html || ''
+          if (!rawHtml.trim()) break
+          const pMatches = rawHtml.split(/<\/p>/i).map(p => p.replace(/<p[^>]*>/gi, '').trim()).filter(Boolean)
+          const chunks = pMatches.length > 0 ? pMatches : [rawHtml.trim()]
+          for (const chunk of chunks) {
+            const parts = chunk.split(/<br\s*\/?>/gi)
+            const inlines = []
+            for (let i = 0; i < parts.length; i++) {
+              if (i > 0) inlines.push({ type: 'hardBreak' })
+              const txt = stripHtml(parts[i])
+              if (txt.length > 0) inlines.push({ type: 'text', text: txt })
+            }
+            if (inlines.length > 0) {
+              nodes.push({ type: 'paragraph', content: inlines })
+            }
+          }
           break
         }
         default: {
