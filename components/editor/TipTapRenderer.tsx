@@ -2,6 +2,7 @@ import React from 'react'
 import { getYouTubeEmbedUrl } from '@/lib/youtube'
 import WideContainer from '@/components/public/WideContainer'
 import BookmarkCard from './BookmarkCard'
+import ButtonCard from './ButtonCard'
 
 interface TipTapNode {
   type: string
@@ -254,6 +255,21 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             thumbnail={thumbnail}
             icon={icon}
             caption={caption}
+          />
+        )
+      }
+      case 'button': {
+        const label = String(node.attrs?.label || '')
+        const url = String(node.attrs?.url || '')
+        const alignment = (node.attrs?.alignment === 'center' ? 'center' : 'left') as 'left' | 'center'
+        if (!label && !url) return null
+
+        return (
+          <ButtonCard
+            key={index}
+            label={label}
+            url={url}
+            alignment={alignment}
           />
         )
       }

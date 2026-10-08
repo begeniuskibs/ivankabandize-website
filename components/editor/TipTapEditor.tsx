@@ -9,7 +9,7 @@ import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
 import { ReactRenderer } from '@tiptap/react'
 import { useEffect, useRef, useState } from 'react'
-import { Video, Gallery, YouTube, Bookmark, Callout, validateYouTubeUrl } from './customNodes'
+import { Video, Gallery, YouTube, Bookmark, Button, Callout, validateYouTubeUrl } from './customNodes'
 import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 
@@ -170,6 +170,27 @@ export default function TipTapEditor({
     }).run()
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function handleInsertButton(ed?: any, range?: any) {
+    console.info('[button] handleInsertButton', { hasEd: !!ed, hasRange: !!range })
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const targetEditor = (ed || editor) as any
+    if (!targetEditor) return
+
+    let chain = targetEditor.chain().focus()
+    if (range) {
+      chain = chain.deleteRange(range)
+    }
+    chain.insertContent({
+      type: 'button',
+      attrs: {
+        label: 'Click here',
+        url: '',
+        alignment: 'left',
+      },
+    }).run()
+  }
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -203,6 +224,7 @@ export default function TipTapEditor({
       Gallery,
       YouTube,
       Bookmark,
+      Button,
       Callout,
       SlashCommands.configure({
         suggestion: {
@@ -326,6 +348,13 @@ export default function TipTapEditor({
                 icon: '🔖',
                 command: ({ editor: ed, range }) => {
                   handleInsertBookmark(ed, range)
+                },
+              },
+              {
+                title: 'Button',
+                icon: '🔘',
+                command: ({ editor: ed, range }) => {
+                  handleInsertButton(ed, range)
                 },
               },
             ]
@@ -765,6 +794,12 @@ export default function TipTapEditor({
           color: #232536;
           text-decoration: none;
         }
+        .tiptap-editor-scope .ProseMirror .kg-button-card a.kg-btn,
+        .tiptap-editor-scope .ProseMirror .kg-button-card a.kg-btn:hover,
+        .tiptap-editor-scope .ProseMirror .kg-button-card a.kg-btn:visited {
+          color: #FFFFFF;
+          text-decoration: none;
+        }
         .tiptap-editor-scope .ProseMirror .kg-bookmark-card img {
           margin: 0;
           border: 0;
@@ -978,6 +1013,15 @@ export default function TipTapEditor({
           title="Insert web bookmark card"
         >
           <span>🔖 Bookmark</span>
+        </button>
+        {/* Insert Button Control */}
+        <button
+          type="button"
+          onClick={() => handleInsertButton()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1 cursor-pointer"
+          title="Insert button card"
+        >
+          <span>🔘 Button</span>
         </button>
       </div>
 
