@@ -150,15 +150,24 @@ export async function runImporter({
     }
   }
 
-  // 3. Filter target posts
-  let targetMappings = APPROVED_MAPPINGS
+  // 3. Filter and sort target posts by Ghost published_at ascending (drafts come last)
+  let targetMappings = [...APPROVED_MAPPINGS]
+
+  targetMappings.sort((a, b) => {
+    const postA = ghostPostBySlug.get(a.slug)
+    const postB = ghostPostBySlug.get(b.slug)
+    const timeA = postA?.published_at ? new Date(postA.published_at).getTime() : Infinity
+    const timeB = postB?.published_at ? new Date(postB.published_at).getTime() : Infinity
+    return timeA - timeB
+  })
+
   if (onlySlugs && onlySlugs.length > 0) {
     targetMappings = targetMappings.filter(m => onlySlugs.includes(m.slug.toLowerCase()))
     log(`Filtered by --only to ${targetMappings.length} posts.`)
   }
   if (batchSize && batchSize > 0) {
     targetMappings = targetMappings.slice(0, batchSize)
-    log(`Limited by --batch to ${targetMappings.length} posts.`)
+    log(`Limited by --batch to ${targetMappings.length} posts (by published_at ascending).`)
   }
 
   log(`Target posts to process in this run: ${targetMappings.length}`)

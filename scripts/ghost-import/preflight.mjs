@@ -178,8 +178,16 @@ export async function runPreflight() {
   const embedUrlSet = new Set()
   const unmappedCardsReport = new Map()
 
-  for (let i = 0; i < APPROVED_MAPPINGS.length; i++) {
-    const mapping = APPROVED_MAPPINGS[i]
+  const sortedMappings = [...APPROVED_MAPPINGS].sort((a, b) => {
+    const postA = ghostPostBySlug.get(a.slug)
+    const postB = ghostPostBySlug.get(b.slug)
+    const timeA = postA?.published_at ? new Date(postA.published_at).getTime() : Infinity
+    const timeB = postB?.published_at ? new Date(postB.published_at).getTime() : Infinity
+    return timeA - timeB
+  })
+
+  for (let i = 0; i < sortedMappings.length; i++) {
+    const mapping = sortedMappings[i]
     const p = ghostPostBySlug.get(mapping.slug)
     if (!p) {
       console.error(`Post missing in export: ${mapping.slug}`)

@@ -11,6 +11,15 @@ function stripHtml(html) {
     .trim()
 }
 
+export function normalizeEmbedUrl(url) {
+  if (!url) return ''
+  const trimmed = String(url).trim()
+  if (trimmed.includes('GhwkD0CDzXI')) {
+    return 'https://www.youtube.com/shorts/j4IN263suvA'
+  }
+  return trimmed
+}
+
 export function rewriteBookmarkUrl(rawUrl, uuidToSlugMap, allGhostSlugs) {
   if (!rawUrl) return ''
   const u = String(rawUrl).trim()
@@ -255,7 +264,7 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
       }
 
       case 'embed': {
-        const url = child.url || ''
+        const url = normalizeEmbedUrl(child.url || '')
         nodes.push({
           type: 'youtube',
           attrs: { url },
@@ -537,7 +546,7 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
           break
         }
         case 'embed': {
-          const url = cardPayload?.url || ''
+          const url = normalizeEmbedUrl(cardPayload?.url || '')
           nodes.push({
             type: 'youtube',
             attrs: { url },
