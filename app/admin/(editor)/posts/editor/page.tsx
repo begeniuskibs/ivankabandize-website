@@ -12,6 +12,12 @@ interface Tag {
   slug: string
 }
 
+interface SeriesOption {
+  id: string
+  title: string
+  slug: string
+}
+
 function PostEditorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -33,6 +39,8 @@ function PostEditorContent() {
   const [availableTags, setAvailableTags] = useState<Tag[]>([])
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [newTagName, setNewTagName] = useState('')
+  const [availableSeries, setAvailableSeries] = useState<SeriesOption[]>([])
+  const [seriesId, setSeriesId] = useState<string | null>(null)
 
   // Publish / Schedule
   const [publishStatus, setPublishStatus] = useState<'draft' | 'scheduled' | 'published'>('draft')
@@ -47,55 +55,64 @@ function PostEditorContent() {
   const [success, setSuccess] = useState<string | null>(null)
 
   useEffect(() => {
-    fetchTags()
-    if (postId) {
-      loadPost(postId)
+    let isMounted = true
+
+    async function init() {
+      try {
+        const [tagsRes, seriesRes] = await Promise.all([
+          fetch('/api/admin/tags'),
+          fetch('/api/admin/series'),
+        ])
+        if (tagsRes.ok) {
+          const data = await tagsRes.json()
+          if (isMounted) setAvailableTags(data.tags || [])
+        }
+        if (seriesRes.ok) {
+          const data = await seriesRes.json()
+          if (isMounted) setAvailableSeries(data.series || [])
+        }
+        if (postId) {
+          if (isMounted) setLoading(true)
+          const postRes = await fetch(`/api/admin/posts/${postId}`)
+          if (postRes.ok) {
+            const { post } = await postRes.json()
+            if (isMounted) {
+              setTitle(post.title || '')
+              setSlug(post.slug || '')
+              setExcerpt(post.excerpt || '')
+              setContent(post.content || {})
+              setFeaturedImageUrl(post.featured_image_url || null)
+              const contentObj = (post.content || {}) as Record<string, unknown>
+              setFeaturedImageCaption((contentObj.featured_image_caption as string) || null)
+              setHeaderImageWidth(post.header_image_width || (contentObj.header_image_width as 'standard' | 'wide') || 'standard')
+              setVisibility(post.visibility || 'public')
+              setContentType(post.content_type || 'structured_thoughts')
+              setPublishStatus(post.publish_status || 'draft')
+              setSeriesId(post.series_id || null)
+              if (post.published_at) {
+                setScheduledDate(new Date(post.published_at).toISOString().slice(0, 16))
+              }
+              if (post.post_tags) {
+                setSelectedTagIds(post.post_tags.map((pt: { tag: Tag }) => pt.tag?.id).filter(Boolean))
+              }
+            }
+          } else {
+            if (isMounted) setError('Failed to load post')
+          }
+        }
+      } catch {
+        if (isMounted) setError('Error loading post data')
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    }
+
+    init()
+
+    return () => {
+      isMounted = false
     }
   }, [postId])
-
-  async function fetchTags() {
-    try {
-      const res = await fetch('/api/admin/tags')
-      if (res.ok) {
-        const data = await res.json()
-        setAvailableTags(data.tags || [])
-      }
-    } catch (e) {
-      console.error('Failed to fetch tags', e)
-    }
-  }
-
-  async function loadPost(id: string) {
-    try {
-      setLoading(true)
-      const res = await fetch(`/api/admin/posts/${id}`)
-      if (res.ok) {
-        const { post } = await res.json()
-        setTitle(post.title || '')
-        setSlug(post.slug || '')
-        setExcerpt(post.excerpt || '')
-        setContent(post.content || {})
-        setFeaturedImageUrl(post.featured_image_url || null)
-        setFeaturedImageCaption((post.content as any)?.featured_image_caption || null)
-        setHeaderImageWidth(post.header_image_width || (post.content as any)?.header_image_width || 'standard')
-        setVisibility(post.visibility || 'public')
-        setContentType(post.content_type || 'structured_thoughts')
-        setPublishStatus(post.publish_status || 'draft')
-        if (post.published_at) {
-          setScheduledDate(new Date(post.published_at).toISOString().slice(0, 16))
-        }
-        if (post.post_tags) {
-          setSelectedTagIds(post.post_tags.map((pt: { tag: Tag }) => pt.tag?.id).filter(Boolean))
-        }
-      } else {
-        setError('Failed to load post')
-      }
-    } catch {
-      setError('Error loading post')
-    } finally {
-      setLoading(false)
-    }
-  }
 
   async function handleFeatureImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -180,9 +197,19 @@ function PostEditorContent() {
       return
     }
 
+    if (slug && slug.trim().toLowerCase() === 'series') {
+      setError("The slug 'series' is reserved.")
+      setLoading(false)
+      return
+    }
+
     let targetPublishedAt: string | null = null
     if (status === 'published') {
-      targetPublishedAt = new Date().toISOString()
+      if (scheduledDate) {
+        targetPublishedAt = new Date(scheduledDate).toISOString()
+      } else {
+        targetPublishedAt = new Date().toISOString()
+      }
     } else if (status === 'scheduled') {
       if (!scheduledDate) {
         setError('Please choose a future date & time for scheduled publishing.')
@@ -193,13 +220,13 @@ function PostEditorContent() {
     }
 
     // Embed featured_image_caption into content JSONB object
-    const finalContent = { ...(content || {}) }
+    const finalContent: Record<string, unknown> = { ...(content || {}) }
     if (featuredImageCaption) {
-      (finalContent as any).featured_image_caption = featuredImageCaption
+      finalContent.featured_image_caption = featuredImageCaption
     } else {
-      delete (finalContent as any).featured_image_caption
+      delete finalContent.featured_image_caption
     }
-    delete (finalContent as any).header_image_width
+    delete finalContent.header_image_width
 
     const payload = {
       title,
@@ -210,6 +237,7 @@ function PostEditorContent() {
       header_image_width: headerImageWidth,
       visibility,
       content_type: contentType,
+      series_id: seriesId || null,
       publish_status: status,
       published_at: targetPublishedAt,
       tag_ids: selectedTagIds,
@@ -629,6 +657,25 @@ function PostEditorContent() {
                     </div>
                   </div>
 
+                  {/* Series */}
+                  <div>
+                    <label className="block text-xs font-semibold text-gray-700 mb-1">
+                      Series Collection (Optional)
+                    </label>
+                    <select
+                      value={seriesId || ''}
+                      onChange={e => setSeriesId(e.target.value || null)}
+                      className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white"
+                    >
+                      <option value="">None (Standalone Post)</option>
+                      {availableSeries.map(s => (
+                        <option key={s.id} value={s.id}>
+                          {s.title}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
                   {/* Tags */}
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-2">
@@ -680,7 +727,7 @@ function PostEditorContent() {
 
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1">
-                      Schedule Date &amp; Time
+                      {publishStatus === 'published' ? 'Publish Date & Time' : 'Schedule Date & Time'}
                     </label>
                     <input
                       type="datetime-local"
@@ -688,6 +735,11 @@ function PostEditorContent() {
                       onChange={e => setScheduledDate(e.target.value)}
                       className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                     />
+                    {publishStatus === 'published' && (
+                      <p className="text-[10px] text-gray-400 mt-1">
+                        Editing this date updates this post&apos;s chronological position in its series and on the site.
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -698,9 +750,9 @@ function PostEditorContent() {
                   type="button"
                   disabled={loading}
                   onClick={() => handleSave('published')}
-                  className="w-full py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition disabled:opacity-50"
+                  className="w-full py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 cursor-pointer"
                 >
-                  Publish Now
+                  {publishStatus === 'published' ? 'Update Published Post' : 'Publish Now'}
                 </button>
 
                 <div className="grid grid-cols-2 gap-2">

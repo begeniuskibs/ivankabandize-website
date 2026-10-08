@@ -15,7 +15,7 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
 
   const { data: post, error } = await supabase
     .from('posts')
-    .select('*, post_tags(tag:tags(*))')
+    .select('*, post_tags(tag:tags(*)), series:series(*)')
     .eq('id', id)
     .single()
 
@@ -48,7 +48,12 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       content_type,
       published_at,
       tag_ids,
+      series_id,
     } = body
+
+    if (slug !== undefined && slug.trim().toLowerCase() === 'series') {
+      return NextResponse.json({ error: "The slug 'series' is reserved" }, { status: 400 })
+    }
 
     const updatePayload: Record<string, unknown> = {}
     if (title !== undefined) updatePayload.title = title
@@ -61,6 +66,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
     if (visibility !== undefined) updatePayload.visibility = visibility
     if (content_type !== undefined) updatePayload.content_type = content_type
+    if (series_id !== undefined) updatePayload.series_id = series_id || null
     if (publish_status !== undefined) {
       updatePayload.publish_status = publish_status
       if (publish_status === 'published' && !published_at) {
@@ -68,6 +74,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       } else if (published_at !== undefined) {
         updatePayload.published_at = published_at
       }
+    } else if (published_at !== undefined) {
+      updatePayload.published_at = published_at
     }
 
     const { data: post, error: updateError } = await supabase

@@ -15,6 +15,25 @@ export interface PostTagItem {
   }> | null
 }
 
+export interface ArticleSeriesContext {
+  series: {
+    id: string
+    title: string
+    slug: string
+    status: 'growing' | 'complete'
+  }
+  partNumber: number
+  totalParts: number
+  prevPost?: {
+    title: string
+    slug: string
+  } | null
+  nextPost?: {
+    title: string
+    slug: string
+  } | null
+}
+
 export interface PostData {
   id?: string
   title: string
@@ -26,6 +45,7 @@ export interface PostData {
   featured_image_url?: string | null
   header_image_width?: 'standard' | 'wide' | null
   post_tags?: PostTagItem[] | any[] | null
+  series_id?: string | null
 }
 
 export interface RelatedPostData {
@@ -40,6 +60,7 @@ export interface RelatedPostData {
 export interface ArticleViewProps {
   post: PostData
   relatedPost?: RelatedPostData | null
+  seriesContext?: ArticleSeriesContext | null
   isPreview?: boolean
 }
 
@@ -79,20 +100,19 @@ function calculateReadTime(content: unknown, excerpt?: string | null): number {
 export default function ArticleView({
   post,
   relatedPost = null,
+  seriesContext = null,
   isPreview = false,
 }: ArticleViewProps) {
   const typeInfo = post.content_type && TYPE_CONFIG[post.content_type] ? TYPE_CONFIG[post.content_type] : null
   const readTime = calculateReadTime(post.content, post.excerpt)
 
-  // Extract optional series metadata if embedded in content
-  const seriesInfo = (post.content as any)?.series as { title: string; part?: number | string; href?: string } | undefined
-
   // Extract optional featured image caption if present in content
-  const featuredImageCaption = (post.content as any)?.featured_image_caption || null
+  const contentObj = (post.content || {}) as Record<string, unknown>
+  const featuredImageCaption = (contentObj?.featured_image_caption as string) || null
 
   // Header image width: 'standard' (default) vs 'wide' (breakout container)
   const headerImageWidth: 'standard' | 'wide' =
-    post.header_image_width || (post.content as any)?.header_image_width || 'standard'
+    post.header_image_width || (contentObj?.header_image_width as 'standard' | 'wide') || 'standard'
 
   return (
     <>
@@ -185,23 +205,51 @@ export default function ArticleView({
             </div>
           </header>
 
-          {/* 4. Optional Series Callout Box */}
-          {seriesInfo && (
-            <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] flex items-start gap-3.5">
-              <span className="text-2xl" aria-hidden="true">📖</span>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-0.5">
-                  Series {seriesInfo.part ? `· Part ${seriesInfo.part}` : ''}
-                </p>
-                <p className="font-bold text-base text-[#232536]">
-                  {seriesInfo.title}
-                </p>
-                {seriesInfo.href && (
-                  <Link href={seriesInfo.href} className="text-xs font-semibold text-[#2AA198] hover:underline mt-1 inline-block">
-                    View full series &rarr;
+          {/* 4. Optional Database-Driven Series Callout Box */}
+          {seriesContext && (
+            <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)]">
+              <div className="flex items-start gap-3.5 mb-2">
+                <span className="text-2xl" aria-hidden="true">📖</span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-0.5">
+                    Series - Part {seriesContext.partNumber} of {seriesContext.totalParts}
+                  </p>
+                  <Link
+                    href={`/garden/series/${seriesContext.series.slug}`}
+                    className="font-bold text-base text-[#232536] hover:text-[#EF5B45] transition inline-block"
+                  >
+                    {seriesContext.series.title}
                   </Link>
-                )}
+                </div>
               </div>
+
+              {(seriesContext.prevPost || seriesContext.nextPost) && (
+                <div className="pt-3 border-t border-[#F5ECDE] flex flex-wrap items-center justify-between gap-3 text-xs">
+                  {seriesContext.prevPost ? (
+                    <Link
+                      href={`/garden/${seriesContext.prevPost.slug}`}
+                      className="text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%]"
+                      title={seriesContext.prevPost.title}
+                    >
+                      <span aria-hidden="true">&larr;</span>
+                      <span className="truncate">Previous: {seriesContext.prevPost.title}</span>
+                    </Link>
+                  ) : (
+                    <div />
+                  )}
+
+                  {seriesContext.nextPost && (
+                    <Link
+                      href={`/garden/${seriesContext.nextPost.slug}`}
+                      className="text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%] ml-auto"
+                      title={seriesContext.nextPost.title}
+                    >
+                      <span className="truncate">Next: {seriesContext.nextPost.title}</span>
+                      <span aria-hidden="true">&rarr;</span>
+                    </Link>
+                  )}
+                </div>
+              )}
             </div>
           )}
 

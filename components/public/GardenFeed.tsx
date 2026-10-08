@@ -16,12 +16,24 @@ export interface PostItem {
   post_tags?: { tag?: { name?: string; slug?: string } | null }[] | any[]
 }
 
+export interface SeriesFeedItem {
+  id: string
+  title: string
+  slug: string
+  description?: string | null
+  status: 'growing' | 'complete'
+  cover_emoji?: string | null
+  card_tint?: string | null
+  published_count: number
+}
+
 interface GardenFeedProps {
   title: string
   eyebrow?: string
   description: string
   currentFilter: 'all' | 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought'
   posts: PostItem[]
+  series?: SeriesFeedItem[]
   heroBannerImage?: string | null
 }
 
@@ -53,6 +65,7 @@ export default function GardenFeed({
   description,
   currentFilter,
   posts,
+  series = [],
   heroBannerImage = null,
 }: GardenFeedProps) {
   const [selectedTag, setSelectedTag] = useState<string | null>(null)
@@ -230,6 +243,85 @@ export default function GardenFeed({
       {/* Feed Content */}
       <section className="py-12 md:py-16 bg-[#FDF8F1] flex-1">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Series Section (Curated Collections) */}
+          {series && series.length > 0 && currentFilter === 'all' && (
+            <div className="mb-14">
+              <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold uppercase tracking-widest text-[#C99424]">
+                    Series
+                  </span>
+                  <span className="text-[#5A5D70]/40 text-xs">•</span>
+                  <span className="text-xs font-medium text-[#5A5D70]">
+                    Curated Collections
+                  </span>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {series.map((item) => (
+                  <Link
+                    key={item.id}
+                    href={`/garden/series/${item.slug}`}
+                    className="group relative flex flex-col justify-between p-6 bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#EF5B45]/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                    style={
+                      item.card_tint
+                        ? {
+                            borderTopWidth: '3px',
+                            borderTopColor: item.card_tint,
+                          }
+                        : undefined
+                    }
+                  >
+                    <div>
+                      {/* Top Row: Label and Emoji */}
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <span
+                          className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                            item.status === 'complete'
+                              ? 'bg-blue-50 text-blue-700 border border-blue-200/50'
+                              : 'bg-emerald-50 text-emerald-700 border border-emerald-200/50'
+                          }`}
+                        >
+                          SERIES - {item.status === 'complete' ? 'COMPLETE' : 'GROWING'}
+                        </span>
+                        {item.cover_emoji && (
+                          <span className="text-xl" aria-hidden="true">
+                            {item.cover_emoji}
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Title */}
+                      <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors mb-2 leading-snug">
+                        {item.title}
+                      </h3>
+
+                      {/* Description */}
+                      {item.description && (
+                        <p className="text-sm text-[#5A5D70] leading-relaxed line-clamp-3 mb-4">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+
+                    {/* Bottom Row: Live Entry Count */}
+                    <div className="pt-3 border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs">
+                      <span className="font-semibold text-[#2AA198]">
+                        {item.status === 'complete'
+                          ? `${item.published_count} ${item.published_count === 1 ? 'entry' : 'entries'}`
+                          : `${item.published_count} ${item.published_count === 1 ? 'entry' : 'entries'} and counting`}
+                      </span>
+                      <span className="text-[#5A5D70] group-hover:text-[#EF5B45] group-hover:translate-x-0.5 font-bold transition-all">
+                        Explore series &rarr;
+                      </span>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
           {filteredPosts && filteredPosts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredPosts.map((post) => (
