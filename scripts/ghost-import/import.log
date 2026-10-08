@@ -1,0 +1,69 @@
+=== GHOST IMPORTER RUN: 2026-10-08T19:52:29.592Z ===
+Mode: DRY-RUN
+
+[2026-10-08T19:52:29.601Z] Starting Ghost Importer (Mode: DRY-RUN (read-only))
+[2026-10-08T19:52:29.797Z] Fetching database baseline state...
+[2026-10-08T19:52:31.558Z] Found 9 existing posts in database.
+[2026-10-08T19:52:31.871Z] Found 6 existing tags in database.
+[2026-10-08T19:52:32.198Z] Found series '30in30' (ID: ed119b90-c359-4f9e-ba48-ddd182993881).
+[2026-10-08T19:52:32.564Z] Resolved author_id for posts: 3d9972b1-1b8f-4503-8c66-ccfcc6fea32d
+[2026-10-08T19:52:32.566Z] Loading Ghost export from: C:/Users/ivan.kabandize/ghost-export/begenius-thoughts.ghost.2026-09-21-17-50-28.json
+[2026-10-08T19:52:32.620Z] Loaded 68 total posts/pages from Ghost export.
+[2026-10-08T19:52:32.623Z] Limited by --batch to 10 posts.
+[2026-10-08T19:52:32.626Z] Target posts to process in this run: 10
+[2026-10-08T19:52:32.628Z] 
+--- [1/10] Processing: fatherhood ---
+[2026-10-08T19:52:32.631Z] Post has 0 media items pointing to Ghost storage.
+[2026-10-08T19:52:32.642Z] Metadata: Title="Fatherhood", Stream=random_thoughts, Series=none, Tags=[], PublishedAt=2020-06-21T13:03:00.000Z
+[2026-10-08T19:52:32.644Z] TipTap conversion: Format=mobiledoc, Nodes=17
+[2026-10-08T19:52:32.646Z] 
+--- [2/10] Processing: people-and-places ---
+[2026-10-08T19:52:32.648Z] Post has 3 media items pointing to Ghost storage.
+[2026-10-08T19:52:36.934Z] Metadata: Title="People and Places", Stream=random_thoughts, Series=none, Tags=[], PublishedAt=2020-11-16T21:00:00.000Z
+[2026-10-08T19:52:36.936Z] TipTap conversion: Format=mobiledoc, Nodes=15
+[2026-10-08T19:52:36.938Z] 
+--- [3/10] Processing: did-it-count ---
+[2026-10-08T19:52:36.940Z] Post has 1 media items pointing to Ghost storage.
+[2026-10-08T19:52:38.706Z] Metadata: Title="Did It Count?", Stream=random_thoughts, Series=none, Tags=[], PublishedAt=2021-12-27T16:43:00.000Z
+[2026-10-08T19:52:38.708Z] TipTap conversion: Format=mobiledoc, Nodes=13
+[2026-10-08T19:52:38.710Z] 
+--- [4/10] Processing: on-life-and-death ---
+[2026-10-08T19:52:38.712Z] Post has 0 media items pointing to Ghost storage.
+[2026-10-08T19:52:38.717Z] Metadata: Title="On Life And Death", Stream=random_thoughts, Series=none, Tags=[], PublishedAt=2022-08-10T12:57:00.000Z
+[2026-10-08T19:52:38.719Z] TipTap conversion: Format=mobiledoc, Nodes=13
+[2026-10-08T19:52:38.722Z] 
+--- [5/10] Processing: tools-that-have-triggered-my-growth-and-productivity ---
+[2026-10-08T19:52:38.727Z] Post has 7 media items pointing to Ghost storage.
+[2026-10-08T19:52:51.440Z] Metadata: Title="Tools That Have Triggered My Growth and Productivity", Stream=tools_for_thought, Series=none, Tags=[], PublishedAt=2022-02-28T13:07:00.000Z
+[2026-10-08T19:52:51.442Z] TipTap conversion: Format=mobiledoc, Nodes=40
+[2026-10-08T19:52:51.443Z] 
+--- [6/10] Processing: starting-out-against-all-odds ---
+[2026-10-08T19:52:51.445Z] Post has 0 media items pointing to Ghost storage.
+[2026-10-08T19:52:51.447Z] Metadata: Title="Starting Out: Against All Odds", Stream=structured_thoughts, Series=none, Tags=[Business], PublishedAt=2023-01-09T11:00:57.000Z
+[2026-10-08T19:52:51.448Z] TipTap conversion: Format=mobiledoc, Nodes=21
+[2026-10-08T19:52:51.450Z] 
+--- [7/10] Processing: authentic-leadership ---
+[2026-10-08T19:52:51.451Z] Post has 0 media items pointing to Ghost storage.
+[2026-10-08T19:52:51.454Z] Metadata: Title="Authentic Leadership", Stream=random_thoughts, Series=none, Tags=[Leadership], PublishedAt=2023-01-16T11:15:16.000Z
+[2026-10-08T19:52:51.456Z] TipTap conversion: Format=mobiledoc, Nodes=20
+[2026-10-08T19:52:51.458Z] 
+--- [8/10] Processing: outgrow-your-implicit-bias ---
+[2026-10-08T19:52:51.460Z] Post has 2 media items pointing to Ghost storage.
+[2026-10-08T19:52:54.483Z] Metadata: Title="Outgrow Your Implicit Bias", Stream=random_thoughts, Series=none, Tags=[], PublishedAt=2023-02-06T15:00:02.000Z
+[2026-10-08T19:52:54.485Z] TipTap conversion: Format=mobiledoc, Nodes=22
+[2026-10-08T19:52:54.487Z] 
+--- [9/10] Processing: weekly-planning ---
+[2026-10-08T19:52:54.490Z] Post has 1 media items pointing to Ghost storage.
+[2026-10-08T19:52:55.972Z] Metadata: Title="Weekly Planning for Productivity", Stream=structured_thoughts, Series=none, Tags=[Productivity], PublishedAt=2023-01-30T09:00:00.000Z
+[2026-10-08T19:52:55.973Z] TipTap conversion: Format=mobiledoc, Nodes=14
+[2026-10-08T19:52:55.974Z] 
+--- [10/10] Processing: chatgpt-vs-notion-ai ---
+[2026-10-08T19:52:55.975Z] Post has 1 media items pointing to Ghost storage.
+[2026-10-08T19:52:57.496Z] Metadata: Title="ChatGPT vs Notion AI", Stream=tools_for_thought, Series=none, Tags=[Technology], PublishedAt=2023-02-10T16:30:58.000Z
+[2026-10-08T19:52:57.497Z] TipTap conversion: Format=mobiledoc, Nodes=18
+[2026-10-08T19:52:57.498Z] 
+=== IMPORTER RUN COMPLETE ===
+[2026-10-08T19:52:57.500Z] Total processed: 10
+[2026-10-08T19:52:57.501Z] Succeeded/Validated: 10
+[2026-10-08T19:52:57.503Z] Skipped existing: 0
+[2026-10-08T19:52:57.505Z] Failed: 0

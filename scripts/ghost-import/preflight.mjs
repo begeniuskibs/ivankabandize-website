@@ -274,6 +274,9 @@ export async function runPreflight() {
     }
     scanMedia(doc)
 
+    // Check in batches of 10 with retry logic
+    const skippedSignupCards = unmappedCards.filter(c => c.type === 'signup').length
+
     postsTable.push({
       num: i + 1,
       slug: p.slug,
@@ -285,6 +288,7 @@ export async function runPreflight() {
       wordCount,
       format,
       cardCounts,
+      skippedSignupCards,
       internalBookmarks,
     })
   }
@@ -294,45 +298,85 @@ export async function runPreflight() {
   const mediaResults = []
   const mediaEntries = Array.from(allGhostMediaMap.entries())
 
-  // Check in batches of 10
+  // Check in batches of 10 with retry and fallback
   for (let i = 0; i < mediaEntries.length; i += 10) {
     const batch = mediaEntries.slice(i, i + 10)
     await Promise.all(
       batch.map(async ([rawUrl, meta]) => {
         const absUrl = toAbsoluteGhostMediaUrl(rawUrl)
         const isVideo = meta.bucket === 'post-videos'
-        try {
-          const res = await fetch(absUrl, { method: 'HEAD' })
-          const bytes = parseInt(res.headers.get('content-length') || '0', 10)
-          const contentType = res.headers.get('content-type') || ''
-          const oversized = isVideo ? bytes > MAX_VIDEO_BYTES : bytes > MAX_IMAGE_BYTES
-          mediaResults.push({
-            rawUrl,
-            absUrl,
-            post: meta.post,
-            context: meta.context,
-            bucket: meta.bucket,
-            bytes,
-            mb: (bytes / (1024 * 1024)).toFixed(2),
-            contentType,
-            status: res.status,
-            oversized,
-          })
-        } catch (err) {
-          mediaResults.push({
-            rawUrl,
-            absUrl,
-            post: meta.post,
-            context: meta.context,
-            bucket: meta.bucket,
-            bytes: 0,
-            mb: '0',
-            contentType: 'error',
-            status: 0,
-            error: err.message,
-            oversized: false,
-          })
+        let attempts = 0
+        let lastErr = null
+
+        while (attempts < 3) {
+          attempts++
+          try {
+            let res = await fetch(absUrl, {
+              method: 'HEAD',
+              headers: {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+              },
+            })
+
+            let bytes = parseInt(res.headers.get('content-length') || '0', 10)
+            let contentType = res.headers.get('content-type') || ''
+            let status = res.status
+
+            if (!res.ok || bytes === 0 || res.status === 405 || res.status === 403) {
+              const getRes = await fetch(absUrl, {
+                method: 'GET',
+                headers: {
+                  Range: 'bytes=0-1024',
+                  'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+                },
+              })
+              status = getRes.status
+              contentType = getRes.headers.get('content-type') || contentType
+              const contentRange = getRes.headers.get('content-range')
+              if (contentRange) {
+                const totalMatch = contentRange.match(/\/(\d+)$/)
+                if (totalMatch) bytes = parseInt(totalMatch[1], 10)
+              }
+              if (bytes === 0) {
+                bytes = parseInt(getRes.headers.get('content-length') || '0', 10)
+              }
+            }
+
+            const oversized = isVideo ? bytes > MAX_VIDEO_BYTES : bytes > MAX_IMAGE_BYTES
+            mediaResults.push({
+              rawUrl,
+              absUrl,
+              post: meta.post,
+              context: meta.context,
+              bucket: meta.bucket,
+              bytes,
+              mb: (bytes / (1024 * 1024)).toFixed(2),
+              contentType,
+              status,
+              oversized,
+            })
+            return
+          } catch (err) {
+            lastErr = err
+            if (attempts < 3) {
+              await new Promise(r => setTimeout(r, 400 * attempts))
+            }
+          }
         }
+
+        mediaResults.push({
+          rawUrl,
+          absUrl,
+          post: meta.post,
+          context: meta.context,
+          bucket: meta.bucket,
+          bytes: 0,
+          mb: '0',
+          contentType: 'error',
+          status: 0,
+          error: lastErr ? lastErr.message : 'Unknown error',
+          oversized: false,
+        })
       })
     )
     process.stdout.write(`   Checked ${Math.min(i + 10, mediaEntries.length)}/${mediaEntries.length} media files...\r`)
@@ -384,13 +428,21 @@ export async function runPreflight() {
     console.log(`   - Card type: "${cardType}" (encountered ${count} times) - Ghost newsletter subscription card, omitted (public site renders its own footer newsletter subscription).`)
   }
 
+  const skippedSignupCardsPerPost = {}
+  for (const post of postsTable) {
+    if (post.skippedSignupCards > 0) {
+      skippedSignupCardsPerPost[post.slug] = post.skippedSignupCards
+    }
+  }
+
   return {
     postsTable,
     mediaResults,
     oversizedItems,
     embedResults,
     bookmarkResults,
-    unmappedCardsReport,
+    unmappedCardsReport: Object.fromEntries(unmappedCardsReport),
+    skippedSignupCardsPerPost,
     conflicts,
   }
 }
