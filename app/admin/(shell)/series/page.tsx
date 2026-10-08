@@ -63,8 +63,24 @@ export default function AdminSeriesListPage() {
     loadedText: string
     totalText: string
   } | null>(null)
+  const [imageError, setImageError] = useState<string | null>(null)
+  const [modalError, setModalError] = useState<string | null>(null)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const imageErrorRef = useRef<HTMLDivElement>(null)
+  const modalErrorRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (imageError && imageErrorRef.current) {
+      imageErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [imageError])
+
+  useEffect(() => {
+    if (modalError && modalErrorRef.current) {
+      modalErrorRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }
+  }, [modalError])
 
   useEffect(() => {
     fetchSeries()
@@ -101,6 +117,8 @@ export default function AdminSeriesListPage() {
     setHeaderImageUrl(null)
     setSortOrder(seriesList.length)
     setError(null)
+    setImageError(null)
+    setModalError(null)
     setSuccess(null)
     setUploadProgress(null)
     setIsModalOpen(true)
@@ -119,9 +137,17 @@ export default function AdminSeriesListPage() {
     setHeaderImageUrl(item.header_image_url || null)
     setSortOrder(item.sort_order || 0)
     setError(null)
+    setImageError(null)
+    setModalError(null)
     setSuccess(null)
     setUploadProgress(null)
     setIsModalOpen(true)
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false)
+    setImageError(null)
+    setModalError(null)
   }
 
   function handleTitleChange(val: string) {
@@ -144,9 +170,11 @@ export default function AdminSeriesListPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
+    setImageError(null)
+
     // Validate: image types only
     if (!file.type.startsWith('image/')) {
-      setError('Please select a valid image file (PNG, JPG, WebP).')
+      setImageError('That file is not an image. Please choose a PNG, JPG or WebP file.')
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -156,7 +184,7 @@ export default function AdminSeriesListPage() {
     // Validate: max 10 MB
     const maxSizeBytes = 10 * 1024 * 1024 // 10 MB
     if (file.size > maxSizeBytes) {
-      setError('Image file size exceeds the 10 MB limit.')
+      setImageError('That image is too large (max 10 MB). Please choose a smaller file.')
       if (fileInputRef.current) {
         fileInputRef.current.value = ''
       }
@@ -169,7 +197,6 @@ export default function AdminSeriesListPage() {
       loadedText: '0 B',
       totalText: formatBytes(file.size),
     })
-    setError(null)
 
     try {
       const res = await uploadFileDirect({
@@ -187,14 +214,13 @@ export default function AdminSeriesListPage() {
 
       if (res.url) {
         setHeaderImageUrl(res.url)
-        setError(null)
+        setImageError(null)
       } else {
         throw new Error('Upload succeeded but no image URL was returned')
       }
     } catch (err) {
       console.error('Image upload failed', err)
-      const message = err instanceof Error ? err.message : 'Error uploading header image'
-      setError(message)
+      setImageError('The upload failed. Please check your connection and try again.')
     } finally {
       setUploadProgress(null)
       if (fileInputRef.current) {
@@ -205,18 +231,19 @@ export default function AdminSeriesListPage() {
 
   async function handleSaveSeries(e: React.FormEvent) {
     e.preventDefault()
+    setModalError(null)
+
     if (!title.trim()) {
-      setError('Series title is required')
+      setModalError('Series title is required')
       return
     }
 
     if (slug.trim().toLowerCase() === 'series') {
-      setError("The slug 'series' is reserved")
+      setModalError("The slug 'series' is reserved")
       return
     }
 
     setSaving(true)
-    setError(null)
 
     const payload = {
       title: title.trim(),
@@ -247,11 +274,11 @@ export default function AdminSeriesListPage() {
       }
 
       setSuccess(`Series "${payload.title}" saved successfully`)
-      setIsModalOpen(false)
+      handleCloseModal()
       fetchSeries()
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Error saving series'
-      setError(message)
+      setModalError(message)
     } finally {
       setSaving(false)
     }
@@ -532,7 +559,7 @@ export default function AdminSeriesListPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setIsModalOpen(false)}
+                onClick={handleCloseModal}
                 className="text-gray-400 hover:text-gray-600 text-xl font-bold p-1 cursor-pointer"
               >
                 &times;
@@ -683,7 +710,31 @@ export default function AdminSeriesListPage() {
                   className="hidden"
                 />
 
-                {uploadProgress ? (
+                {imageError ? (
+                  <div
+                    ref={imageErrorRef}
+                    className="relative w-full py-5 px-4 border border-red-200 bg-red-50 rounded-xl flex flex-col items-center justify-center text-center gap-2"
+                  >
+                    <button
+                      type="button"
+                      onClick={() => setImageError(null)}
+                      className="absolute top-2 right-2 text-red-400 hover:text-red-700 p-1 text-sm font-bold leading-none cursor-pointer"
+                      aria-label="Dismiss error"
+                    >
+                      &times;
+                    </button>
+                    <p className="text-xs font-medium text-red-800 max-w-sm">
+                      {imageError}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="px-3 py-1.5 bg-red-600 hover:bg-red-700 text-white text-xs font-semibold rounded-lg transition cursor-pointer shadow-xs"
+                    >
+                      Try again
+                    </button>
+                  </div>
+                ) : uploadProgress ? (
                   <div className="w-full py-6 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center bg-gray-50/50">
                     <UploadProgressCard
                       filename={uploadProgress.filename}
@@ -711,7 +762,10 @@ export default function AdminSeriesListPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => setHeaderImageUrl(null)}
+                          onClick={() => {
+                            setHeaderImageUrl(null)
+                            setImageError(null)
+                          }}
                           className="px-3 py-1.5 bg-red-600 text-white rounded-lg text-xs font-semibold hover:bg-red-700 cursor-pointer"
                         >
                           Remove
@@ -732,7 +786,10 @@ export default function AdminSeriesListPage() {
                         </button>
                         <button
                           type="button"
-                          onClick={() => setHeaderImageUrl(null)}
+                          onClick={() => {
+                            setHeaderImageUrl(null)
+                            setImageError(null)
+                          }}
                           className="text-xs font-medium text-red-600 hover:text-red-700 cursor-pointer underline"
                         >
                           Remove
@@ -755,11 +812,28 @@ export default function AdminSeriesListPage() {
                 )}
               </div>
 
+              {/* Modal Error */}
+              {modalError && (
+                <div
+                  ref={modalErrorRef}
+                  className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-xs flex items-center justify-between"
+                >
+                  <span>{modalError}</span>
+                  <button
+                    type="button"
+                    onClick={() => setModalError(null)}
+                    className="text-red-500 hover:text-red-800 font-bold ml-2 cursor-pointer"
+                  >
+                    &times;
+                  </button>
+                </div>
+              )}
+
               {/* Modal Footer */}
               <div className="pt-4 border-t border-gray-100 flex items-center justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsModalOpen(false)}
+                  onClick={handleCloseModal}
                   className="px-4 py-2 text-xs font-semibold text-gray-600 hover:text-gray-900 rounded-xl transition cursor-pointer"
                 >
                   Cancel
