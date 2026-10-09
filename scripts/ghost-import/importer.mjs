@@ -8,6 +8,7 @@ import { createClient } from '@supabase/supabase-js'
 import { APPROVED_MAPPINGS, EXCLUDED_SLUGS } from './mapping.mjs'
 import { convertGhostPostToTipTap } from './converter.mjs'
 import { isGhostMedia, uploadMediaToSupabase, toAbsoluteGhostMediaUrl } from './rehost.mjs'
+import { validateDocSchema } from './editorSchema.mjs'
 
 const LOG_FILE = path.resolve('scripts/ghost-import/import.log')
 
@@ -18,6 +19,43 @@ function log(message, { consoleLog = true } = {}) {
     console.log(formatted)
   }
   fs.appendFileSync(LOG_FILE, `${formatted}\n`, 'utf8')
+}
+
+export function countWords(doc) {
+  let count = 0
+  function scan(n) {
+    if (!n) return
+    if (n.type === 'text' && typeof n.text === 'string') {
+      const words = n.text.trim().split(/\s+/).filter(Boolean)
+      count += words.length
+    }
+    if (n.content && Array.isArray(n.content)) {
+      n.content.forEach(scan)
+    }
+  }
+  scan(doc)
+  return count
+}
+
+export function backupPostContent(slug, content) {
+  const backupDir = path.resolve('scripts/ghost-import/backups')
+  if (!fs.existsSync(backupDir)) {
+    fs.mkdirSync(backupDir, { recursive: true })
+  }
+  const isoTimestamp = new Date().toISOString().replace(/:/g, '-')
+  const fileName = `${slug}-${isoTimestamp}.json`
+  const filePath = path.join(backupDir, fileName)
+  fs.writeFileSync(filePath, JSON.stringify(content ?? {}, null, 2), 'utf8')
+  log(`Backup created: ${filePath}`)
+  return filePath
+}
+
+export function buildPostContent(ghostPost, conversion) {
+  const content = { ...conversion.doc }
+  if (ghostPost.feature_image_caption) {
+    content.featured_image_caption = ghostPost.feature_image_caption
+  }
+  return content
 }
 
 function loadEnvLocal() {
@@ -44,6 +82,7 @@ function loadEnvLocal() {
 export function parseArgs(argv) {
   const args = argv.slice(2)
   const isApply = args.includes('--apply')
+  const isUpdateContent = args.includes('--update-content')
 
   let onlySlugs = null
   const onlyIdx = args.indexOf('--only')
@@ -57,19 +96,20 @@ export function parseArgs(argv) {
     batchSize = parseInt(args[batchIdx + 1], 10)
   }
 
-  return { isDryRun: !isApply, isApply, onlySlugs, batchSize }
+  return { isDryRun: !isApply, isApply, isUpdateContent, onlySlugs, batchSize }
 }
 
 export async function runImporter({
   exportFilePath = 'C:/Users/ivan.kabandize/ghost-export/begenius-thoughts.ghost.2026-09-21-17-50-28.json',
   isDryRun = true,
+  isUpdateContent = false,
   onlySlugs = null,
   batchSize = null,
 } = {}) {
   // Clear or init log file
-  fs.writeFileSync(LOG_FILE, `=== GHOST IMPORTER RUN: ${new Date().toISOString()} ===\nMode: ${isDryRun ? 'DRY-RUN' : 'APPLY'}\n\n`, 'utf8')
+  fs.writeFileSync(LOG_FILE, `=== GHOST IMPORTER RUN: ${new Date().toISOString()} ===\nMode: ${isDryRun ? 'DRY-RUN' : 'APPLY'}${isUpdateContent ? ' (UPDATE-CONTENT)' : ''}\n\n`, 'utf8')
 
-  log(`Starting Ghost Importer (Mode: ${isDryRun ? 'DRY-RUN (read-only)' : 'APPLY (live writes)'})`)
+  log(`Starting Ghost Importer (Mode: ${isDryRun ? 'DRY-RUN (read-only)' : 'APPLY (live writes)'}${isUpdateContent ? ', UPDATE-CONTENT' : ''})`)
 
   if (!isDryRun) {
     if (process.env.IMPORT_CONFIRM !== 'yes') {
@@ -100,9 +140,10 @@ export async function runImporter({
 
   // 1. Fetch DB baseline state
   log('Fetching database baseline state...')
-  const { data: existingPosts, error: postsErr } = await supabase.from('posts').select('id, slug, title')
+  const { data: existingPosts, error: postsErr } = await supabase.from('posts').select('id, slug, title, content')
   if (postsErr) throw new Error(`Failed to query existing posts: ${postsErr.message}`)
-  const existingPostSlugs = new Set((existingPosts || []).map(p => p.slug))
+  const existingPostBySlug = new Map((existingPosts || []).map(p => [p.slug.toLowerCase(), p]))
+  const existingPostSlugs = new Set((existingPosts || []).map(p => p.slug.toLowerCase()))
   log(`Found ${existingPostSlugs.size} existing posts in database.`)
 
   const { data: existingTags, error: tagsErr } = await supabase.from('tags').select('id, name, slug')
@@ -110,22 +151,26 @@ export async function runImporter({
   const tagMapByName = new Map((existingTags || []).map(t => [t.name.toLowerCase(), t]))
   log(`Found ${tagMapByName.size} existing tags in database.`)
 
-  const { data: existingSeries, error: seriesErr } = await supabase.from('series').select('id, title, slug')
-  if (seriesErr) throw new Error(`Failed to query existing series: ${seriesErr.message}`)
-  const seriesMapBySlug = new Map((existingSeries || []).map(s => [s.slug.toLowerCase(), s]))
-  const series30in30 = seriesMapBySlug.get('30in30')
-  if (!series30in30) {
-    throw new Error("Series '30in30' not found in database! Expected it to exist.")
-  }
-  log(`Found series '30in30' (ID: ${series30in30.id}).`)
+  let series30in30 = null
+  let authorId = null
+  if (!isUpdateContent) {
+    const { data: existingSeries, error: seriesErr } = await supabase.from('series').select('id, title, slug')
+    if (seriesErr) throw new Error(`Failed to query existing series: ${seriesErr.message}`)
+    const seriesMapBySlug = new Map((existingSeries || []).map(s => [s.slug.toLowerCase(), s]))
+    series30in30 = seriesMapBySlug.get('30in30')
+    if (!series30in30) {
+      throw new Error("Series '30in30' not found in database! Expected it to exist.")
+    }
+    log(`Found series '30in30' (ID: ${series30in30.id}).`)
 
-  // Find author_id
-  const { data: users, error: usersErr } = await supabase.from('users').select('id, email').limit(1)
-  if (usersErr || !users || users.length === 0) {
-    throw new Error(`Failed to resolve owner author_id from users: ${usersErr?.message}`)
+    // Find author_id
+    const { data: users, error: usersErr } = await supabase.from('users').select('id, email').limit(1)
+    if (usersErr || !users || users.length === 0) {
+      throw new Error(`Failed to resolve owner author_id from users: ${usersErr?.message}`)
+    }
+    authorId = users[0].id
+    log(`Resolved author_id for posts: ${authorId}`)
   }
-  const authorId = users[0].id
-  log(`Resolved author_id for posts: ${authorId}`)
 
   // 2. Load Ghost export
   log(`Loading Ghost export from: ${exportFilePath}`)
@@ -172,9 +217,9 @@ export async function runImporter({
 
   log(`Target posts to process in this run: ${targetMappings.length}`)
 
-  // 4. In APPLY mode, create missing topic tags first
+  // 4. In APPLY mode, create missing topic tags first (insert mode only)
   const neededTagNames = ['Business', 'Leadership', 'Faith']
-  if (!isDryRun) {
+  if (!isDryRun && !isUpdateContent) {
     for (const tagName of neededTagNames) {
       if (!tagMapByName.has(tagName.toLowerCase())) {
         log(`Creating missing topic tag '${tagName}'...`)
@@ -197,6 +242,7 @@ export async function runImporter({
   const results = {
     processed: 0,
     skippedExisting: 0,
+    skippedMissingDb: 0,
     succeeded: 0,
     failed: 0,
     items: [],
@@ -212,11 +258,20 @@ export async function runImporter({
       continue
     }
 
-    if (existingPostSlugs.has(slug)) {
-      log(`IDEMPOTENCY: Post with slug '${slug}' already exists in database. Skipping.`)
-      results.skippedExisting++
-      results.items.push({ slug, status: 'skipped_existing' })
-      continue
+    if (isUpdateContent) {
+      if (!existingPostBySlug.has(slug.toLowerCase())) {
+        log(`UPDATE-CONTENT: Post with slug '${slug}' does not exist in database. Skipping.`)
+        results.skippedMissingDb++
+        results.items.push({ slug, status: 'skipped_not_in_database' })
+        continue
+      }
+    } else {
+      if (existingPostSlugs.has(slug.toLowerCase())) {
+        log(`IDEMPOTENCY: Post with slug '${slug}' already exists in database. Skipping.`)
+        results.skippedExisting++
+        results.items.push({ slug, status: 'skipped_existing' })
+        continue
+      }
     }
 
     const ghostPost = ghostPostBySlug.get(slug)
@@ -313,81 +368,133 @@ export async function runImporter({
       mediaUrlMap,
     })
 
-    const title = ghostPost.title
-    const publishedAt = ghostPost.published_at || null
-    const excerpt = ghostPost.custom_excerpt || ghostPost.excerpt || null
-    const featuredImageUrl = ghostPost.feature_image
-      ? (mediaUrlMap.get(ghostPost.feature_image) || toAbsoluteGhostMediaUrl(ghostPost.feature_image))
-      : null
+    const newContent = buildPostContent(ghostPost, conversion)
 
-    const seriesId = mapping.series === '30in30' ? series30in30.id : null
-    const targetTagIds = (mapping.tags || [])
-      .map(tName => tagMapByName.get(tName.toLowerCase())?.id)
-      .filter(Boolean)
+    if (isUpdateContent) {
+      const existingRow = existingPostBySlug.get(slug.toLowerCase())
+      const existingDoc = existingRow?.content
+      const existingNodeCount = Array.isArray(existingDoc?.content) ? existingDoc.content.length : 0
+      const newNodeCount = Array.isArray(newContent?.content) ? newContent.content.length : 0
+      const newWordCount = countWords(newContent)
+      const schemaCheck = validateDocSchema(newContent)
+      const schemaResult = schemaCheck.valid ? 'PASS' : `FAIL: ${schemaCheck.error}`
 
-    log(`Metadata: Title="${title}", Stream=${mapping.stream}, Series=${mapping.series || 'none'}, Tags=[${mapping.tags.join(', ')}], PublishedAt=${publishedAt}`)
-    log(`TipTap conversion: Format=${conversion.format}, Nodes=${conversion.doc.content?.length || 0}`)
+      if (isDryRun) {
+        log(`[DRY-RUN UPDATE-CONTENT] Slug: ${slug}`)
+        log(`  Existing top-level node count: ${existingNodeCount}`)
+        log(`  New top-level node count: ${newNodeCount}`)
+        log(`  New word count: ${newWordCount}`)
+        log(`  Editor schema check: ${schemaResult}`)
 
-    if (!isDryRun) {
-      // Live Insert
-      const { data: newPost, error: insertErr } = await supabase
-        .from('posts')
-        .insert({
-          title,
+        results.succeeded++
+        results.items.push({
           slug,
-          excerpt,
-          content: conversion.doc,
-          featured_image_url: featuredImageUrl,
-          header_image_width: 'standard',
-          visibility: 'public',
-          publish_status: 'draft',
-          content_type: mapping.stream,
-          series_id: seriesId,
-          published_at: publishedAt,
-          author_id: authorId,
+          status: 'dry_run_update_validated',
+          existingNodeCount,
+          newNodeCount,
+          newWordCount,
+          schemaValid: schemaCheck.valid,
         })
-        .select()
-        .single()
+      } else {
+        // Live Update
+        const backupPath = backupPostContent(slug, existingRow?.content)
 
-      if (insertErr) {
-        log(`ERROR inserting post ${slug}: ${insertErr.message}`)
-        results.failed++
-        results.items.push({ slug, status: 'error', error: insertErr.message })
-        continue
-      }
+        const { error: updateErr } = await supabase
+          .from('posts')
+          .update({
+            content: newContent,
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', existingRow.id)
 
-      log(`Inserted post '${slug}' (ID: ${newPost.id}).`)
-
-      // Link tags
-      if (targetTagIds.length > 0) {
-        const postTagsData = targetTagIds.map(tagId => ({
-          post_id: newPost.id,
-          tag_id: tagId,
-        }))
-        const { error: ptErr } = await supabase.from('post_tags').insert(postTagsData)
-        if (ptErr) {
-          log(`Warning: Failed to attach post_tags for ${slug}: ${ptErr.message}`)
-        } else {
-          log(`Attached ${postTagsData.length} tags to post.`)
+        if (updateErr) {
+          log(`ERROR updating post ${slug}: ${updateErr.message}`)
+          results.failed++
+          results.items.push({ slug, status: 'error', error: updateErr.message })
+          continue
         }
-      }
 
-      results.succeeded++
-      results.items.push({ slug, status: 'imported', id: newPost.id })
+        log(`Updated post '${slug}' (ID: ${existingRow.id}). Backup saved: ${backupPath}`)
+        results.succeeded++
+        results.items.push({ slug, status: 'updated', id: existingRow.id, backupPath })
+      }
     } else {
-      // Dry run simulation
-      results.succeeded++
-      results.items.push({
-        slug,
-        status: 'dry_run_validated',
-        title,
-        stream: mapping.stream,
-        series: mapping.series,
-        tags: mapping.tags,
-        tagIds: targetTagIds,
-        seriesId,
-        nodeCount: conversion.doc.content?.length || 0,
-      })
+      const title = ghostPost.title
+      const publishedAt = ghostPost.published_at || null
+      const excerpt = ghostPost.custom_excerpt || ghostPost.excerpt || null
+      const featuredImageUrl = ghostPost.feature_image
+        ? (mediaUrlMap.get(ghostPost.feature_image) || toAbsoluteGhostMediaUrl(ghostPost.feature_image))
+        : null
+
+      const seriesId = mapping.series === '30in30' && series30in30 ? series30in30.id : null
+      const targetTagIds = (mapping.tags || [])
+        .map(tName => tagMapByName.get(tName.toLowerCase())?.id)
+        .filter(Boolean)
+
+      log(`Metadata: Title="${title}", Stream=${mapping.stream}, Series=${mapping.series || 'none'}, Tags=[${mapping.tags.join(', ')}], PublishedAt=${publishedAt}`)
+      log(`TipTap conversion: Format=${conversion.format}, Nodes=${conversion.doc.content?.length || 0}`)
+
+      if (!isDryRun) {
+        // Live Insert
+        const { data: newPost, error: insertErr } = await supabase
+          .from('posts')
+          .insert({
+            title,
+            slug,
+            excerpt,
+            content: newContent,
+            featured_image_url: featuredImageUrl,
+            header_image_width: 'standard',
+            visibility: 'public',
+            publish_status: 'draft',
+            content_type: mapping.stream,
+            series_id: seriesId,
+            published_at: publishedAt,
+            author_id: authorId,
+          })
+          .select()
+          .single()
+
+        if (insertErr) {
+          log(`ERROR inserting post ${slug}: ${insertErr.message}`)
+          results.failed++
+          results.items.push({ slug, status: 'error', error: insertErr.message })
+          continue
+        }
+
+        log(`Inserted post '${slug}' (ID: ${newPost.id}).`)
+
+        // Link tags
+        if (targetTagIds.length > 0) {
+          const postTagsData = targetTagIds.map(tagId => ({
+            post_id: newPost.id,
+            tag_id: tagId,
+          }))
+          const { error: ptErr } = await supabase.from('post_tags').insert(postTagsData)
+          if (ptErr) {
+            log(`Warning: Failed to attach post_tags for ${slug}: ${ptErr.message}`)
+          } else {
+            log(`Attached ${postTagsData.length} tags to post.`)
+          }
+        }
+
+        results.succeeded++
+        results.items.push({ slug, status: 'imported', id: newPost.id })
+      } else {
+        // Dry run simulation
+        results.succeeded++
+        results.items.push({
+          slug,
+          status: 'dry_run_validated',
+          title,
+          stream: mapping.stream,
+          series: mapping.series,
+          tags: mapping.tags,
+          tagIds: targetTagIds,
+          seriesId,
+          nodeCount: conversion.doc.content?.length || 0,
+        })
+      }
     }
 
     results.processed++
@@ -396,7 +503,11 @@ export async function runImporter({
   log(`\n=== IMPORTER RUN COMPLETE ===`)
   log(`Total processed: ${results.processed}`)
   log(`Succeeded/Validated: ${results.succeeded}`)
-  log(`Skipped existing: ${results.skippedExisting}`)
+  if (isUpdateContent) {
+    log(`Skipped missing from DB: ${results.skippedMissingDb}`)
+  } else {
+    log(`Skipped existing: ${results.skippedExisting}`)
+  }
   log(`Failed: ${results.failed}`)
 
   return results
@@ -404,8 +515,8 @@ export async function runImporter({
 
 // Standalone execution
 if (process.argv[1]?.endsWith('importer.mjs')) {
-  const { isDryRun, onlySlugs, batchSize } = parseArgs(process.argv)
-  runImporter({ isDryRun, onlySlugs, batchSize })
+  const { isDryRun, isUpdateContent, onlySlugs, batchSize } = parseArgs(process.argv)
+  runImporter({ isDryRun, isUpdateContent, onlySlugs, batchSize })
     .then(() => process.exit(0))
     .catch(err => {
       console.error('Importer failed:', err.message)
