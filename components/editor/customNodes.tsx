@@ -17,6 +17,7 @@ export interface GalleryImageEntry {
 
 export { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
 import { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
+import CaptionInput from './CaptionInput'
 
 // React NodeView: Image
 interface ImageComponentProps {
@@ -48,10 +49,9 @@ export function ImageComponent({ node, updateAttributes, selected }: ImageCompon
           selected ? 'ring-2 ring-[#232536] ring-offset-2' : ''
         }`}
       />
-      <input
-        type="text"
+      <CaptionInput
         value={caption}
-        onChange={(e) => updateAttributes({ caption: e.target.value })}
+        onChange={(val) => updateAttributes({ caption: val })}
         placeholder="Add a caption (optional). Link with [text](https://...)"
         className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
       />
@@ -206,10 +206,9 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
           <span>Flush background</span>
         </label>
       </div>
-      <input
-        type="text"
+      <CaptionInput
         value={caption}
-        onChange={(e) => updateAttributes({ caption: e.target.value })}
+        onChange={(val) => updateAttributes({ caption: val })}
         placeholder="Add a caption (optional). Link with [text](https://...)"
         className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
       />
@@ -626,10 +625,9 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
         </div>
       ) : null}
 
-      <input
-        type="text"
+      <CaptionInput
         value={caption}
-        onChange={(e) => updateAttributes({ caption: e.target.value })}
+        onChange={(val) => updateAttributes({ caption: val })}
         placeholder="Add a caption (optional). Link with [text](https://...)"
         className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
       />

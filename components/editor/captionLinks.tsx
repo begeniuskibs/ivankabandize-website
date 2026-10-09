@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react'
 
-export const CAPTION_LINK_REGEX = /\[([^\]]+)\]\(([^)\s]+)\)/g
+export const CAPTION_LINK_REGEX = /\[([^\]]+)\]\s*\(([^)\s]+)\)/g
 
 export function isAllowedCaptionUrl(url: string): boolean {
   if (!url || typeof url !== 'string') return false
@@ -18,11 +18,30 @@ export function stripCaptionMarkdown(text: string): string {
   return text.replace(CAPTION_LINK_REGEX, '$1')
 }
 
+export function wrapSelectionAsLink(
+  text: string,
+  start: number,
+  end: number,
+  url: string
+): string | null {
+  if (typeof text !== 'string') return null
+  if (start >= end) return null
+  if (start < 0 || end > text.length) return null
+  const cleanUrl = (url || '').trim()
+  if (!cleanUrl) return null
+  const selected = text.slice(start, end)
+  if (!selected) return null
+
+  const before = text.slice(0, start)
+  const after = text.slice(end)
+  return `${before}[${selected}](${cleanUrl})${after}`
+}
+
 export function renderCaption(text: string | null | undefined): ReactNode {
   if (!text) return null
 
-  // Fast path for text without markdown links
-  if (!text.includes('[') || !text.includes('](')) {
+  // Fast path for text without brackets
+  if (!text.includes('[') || !text.includes(']')) {
     return text
   }
 
