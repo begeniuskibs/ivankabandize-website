@@ -17,9 +17,11 @@ const jsCode = ts.transpileModule(tsCode, {
 const tempFile = path.resolve('components/editor/_temp_test_captionLinks.mjs')
 fs.writeFileSync(tempFile, jsCode, 'utf8')
 let renderCaption
+let wrapSelectionAsLink
 try {
   const mod = await import(pathToFileURL(tempFile).href)
   renderCaption = mod.renderCaption
+  wrapSelectionAsLink = mod.wrapSelectionAsLink
 } finally {
   if (fs.existsSync(tempFile)) fs.unlinkSync(tempFile)
 }
@@ -460,5 +462,104 @@ console.log('=== TEST SUITE: patchDocCaptions plain-text restore & guards (Step 
   console.log(`  DB caption untouched: ${dbDoc.content[0].attrs.caption}`)
   console.log()
 }
+
+console.log('=== TEST SUITE: Tolerant caption parsing & wrapSelectionAsLink ===\n')
+
+// (a) renderCaption/regex accepts "[gcis] (https://x.org/)" and "[gcis](https://x.org/)"
+{
+  const inputWithSpace = 'Visit [gcis] (https://x.org/) for details'
+  const inputWithoutSpace = 'Visit [gcis](https://x.org/) for details'
+
+  const renderedWithSpace = renderToStaticMarkup(renderCaption(inputWithSpace))
+  const renderedWithoutSpace = renderToStaticMarkup(renderCaption(inputWithoutSpace))
+
+  console.log('Test (a): Tolerant parsing of whitespace between ] and (')
+  console.log('  Input with space:   ', inputWithSpace)
+  console.log('  Rendered:           ', renderedWithSpace)
+  console.log('  Input without space:', inputWithoutSpace)
+  console.log('  Rendered:           ', renderedWithoutSpace)
+
+  const hasLinkWithSpace =
+    renderedWithSpace.includes('<a href="https://x.org/"') && renderedWithSpace.includes('>gcis</a>')
+  const hasLinkWithoutSpace =
+    renderedWithoutSpace.includes('<a href="https://x.org/"') && renderedWithoutSpace.includes('>gcis</a>')
+
+  console.log(`  With space parsed as link:    ${hasLinkWithSpace}`)
+  console.log(`  Without space parsed as link: ${hasLinkWithoutSpace}`)
+  if (!hasLinkWithSpace || !hasLinkWithoutSpace) {
+    throw new Error('Test (a) failed: tolerant parsing did not produce link for both inputs')
+  }
+  console.log()
+}
+
+// (b) Disallowed URL (javascript:) stays plain text
+{
+  const inputDisallowed = 'Dangerous link: [click me] (javascript:alert(1)) here'
+  const renderedDisallowed = renderCaption(inputDisallowed)
+  const renderedStr =
+    typeof renderedDisallowed === 'string' ? renderedDisallowed : renderToStaticMarkup(renderedDisallowed)
+
+  console.log('Test (b): Disallowed URL stays plain text')
+  console.log('  Input:   ', inputDisallowed)
+  console.log('  Rendered:', renderedStr)
+  const noAnchorTag = !renderedStr.includes('<a ')
+  console.log(`  No anchor tag rendered: ${noAnchorTag}`)
+  if (!noAnchorTag) {
+    throw new Error('Test (b) failed: javascript: URL rendered an anchor tag')
+  }
+  console.log()
+}
+
+// (c) wrapSelectionAsLink pure function test cases
+{
+  console.log('Test (c): wrapSelectionAsLink pure function')
+
+  // Normal case (middle of string)
+  const normalText = 'Photo of sunset in Jinja'
+  // 'sunset' is at index 9 to 15
+  const normalWrap = wrapSelectionAsLink(normalText, 9, 15, 'https://example.com')
+  console.log('  Normal case:')
+  console.log('    Input:   ', normalText)
+  console.log('    Wrapped: ', normalWrap)
+  console.log(`    Matches expected: ${normalWrap === 'Photo of [sunset](https://example.com) in Jinja'}`)
+  if (normalWrap !== 'Photo of [sunset](https://example.com) in Jinja') {
+    throw new Error('Test (c) normal case failed')
+  }
+
+  // Start-of-string case
+  const startText = 'Sunset in Jinja'
+  // 'Sunset' is at index 0 to 6
+  const startWrap = wrapSelectionAsLink(startText, 0, 6, 'https://example.com')
+  console.log('  Start-of-string case:')
+  console.log('    Input:   ', startText)
+  console.log('    Wrapped: ', startWrap)
+  console.log(`    Matches expected: ${startWrap === '[Sunset](https://example.com) in Jinja'}`)
+  if (startWrap !== '[Sunset](https://example.com) in Jinja') {
+    throw new Error('Test (c) start-of-string case failed')
+  }
+
+  // End-of-string case
+  const endText = 'Photo of sunset'
+  // 'sunset' is at index 9 to 15
+  const endWrap = wrapSelectionAsLink(endText, 9, 15, 'https://example.com')
+  console.log('  End-of-string case:')
+  console.log('    Input:   ', endText)
+  console.log('    Wrapped: ', endWrap)
+  console.log(`    Matches expected: ${endWrap === 'Photo of [sunset](https://example.com)'}`)
+  if (endWrap !== 'Photo of [sunset](https://example.com)') {
+    throw new Error('Test (c) end-of-string case failed')
+  }
+
+  // Empty selection case (returns null)
+  const emptyWrap = wrapSelectionAsLink(normalText, 5, 5, 'https://example.com')
+  console.log('  Empty-selection case:')
+  console.log('    Result:  ', emptyWrap)
+  console.log(`    Returns null: ${emptyWrap === null}`)
+  if (emptyWrap !== null) {
+    throw new Error('Test (c) empty-selection case failed: expected null')
+  }
+  console.log()
+}
+
 
 
