@@ -961,7 +961,7 @@ function BookmarkComponent({ node, updateAttributes, deleteNode }: BookmarkCompo
             type="text"
             value={caption}
             onChange={(e) => updateAttributes({ caption: e.target.value })}
-            placeholder="Add a caption (optional)..."
+            placeholder="Add a caption (optional). Link with [text](https://...)"
             className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
           />
 

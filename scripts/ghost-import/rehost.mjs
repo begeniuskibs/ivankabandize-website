@@ -74,6 +74,22 @@ export async function inspectMediaUrl(rawUrl, isVideo = false) {
   }
 }
 
+export function getStorageObjectName(rawUrl, isVideo = false) {
+  if (!rawUrl) return ''
+  const absoluteUrl = toAbsoluteGhostMediaUrl(rawUrl)
+  const cleanUrl = absoluteUrl.split('?')[0]
+  const hash12 = crypto.createHash('sha1').update(cleanUrl).digest('hex').slice(0, 12)
+  const urlParts = cleanUrl.split('/')
+  const rawFileName = urlParts[urlParts.length - 1] || 'media'
+  const ext = (rawFileName.includes('.') ? rawFileName.split('.').pop() : (isVideo ? 'mp4' : 'jpg')).toLowerCase()
+  const baseName = rawFileName
+    .replace(/\.[^/.]+$/, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+  return `ghost-${hash12}-${baseName || 'upload'}.${ext}`
+}
+
 export async function uploadMediaToSupabase({
   supabase,
   rawUrl,
@@ -94,17 +110,7 @@ export async function uploadMediaToSupabase({
     }
   }
 
-  const cleanUrl = absoluteUrl.split('?')[0]
-  const hash12 = crypto.createHash('sha1').update(cleanUrl).digest('hex').slice(0, 12)
-  const urlParts = cleanUrl.split('/')
-  const rawFileName = urlParts[urlParts.length - 1] || 'media'
-  const ext = (rawFileName.includes('.') ? rawFileName.split('.').pop() : (isVideo ? 'mp4' : 'jpg')).toLowerCase()
-  const baseName = rawFileName
-    .replace(/\.[^/.]+$/, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-  const storagePath = `ghost-${hash12}-${baseName || 'upload'}.${ext}`
+  const storagePath = getStorageObjectName(rawUrl, isVideo)
 
   const {
     data: { publicUrl },
