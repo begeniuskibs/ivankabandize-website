@@ -1,8 +1,9 @@
 'use client'
 
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { useSearchParams, useRouter } from 'next/navigation'
+import DeletePostModal, { PostToDelete } from '@/components/admin/DeletePostModal'
 
 interface PostRecord {
   id: string
@@ -18,6 +19,11 @@ interface PostRecord {
 
 type StatusTab = 'all' | 'draft' | 'scheduled' | 'published'
 
+interface ToastState {
+  message: string
+  type: 'success' | 'error'
+}
+
 export default function AdminPostsListPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -27,9 +33,32 @@ export default function AdminPostsListPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Delete modal & toast state
+  const [postToDelete, setPostToDelete] = useState<PostToDelete | null>(null)
+  const [toast, setToast] = useState<ToastState | null>(null)
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null)
+
   useEffect(() => {
     fetchPosts()
   }, [])
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) {
+        clearTimeout(toastTimerRef.current)
+      }
+    }
+  }, [])
+
+  function showToast(message: string, type: 'success' | 'error' = 'success') {
+    if (toastTimerRef.current) {
+      clearTimeout(toastTimerRef.current)
+    }
+    setToast({ message, type })
+    toastTimerRef.current = setTimeout(() => {
+      setToast(null)
+    }, 4000)
+  }
 
   async function fetchPosts() {
     try {
@@ -47,6 +76,15 @@ export default function AdminPostsListPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  function handleDeleteSuccess(deletedPost: PostToDelete) {
+    setPosts((prev) => prev.filter((p) => p.id !== deletedPost.id))
+    showToast(`Post "${deletedPost.title}" was deleted.`, 'success')
+  }
+
+  function handleDeleteError(errorMsg: string) {
+    showToast(errorMsg, 'error')
   }
 
   const filteredPosts = useMemo(() => {
@@ -163,12 +201,14 @@ export default function AdminPostsListPage() {
                 const tagNames = post.post_tags?.map((pt) => pt.tag?.name).filter(Boolean) || []
 
                 return (
-                  <Link
+                  <div
                     key={post.id}
-                    href={`/admin/posts/editor?id=${post.id}`}
                     className="p-5 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:bg-gray-50/80 transition group"
                   >
-                    <div className="space-y-1.5 flex-1 min-w-0">
+                    <Link
+                      href={`/admin/posts/editor?id=${post.id}`}
+                      className="space-y-1.5 flex-1 min-w-0"
+                    >
                       <div className="flex items-center gap-2.5">
                         <span
                           className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full ${
@@ -211,21 +251,66 @@ export default function AdminPostsListPage() {
                           </>
                         )}
                       </div>
-                    </div>
+                    </Link>
 
-                    <div className="flex items-center gap-3 shrink-0">
-                      <span className="text-xs font-semibold text-gray-500 group-hover:text-gray-900 transition flex items-center gap-1">
+                    {/* Row Actions */}
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Link
+                        href={`/admin/posts/editor?id=${post.id}`}
+                        aria-label={`Edit ${post.title}`}
+                        className="px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition border border-gray-200 flex items-center gap-1"
+                      >
                         <span>Edit</span>
                         <span>&rarr;</span>
-                      </span>
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => setPostToDelete(post)}
+                        aria-label={`Delete ${post.title}`}
+                        className="px-3 py-1.5 text-xs font-semibold text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition border border-red-200 cursor-pointer"
+                      >
+                        Delete
+                      </button>
                     </div>
-                  </Link>
+                  </div>
                 )
               })}
             </div>
           </div>
         )}
       </main>
+
+      {/* Delete Confirmation Modal */}
+      <DeletePostModal
+        post={postToDelete}
+        isOpen={Boolean(postToDelete)}
+        onClose={() => setPostToDelete(null)}
+        onSuccess={handleDeleteSuccess}
+        onError={handleDeleteError}
+      />
+
+      {/* Toast Notification */}
+      {toast && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg border text-xs font-medium transition animate-in fade-in slide-in-from-bottom-2 ${
+            toast.type === 'success'
+              ? 'bg-[#191A23] text-white border-gray-800'
+              : 'bg-red-900 text-white border-red-800'
+          }`}
+        >
+          <span>{toast.message}</span>
+          <button
+            type="button"
+            onClick={() => setToast(null)}
+            aria-label="Dismiss notification"
+            className="text-white/60 hover:text-white font-bold ml-1 cursor-pointer"
+          >
+            &times;
+          </button>
+        </div>
+      )}
     </div>
   )
 }
