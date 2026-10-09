@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef, Suspense } from 'react'
+import React, { useState, useEffect, useRef, Suspense, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import TipTapEditor from '@/components/editor/TipTapEditor'
@@ -18,11 +18,54 @@ interface SeriesOption {
   slug: string
 }
 
+function contentHasText(d: unknown): boolean {
+  if (!d) return false
+  if (typeof d === 'string') {
+    const trimmed = d.trim()
+    if (!trimmed || trimmed === '{}' || trimmed === '[]') return false
+    try {
+      const parsed = JSON.parse(trimmed)
+      if (typeof parsed === 'object' && parsed !== null) {
+        return contentHasText(parsed)
+      }
+    } catch {
+      // not JSON string
+    }
+    const stripped = trimmed.replace(/<[^>]*>/g, '').trim()
+    return stripped.length > 0
+  }
+  if (typeof d !== 'object') return false
+  if (Array.isArray(d)) {
+    return d.some(contentHasText)
+  }
+  const obj = d as Record<string, unknown>
+  if (typeof obj.text === 'string' && obj.text.trim().length > 0) {
+    return true
+  }
+  if (Array.isArray(obj.content) && obj.content.some(contentHasText)) {
+    return true
+  }
+  if (Array.isArray(obj.sections) && contentHasText(obj.sections)) {
+    return true
+  }
+  if (Array.isArray(obj.cards) && contentHasText(obj.cards)) {
+    return true
+  }
+  if (obj.root && typeof obj.root === 'object' && contentHasText(obj.root)) {
+    return true
+  }
+  return false
+}
+
 function PostEditorContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const postId = searchParams.get('id')
   const featureImageInputRef = useRef<HTMLInputElement>(null)
+  const isExistingPost = Boolean(postId)
+  const [isPostLoaded, setIsPostLoaded] = useState(!isExistingPost)
+  const [emptyLoadBlocked, setEmptyLoadBlocked] = useState(false)
+  const storedContentHasTextRef = useRef(false)
 
   // Post Data
   const [title, setTitle] = useState('')
@@ -56,6 +99,7 @@ function PostEditorContent() {
 
   useEffect(() => {
     let isMounted = true
+    storedContentHasTextRef.current = false
 
     async function init() {
       try {
@@ -72,15 +116,21 @@ function PostEditorContent() {
           if (isMounted) setAvailableSeries(data.series || [])
         }
         if (postId) {
-          if (isMounted) setLoading(true)
+          if (isMounted) {
+            setLoading(true)
+            setIsPostLoaded(false)
+            setEmptyLoadBlocked(false)
+          }
           const postRes = await fetch(`/api/admin/posts/${postId}`)
           if (postRes.ok) {
             const { post } = await postRes.json()
             if (isMounted) {
+              const rawContent = (post.content || post.content_json || {}) as Record<string, unknown>
+              storedContentHasTextRef.current = contentHasText(rawContent)
               setTitle(post.title || '')
               setSlug(post.slug || '')
               setExcerpt(post.excerpt || '')
-              setContent(post.content || {})
+              setContent(rawContent)
               setFeaturedImageUrl(post.featured_image_url || null)
               const contentObj = (post.content || {}) as Record<string, unknown>
               setFeaturedImageCaption((contentObj.featured_image_caption as string) || null)
@@ -95,10 +145,13 @@ function PostEditorContent() {
               if (post.post_tags) {
                 setSelectedTagIds(post.post_tags.map((pt: { tag: Tag }) => pt.tag?.id).filter(Boolean))
               }
+              setIsPostLoaded(true)
             }
           } else {
             if (isMounted) setError('Failed to load post')
           }
+        } else {
+          if (isMounted) setIsPostLoaded(true)
         }
       } catch {
         if (isMounted) setError('Error loading post data')
@@ -113,6 +166,15 @@ function PostEditorContent() {
       isMounted = false
     }
   }, [postId])
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleEditorReady = useCallback((ed: any) => {
+    if (!ed) return
+    const text = typeof ed.getText === 'function' ? ed.getText().trim() : ''
+    if (storedContentHasTextRef.current && !text) {
+      setEmptyLoadBlocked(true)
+    }
+  }, [])
 
   async function handleFeatureImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
@@ -187,6 +249,9 @@ function PostEditorContent() {
   }
 
   async function handleSave(status: 'draft' | 'scheduled' | 'published') {
+    if (emptyLoadBlocked) {
+      return
+    }
     setError(null)
     setSuccess(null)
     setLoading(true)
@@ -346,17 +411,18 @@ function PostEditorContent() {
 
           <button
             type="button"
-            disabled={loading}
+            disabled={!isPostLoaded || loading || emptyLoadBlocked}
             onClick={() => handleSave('draft')}
-            className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition disabled:opacity-50"
+            className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Save Draft
           </button>
 
           <button
             type="button"
+            disabled={!isPostLoaded || loading || emptyLoadBlocked}
             onClick={() => setIsDrawerOpen(true)}
-            className="px-5 py-2 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-2"
+            className="px-5 py-2 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>Publish Settings</span>
             <span className="text-gray-400">&rarr;</span>
@@ -381,140 +447,183 @@ function PostEditorContent() {
 
       {/* CLEAN WRITING CANVAS (Only Title + Feature Image + TipTap Body) */}
       <main className="flex-1 max-w-4xl mx-auto w-full px-4 sm:px-6 py-8">
-        {/* Featured Image Section */}
-        <div className="mb-8">
-          {featuredImageUrl ? (
-            <div className="relative group rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-sm">
-              <div className="relative aspect-[16/9] w-full">
-                <img
-                  src={featuredImageUrl}
-                  alt={title || 'Featured post image'}
-                  className="w-full h-full object-cover"
-                />
-              </div>
+        {!isPostLoaded ? (
+          <div className="space-y-6 animate-pulse" aria-busy="true" aria-label="Loading post">
+            <div className="flex items-center gap-2 text-gray-500 text-sm font-medium">
+              <svg
+                className="animate-spin h-4 w-4 text-gray-500"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+              >
+                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z" />
+              </svg>
+              <span>Loading post...</span>
+            </div>
+            {/* Header image placeholder */}
+            <div className="w-full aspect-[16/9] bg-gray-200 rounded-2xl" />
+            {/* Title placeholder */}
+            <div className="h-12 bg-gray-200 rounded-xl w-3/4 max-w-lg" />
+            {/* Body placeholder */}
+            <div className="space-y-3 pt-2">
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-11/12" />
+              <div className="h-4 bg-gray-200 rounded w-4/5" />
+              <div className="h-4 bg-gray-200 rounded w-full" />
+              <div className="h-4 bg-gray-200 rounded w-3/4" />
+            </div>
+          </div>
+        ) : (
+          <>
+            {/* Featured Image Section */}
+            <div className="mb-8">
+              {featuredImageUrl ? (
+                <div className="relative group rounded-2xl overflow-hidden border border-gray-200 bg-gray-100 shadow-sm">
+                  <div className="relative aspect-[16/9] w-full">
+                    <img
+                      src={featuredImageUrl}
+                      alt={title || 'Featured post image'}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
 
-              {/* Attribution Caption Overlay / Display */}
-              {featuredImageCaption && (
-                <div
-                  className="p-3 bg-white/95 border-t border-gray-100 text-center text-xs text-gray-500"
-                  dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
-                />
+                  {/* Attribution Caption Overlay / Display */}
+                  {featuredImageCaption && (
+                    <div
+                      className="p-3 bg-white/95 border-t border-gray-100 text-center text-xs text-gray-500"
+                      dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
+                    />
+                  )}
+
+                  {/* Action Buttons on Hover */}
+                  <div className="absolute top-3 right-3 flex items-center gap-2 opacity-90 group-hover:opacity-100 transition">
+                    <button
+                      type="button"
+                      onClick={() => setIsUnsplashOpen(true)}
+                      className="px-3 py-1.5 bg-black/80 hover:bg-black text-white text-xs font-semibold rounded-lg backdrop-blur-sm shadow transition"
+                    >
+                      Change (Unsplash)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => featureImageInputRef.current?.click()}
+                      className="px-3 py-1.5 bg-black/80 hover:bg-black text-white text-xs font-semibold rounded-lg backdrop-blur-sm shadow transition"
+                    >
+                      Change (Upload)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRemoveFeatureImage}
+                      className="p-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-lg backdrop-blur-sm shadow transition text-xs font-bold leading-none"
+                      title="Remove Feature Image"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-200 hover:border-gray-300 rounded-2xl p-6 transition flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/60">
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800">Add a Feature Image</p>
+                    <p className="text-xs text-gray-500">Attach an Unsplash photo or upload a custom image</p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setIsUnsplashOpen(true)}
+                      aria-label="Insert photo from Unsplash"
+                      title="Insert photo from Unsplash"
+                      className="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition flex items-center justify-center"
+                    >
+                      <svg
+                        className="w-4 h-4 fill-current"
+                        viewBox="0 0 24 24"
+                        aria-hidden="true"
+                      >
+                        <path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" />
+                      </svg>
+                    </button>
+                    <button
+                      type="button"
+                      disabled={uploadingFeatureImage}
+                      onClick={() => featureImageInputRef.current?.click()}
+                      className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 text-xs font-semibold rounded-xl transition disabled:opacity-50"
+                    >
+                      {uploadingFeatureImage ? 'Uploading...' : '📁 Upload Image'}
+                    </button>
+                  </div>
+                </div>
               )}
 
-              {/* Action Buttons on Hover */}
-              <div className="absolute top-3 right-3 flex items-center gap-2 opacity-90 group-hover:opacity-100 transition">
-                <button
-                  type="button"
-                  onClick={() => setIsUnsplashOpen(true)}
-                  className="px-3 py-1.5 bg-black/80 hover:bg-black text-white text-xs font-semibold rounded-lg backdrop-blur-sm shadow transition"
-                >
-                  Change (Unsplash)
-                </button>
-                <button
-                  type="button"
-                  onClick={() => featureImageInputRef.current?.click()}
-                  className="px-3 py-1.5 bg-black/80 hover:bg-black text-white text-xs font-semibold rounded-lg backdrop-blur-sm shadow transition"
-                >
-                  Change (Upload)
-                </button>
-                <button
-                  type="button"
-                  onClick={handleRemoveFeatureImage}
-                  className="p-1.5 bg-red-600/80 hover:bg-red-600 text-white rounded-lg backdrop-blur-sm shadow transition text-xs font-bold leading-none"
-                  title="Remove Feature Image"
-                >
-                  &times;
-                </button>
-              </div>
+              {/* Header Image Width Setting (Standard vs Wide) */}
+              {featuredImageUrl && (
+                <div className="mt-3 flex items-center justify-between text-xs bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5">
+                  <div>
+                    <span className="font-semibold text-gray-800">Header Image Width</span>
+                    <p className="text-[11px] text-gray-500">Standard stays within reading column; Wide expands across desktop and tablet</p>
+                  </div>
+                  <div className="inline-flex rounded-lg bg-gray-200/80 p-0.5 border border-gray-200 shrink-0">
+                    <button
+                      type="button"
+                      onClick={() => setHeaderImageWidth('standard')}
+                      className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+                        headerImageWidth === 'standard'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-800'
+                      }`}
+                    >
+                      Standard
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setHeaderImageWidth('wide')}
+                      className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
+                        headerImageWidth === 'wide'
+                          ? 'bg-white text-gray-900 shadow-sm'
+                          : 'text-gray-500 hover:text-gray-800'
+                      }`}
+                    >
+                      Wide
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          ) : (
-            <div className="border-2 border-dashed border-gray-200 hover:border-gray-300 rounded-2xl p-6 transition flex flex-col sm:flex-row items-center justify-between gap-4 bg-white/60">
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Add a Feature Image</p>
-                <p className="text-xs text-gray-500">Attach an Unsplash photo or upload a custom image</p>
-              </div>
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setIsUnsplashOpen(true)}
-                  aria-label="Insert photo from Unsplash"
-                  title="Insert photo from Unsplash"
-                  className="p-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-xl transition flex items-center justify-center"
+
+            {/* Clean Post Title Input */}
+            <div className="mb-6">
+              <input
+                type="text"
+                value={title}
+                onChange={e => setTitle(e.target.value)}
+                placeholder="Post Title..."
+                className="w-full text-4xl sm:text-5xl font-extrabold placeholder-gray-300 border-0 focus:ring-0 focus:outline-none p-0 text-gray-900 tracking-tight bg-transparent"
+              />
+            </div>
+
+            {/* TipTap Rich Text Writing Canvas */}
+            <div className="mt-4">
+              {emptyLoadBlocked && (
+                <div
+                  role="alert"
+                  className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm font-medium flex items-center gap-2"
                 >
-                  <svg
-                    className="w-4 h-4 fill-current"
-                    viewBox="0 0 24 24"
-                    aria-hidden="true"
-                  >
-                    <path d="M7.5 6.75V0h9v6.75h-9zm9 3.75H24V24H0V10.5h7.5v6.75h9V10.5z" />
+                  <svg className="w-5 h-5 text-red-500 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
                   </svg>
-                </button>
-                <button
-                  type="button"
-                  disabled={uploadingFeatureImage}
-                  onClick={() => featureImageInputRef.current?.click()}
-                  className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 text-xs font-semibold rounded-xl transition disabled:opacity-50"
-                >
-                  {uploadingFeatureImage ? 'Uploading...' : '📁 Upload Image'}
-                </button>
-              </div>
+                  <span>This post&#39;s content could not be loaded into the editor. Saving is disabled to protect your content.</span>
+                </div>
+              )}
+              <TipTapEditor
+                content={content}
+                onChange={newJson => setContent(newJson)}
+                placeholder="Begin writing your post..."
+                onEditorReady={handleEditorReady}
+              />
             </div>
-          )}
-
-          {/* Header Image Width Setting (Standard vs Wide) */}
-          {featuredImageUrl && (
-            <div className="mt-3 flex items-center justify-between text-xs bg-gray-50 border border-gray-200 rounded-xl px-3.5 py-2.5">
-              <div>
-                <span className="font-semibold text-gray-800">Header Image Width</span>
-                <p className="text-[11px] text-gray-500">Standard stays within reading column; Wide expands across desktop and tablet</p>
-              </div>
-              <div className="inline-flex rounded-lg bg-gray-200/80 p-0.5 border border-gray-200 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setHeaderImageWidth('standard')}
-                  className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
-                    headerImageWidth === 'standard'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-800'
-                  }`}
-                >
-                  Standard
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setHeaderImageWidth('wide')}
-                  className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
-                    headerImageWidth === 'wide'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-500 hover:text-gray-800'
-                  }`}
-                >
-                  Wide
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Clean Post Title Input */}
-        <div className="mb-6">
-          <input
-            type="text"
-            value={title}
-            onChange={e => setTitle(e.target.value)}
-            placeholder="Post Title..."
-            className="w-full text-4xl sm:text-5xl font-extrabold placeholder-gray-300 border-0 focus:ring-0 focus:outline-none p-0 text-gray-900 tracking-tight bg-transparent"
-          />
-        </div>
-
-        {/* TipTap Rich Text Writing Canvas */}
-        <div className="mt-4">
-          <TipTapEditor
-            content={content}
-            onChange={newJson => setContent(newJson)}
-            placeholder="Begin writing your post..."
-          />
-        </div>
+          </>
+        )}
       </main>
 
       {/* SLIDE-OUT PUBLISH DRAWER / PANEL */}
@@ -748,9 +857,9 @@ function PostEditorContent() {
               <div className="p-6 bg-gray-50 border-t border-gray-100 space-y-2">
                 <button
                   type="button"
-                  disabled={loading}
+                  disabled={!isPostLoaded || loading || emptyLoadBlocked}
                   onClick={() => handleSave('published')}
-                  className="w-full py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 cursor-pointer"
+                  className="w-full py-2.5 bg-black hover:bg-gray-800 text-white rounded-xl text-xs font-bold transition disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {publishStatus === 'published' ? 'Update Published Post' : 'Publish Now'}
                 </button>
@@ -758,18 +867,18 @@ function PostEditorContent() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     type="button"
-                    disabled={loading}
+                    disabled={!isPostLoaded || loading || emptyLoadBlocked}
                     onClick={() => handleSave('scheduled')}
-                    className="py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-xl text-xs font-semibold transition disabled:opacity-50"
+                    className="py-2 border border-blue-600 text-blue-600 hover:bg-blue-50 rounded-xl text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Schedule
                   </button>
 
                   <button
                     type="button"
-                    disabled={loading}
+                    disabled={!isPostLoaded || loading || emptyLoadBlocked}
                     onClick={() => handleSave('draft')}
-                    className="py-2 border border-gray-300 text-gray-700 hover:bg-white rounded-xl text-xs font-semibold transition disabled:opacity-50"
+                    className="py-2 border border-gray-300 text-gray-700 hover:bg-white rounded-xl text-xs font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     Save Draft
                   </button>

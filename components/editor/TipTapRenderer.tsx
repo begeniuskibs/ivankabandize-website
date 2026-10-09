@@ -329,7 +329,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             <blockquote
               style={{
                 textAlign: 'center',
-                fontSize: '20px',
+                fontSize: 'clamp(21px, 2.2vw, 24px)',
                 fontWeight: 500,
                 lineHeight: 1.5,
                 borderLeft: 'none',
@@ -337,7 +337,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                 padding: 0,
                 margin: 0,
               }}
-              className="text-[#232536]"
+              className="text-[#232536] [&_p]:text-[length:inherit] [&_p]:leading-[inherit] [&_p]:text-[#232536] [&_p]:mb-2 [&_p:last-child]:mb-0"
             >
               {quoteNodes.map(renderNode)}
             </blockquote>
@@ -373,6 +373,10 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
   }
 
   const renderInline = (node: TipTapNode, index: number): React.ReactNode => {
+    if (node.type === 'hardBreak') {
+      return <br key={index} />
+    }
+
     let element: React.ReactNode = node.text || ''
 
     if (node.marks) {
