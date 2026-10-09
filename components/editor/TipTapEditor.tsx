@@ -7,12 +7,12 @@ import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
-import { ReactRenderer } from '@tiptap/react'
+import { ReactRenderer, ReactNodeViewRenderer } from '@tiptap/react'
 import { Extension, InputRule } from '@tiptap/core'
 import { Plugin } from '@tiptap/pm/state'
 import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { useEffect, useRef, useState } from 'react'
-import { Video, Gallery, YouTube, Bookmark, Button, Callout, validateYouTubeUrl } from './customNodes'
+import { Video, Gallery, YouTube, Bookmark, Button, Callout, validateYouTubeUrl, ImageComponent } from './customNodes'
 import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 
@@ -54,6 +54,29 @@ export function YoutubeIcon({ className = 'w-4 h-4', ...props }: React.SVGProps<
     </svg>
   )
 }
+
+const CustomImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      caption: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-caption') || null,
+        renderHTML: (attributes) => {
+          if (!attributes.caption) {
+            return {}
+          }
+          return {
+            'data-caption': attributes.caption,
+          }
+        },
+      },
+    }
+  },
+  addNodeView() {
+    return ReactNodeViewRenderer(ImageComponent)
+  },
+})
 
 const QuoteAttributionPlugin = Extension.create({
   name: 'quoteAttributionDecoration',
@@ -357,7 +380,7 @@ export default function TipTapEditor({
           class: 'text-[#D94834] underline hover:text-[#B93A2A] visited:text-[#D94834]',
         },
       }),
-      Image.configure({
+      CustomImage.configure({
         allowBase64: true,
         HTMLAttributes: {
           class: 'rounded-[5px] max-w-full my-6 shadow-sm border border-gray-100',

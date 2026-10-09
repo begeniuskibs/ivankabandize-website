@@ -18,6 +18,47 @@ export interface GalleryImageEntry {
 export { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
 import { validateYouTubeUrl, getYouTubeEmbedUrl } from '@/lib/youtube'
 
+// React NodeView: Image
+interface ImageComponentProps {
+  node: {
+    attrs: {
+      src?: string
+      alt?: string
+      title?: string
+      caption?: string
+    }
+  }
+  updateAttributes: (attrs: Record<string, unknown>) => void
+  selected: boolean
+}
+
+export function ImageComponent({ node, updateAttributes, selected }: ImageComponentProps) {
+  const src = node.attrs?.src || ''
+  const alt = node.attrs?.alt || ''
+  const title = node.attrs?.title || ''
+  const caption = node.attrs?.caption || ''
+
+  return (
+    <NodeViewWrapper className="image-node-view my-6 relative group text-center">
+      <img
+        src={src}
+        alt={alt}
+        title={title}
+        className={`rounded-[5px] max-w-full mx-auto shadow-sm border border-gray-100 ${
+          selected ? 'ring-2 ring-[#232536] ring-offset-2' : ''
+        }`}
+      />
+      <input
+        type="text"
+        value={caption}
+        onChange={(e) => updateAttributes({ caption: e.target.value })}
+        placeholder="Add a caption (optional). Link with [text](https://...)"
+        className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
+      />
+    </NodeViewWrapper>
+  )
+}
+
 // React NodeView: Video
 function VideoComponent({ node, updateAttributes, deleteNode }: any) {
   const url = node.attrs.url || ''
@@ -169,7 +210,7 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
         type="text"
         value={caption}
         onChange={(e) => updateAttributes({ caption: e.target.value })}
-        placeholder="Add video caption (optional)..."
+        placeholder="Add a caption (optional). Link with [text](https://...)"
         className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
       />
     </NodeViewWrapper>
@@ -589,7 +630,7 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
         type="text"
         value={caption}
         onChange={(e) => updateAttributes({ caption: e.target.value })}
-        placeholder="Add single gallery caption (optional)..."
+        placeholder="Add a caption (optional). Link with [text](https://...)"
         className="w-full text-center text-xs text-gray-600 mt-2 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
       />
     </NodeViewWrapper>

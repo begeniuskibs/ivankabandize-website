@@ -3,6 +3,7 @@ import { getYouTubeEmbedUrl } from '@/lib/youtube'
 import WideContainer from '@/components/public/WideContainer'
 import BookmarkCard from './BookmarkCard'
 import ButtonCard from './ButtonCard'
+import { renderCaption, stripCaptionMarkdown } from './captionLinks'
 
 interface TipTapNode {
   type: string
@@ -71,14 +72,15 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         )
       case 'image': {
         const src = String(node.attrs?.src || '')
-        const alt = String(node.attrs?.alt || node.attrs?.title || 'Article image')
+        const rawAlt = String(node.attrs?.alt || node.attrs?.title || 'Article image')
+        const alt = stripCaptionMarkdown(rawAlt)
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : (node.attrs?.title ? String(node.attrs?.title) : null)
         return (
           <figure key={index} className="my-8">
             <img src={src} alt={alt} className="w-full rounded-[5px] object-cover" />
             {caption && (
               <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
-                {caption}
+                {renderCaption(caption)}
               </figcaption>
             )}
           </figure>
@@ -116,7 +118,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             )}
             {caption && (
               <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
-                {caption}
+                {renderCaption(caption)}
               </figcaption>
             )}
           </figure>
@@ -164,11 +166,11 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                                 minWidth: 0,
                                 aspectRatio: `${w} / ${h}`,
                               }}
-                              title={img.caption || 'View full-size image'}
+                              title={img.caption ? stripCaptionMarkdown(img.caption) : 'View full-size image'}
                             >
                               <img
                                 src={img.url}
-                                alt={img.caption || 'Gallery image'}
+                                alt={img.caption ? stripCaptionMarkdown(img.caption) : 'Gallery image'}
                                 className="w-full h-full block object-cover transition-transform duration-300 group-hover:scale-105"
                                 loading="lazy"
                               />
@@ -193,11 +195,11 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                         style={{
                           aspectRatio: `${w} / ${h}`,
                         }}
-                        title={img.caption || 'View full-size image'}
+                        title={img.caption ? stripCaptionMarkdown(img.caption) : 'View full-size image'}
                       >
                         <img
                           src={img.url}
-                          alt={img.caption || 'Gallery image'}
+                          alt={img.caption ? stripCaptionMarkdown(img.caption) : 'Gallery image'}
                           className="w-full h-full block object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
                         />
@@ -208,7 +210,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
               </div>
               {caption && (
                 <figcaption className="mt-3 text-center text-xs sm:text-sm text-[#5A5D70]">
-                  {caption}
+                  {renderCaption(caption)}
                 </figcaption>
               )}
             </figure>

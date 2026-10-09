@@ -11,6 +11,26 @@ import { convertGhostPostToTipTap } from './converter.mjs'
 
 const EXPORT_FILE = 'C:/Users/ivan.kabandize/ghost-export/begenius-thoughts.ghost.2026-09-21-17-50-28.json'
 
+const CustomImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      caption: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-caption') || null,
+        renderHTML: (attributes) => {
+          if (!attributes.caption) {
+            return {}
+          }
+          return {
+            'data-caption': attributes.caption,
+          }
+        },
+      },
+    }
+  },
+})
+
 const extensions = [
   StarterKit.configure({
     heading: {
@@ -27,7 +47,7 @@ const extensions = [
     protocols: ['http', 'https', 'mailto', 'tel'],
     defaultProtocol: 'https',
   }),
-  Image.configure({
+  CustomImage.configure({
     allowBase64: true,
   }),
   CharacterCount.configure(),
