@@ -299,7 +299,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             const rawText = lastChild.content.map((c) => c.text || '').join('')
             // Check for attribution prefix: " - ", "- ", "-- ", or dashes
             if (/^(\s*(-|\u2013|\u2014){1,2}\s*)/.test(rawText)) {
-              attributionText = rawText.replace(/^(\s*(-|\u2013|\u2014){1,2}\s*)/, '- ')
+              attributionText = rawText.replace(/^(\s*(-|\u2013|\u2014){1,2}\s*)/, '— ')
               quoteNodes = quoteNodes.slice(0, -1)
             }
           }
