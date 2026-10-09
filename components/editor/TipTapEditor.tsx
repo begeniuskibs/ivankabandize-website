@@ -8,7 +8,7 @@ import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
 import { ReactRenderer } from '@tiptap/react'
-import { Extension } from '@tiptap/core'
+import { Extension, InputRule } from '@tiptap/core'
 import { Plugin } from '@tiptap/pm/state'
 import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { useEffect, useRef, useState } from 'react'
@@ -91,6 +91,32 @@ const QuoteAttributionPlugin = Extension.create({
             })
             return DecorationSet.create(state.doc, decorations)
           },
+        },
+      }),
+    ]
+  },
+})
+
+const QuoteDashRule = Extension.create({
+  name: 'quoteDashRule',
+  addInputRules() {
+    return [
+      new InputRule({
+        find: /--$/,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handler: ({ state, range }: any) => {
+          const $from = state.doc.resolve(range.from)
+          let inBlockquote = false
+          for (let d = $from.depth; d > 0; d--) {
+            if ($from.node(d).type.name === 'blockquote') {
+              inBlockquote = true
+              break
+            }
+          }
+          if (!inBlockquote) {
+            return null
+          }
+          state.tr.insertText('—', range.from, range.to)
         },
       }),
     ]
@@ -345,6 +371,7 @@ export default function TipTapEditor({
       Button,
       Callout,
       QuoteAttributionPlugin,
+      QuoteDashRule,
       SlashCommands.configure({
         suggestion: {
           char: '/',
