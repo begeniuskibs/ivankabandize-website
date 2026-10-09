@@ -8,6 +8,9 @@ import Link from '@tiptap/extension-link'
 import Image from '@tiptap/extension-image'
 import CharacterCount from '@tiptap/extension-character-count'
 import { ReactRenderer } from '@tiptap/react'
+import { Extension, InputRule } from '@tiptap/core'
+import { Plugin } from '@tiptap/pm/state'
+import { Decoration, DecorationSet } from '@tiptap/pm/view'
 import { useEffect, useRef, useState } from 'react'
 import { Video, Gallery, YouTube, Bookmark, Button, Callout, validateYouTubeUrl } from './customNodes'
 import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
@@ -52,6 +55,74 @@ export function YoutubeIcon({ className = 'w-4 h-4', ...props }: React.SVGProps<
   )
 }
 
+const QuoteAttributionPlugin = Extension.create({
+  name: 'quoteAttributionDecoration',
+  addProseMirrorPlugins() {
+    return [
+      new Plugin({
+        props: {
+          decorations(state) {
+            const decorations: Decoration[] = []
+            state.doc.descendants((node, pos) => {
+              if (node.type.name === 'paragraph') {
+                const $pos = state.doc.resolve(pos)
+                const parent = $pos.parent
+                if (
+                  parent.type.name === 'blockquote' &&
+                  $pos.index() === parent.childCount - 1 &&
+                  $pos.index() > 0
+                ) {
+                  const text = node.textContent
+                  const match = text.match(/^(\s*(-|\u2013|\u2014){1,2}\s*)/)
+                  if (match) {
+                    const afterDash = text.slice(match[0].length)
+                    const isEmpty = afterDash.trim() === ''
+                    const className = isEmpty
+                      ? 'quote-attribution quote-attribution-empty'
+                      : 'quote-attribution'
+                    decorations.push(
+                      Decoration.node(pos, pos + node.nodeSize, {
+                        class: className,
+                      })
+                    )
+                  }
+                }
+              }
+            })
+            return DecorationSet.create(state.doc, decorations)
+          },
+        },
+      }),
+    ]
+  },
+})
+
+const QuoteDashRule = Extension.create({
+  name: 'quoteDashRule',
+  addInputRules() {
+    return [
+      new InputRule({
+        find: /--$/,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        handler: ({ state, range }: any) => {
+          const $from = state.doc.resolve(range.from)
+          let inBlockquote = false
+          for (let d = $from.depth; d > 0; d--) {
+            if ($from.node(d).type.name === 'blockquote') {
+              inBlockquote = true
+              break
+            }
+          }
+          if (!inBlockquote) {
+            return null
+          }
+          state.tr.insertText('—', range.from, range.to)
+        },
+      }),
+    ]
+  },
+})
+
 interface TipTapEditorProps {
   content?: Record<string, unknown> | string
   onChange: (json: Record<string, unknown>) => void
@@ -84,7 +155,65 @@ export default function TipTapEditor({
   const handleToggleHeading3 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 3 }).run()
   const handleToggleBulletList = (ed?: any) => (ed || editor)?.chain().focus().toggleBulletList().run()
   const handleToggleOrderedList = (ed?: any) => (ed || editor)?.chain().focus().toggleOrderedList().run()
-  const handleToggleQuote = (ed?: any) => (ed || editor)?.chain().focus().toggleBlockquote().run()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  function insertQuoteBlock(ed?: any, range?: any) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const targetEditor = (ed || editor) as any
+    if (!targetEditor) return
+
+    let chain = targetEditor.chain().focus()
+    if (range) {
+      chain = chain.deleteRange(range)
+    }
+    chain
+      .insertContent({
+        type: 'blockquote',
+        content: [
+          { type: 'paragraph' },
+          { type: 'paragraph', content: [{ type: 'text', text: '— ' }] },
+        ],
+      })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      .command(({ tr, commands }: any) => {
+        let blockquotePos: number | null = null
+        for (let d = tr.selection.$from.depth; d > 0; d--) {
+          if (tr.selection.$from.node(d).type.name === 'blockquote') {
+            blockquotePos = tr.selection.$from.before(d)
+            break
+          }
+        }
+        if (blockquotePos !== null) {
+          return commands.setTextSelection(blockquotePos + 2)
+        }
+        return true
+      })
+      .run()
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleToggleQuote = (ed?: any) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const targetEditor = (ed || editor) as any
+    if (!targetEditor) return
+
+    const { selection } = targetEditor.state
+    const $from = selection.$from
+    const isEmptyParagraph =
+      $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0
+    let inBlockquote = false
+    for (let d = $from.depth; d > 0; d--) {
+      if ($from.node(d).type.name === 'blockquote') {
+        inBlockquote = true
+        break
+      }
+    }
+
+    if (selection.empty && isEmptyParagraph && !inBlockquote) {
+      insertQuoteBlock(targetEditor)
+    } else {
+      targetEditor.chain().focus().toggleBlockquote().run()
+    }
+  }
   const handleToggleCallout = (ed?: any) => (ed || editor)?.chain().focus().toggleCallout().run()
   const handleToggleCode = (ed?: any) => (ed || editor)?.chain().focus().toggleCodeBlock().run()
   const handleTriggerImageUpload = () => fileInputRef.current?.click()
@@ -202,7 +331,19 @@ export default function TipTapEditor({
         },
       }),
       Placeholder.configure({
-        placeholder,
+        includeChildren: true,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        placeholder: ({ node, pos, editor: ed }: any) => {
+          const $pos = ed.state.doc.resolve(pos)
+          const parent = $pos.parent
+          if (parent.type.name === 'doc') {
+            return placeholder
+          }
+          if (node.type.name === 'paragraph' && parent.type.name === 'blockquote' && $pos.index() === 0) {
+            return 'Write your quote…'
+          }
+          return ''
+        },
       }),
       Link.configure({
         openOnClick: false,
@@ -229,6 +370,8 @@ export default function TipTapEditor({
       Bookmark,
       Button,
       Callout,
+      QuoteAttributionPlugin,
+      QuoteDashRule,
       SlashCommands.configure({
         suggestion: {
           char: '/',
@@ -279,7 +422,14 @@ export default function TipTapEditor({
                 icon: '”',
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
-                  handleToggleQuote(ed)
+                  const $from = ed.state.selection.$from
+                  const isCurrentBlockEmptyParagraph =
+                    $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0
+                  if (isCurrentBlockEmptyParagraph) {
+                    insertQuoteBlock(ed)
+                  } else {
+                    ed.chain().focus().toggleBlockquote().run()
+                  }
                 },
               },
               {
@@ -710,6 +860,18 @@ export default function TipTapEditor({
           line-height: 1.5;
           margin-bottom: 0.5rem;
         }
+        .tiptap-editor-scope .ProseMirror blockquote p.quote-attribution {
+          font-size: 14px;
+          font-weight: 400;
+          color: #5A5D70;
+          margin-top: 0.75rem;
+          margin-bottom: 0;
+        }
+        .tiptap-editor-scope .ProseMirror blockquote p.quote-attribution-empty::after {
+          content: 'Author or reference';
+          color: #9ca3af;
+          pointer-events: none;
+        }
         /* Callout Block */
         .tiptap-editor-scope .ProseMirror div[data-type="callout"],
         .tiptap-editor-scope .ProseMirror .callout-block {
@@ -840,7 +1002,8 @@ export default function TipTapEditor({
           max-width: none;
           object-fit: cover;
         }
-        .tiptap-editor-scope .ProseMirror p.is-editor-empty:first-child::before {
+        .tiptap-editor-scope .ProseMirror p.is-editor-empty:first-child::before,
+        .tiptap-editor-scope .ProseMirror blockquote p.is-empty:first-child::before {
           color: #9ca3af;
           content: attr(data-placeholder);
           float: left;
@@ -1159,7 +1322,7 @@ export default function TipTapEditor({
               </button>
               <button
                 type="button"
-                onClick={() => editor.chain().focus().toggleBlockquote().run()}
+                onClick={() => handleToggleQuote(editor)}
                 aria-label="Quote"
                 aria-pressed={editor.isActive('blockquote')}
                 className={`px-2 py-1 rounded transition ${
