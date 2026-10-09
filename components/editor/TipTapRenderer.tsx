@@ -337,7 +337,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                 padding: 0,
                 margin: 0,
               }}
-              className="text-[#232536]"
+              className="text-[#232536] [&_p]:text-[length:inherit] [&_p]:leading-[inherit] [&_p]:text-[#232536] [&_p]:mb-2 [&_p:last-child]:mb-0"
             >
               {quoteNodes.map(renderNode)}
             </blockquote>
