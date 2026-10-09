@@ -373,6 +373,10 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
   }
 
   const renderInline = (node: TipTapNode, index: number): React.ReactNode => {
+    if (node.type === 'hardBreak') {
+      return <br key={index} />
+    }
+
     let element: React.ReactNode = node.text || ''
 
     if (node.marks) {
