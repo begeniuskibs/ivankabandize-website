@@ -56,12 +56,15 @@ interface TipTapEditorProps {
   content?: Record<string, unknown> | string
   onChange: (json: Record<string, unknown>) => void
   placeholder?: string
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onEditorReady?: (editor: any) => void
 }
 
 export default function TipTapEditor({
   content,
   onChange,
   placeholder = 'Write your post content here...',
+  onEditorReady,
 }: TipTapEditorProps) {
   const fileInputRef = useRef<HTMLInputElement>(null)
   const videoInputRef = useRef<HTMLInputElement>(null)
@@ -357,6 +360,13 @@ export default function TipTapEditor({
                   handleInsertButton(ed, range)
                 },
               },
+              {
+                title: 'Divider',
+                icon: '➖',
+                command: ({ editor: ed, range }) => {
+                  ed.chain().focus().deleteRange(range).setHorizontalRule().run()
+                },
+              },
             ]
             const q = (query || '').toLowerCase().trim()
             if (!q) return allItems
@@ -462,6 +472,7 @@ export default function TipTapEditor({
     },
     onCreate: ({ editor }) => {
       setWordCount(editor.storage.characterCount?.words() ?? 0)
+      onEditorReady?.(editor)
     },
     onSelectionUpdate: ({ editor }) => {
       if (!editor.isActive('link') && editor.state.selection.empty) {
@@ -470,6 +481,12 @@ export default function TipTapEditor({
     },
     immediatelyRender: false,
   })
+
+  useEffect(() => {
+    if (editor) {
+      onEditorReady?.(editor)
+    }
+  }, [editor, onEditorReady])
 
   useEffect(() => {
     if (editor && content) {
@@ -481,9 +498,10 @@ export default function TipTapEditor({
           typeof content === 'object' && content !== null ? content : {}
         )
         setWordCount(editor.storage.characterCount?.words() ?? 0)
+        onEditorReady?.(editor)
       }
     }
-  }, [content, editor])
+  }, [content, editor, onEditorReady])
 
   useEffect(() => {
     if (isEditingLink && linkInputRef.current) {
@@ -662,7 +680,7 @@ export default function TipTapEditor({
         /* Restyled Quote (blockquote) */
         .tiptap-editor-scope .ProseMirror blockquote {
           text-align: center;
-          font-size: 20px;
+          font-size: clamp(21px, 2.2vw, 24px);
           font-weight: 500;
           line-height: 1.5;
           border-left: none;
@@ -687,7 +705,7 @@ export default function TipTapEditor({
         }
         .tiptap-editor-scope .ProseMirror blockquote p {
           text-align: center;
-          font-size: 20px;
+          font-size: clamp(21px, 2.2vw, 24px);
           font-weight: 500;
           line-height: 1.5;
           margin-bottom: 0.5rem;
@@ -1022,6 +1040,15 @@ export default function TipTapEditor({
           title="Insert button card"
         >
           <span>🔘 Button</span>
+        </button>
+        {/* Insert Divider Control */}
+        <button
+          type="button"
+          onClick={() => editor.chain().focus().setHorizontalRule().run()}
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1 cursor-pointer"
+          title="Insert horizontal divider"
+        >
+          <span>➖ Divider</span>
         </button>
       </div>
 

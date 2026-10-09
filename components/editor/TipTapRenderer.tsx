@@ -329,7 +329,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
             <blockquote
               style={{
                 textAlign: 'center',
-                fontSize: '20px',
+                fontSize: 'clamp(21px, 2.2vw, 24px)',
                 fontWeight: 500,
                 lineHeight: 1.5,
                 borderLeft: 'none',
