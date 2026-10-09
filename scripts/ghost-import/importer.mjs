@@ -147,6 +147,27 @@ export function collectMediaNodes(rootNode) {
   return { imageNodes, videoNodes, galleryNodes }
 }
 
+export function getCaptionAction(cCap, oldCap) {
+  if (!cCap || typeof cCap !== 'string' || cCap.trim().length === 0) {
+    return null
+  }
+  const isDbEmpty = oldCap === null || oldCap === undefined || (typeof oldCap === 'string' && oldCap.trim().length === 0)
+  const hasLink = hasMarkdownLink(cCap)
+
+  if (hasLink) {
+    if (oldCap !== cCap) {
+      return 'CHANGE'
+    }
+    return null
+  }
+
+  if (isDbEmpty) {
+    return 'RESTORE'
+  }
+
+  return null
+}
+
 export function patchDocCaptions({ convertedDoc, dbDoc, slug }) {
   const convertedMedia = collectMediaNodes(convertedDoc)
   const dbMedia = collectMediaNodes(dbDoc)
@@ -157,27 +178,29 @@ export function patchDocCaptions({ convertedDoc, dbDoc, slug }) {
   // 1. Match image nodes by attrs.src
   for (const cImg of convertedMedia.imageNodes) {
     const cCap = cImg.attrs?.caption
-    if (hasMarkdownLink(cCap)) {
-      const cSrc = cImg.attrs?.src
-      const cBase = getSrcBasename(cSrc)
-      const match = findMatchingMediaNode(cSrc, dbMedia.imageNodes, n => n.attrs?.src, false)
+    const cSrc = cImg.attrs?.src
+    const cBase = getSrcBasename(cSrc)
+    const match = findMatchingMediaNode(cSrc, dbMedia.imageNodes, n => n.attrs?.src, false)
 
-      if (match) {
-        const oldCap = match.attrs?.caption ?? null
-        if (oldCap !== cCap) {
-          changes.push({
-            slug,
-            nodeType: 'image',
-            srcBasename: cBase,
-            oldCaption: oldCap,
-            newCaption: cCap,
-            apply: () => {
-              if (!match.attrs) match.attrs = {}
-              match.attrs.caption = cCap
-            },
-          })
-        }
-      } else {
+    if (match) {
+      const oldCap = match.attrs?.caption ?? null
+      const action = getCaptionAction(cCap, oldCap)
+      if (action) {
+        changes.push({
+          slug,
+          actionType: action,
+          nodeType: 'image',
+          srcBasename: cBase,
+          oldCaption: oldCap,
+          newCaption: cCap,
+          apply: () => {
+            if (!match.attrs) match.attrs = {}
+            match.attrs.caption = cCap
+          },
+        })
+      }
+    } else {
+      if (hasMarkdownLink(cCap)) {
         unmatched.push({
           slug,
           nodeType: 'image',
@@ -191,27 +214,29 @@ export function patchDocCaptions({ convertedDoc, dbDoc, slug }) {
   // 2. Match video nodes by url/src
   for (const cVid of convertedMedia.videoNodes) {
     const cCap = cVid.attrs?.caption
-    if (hasMarkdownLink(cCap)) {
-      const cSrc = cVid.attrs?.url || cVid.attrs?.src
-      const cBase = getSrcBasename(cSrc)
-      const match = findMatchingMediaNode(cVid.attrs?.url || cVid.attrs?.src, dbMedia.videoNodes, n => n.attrs?.url || n.attrs?.src, true)
+    const cSrc = cVid.attrs?.url || cVid.attrs?.src
+    const cBase = getSrcBasename(cSrc)
+    const match = findMatchingMediaNode(cVid.attrs?.url || cVid.attrs?.src, dbMedia.videoNodes, n => n.attrs?.url || n.attrs?.src, true)
 
-      if (match) {
-        const oldCap = match.attrs?.caption ?? null
-        if (oldCap !== cCap) {
-          changes.push({
-            slug,
-            nodeType: 'video',
-            srcBasename: cBase,
-            oldCaption: oldCap,
-            newCaption: cCap,
-            apply: () => {
-              if (!match.attrs) match.attrs = {}
-              match.attrs.caption = cCap
-            },
-          })
-        }
-      } else {
+    if (match) {
+      const oldCap = match.attrs?.caption ?? null
+      const action = getCaptionAction(cCap, oldCap)
+      if (action) {
+        changes.push({
+          slug,
+          actionType: action,
+          nodeType: 'video',
+          srcBasename: cBase,
+          oldCaption: oldCap,
+          newCaption: cCap,
+          apply: () => {
+            if (!match.attrs) match.attrs = {}
+            match.attrs.caption = cCap
+          },
+        })
+      }
+    } else {
+      if (hasMarkdownLink(cCap)) {
         unmatched.push({
           slug,
           nodeType: 'video',
@@ -239,23 +264,25 @@ export function patchDocCaptions({ convertedDoc, dbDoc, slug }) {
 
     // Card-level gallery caption
     const cCap = cGal.attrs?.caption
-    if (hasMarkdownLink(cCap)) {
-      if (matchGal) {
-        const oldCap = matchGal.attrs?.caption ?? null
-        if (oldCap !== cCap) {
-          changes.push({
-            slug,
-            nodeType: 'gallery',
-            srcBasename: firstBase,
-            oldCaption: oldCap,
-            newCaption: cCap,
-            apply: () => {
-              if (!matchGal.attrs) matchGal.attrs = {}
-              matchGal.attrs.caption = cCap
-            },
-          })
-        }
-      } else {
+    if (matchGal) {
+      const oldCap = matchGal.attrs?.caption ?? null
+      const action = getCaptionAction(cCap, oldCap)
+      if (action) {
+        changes.push({
+          slug,
+          actionType: action,
+          nodeType: 'gallery',
+          srcBasename: firstBase,
+          oldCaption: oldCap,
+          newCaption: cCap,
+          apply: () => {
+            if (!matchGal.attrs) matchGal.attrs = {}
+            matchGal.attrs.caption = cCap
+          },
+        })
+      }
+    } else {
+      if (hasMarkdownLink(cCap)) {
         unmatched.push({
           slug,
           nodeType: 'gallery',
@@ -268,27 +295,29 @@ export function patchDocCaptions({ convertedDoc, dbDoc, slug }) {
     // Per-image captions inside gallery
     for (const cImg of cGal.attrs?.images || []) {
       const cImgCap = cImg.caption
-      if (hasMarkdownLink(cImgCap)) {
-        const cImgBase = getSrcBasename(cImg.src || cImg.url)
-        let matchedImg = null
-        if (matchGal && Array.isArray(matchGal.attrs?.images)) {
-          matchedImg = findMatchingMediaNode(cImg.src || cImg.url, matchGal.attrs.images, img => img.src || img.url, false)
+      const cImgBase = getSrcBasename(cImg.src || cImg.url)
+      let matchedImg = null
+      if (matchGal && Array.isArray(matchGal.attrs?.images)) {
+        matchedImg = findMatchingMediaNode(cImg.src || cImg.url, matchGal.attrs.images, img => img.src || img.url, false)
+      }
+      if (matchedImg) {
+        const oldCap = matchedImg.caption ?? null
+        const action = getCaptionAction(cImgCap, oldCap)
+        if (action) {
+          changes.push({
+            slug,
+            actionType: action,
+            nodeType: 'gallery (per-image)',
+            srcBasename: cImgBase,
+            oldCaption: oldCap,
+            newCaption: cImgCap,
+            apply: () => {
+              matchedImg.caption = cImgCap
+            },
+          })
         }
-        if (matchedImg) {
-          const oldCap = matchedImg.caption ?? ''
-          if (oldCap !== cImgCap) {
-            changes.push({
-              slug,
-              nodeType: 'gallery (per-image)',
-              srcBasename: cImgBase,
-              oldCaption: oldCap,
-              newCaption: cImgCap,
-              apply: () => {
-                matchedImg.caption = cImgCap
-              },
-            })
-          }
-        } else {
+      } else {
+        if (hasMarkdownLink(cImgCap)) {
           unmatched.push({
             slug,
             nodeType: 'gallery (per-image)',
@@ -393,7 +422,7 @@ export async function runPatchCaptions({
     if (changes.length > 0) {
       log(`Changes detected for '${slug}' (${changes.length}):`)
       for (const ch of changes) {
-        log(`  [CHANGE] Slug: ${ch.slug} | Node: ${ch.nodeType} | Basename: ${ch.srcBasename}`)
+        log(`  [${ch.actionType || 'CHANGE'}] Slug: ${ch.slug} | Node: ${ch.nodeType} | Basename: ${ch.srcBasename}`)
         log(`    Old: ${JSON.stringify(ch.oldCaption)}`)
         log(`    New: ${JSON.stringify(ch.newCaption)}`)
       }

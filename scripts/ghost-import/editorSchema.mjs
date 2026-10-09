@@ -85,6 +85,26 @@ const Button = Node.create({
   },
 })
 
+export const CustomImage = Image.extend({
+  addAttributes() {
+    return {
+      ...this.parent?.(),
+      caption: {
+        default: null,
+        parseHTML: (element) => element.getAttribute('data-caption') || null,
+        renderHTML: (attributes) => {
+          if (!attributes.caption) {
+            return {}
+          }
+          return {
+            'data-caption': attributes.caption,
+          }
+        },
+      },
+    }
+  },
+})
+
 const extensions = [
   StarterKit.configure({
     heading: {
@@ -101,7 +121,7 @@ const extensions = [
     protocols: ['http', 'https', 'mailto', 'tel'],
     defaultProtocol: 'https',
   }),
-  Image.configure({
+  CustomImage.configure({
     allowBase64: true,
   }),
   CharacterCount.configure(),

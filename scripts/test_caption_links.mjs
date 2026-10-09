@@ -1,8 +1,11 @@
 import fs from 'node:fs'
 import ts from 'typescript'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { getSchema } from '@tiptap/core'
+import StarterKit from '@tiptap/starter-kit'
+import Image from '@tiptap/extension-image'
 import { captionHtmlToText } from './ghost-import/converter.mjs'
-
+import { editorSchema } from './ghost-import/editorSchema.mjs'
 import path from 'node:path'
 import { pathToFileURL } from 'node:url'
 
@@ -292,5 +295,170 @@ const { findMatchingMediaNode, patchDocCaptions } = await import('./ghost-import
     console.log(`  Updated dbDoc caption:${dbDoc.content[0].attrs.caption}`)
     console.log(`  Images array preserved: ${dbDoc.content[0].attrs.images === originalImagesRef && dbDoc.content[0].attrs.images[0].url === dbSrc1}`)
   }
+  console.log()
 }
+
+console.log('=== TEST SUITE: TipTap editor schema caption survival (Step 3) ===\n')
+
+// 3(a): Editor schema (with CustomImage) keeps caption
+{
+  const inputDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: 'https://x/y.png',
+          alt: 'a',
+          caption: 'Image from [Notion](https://notion.so/)',
+        },
+      },
+    ],
+  }
+  const result = editorSchema.nodeFromJSON(inputDoc).toJSON()
+  console.log('Test 3(a): CustomImage keeps caption:')
+  console.log(JSON.stringify(result, null, 2))
+  console.log(`  Caption preserved: ${result.content[0].attrs.caption === 'Image from [Notion](https://notion.so/)'}`)
+  console.log()
+}
+
+// 3(b): Stock Image schema DROPS caption (proving the test detects the bug)
+{
+  const stockSchema = getSchema([
+    StarterKit.configure({ heading: { levels: [1, 2, 3] } }),
+    Image.configure({ allowBase64: true }),
+  ])
+  const inputDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: 'https://x/y.png',
+          alt: 'a',
+          caption: 'Image from [Notion](https://notion.so/)',
+        },
+      },
+    ],
+  }
+  const result = stockSchema.nodeFromJSON(inputDoc).toJSON()
+  console.log('Test 3(b): Stock Image drops caption (proving test detects the bug):')
+  console.log(JSON.stringify(result, null, 2))
+  console.log(`  Caption dropped: ${result.content[0].attrs.caption === undefined}`)
+  console.log()
+}
+
+// 3(c): Image without caption round-trips unchanged (caption stays null / absent, no extra junk)
+{
+  const inputDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: 'https://x/y.png',
+          alt: 'a',
+        },
+      },
+    ],
+  }
+  const result = editorSchema.nodeFromJSON(inputDoc).toJSON()
+  console.log('Test 3(c): Image without caption round-trips unchanged:')
+  console.log(JSON.stringify(result, null, 2))
+  console.log(`  Caption is null/absent: ${result.content[0].attrs.caption === null || result.content[0].attrs.caption === undefined}`)
+  console.log()
+}
+
+console.log('=== TEST SUITE: patchDocCaptions plain-text restore & guards (Step 4) ===\n')
+
+// 4(a): Plain-text caption restored when DB node has empty/missing caption
+{
+  const ghostUrl = 'https://begenius-thoughts.ghost.io/content/images/2022/photo-plain.png'
+  const objName = getStorageObjectName(ghostUrl, false)
+  const dbSrc = `https://eoobmmupqdygujyaxifz.supabase.co/storage/v1/object/public/post-images/${objName}`
+
+  const convertedDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: ghostUrl,
+          caption: 'Sunset over Lake Victoria in Jinja',
+        },
+      },
+    ],
+  }
+  const dbDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: dbSrc,
+          caption: null,
+        },
+      },
+    ],
+  }
+
+  const { changes, unmatched } = patchDocCaptions({
+    convertedDoc,
+    dbDoc,
+    slug: 'fixture-test-restore',
+  })
+
+  console.log('Test 4(a): Plain-text caption restored when DB caption is empty/missing')
+  console.log(`  Changes count:        ${changes.length} (Expected: 1)`)
+  console.log(`  Action label:         [${changes[0]?.actionType}] (Expected: [RESTORE])`)
+  console.log(`  Old caption:          ${JSON.stringify(changes[0]?.oldCaption)}`)
+  console.log(`  New caption:          ${JSON.stringify(changes[0]?.newCaption)}`)
+  changes[0]?.apply()
+  console.log(`  Applied to dbDoc:     ${dbDoc.content[0].attrs.caption}`)
+  console.log()
+}
+
+// 4(b): Non-empty DB caption without link is left alone
+{
+  const ghostUrl = 'https://begenius-thoughts.ghost.io/content/images/2022/photo-edited.png'
+  const objName = getStorageObjectName(ghostUrl, false)
+  const dbSrc = `https://eoobmmupqdygujyaxifz.supabase.co/storage/v1/object/public/post-images/${objName}`
+
+  const convertedDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: ghostUrl,
+          caption: 'Original ghost caption from export',
+        },
+      },
+    ],
+  }
+  const dbDoc = {
+    type: 'doc',
+    content: [
+      {
+        type: 'image',
+        attrs: {
+          src: dbSrc,
+          caption: 'Custom edited DB caption that should NOT be overwritten',
+        },
+      },
+    ],
+  }
+
+  const { changes, unmatched } = patchDocCaptions({
+    convertedDoc,
+    dbDoc,
+    slug: 'fixture-test-left-alone',
+  })
+
+  console.log('Test 4(b): Non-empty DB caption without link is left alone')
+  console.log(`  Changes count:        ${changes.length} (Expected: 0)`)
+  console.log(`  DB caption untouched: ${dbDoc.content[0].attrs.caption}`)
+  console.log()
+}
+
 
