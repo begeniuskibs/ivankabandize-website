@@ -79,10 +79,342 @@ function loadEnvLocal() {
   return env
 }
 
+export function getSrcBasename(url) {
+  if (!url) return ''
+  const clean = String(url).split('?')[0].split('#')[0].replace(/\\/g, '/')
+  const lastSlash = clean.lastIndexOf('/')
+  return lastSlash !== -1 ? clean.slice(lastSlash + 1) : clean
+}
+
+export function hasMarkdownLink(text) {
+  return typeof text === 'string' && /\[([^\]]+)\]\(([^)\s]+)\)/.test(text)
+}
+
+export function collectMediaNodes(rootNode) {
+  const imageNodes = []
+  const videoNodes = []
+  const galleryNodes = []
+
+  function walk(node) {
+    if (!node) return
+    if (node.type === 'image') imageNodes.push(node)
+    else if (node.type === 'video') videoNodes.push(node)
+    else if (node.type === 'gallery') galleryNodes.push(node)
+    if (Array.isArray(node.content)) {
+      node.content.forEach(walk)
+    }
+  }
+  walk(rootNode)
+  return { imageNodes, videoNodes, galleryNodes }
+}
+
+export async function runPatchCaptions({
+  supabase,
+  exportFilePath = 'C:/Users/ivan.kabandize/ghost-export/begenius-thoughts.ghost.2026-09-21-17-50-28.json',
+  isDryRun = true,
+  onlySlugs = null,
+} = {}) {
+  if (!onlySlugs || onlySlugs.length === 0) {
+    throw new Error('--patch-captions requires --only <slug,slug>')
+  }
+
+  log(`Running --patch-captions (Mode: ${isDryRun ? 'DRY-RUN (read-only)' : 'APPLY (live writes)'}) for slugs: ${onlySlugs.join(', ')}`)
+
+  // 1. Fetch target posts from DB
+  const { data: dbPosts, error: dbErr } = await supabase
+    .from('posts')
+    .select('id, slug, content')
+    .in('slug', onlySlugs)
+
+  if (dbErr) {
+    throw new Error(`Failed to query posts from DB: ${dbErr.message}`)
+  }
+
+  const existingPostBySlug = new Map((dbPosts || []).map(p => [p.slug.toLowerCase(), p]))
+
+  // 2. Load Ghost export
+  if (!fs.existsSync(exportFilePath)) {
+    throw new Error(`Export file not found at: ${exportFilePath}`)
+  }
+  const exportData = JSON.parse(fs.readFileSync(exportFilePath, 'utf8'))
+  const rawPosts = exportData.db[0].data.posts || []
+
+  const ghostPostBySlug = new Map()
+  const ghostPostByUuid = new Map()
+  const allGhostSlugs = new Set()
+  for (const p of rawPosts) {
+    if (p.slug) {
+      ghostPostBySlug.set(p.slug.toLowerCase(), p)
+      allGhostSlugs.add(p.slug.toLowerCase())
+    }
+    if (p.uuid && p.slug) {
+      ghostPostByUuid.set(p.uuid, p.slug.toLowerCase())
+    }
+  }
+
+  const results = {
+    processed: 0,
+    succeeded: 0,
+    failed: 0,
+    changesTotal: 0,
+    unmatchedTotal: 0,
+    items: [],
+  }
+
+  for (const slug of onlySlugs) {
+    const slugLower = slug.toLowerCase()
+    log(`\n--- Checking caption patch for: ${slug} ---`)
+
+    const existingRow = existingPostBySlug.get(slugLower)
+    if (!existingRow) {
+      log(`Post '${slug}' does not exist in DB. Skipping.`)
+      results.items.push({ slug, status: 'skipped_not_in_db' })
+      continue
+    }
+
+    const ghostPost = ghostPostBySlug.get(slugLower)
+    if (!ghostPost) {
+      log(`Post '${slug}' not found in Ghost export. Skipping.`)
+      results.items.push({ slug, status: 'skipped_not_in_export' })
+      continue
+    }
+
+    // Re-convert ghost post to TipTap
+    const conversion = convertGhostPostToTipTap(ghostPost, {
+      uuidToSlugMap: ghostPostByUuid,
+      allGhostSlugs,
+    })
+
+    const convertedDoc = conversion.doc
+    const dbDoc = structuredClone(existingRow.content || { type: 'doc', content: [] })
+
+    const convertedMedia = collectMediaNodes(convertedDoc)
+    const dbMedia = collectMediaNodes(dbDoc)
+
+    const changes = []
+    const unmatched = []
+
+    // 1. Match image nodes by attrs.src
+    for (const cImg of convertedMedia.imageNodes) {
+      const cCap = cImg.attrs?.caption
+      if (hasMarkdownLink(cCap)) {
+        const cSrc = cImg.attrs?.src
+        const cBase = getSrcBasename(cSrc)
+        const match = dbMedia.imageNodes.find(dbImg => {
+          const dbSrc = dbImg.attrs?.src
+          return (dbSrc && dbSrc === cSrc) || (cBase && getSrcBasename(dbSrc) === cBase)
+        })
+
+        if (match) {
+          const oldCap = match.attrs?.caption ?? null
+          if (oldCap !== cCap) {
+            changes.push({
+              slug,
+              nodeType: 'image',
+              srcBasename: cBase,
+              oldCaption: oldCap,
+              newCaption: cCap,
+              apply: () => {
+                if (!match.attrs) match.attrs = {}
+                match.attrs.caption = cCap
+              },
+            })
+          }
+        } else {
+          unmatched.push({
+            slug,
+            nodeType: 'image',
+            srcBasename: cBase,
+            caption: cCap,
+          })
+        }
+      }
+    }
+
+    // 2. Match video nodes by url/src
+    for (const cVid of convertedMedia.videoNodes) {
+      const cCap = cVid.attrs?.caption
+      if (hasMarkdownLink(cCap)) {
+        const cSrc = cVid.attrs?.url || cVid.attrs?.src
+        const cBase = getSrcBasename(cSrc)
+        const match = dbMedia.videoNodes.find(dbVid => {
+          const dbSrc = dbVid.attrs?.url || dbVid.attrs?.src
+          return (dbSrc && dbSrc === cSrc) || (cBase && getSrcBasename(dbSrc) === cBase)
+        })
+
+        if (match) {
+          const oldCap = match.attrs?.caption ?? null
+          if (oldCap !== cCap) {
+            changes.push({
+              slug,
+              nodeType: 'video',
+              srcBasename: cBase,
+              oldCaption: oldCap,
+              newCaption: cCap,
+              apply: () => {
+                if (!match.attrs) match.attrs = {}
+                match.attrs.caption = cCap
+              },
+            })
+          }
+        } else {
+          unmatched.push({
+            slug,
+            nodeType: 'video',
+            srcBasename: cBase,
+            caption: cCap,
+          })
+        }
+      }
+    }
+
+    // 3. Match gallery nodes and gallery images
+    for (const cGal of convertedMedia.galleryNodes) {
+      const cImgBases = (cGal.attrs?.images || []).map(img => getSrcBasename(img.src || img.url)).filter(Boolean)
+      const matchGal = dbMedia.galleryNodes.find(dbGal =>
+        (dbGal.attrs?.images || []).some(dbImg => cImgBases.includes(getSrcBasename(dbImg.src || dbImg.url)))
+      ) || (dbMedia.galleryNodes.length === 1 ? dbMedia.galleryNodes[0] : null)
+
+      // Card-level gallery caption
+      const cCap = cGal.attrs?.caption
+      if (hasMarkdownLink(cCap)) {
+        if (matchGal) {
+          const oldCap = matchGal.attrs?.caption ?? null
+          const firstBase = cImgBases[0] || 'gallery'
+          if (oldCap !== cCap) {
+            changes.push({
+              slug,
+              nodeType: 'gallery',
+              srcBasename: firstBase,
+              oldCaption: oldCap,
+              newCaption: cCap,
+              apply: () => {
+                if (!matchGal.attrs) matchGal.attrs = {}
+                matchGal.attrs.caption = cCap
+              },
+            })
+          }
+        } else {
+          unmatched.push({
+            slug,
+            nodeType: 'gallery',
+            srcBasename: cImgBases[0] || 'gallery',
+            caption: cCap,
+          })
+        }
+      }
+
+      // Per-image captions inside gallery
+      for (const cImg of cGal.attrs?.images || []) {
+        const cImgCap = cImg.caption
+        if (hasMarkdownLink(cImgCap)) {
+          const cImgBase = getSrcBasename(cImg.src || cImg.url)
+          let matchedImg = null
+          if (matchGal && Array.isArray(matchGal.attrs?.images)) {
+            matchedImg = matchGal.attrs.images.find(dbImg => getSrcBasename(dbImg.src || dbImg.url) === cImgBase)
+          }
+          if (matchedImg) {
+            const oldCap = matchedImg.caption ?? ''
+            if (oldCap !== cImgCap) {
+              changes.push({
+                slug,
+                nodeType: 'gallery (per-image)',
+                srcBasename: cImgBase,
+                oldCaption: oldCap,
+                newCaption: cImgCap,
+                apply: () => {
+                  matchedImg.caption = cImgCap
+                },
+              })
+            }
+          } else {
+            unmatched.push({
+              slug,
+              nodeType: 'gallery (per-image)',
+              srcBasename: cImgBase,
+              caption: cImgCap,
+            })
+          }
+        }
+      }
+    }
+
+    // Print dry-run diffs
+    if (changes.length > 0) {
+      log(`Changes detected for '${slug}' (${changes.length}):`)
+      for (const ch of changes) {
+        log(`  [CHANGE] Slug: ${ch.slug} | Node: ${ch.nodeType} | Basename: ${ch.srcBasename}`)
+        log(`    Old: ${JSON.stringify(ch.oldCaption)}`)
+        log(`    New: ${JSON.stringify(ch.newCaption)}`)
+      }
+    } else {
+      log(`No caption link changes needed for '${slug}'.`)
+    }
+
+    if (unmatched.length > 0) {
+      log(`Unmatched captions with links for '${slug}' (${unmatched.length}):`)
+      for (const um of unmatched) {
+        log(`  [UNMATCHED] Slug: ${um.slug} | Node: ${um.nodeType} | Basename: ${um.srcBasename}`)
+        log(`    Caption: ${JSON.stringify(um.caption)}`)
+      }
+    }
+
+    results.changesTotal += changes.length
+    results.unmatchedTotal += unmatched.length
+
+    // Live update if not dry-run
+    if (!isDryRun && changes.length > 0) {
+      const backupPath = backupPostContent(slug, existingRow)
+      for (const ch of changes) {
+        ch.apply()
+      }
+
+      const { error: updateErr } = await supabase
+        .from('posts')
+        .update({
+          content: dbDoc,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', existingRow.id)
+
+      if (updateErr) {
+        log(`ERROR updating post ${slug}: ${updateErr.message}`)
+        results.failed++
+        results.items.push({ slug, status: 'error', error: updateErr.message })
+        continue
+      }
+
+      log(`Successfully patched captions for '${slug}' (ID: ${existingRow.id}). Backup: ${backupPath}`)
+      results.succeeded++
+      results.items.push({ slug, status: 'patched', changesCount: changes.length, backupPath })
+    } else {
+      results.succeeded++
+      results.items.push({
+        slug,
+        status: isDryRun ? 'dry_run_validated' : 'no_changes',
+        changesCount: changes.length,
+        unmatchedCount: unmatched.length,
+      })
+    }
+
+    results.processed++
+  }
+
+  log(`\n=== PATCH-CAPTIONS COMPLETE ===`)
+  log(`Total processed: ${results.processed}`)
+  log(`Total changes: ${results.changesTotal}`)
+  log(`Total unmatched: ${results.unmatchedTotal}`)
+  log(`Succeeded/Validated: ${results.succeeded}`)
+  log(`Failed: ${results.failed}`)
+
+  return results
+}
+
 export function parseArgs(argv) {
   const args = argv.slice(2)
   const isApply = args.includes('--apply')
   const isUpdateContent = args.includes('--update-content')
+  const isPatchCaptions = args.includes('--patch-captions')
 
   let onlySlugs = null
   const onlyIdx = args.indexOf('--only')
@@ -96,20 +428,27 @@ export function parseArgs(argv) {
     batchSize = parseInt(args[batchIdx + 1], 10)
   }
 
-  return { isDryRun: !isApply, isApply, isUpdateContent, onlySlugs, batchSize }
+  return { isDryRun: !isApply, isApply, isUpdateContent, isPatchCaptions, onlySlugs, batchSize }
 }
 
 export async function runImporter({
   exportFilePath = 'C:/Users/ivan.kabandize/ghost-export/begenius-thoughts.ghost.2026-09-21-17-50-28.json',
   isDryRun = true,
   isUpdateContent = false,
+  isPatchCaptions = false,
   onlySlugs = null,
   batchSize = null,
 } = {}) {
   // Clear or init log file
-  fs.writeFileSync(LOG_FILE, `=== GHOST IMPORTER RUN: ${new Date().toISOString()} ===\nMode: ${isDryRun ? 'DRY-RUN' : 'APPLY'}${isUpdateContent ? ' (UPDATE-CONTENT)' : ''}\n\n`, 'utf8')
+  fs.writeFileSync(
+    LOG_FILE,
+    `=== GHOST IMPORTER RUN: ${new Date().toISOString()} ===\nMode: ${isDryRun ? 'DRY-RUN' : 'APPLY'}${isUpdateContent ? ' (UPDATE-CONTENT)' : ''}${isPatchCaptions ? ' (PATCH-CAPTIONS)' : ''}\n\n`,
+    'utf8'
+  )
 
-  log(`Starting Ghost Importer (Mode: ${isDryRun ? 'DRY-RUN (read-only)' : 'APPLY (live writes)'}${isUpdateContent ? ', UPDATE-CONTENT' : ''})`)
+  log(
+    `Starting Ghost Importer (Mode: ${isDryRun ? 'DRY-RUN (read-only)' : 'APPLY (live writes)'}${isUpdateContent ? ', UPDATE-CONTENT' : ''}${isPatchCaptions ? ', PATCH-CAPTIONS' : ''})`
+  )
 
   if (!isDryRun) {
     if (process.env.IMPORT_CONFIRM !== 'yes') {
@@ -137,6 +476,15 @@ export async function runImporter({
   const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   })
+
+  if (isPatchCaptions) {
+    return await runPatchCaptions({
+      supabase,
+      exportFilePath,
+      isDryRun,
+      onlySlugs,
+    })
+  }
 
   // 1. Fetch DB baseline state
   log('Fetching database baseline state...')
@@ -515,8 +863,8 @@ export async function runImporter({
 
 // Standalone execution
 if (process.argv[1]?.endsWith('importer.mjs')) {
-  const { isDryRun, isUpdateContent, onlySlugs, batchSize } = parseArgs(process.argv)
-  runImporter({ isDryRun, isUpdateContent, onlySlugs, batchSize })
+  const { isDryRun, isUpdateContent, isPatchCaptions, onlySlugs, batchSize } = parseArgs(process.argv)
+  runImporter({ isDryRun, isUpdateContent, isPatchCaptions, onlySlugs, batchSize })
     .then(() => process.exit(0))
     .catch(err => {
       console.error('Importer failed:', err.message)

@@ -2,13 +2,27 @@
 // Supports both Ghost Lexical (JSON string) and Ghost Mobiledoc (JSON string)
 // Compliant with TipTapRenderer and customNodes.tsx schema in this repository.
 
+export function decodeHtmlEntities(str) {
+  if (!str) return ''
+  return String(str)
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(Number(code)))
+    .replace(/&#x([0-9a-fA-F]+);/gi, (_, code) => String.fromCharCode(parseInt(code, 16)))
+}
+
 function stripHtml(html) {
   if (!html) return ''
-  return String(html)
+  const stripped = String(html)
     .replace(/<br\s*\/?>/gi, '\n')
     .replace(/<\/p>/gi, '\n')
     .replace(/<[^>]+>/g, '')
     .trim()
+  return decodeHtmlEntities(stripped)
 }
 
 export function normalizeEmbedUrl(url) {
@@ -38,9 +52,20 @@ export function rewriteBookmarkUrl(rawUrl, uuidToSlugMap, allGhostSlugs) {
   if (!rawUrl) return ''
   const u = String(rawUrl).trim()
 
+  // Root domain match: __GHOST_URL__ or __GHOST_URL__/ or home domain
+  if (u === '__GHOST_URL__' || u === '__GHOST_URL__/' || /^(?:https?:\/\/(?:www\.)?)?(?:begenius-thoughts\.ghost\.io|ivankabandize\.com)\/?$/i.test(u)) {
+    return '/'
+  }
+
   // Tag archive 30in30-series -> /garden/series/30in30
   if (u.includes('tag/30in30-series')) {
     return '/garden/series/30in30'
+  }
+
+  // General tag pattern
+  const tagMatch = u.match(/(?:__GHOST_URL__|begenius-thoughts\.ghost\.io|ivankabandize\.com)\/tag\/([a-z0-9-]+)\/?$/i)
+  if (tagMatch) {
+    return `/${tagMatch[1]}`
   }
 
   // UUID pattern: /p/<uuid>/ or __GHOST_URL__/p/<uuid>/
@@ -70,6 +95,24 @@ export function rewriteBookmarkUrl(rawUrl, uuidToSlugMap, allGhostSlugs) {
   }
 
   return u
+}
+
+export function captionHtmlToText(html, uuidToSlugMap, allGhostSlugs) {
+  if (!html) return ''
+  let str = String(html)
+
+  // Convert <a href="X">text</a> to [text](X')
+  str = str.replace(/<a\b([^>]*)>([\s\S]*?)<\/a>/gi, (match, attrs, innerText) => {
+    const hrefMatch = attrs.match(/href\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))/i)
+    const rawHref = hrefMatch ? (hrefMatch[1] ?? hrefMatch[2] ?? hrefMatch[3] ?? '') : ''
+    const cleanHref = decodeHtmlEntities(rawHref.trim())
+    const rewrittenUrl = rewriteBookmarkUrl(cleanHref, uuidToSlugMap, allGhostSlugs)
+    const linkText = stripHtml(innerText)
+    if (!linkText) return ''
+    return `[${linkText}](${rewrittenUrl})`
+  })
+
+  return stripHtml(str)
 }
 
 function resolveMediaUrl(rawUrl, mediaUrlMap) {
@@ -260,7 +303,7 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
       case 'image': {
         const src = resolveMediaUrl(child.src, mediaUrlMap)
         const alt = child.alt || stripHtml(child.caption) || child.title || 'Article image'
-        const caption = stripHtml(child.caption) || null
+        const caption = captionHtmlToText(child.caption, uuidToSlugMap, allGhostSlugs) || null
         nodes.push({
           type: 'image',
           attrs: {
@@ -275,11 +318,11 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
       case 'gallery': {
         const images = (child.images || []).map(img => ({
           url: resolveMediaUrl(img.src, mediaUrlMap),
-          caption: stripHtml(img.caption) || '',
+          caption: captionHtmlToText(img.caption, uuidToSlugMap, allGhostSlugs) || '',
           width: img.width || 1200,
           height: img.height || 800,
         }))
-        const caption = stripHtml(child.caption) || null
+        const caption = captionHtmlToText(child.caption, uuidToSlugMap, allGhostSlugs) || null
         nodes.push({
           type: 'gallery',
           attrs: {
@@ -292,7 +335,7 @@ export function convertLexicalToTipTap(lexicalObj, { uuidToSlugMap, allGhostSlug
 
       case 'video': {
         const url = resolveMediaUrl(child.src, mediaUrlMap)
-        const caption = stripHtml(child.caption) || null
+        const caption = captionHtmlToText(child.caption, uuidToSlugMap, allGhostSlugs) || null
         nodes.push({
           type: 'video',
           attrs: {
@@ -595,7 +638,7 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
         case 'image': {
           const src = resolveMediaUrl(cardPayload?.src, mediaUrlMap)
           const alt = cardPayload?.alt || stripHtml(cardPayload?.caption) || 'Article image'
-          const caption = stripHtml(cardPayload?.caption) || null
+          const caption = captionHtmlToText(cardPayload?.caption, uuidToSlugMap, allGhostSlugs) || null
           nodes.push({
             type: 'image',
             attrs: { src, alt, caption },
@@ -605,14 +648,28 @@ export function convertMobiledocToTipTap(mobiledocObj, { uuidToSlugMap, allGhost
         case 'gallery': {
           const images = (cardPayload?.images || []).map(img => ({
             url: resolveMediaUrl(img.src, mediaUrlMap),
-            caption: stripHtml(img.caption) || '',
+            caption: captionHtmlToText(img.caption, uuidToSlugMap, allGhostSlugs) || '',
             width: img.width || 1200,
             height: img.height || 800,
           }))
-          const caption = stripHtml(cardPayload?.caption) || null
+          const caption = captionHtmlToText(cardPayload?.caption, uuidToSlugMap, allGhostSlugs) || null
           nodes.push({
             type: 'gallery',
             attrs: { images, caption },
+          })
+          break
+        }
+        case 'video': {
+          const url = resolveMediaUrl(cardPayload?.src || cardPayload?.url, mediaUrlMap)
+          const caption = captionHtmlToText(cardPayload?.caption, uuidToSlugMap, allGhostSlugs) || null
+          nodes.push({
+            type: 'video',
+            attrs: {
+              url,
+              caption,
+              playAsGif: false,
+              flushBackground: false,
+            },
           })
           break
         }
