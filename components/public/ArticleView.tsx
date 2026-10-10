@@ -4,6 +4,7 @@ import Image from 'next/image'
 import TipTapRenderer from '@/components/editor/TipTapRenderer'
 import ReadingProgressBar from '@/components/public/ReadingProgressBar'
 import WideContainer from '@/components/public/WideContainer'
+import { renderCaption } from '@/components/editor/captionLinks'
 
 export interface PostTagItem {
   tag?: {
@@ -265,10 +266,9 @@ export default function ArticleView({
                   />
                 </div>
                 {featuredImageCaption && (
-                  <figcaption
-                    className="mt-2.5 text-center text-xs text-[#5A5D70]"
-                    dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
-                  />
+                  <figcaption className="mt-2.5 text-center text-xs text-[#5A5D70]">
+                    {renderCaption(featuredImageCaption)}
+                  </figcaption>
                 )}
               </figure>
             )
