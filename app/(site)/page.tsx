@@ -52,7 +52,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8">
           <div className="max-md:flex max-md:flex-col grid grid-cols-1 lg:grid-cols-12 max-md:gap-6 gap-12 lg:gap-16 items-center">
             {/* Left Narrative Column */}
-            <div className="contents md:block lg:col-span-7 space-y-6">
+            <div className="contents md:block lg:col-span-7 md:space-y-6">
               <ScrollReveal className="order-1 md:order-none w-full">
                 <p className="text-xl sm:text-2xl font-bold text-[#232536] flex items-center gap-2">
                   <span>Hey Friends</span>
@@ -103,7 +103,7 @@ export default async function HomePage() {
             {/* Right Portrait Column (No stickers) */}
             <div className="contents md:flex lg:col-span-5 md:justify-center">
               <ScrollReveal delayMs={150} className="order-4 md:order-none w-full max-md:max-w-none max-w-sm sm:max-w-md max-md:my-3">
-                <div className="relative mx-auto w-full pt-4 pb-6 px-4">
+                <div className="relative mx-auto w-full md:pt-4 md:pb-6 md:px-4">
                   <div className="relative z-10 w-full">
                     <Image
                       src="/images/ivan-headshot.jpg"

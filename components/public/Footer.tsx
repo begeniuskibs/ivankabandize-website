@@ -42,7 +42,7 @@ export default async function Footer() {
   return (
     <footer className="bg-[#232536] text-[#B8BAC9] py-14 mt-auto font-sans text-sm">
       <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between max-md:gap-8 gap-6">
-        <div className="flex flex-col items-center md:items-start gap-1">
+        <div className="flex flex-col items-center md:items-start gap-1 max-md:text-center">
           <p className="font-['MTN_Brighter_Sans',_sans-serif] font-bold text-lg text-white">
             Ivan Kabandize<span className="text-[#EF5B45]">.</span>
           </p>
