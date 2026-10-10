@@ -124,8 +124,8 @@ export default function ArticleView({
       )}
 
       <ReadingProgressBar targetSelector="#article-body" />
-      <article className={`min-h-full font-sans py-16 md:py-24 bg-[#FDF8F1] ${isPreview ? 'pt-24' : ''}`}>
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <article className={`min-h-full font-sans py-12 md:py-24 bg-[#FDF8F1] ${isPreview ? 'pt-20 md:pt-24' : ''}`}>
+        <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8">
           {/* Navigation Breadcrumb */}
           <div className="mb-10">
             <Link
@@ -266,7 +266,7 @@ export default function ArticleView({
                   />
                 </div>
                 {featuredImageCaption && (
-                  <figcaption className="mt-2.5 text-center text-xs text-[#5A5D70]">
+                  <figcaption className="mt-2.5 text-center text-[13px] sm:text-[14px] leading-relaxed text-[#5A5D70] max-w-full break-words px-2">
                     {renderCaption(featuredImageCaption)}
                   </figcaption>
                 )}
@@ -280,7 +280,10 @@ export default function ArticleView({
           })()}
 
           {/* 6. Post TipTap Content */}
-          <main id="article-body" className="text-[#232536] leading-relaxed prose max-w-none">
+          <main
+            id="article-body"
+            className="text-[#232536] text-[17px] sm:text-[18px] md:text-lg leading-[1.65] max-w-none break-words [&_p]:text-[17px] sm:[&_p]:text-[18px] md:[&_p]:text-lg [&_p]:leading-[1.65] [&_li]:text-[17px] sm:[&_li]:text-[18px] md:[&_li]:text-lg [&_li]:leading-[1.65] [&_img]:max-w-full [&_iframe]:max-w-full [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_table]:max-w-full [&_table]:overflow-x-auto"
+          >
             <TipTapRenderer content={post.content || {}} />
           </main>
 
@@ -298,7 +301,7 @@ export default function ArticleView({
                   <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198]">
                     {(relatedPost.content_type && TYPE_CONFIG[relatedPost.content_type]?.label) || 'Article'}
                   </span>
-                  <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors">
+                  <h3 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-[#232536] group-hover:text-[#EF5B45] transition-colors">
                     {relatedPost.title}
                   </h3>
                   {relatedPost.excerpt && (

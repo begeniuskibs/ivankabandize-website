@@ -49,19 +49,19 @@ export default async function HomePage() {
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
       {/* ================= HERO SECTION ================= */}
       <section className="py-16 md:py-24 border-b border-[#F5ECDE] overflow-hidden">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8">
+          <div className="max-md:flex max-md:flex-col grid grid-cols-1 lg:grid-cols-12 max-md:gap-6 gap-12 lg:gap-16 items-center">
             {/* Left Narrative Column */}
-            <div className="lg:col-span-7 space-y-6">
-              <ScrollReveal>
+            <div className="contents md:block lg:col-span-7 md:space-y-6">
+              <ScrollReveal className="order-1 md:order-none w-full">
                 <p className="text-xl sm:text-2xl font-bold text-[#232536] flex items-center gap-2">
                   <span>Hey Friends</span>
                   <span aria-hidden="true">&#128075;</span>
                 </p>
               </ScrollReveal>
 
-              <ScrollReveal delayMs={80}>
-                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
+              <ScrollReveal delayMs={80} className="order-2 md:order-none w-full max-md:my-1">
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] max-md:text-[36px] max-md:font-[800] max-md:tracking-[-0.02em] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
                   {headline.includes('structure that works.') ? (
                     <>
                       {headline.replace('structure that works.', '')}
@@ -73,7 +73,7 @@ export default async function HomePage() {
                 </h1>
               </ScrollReveal>
 
-              <ScrollReveal delayMs={140}>
+              <ScrollReveal delayMs={140} className="order-3 md:order-none w-full max-md:my-1">
                 <div className="space-y-4 text-lg sm:text-xl text-[#5A5D70] leading-relaxed">
                   <p className="font-medium text-[#232536]">
                     {subheadline}
@@ -81,18 +81,18 @@ export default async function HomePage() {
                 </div>
               </ScrollReveal>
 
-              <ScrollReveal delayMs={200}>
-                <div className="flex flex-wrap items-center gap-4 pt-2">
+              <ScrollReveal delayMs={200} className="order-5 md:order-none w-full max-md:mt-2">
+                <div className="flex max-md:flex-col flex-wrap items-center max-md:gap-3 gap-4 pt-2 max-md:w-full">
                   <Link
                     href={ctaUrl}
-                    className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="max-md:w-full max-md:h-[52px] inline-flex items-center justify-center gap-2 font-bold max-md:text-[17px] text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] md:bg-[#EF5B45] md:hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>{ctaText}</span>
                     <span aria-hidden="true">&rarr;</span>
                   </Link>
                   <a
                     href="#method"
-                    className="inline-flex items-center justify-center font-bold text-base px-7 py-3.5 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="max-md:w-full max-md:h-[52px] inline-flex items-center justify-center font-bold max-md:text-[17px] text-base px-7 py-3.5 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     See how I work
                   </a>
@@ -101,17 +101,17 @@ export default async function HomePage() {
             </div>
 
             {/* Right Portrait Column (No stickers) */}
-            <div className="lg:col-span-5 flex justify-center">
-              <ScrollReveal delayMs={150} className="w-full max-w-sm sm:max-w-md">
-                <div className="relative mx-auto w-full pt-4 pb-6 px-4">
-                  <div className="relative z-10">
+            <div className="contents md:flex lg:col-span-5 md:justify-center">
+              <ScrollReveal delayMs={150} className="order-4 md:order-none w-full max-md:max-w-none max-w-sm sm:max-w-md max-md:my-3">
+                <div className="relative mx-auto w-full md:pt-4 md:pb-6 md:px-4">
+                  <div className="relative z-10 w-full">
                     <Image
                       src="/images/ivan-headshot.jpg"
                       alt="Ivan Kabandize"
                       width={420}
                       height={500}
                       priority
-                      className="w-full aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
+                      className="w-full max-md:h-[300px] max-md:rounded-[24px] aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
                     />
                   </div>
                 </div>

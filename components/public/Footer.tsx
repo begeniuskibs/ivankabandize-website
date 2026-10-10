@@ -41,8 +41,8 @@ export default async function Footer() {
 
   return (
     <footer className="bg-[#232536] text-[#B8BAC9] py-14 mt-auto font-sans text-sm">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex flex-col items-center md:items-start gap-1">
+      <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between max-md:gap-8 gap-6">
+        <div className="flex flex-col items-center md:items-start gap-1 max-md:text-center">
           <p className="font-['MTN_Brighter_Sans',_sans-serif] font-bold text-lg text-white">
             Ivan Kabandize<span className="text-[#EF5B45]">.</span>
           </p>
@@ -51,38 +51,38 @@ export default async function Footer() {
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-center gap-6 font-medium">
-          <Link href="/workwithme" className="hover:text-white transition">
+        <div className="flex max-md:flex-col flex-wrap items-center justify-center max-md:gap-1 gap-6 font-medium max-md:w-full">
+          <Link href="/workwithme" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition">
             Work with Me
           </Link>
-          <Link href="/me" className="hover:text-white transition">
+          <Link href="/me" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition">
             Me
           </Link>
-          <Link href="/garden" className="hover:text-white transition">
+          <Link href="/garden" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition">
             The Garden
           </Link>
-          <Link href="/now" className="hover:text-white transition">
+          <Link href="/now" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition">
             Now
           </Link>
-          <Link href="/lets-talk" className="hover:text-white transition">
+          <Link href="/lets-talk" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition">
             Contact
           </Link>
           {user ? (
             <>
-              <Link href="/auth/account" className="hover:text-white transition">
+              <Link href="/auth/account" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition">
                 {displayName}
               </Link>
               <form action={signOut} className="inline-flex items-center">
                 <button
                   type="submit"
-                  className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45] cursor-pointer font-medium"
+                  className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition text-xs sm:text-sm text-[#EF5B45] cursor-pointer font-medium"
                 >
                   Sign Out
                 </button>
               </form>
             </>
           ) : (
-            <Link href="/login" className="hover:text-white transition text-xs sm:text-sm text-[#EF5B45]">
+            <Link href="/login" className="max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-center max-md:px-2 max-md:py-1 hover:text-white transition text-xs sm:text-sm text-[#EF5B45]">
               Sign-in
             </Link>
           )}
