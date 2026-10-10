@@ -561,5 +561,100 @@ console.log('=== TEST SUITE: Tolerant caption parsing & wrapSelectionAsLink ===\
   console.log()
 }
 
+console.log('=== TEST SUITE: Header Caption Link & Sanitization Tests ===\n')
+
+// 1. Markdown link
+{
+  const input = 'Header photo by [Ivan Kabandize](https://example.com/ivan)'
+  const rendered = renderToStaticMarkup(renderCaption(input))
+  console.log('Test 1: Markdown link')
+  console.log('  Input:    ', input)
+  console.log('  Rendered: ', rendered)
+  const hasAnchor = rendered.includes('<a href="https://example.com/ivan"')
+  const hasText = rendered.includes('>Ivan Kabandize</a>')
+  const hasRel = rendered.includes('rel="noopener noreferrer"')
+  const hasTarget = rendered.includes('target="_blank"')
+  console.log(`  Anchor rendered properly: ${hasAnchor && hasText && hasRel && hasTarget}`)
+  if (!hasAnchor || !hasText || !hasRel || !hasTarget) {
+    throw new Error('Test 1 failed: markdown link was not rendered properly')
+  }
+  console.log()
+}
+
+// 2. Spaced '] (' link
+{
+  const input = 'Header photo by [Ivan Kabandize] (https://example.com/ivan)'
+  const rendered = renderToStaticMarkup(renderCaption(input))
+  console.log('Test 2: Spaced "] (" link')
+  console.log('  Input:    ', input)
+  console.log('  Rendered: ', rendered)
+  const hasAnchor = rendered.includes('<a href="https://example.com/ivan"')
+  const hasText = rendered.includes('>Ivan Kabandize</a>')
+  const hasRel = rendered.includes('rel="noopener noreferrer"')
+  const hasTarget = rendered.includes('target="_blank"')
+  console.log(`  Anchor rendered properly with space: ${hasAnchor && hasText && hasRel && hasTarget}`)
+  if (!hasAnchor || !hasText || !hasRel || !hasTarget) {
+    throw new Error('Test 2 failed: spaced "] (" link was not rendered properly')
+  }
+  console.log()
+}
+
+// 3. Legacy Unsplash HTML (anchor kept, script or onerror stripped)
+{
+  const inputLegacy =
+    '<script>alert("xss")</script>Photo by <a href="https://unsplash.com/@ivan?utm_source=test&amp;utm_medium=referral" onerror="alert(1)" onclick="steal()">Ivan</a> on <a href="https://unsplash.com/?utm_source=test" target="_self">Unsplash</a><img src="x" onerror="alert(2)">'
+  const rendered = renderToStaticMarkup(renderCaption(inputLegacy))
+  console.log('Test 3: Legacy Unsplash HTML sanitization')
+  console.log('  Input:    ', inputLegacy)
+  console.log('  Rendered: ', rendered)
+
+  const hasIvanAnchor =
+    rendered.includes('<a href="https://unsplash.com/@ivan?utm_source=test&amp;utm_medium=referral"') &&
+    rendered.includes('>Ivan</a>')
+  const hasUnsplashAnchor =
+    rendered.includes('<a href="https://unsplash.com/?utm_source=test"') && rendered.includes('>Unsplash</a>')
+  const scriptStripped = !rendered.includes('script') && !rendered.includes('alert("xss")')
+  const onerrorStripped =
+    !rendered.includes('onerror') && !rendered.includes('alert(1)') && !rendered.includes('alert(2)')
+  const onclickStripped = !rendered.includes('onclick') && !rendered.includes('steal')
+  const imgStripped = !rendered.includes('<img')
+  const safeRelAndTarget = rendered.includes('rel="noopener noreferrer"') && rendered.includes('target="_blank"')
+
+  console.log(`  Anchor 1 kept:       ${hasIvanAnchor}`)
+  console.log(`  Anchor 2 kept:       ${hasUnsplashAnchor}`)
+  console.log(`  Script tag stripped: ${scriptStripped}`)
+  console.log(`  Onerror stripped:    ${onerrorStripped}`)
+  console.log(`  Onclick stripped:    ${onclickStripped}`)
+  console.log(`  Img tag stripped:    ${imgStripped}`)
+  console.log(`  Safe rel & target:   ${safeRelAndTarget}`)
+
+  if (
+    !hasIvanAnchor ||
+    !hasUnsplashAnchor ||
+    !scriptStripped ||
+    !onerrorStripped ||
+    !onclickStripped ||
+    !imgStripped ||
+    !safeRelAndTarget
+  ) {
+    throw new Error('Test 3 failed: legacy Unsplash HTML was not sanitized correctly')
+  }
+  console.log()
+}
+
+// 4. Empty caption
+{
+  console.log('Test 4: Empty caption handling')
+  const emptyCases = ['', '   ', null, undefined]
+  for (const val of emptyCases) {
+    const res = renderCaption(val)
+    console.log(`  Input [${val}]: result is null -> ${res === null}`)
+    if (res !== null) {
+      throw new Error(`Test 4 failed: expected null for empty input, got ${res}`)
+    }
+  }
+  console.log()
+}
+
 
 

@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import TipTapEditor from '@/components/editor/TipTapEditor'
 import UnsplashModal from '@/components/editor/UnsplashModal'
+import CaptionInput from '@/components/editor/CaptionInput'
+import { renderCaption } from '@/components/editor/captionLinks'
 
 interface Tag {
   id: string
@@ -488,13 +490,20 @@ function PostEditorContent() {
                     />
                   </div>
 
-                  {/* Attribution Caption Overlay / Display */}
-                  {featuredImageCaption && (
-                    <div
-                      className="p-3 bg-white/95 border-t border-gray-100 text-center text-xs text-gray-500"
-                      dangerouslySetInnerHTML={{ __html: featuredImageCaption }}
+                  {/* Header Image Caption */}
+                  <div className="p-3 bg-white/95 border-t border-gray-100 text-center text-xs text-gray-500">
+                    <CaptionInput
+                      value={featuredImageCaption || ''}
+                      onChange={(val) => setFeaturedImageCaption(val || null)}
+                      placeholder="Add a caption (optional). Link with [text](https://...)"
+                      className="w-full text-center text-xs text-gray-600 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-gray-500 focus:outline-none py-1"
                     />
-                  )}
+                    {featuredImageCaption && (
+                      <div className="mt-1 text-center text-xs text-gray-500">
+                        {renderCaption(featuredImageCaption)}
+                      </div>
+                    )}
+                  </div>
 
                   {/* Action Buttons on Hover */}
                   <div className="absolute top-3 right-3 flex items-center gap-2 opacity-90 group-hover:opacity-100 transition">
