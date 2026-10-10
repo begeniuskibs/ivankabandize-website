@@ -48,12 +48,11 @@ export default async function HomePage() {
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
       {/* ================= HERO SECTION ================= */}
-      <section className="py-12 md:py-24 border-b border-[#F5ECDE] overflow-hidden">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:grid md:grid-cols-1 lg:grid-cols-12 gap-6 md:gap-12 lg:gap-16 items-center">
-            {/* Narrative Column (contents on mobile for CSS reordering, block on desktop) */}
-            <div className="contents md:block md:space-y-6 lg:col-span-7">
-              {/* 1. Hey Friends */}
+      <section className="py-16 md:py-24 border-b border-[#F5ECDE] overflow-hidden">
+        <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8">
+          <div className="max-md:flex max-md:flex-col grid grid-cols-1 lg:grid-cols-12 max-md:gap-6 gap-12 lg:gap-16 items-center">
+            {/* Left Narrative Column */}
+            <div className="contents md:block lg:col-span-7 space-y-6">
               <ScrollReveal className="order-1 md:order-none w-full">
                 <p className="text-xl sm:text-2xl font-bold text-[#232536] flex items-center gap-2">
                   <span>Hey Friends</span>
@@ -61,9 +60,8 @@ export default async function HomePage() {
                 </p>
               </ScrollReveal>
 
-              {/* 2. H1: 36px / line-height 1.12 / weight 800 / letter-spacing -0.02em on mobile */}
-              <ScrollReveal delayMs={80} className="order-2 md:order-none w-full my-1 md:my-0">
-                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[36px] md:text-5xl lg:text-6xl font-[800] md:font-bold tracking-[-0.02em] md:tracking-tight text-[#232536] leading-[1.12]">
+              <ScrollReveal delayMs={80} className="order-2 md:order-none w-full max-md:my-1">
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] max-md:text-[36px] max-md:font-[800] max-md:tracking-[-0.02em] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
                   {headline.includes('structure that works.') ? (
                     <>
                       {headline.replace('structure that works.', '')}
@@ -75,8 +73,7 @@ export default async function HomePage() {
                 </h1>
               </ScrollReveal>
 
-              {/* 3. Intro Paragraph */}
-              <ScrollReveal delayMs={140} className="order-3 md:order-none w-full my-1 md:my-0">
+              <ScrollReveal delayMs={140} className="order-3 md:order-none w-full max-md:my-1">
                 <div className="space-y-4 text-lg sm:text-xl text-[#5A5D70] leading-relaxed">
                   <p className="font-medium text-[#232536]">
                     {subheadline}
@@ -84,19 +81,18 @@ export default async function HomePage() {
                 </div>
               </ScrollReveal>
 
-              {/* 5. Buttons: full width on mobile, 52px high, pill, 17px/700, 12px gap */}
-              <ScrollReveal delayMs={200} className="order-5 md:order-none w-full mt-2 md:mt-0">
-                <div className="flex flex-col sm:flex-row items-center gap-3 md:gap-4 pt-2 w-full">
+              <ScrollReveal delayMs={200} className="order-5 md:order-none w-full max-md:mt-2">
+                <div className="flex max-md:flex-col flex-wrap items-center max-md:gap-3 gap-4 pt-2 max-md:w-full">
                   <Link
                     href={ctaUrl}
-                    className="w-full sm:w-auto h-[52px] md:h-auto inline-flex items-center justify-center gap-2 font-bold text-[17px] md:text-base px-8 md:py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="max-md:w-full max-md:h-[52px] inline-flex items-center justify-center gap-2 font-bold max-md:text-[17px] text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] md:bg-[#EF5B45] md:hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>{ctaText}</span>
                     <span aria-hidden="true">&rarr;</span>
                   </Link>
                   <a
                     href="#method"
-                    className="w-full sm:w-auto h-[52px] md:h-auto inline-flex items-center justify-center font-bold text-[17px] md:text-base px-7 md:py-3.5 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="max-md:w-full max-md:h-[52px] inline-flex items-center justify-center font-bold max-md:text-[17px] text-base px-7 py-3.5 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     See how I work
                   </a>
@@ -104,10 +100,10 @@ export default async function HomePage() {
               </ScrollReveal>
             </div>
 
-            {/* Right Portrait Column: sits after paragraph and before buttons on mobile (order-4) */}
+            {/* Right Portrait Column (No stickers) */}
             <div className="contents md:flex lg:col-span-5 md:justify-center">
-              <ScrollReveal delayMs={150} className="order-4 md:order-none w-full max-w-none md:max-w-sm sm:max-w-md my-3 md:my-0">
-                <div className="relative mx-auto w-full md:pt-4 md:pb-6 md:px-4">
+              <ScrollReveal delayMs={150} className="order-4 md:order-none w-full max-md:max-w-none max-w-sm sm:max-w-md max-md:my-3">
+                <div className="relative mx-auto w-full pt-4 pb-6 px-4">
                   <div className="relative z-10 w-full">
                     <Image
                       src="/images/ivan-headshot.jpg"
@@ -115,7 +111,7 @@ export default async function HomePage() {
                       width={420}
                       height={500}
                       priority
-                      className="w-full h-[300px] md:h-auto md:aspect-[4/5] object-cover object-top rounded-[24px] shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
+                      className="w-full max-md:h-[300px] max-md:rounded-[24px] aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
                     />
                   </div>
                 </div>
@@ -127,7 +123,7 @@ export default async function HomePage() {
 
       {/* ================= PROOF SECTION: TRUST BAR & WHO I WORK WITH ================= */}
       <section className="py-16 md:py-20 bg-[#FDF8F1] border-b border-[#F5ECDE]" aria-label="Where you might know me from">
-        <div className="max-w-4xl mx-auto px-5 sm:px-6 lg:px-8">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <p className="text-center text-xs uppercase tracking-widest font-bold text-[#5A5D70] mb-8">
               Where you might know me from
@@ -169,7 +165,7 @@ export default async function HomePage() {
 
       {/* ================= HELP CARDS: HOW CAN I HELP YOU? ================= */}
       <section className="py-20 md:py-28 bg-white border-b border-[#F5ECDE]">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
@@ -252,7 +248,7 @@ export default async function HomePage() {
             <ScrollReveal delayMs={160}>
               <Link
                 href="/garden"
-                className="bg-[#F2F1FA] hover:bg-[#e4e2f5] border border-[#6B66C4]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
+                className="bg-[#EEEDF9] hover:bg-[#dfdcf5] border border-[#6B66C4]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
                   <span className="text-3xl block mb-4">&#129302;</span>
@@ -275,7 +271,7 @@ export default async function HomePage() {
 
       {/* ================= METHOD SECTION ================= */}
       <section className="py-20 md:py-28 bg-[#FDF8F1] border-b border-[#F5ECDE]" id="method">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
@@ -374,7 +370,7 @@ export default async function HomePage() {
 
       {/* ================= ARTICLES SECTION: RECENT THINKING ================= */}
       <section className="py-20 md:py-28 bg-[#FDF8F1] border-b border-[#F5ECDE]">
-        <div className="max-w-6xl mx-auto px-5 sm:px-6 lg:px-8">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
@@ -415,7 +411,7 @@ export default async function HomePage() {
 
       {/* ================= CLOSING CALL TO ACTION ================= */}
       <section className="py-20 md:py-28 bg-[#FDF8F1] text-center">
-        <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8 space-y-8">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <ScrollReveal>
             <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] leading-tight">
               {closingCtaHeadline.includes("Let's find it together.") ? (
