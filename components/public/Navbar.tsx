@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import NavLinks from './NavLinks'
+import MobileNav from './MobileNav'
 
 export default async function Navbar() {
   let displayName: string | null = null
@@ -48,25 +49,32 @@ export default async function Navbar() {
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-[#FDF8F1]/90 backdrop-blur-md border-b border-[#F5ECDE] font-sans">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-        {/* Logo / Wordmark with trailing dot */}
-        <Link
-          href="/"
-          className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-[26px] font-extrabold tracking-tight text-[#232536] hover:opacity-90 transition flex items-baseline"
-        >
-          <span>Ivan Kabandize</span>
-          <span className="text-[#EF5B45] text-2xl sm:text-[26px] font-extrabold">.</span>
-        </Link>
+    <>
+      {/* Mobile Shell Header & Full-screen Navigation Dialog (< 768px) */}
+      <MobileNav user={user} displayName={displayName} />
 
-        {/* Navigation links */}
-        <NavLinks
-          user={user}
-          displayName={displayName}
-          email={email}
-          isOwner={isOwner}
-        />
-      </div>
-    </header>
+      {/* Desktop Header (>= 768px, untouched visually) */}
+      <header className="hidden md:block sticky top-0 z-50 bg-[#FDF8F1]/90 backdrop-blur-md border-b border-[#F5ECDE] font-sans">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+          {/* Logo / Wordmark with trailing dot */}
+          <Link
+            href="/"
+            className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-[26px] font-extrabold tracking-tight text-[#232536] hover:opacity-90 transition flex items-baseline"
+          >
+            <span>Ivan Kabandize</span>
+            <span className="text-[#EF5B45] text-2xl sm:text-[26px] font-extrabold">.</span>
+          </Link>
+
+          {/* Navigation links */}
+          <NavLinks
+            user={user}
+            displayName={displayName}
+            email={email}
+            isOwner={isOwner}
+          />
+        </div>
+      </header>
+    </>
   )
 }
+
