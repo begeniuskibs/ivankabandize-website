@@ -1,5 +1,6 @@
 // scripts/test_retag.mjs
-// Offline test suite for topic retagging mapping, idempotency, and non-destructive tag rules.
+// Offline test suite for topic retagging mapping, idempotency, non-destructive tag rules,
+// pre-apply manifest structure, and zero-rows tag removal rule.
 
 import assert from 'node:assert'
 import {
@@ -7,7 +8,8 @@ import {
   validateMapping,
   computeRetagPlan,
   formatTable,
-  STREAM_LABELS,
+  buildPreApplyManifest,
+  canDeleteCreatedTag,
 } from './retag/apply-topic-tags.mjs'
 
 console.log('='.repeat(80))
@@ -283,6 +285,129 @@ console.log('\nTest 6: Table formatting')
   assert.ok(tableStr.includes('Test Title'))
   assert.ok(tableStr.includes('Leadership'))
   console.log('  PASS: Table formatting produces expected table representation.')
+}
+
+// ----------------------------------------------------------------------------
+// TEST 7: Pre-apply manifest content validation
+// ----------------------------------------------------------------------------
+console.log('\nTest 7: Pre-apply manifest content validation')
+{
+  const mockPairsToAdd = [
+    {
+      post_id: 'uuid-post-1',
+      post_slug: 'get-in-the-right-room',
+      post_title: 'Get In The Right Room',
+      tag_name: 'Leadership',
+      tag_id: 'uuid-tag-1',
+    },
+    {
+      post_id: 'uuid-post-2',
+      post_slug: 'loving-giving-and-resilience-2',
+      post_title: 'Loving, Giving, and Resilience',
+      tag_name: 'Life and Character',
+      tag_id: null,
+    },
+  ]
+
+  const customTimestamp = '2026-10-10T16:30:00.000Z'
+  const manifest = buildPreApplyManifest({
+    pairsToAdd: mockPairsToAdd,
+    willCreateTag: true,
+    timestamp: customTimestamp,
+  })
+
+  console.log(`  Manifest timestamp:                    ${manifest.timestamp}`)
+  console.log(`  willCreateLifeAndCharacterTag:         ${manifest.willCreateLifeAndCharacterTag}`)
+  console.log(`  totalPlannedPairs:                     ${manifest.totalPlannedPairs}`)
+
+  assert.strictEqual(manifest.timestamp, customTimestamp, 'Timestamp should match input')
+  assert.strictEqual(manifest.willCreateLifeAndCharacterTag, true, 'willCreateTag should be true')
+  assert.strictEqual(manifest.totalPlannedPairs, 2, 'Total planned pairs should be 2')
+  assert.strictEqual(manifest.plannedPairs.length, 2, 'plannedPairs length should be 2')
+
+  // Check structure of each item in plannedPairs: exactly (post_id, post_slug, tag_name)
+  assert.deepStrictEqual(manifest.plannedPairs[0], {
+    post_id: 'uuid-post-1',
+    post_slug: 'get-in-the-right-room',
+    tag_name: 'Leadership',
+  })
+  assert.deepStrictEqual(manifest.plannedPairs[1], {
+    post_id: 'uuid-post-2',
+    post_slug: 'loving-giving-and-resilience-2',
+    tag_name: 'Life and Character',
+  })
+
+  // Test with willCreateTag = false
+  const manifestNoCreate = buildPreApplyManifest({
+    pairsToAdd: mockPairsToAdd,
+    willCreateTag: false,
+  })
+  assert.strictEqual(manifestNoCreate.willCreateLifeAndCharacterTag, false)
+
+  console.log('  PASS: Pre-apply manifest contains all required fields with exact shape.')
+}
+
+// ----------------------------------------------------------------------------
+// TEST 8: Zero-rows rule for created tag deletion on restore
+// ----------------------------------------------------------------------------
+console.log('\nTest 8: Zero-rows rule for created tag deletion on restore')
+{
+  const tagId = 'tag-life-and-character-uuid'
+
+  // Case 1: Flag not passed -> NEVER delete tag, regardless of row count
+  assert.strictEqual(
+    canDeleteCreatedTag({
+      createdTagId: tagId,
+      remainingPostTagsCount: 0,
+      removeCreatedTagFlag: false,
+    }),
+    false,
+    'Without --remove-created-tag flag, tag should NOT be deleted even with 0 remaining rows'
+  )
+
+  // Case 2: Flag passed, but createdTagId is null/absent -> do not delete
+  assert.strictEqual(
+    canDeleteCreatedTag({
+      createdTagId: null,
+      remainingPostTagsCount: 0,
+      removeCreatedTagFlag: true,
+    }),
+    false,
+    'Without createdTagId, should not delete tag'
+  )
+
+  // Case 3: Flag passed, but remaining rows > 0 (tag is used elsewhere) -> MUST NOT delete
+  assert.strictEqual(
+    canDeleteCreatedTag({
+      createdTagId: tagId,
+      remainingPostTagsCount: 3,
+      removeCreatedTagFlag: true,
+    }),
+    false,
+    'When remaining post_tags > 0, MUST NOT delete created tag'
+  )
+  assert.strictEqual(
+    canDeleteCreatedTag({
+      createdTagId: tagId,
+      remainingPostTagsCount: 1,
+      removeCreatedTagFlag: true,
+    }),
+    false,
+    'When remaining post_tags == 1, MUST NOT delete created tag'
+  )
+
+  // Case 4: Flag passed, createdTagId present, AND remaining rows == 0 -> CAN delete tag
+  assert.strictEqual(
+    canDeleteCreatedTag({
+      createdTagId: tagId,
+      remainingPostTagsCount: 0,
+      removeCreatedTagFlag: true,
+    }),
+    true,
+    'When flag is set, tag ID is present, and remaining post_tags == 0, tag CAN be deleted'
+  )
+
+  console.log('  PASS: Zero-rows rule and flag guarding behave correctly across all scenarios.')
 }
 
 console.log('\n' + '='.repeat(80))

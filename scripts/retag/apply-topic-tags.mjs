@@ -263,6 +263,35 @@ export function computeRetagPlan({ posts = [], tags = [], postTags = [], mapping
 }
 
 /**
+ * Builds pre-apply manifest data.
+ * Pure function: constructs serializable manifest object.
+ */
+export function buildPreApplyManifest({ pairsToAdd = [], willCreateTag = false, timestamp = new Date().toISOString() }) {
+  const plannedPairs = pairsToAdd.map((p) => ({
+    post_id: p.post_id,
+    post_slug: p.post_slug,
+    tag_name: p.tag_name,
+  }))
+
+  return {
+    timestamp,
+    willCreateLifeAndCharacterTag: Boolean(willCreateTag),
+    totalPlannedPairs: plannedPairs.length,
+    plannedPairs,
+  }
+}
+
+/**
+ * Pure function: Determines whether a created tag can be safely deleted during restore.
+ * Rule: Only delete if removeCreatedTagFlag is true, createdTagId is provided, and remainingPostTagsCount is 0.
+ */
+export function canDeleteCreatedTag({ createdTagId, remainingPostTagsCount, removeCreatedTagFlag }) {
+  if (!removeCreatedTagFlag) return false
+  if (!createdTagId) return false
+  return remainingPostTagsCount === 0
+}
+
+/**
  * Formats table rows into clean markdown / ASCII format.
  */
 export function formatTable(matchedPosts) {
@@ -301,6 +330,7 @@ export async function run() {
   const restoreIdx = args.indexOf('--restore')
   const isRestore = restoreIdx !== -1
   const restoreFilePath = isRestore ? args[restoreIdx + 1] : null
+  const isRemoveCreatedTag = args.includes('--remove-created-tag')
 
   console.log('='.repeat(80))
   console.log('TOPIC TAGS RETAG SCRIPT')
@@ -324,7 +354,7 @@ export async function run() {
 
     console.log(`\nMode: RESTORE from backup: ${resolvedPath}`)
     const backupData = JSON.parse(fs.readFileSync(resolvedPath, 'utf8'))
-    const { insertedJoinIds, insertedPairs } = backupData
+    const { insertedJoinIds, createdTagId } = backupData
 
     if (!Array.isArray(insertedJoinIds) || insertedJoinIds.length === 0) {
       console.log('Backup contains no inserted join IDs to remove.')
@@ -345,6 +375,44 @@ export async function run() {
     }
 
     console.log(`Successfully removed ${insertedJoinIds.length} join rows.`)
+
+    // Handle --remove-created-tag flag: delete tag ONLY if remaining post_tags rows is 0
+    if (isRemoveCreatedTag) {
+      if (!createdTagId) {
+        console.log('No createdTagId recorded in backup. Skipping tag removal.')
+      } else {
+        console.log(`Checking remaining post_tags rows for created tag (${createdTagId})...`)
+        const { count, error: countErr } = await supabase
+          .from('post_tags')
+          .select('*', { count: 'exact', head: true })
+          .eq('tag_id', createdTagId)
+
+        if (countErr) {
+          console.error('Failed to check remaining post_tags rows for created tag:', countErr)
+          process.exit(1)
+        }
+
+        const remainingCount = count ?? 0
+        const shouldDelete = canDeleteCreatedTag({
+          createdTagId,
+          remainingPostTagsCount: remainingCount,
+          removeCreatedTagFlag: isRemoveCreatedTag,
+        })
+
+        if (shouldDelete) {
+          console.log(`Tag has 0 remaining post_tags rows. Deleting created tag (${createdTagId})...`)
+          const { error: delTagErr } = await supabase.from('tags').delete().eq('id', createdTagId)
+          if (delTagErr) {
+            console.error('Failed to delete created tag:', delTagErr)
+            process.exit(1)
+          }
+          console.log(`Successfully deleted created tag (${createdTagId}).`)
+        } else {
+          console.log(`Created tag has ${remainingCount} remaining post_tags row(s). Skipping tag deletion (zero-rows rule).`)
+        }
+      }
+    }
+
     return
   }
 
@@ -435,8 +503,29 @@ export async function run() {
   console.log('APPLYING TOPIC TAGS TO DATABASE...')
   console.log('='.repeat(80))
 
-  // 1. Ensure "Life and Character" tag exists
+  // Determine whether "Life and Character" will be created
   let lifeAndCharacterTag = tags.find((t) => t.name.toLowerCase() === 'life and character')
+  const willCreateTag = !lifeAndCharacterTag
+
+  // 1. Write pre-apply manifest to os.tmpdir() BEFORE any DB operations
+  const manifestTimestamp = Date.now()
+  const manifestFileName = `retag-manifest-${manifestTimestamp}.json`
+  const manifestPath = path.join(os.tmpdir(), manifestFileName)
+  const manifestPayload = buildPreApplyManifest({
+    pairsToAdd: plan.pairsToAdd,
+    willCreateTag,
+    timestamp: new Date(manifestTimestamp).toISOString(),
+  })
+
+  try {
+    fs.writeFileSync(manifestPath, JSON.stringify(manifestPayload, null, 2), 'utf8')
+    console.log(`\nPRE-APPLY MANIFEST WRITTEN TO: ${manifestPath}`)
+  } catch (err) {
+    console.error(`Error: Failed to write pre-apply manifest: ${err.message}`)
+    throw new Error(`Aborting before any database write: failed to write manifest file at ${manifestPath}`)
+  }
+
+  // 2. Ensure "Life and Character" tag exists
   let createdTagId = null
   if (!lifeAndCharacterTag) {
     console.log('Creating missing tag "Life and Character" (slug: life-and-character)...')
@@ -470,7 +559,7 @@ export async function run() {
     }
   })
 
-  // 2. Perform insert of join rows
+  // 3. Perform insert of join rows
   console.log(`Inserting ${rowsToInsert.length} post_tags join rows...`)
   const { data: insertedData, error: insertErr } = await supabase
     .from('post_tags')
@@ -483,7 +572,7 @@ export async function run() {
 
   const insertedJoinIds = (insertedData || []).map((r) => r.id)
 
-  // 3. Write backup to os.tmpdir()
+  // 4. Write post-insert backup to os.tmpdir() (kept as is)
   const backupFileName = `retag-backup-${Date.now()}.json`
   const backupPath = path.join(os.tmpdir(), backupFileName)
   const backupPayload = {
