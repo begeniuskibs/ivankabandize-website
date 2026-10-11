@@ -1,5 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import ArticleView, { RelatedPostData, ArticleSeriesContext } from '@/components/public/ArticleView'
+import TeaserArticleView from '@/components/public/TeaserArticleView'
+import { getPostTeaser } from '@/lib/postTeaser'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -20,14 +22,26 @@ export async function generateMetadata({ params }: GardenPostPageProps) {
     .lte('published_at', new Date().toISOString())
     .maybeSingle()
 
-  if (!post) {
-    return { title: 'Post Not Found | Ivan Kabandize' }
+  if (post) {
+    return {
+      title: `${post.title} | The Garden`,
+      description: post.excerpt || undefined,
+    }
   }
 
-  return {
-    title: `${post.title} | The Garden`,
-    description: post.excerpt || undefined,
+  const teaser = await getPostTeaser(slug)
+  if (teaser) {
+    return {
+      title: `${teaser.title} | The Garden`,
+      description: teaser.excerpt || undefined,
+      robots: {
+        index: false,
+        follow: true,
+      },
+    }
   }
+
+  return { title: 'Post Not Found | Ivan Kabandize' }
 }
 
 export default async function GardenPostPage({ params }: GardenPostPageProps) {
@@ -45,7 +59,17 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
     .maybeSingle()
 
   if (error || !post) {
-    notFound()
+    const teaser = await getPostTeaser(slug)
+    if (!teaser) {
+      notFound()
+    }
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    const isUpgrade = Boolean(user)
+
+    return <TeaserArticleView teaser={teaser} isUpgrade={isUpgrade} />
   }
 
   // Fetch series context if post belongs to a series

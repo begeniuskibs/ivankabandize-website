@@ -42,6 +42,7 @@ const sampleRow = {
   published_at: '2025-12-27T03:00:00+00:00',
   excerpt: '  An introduction to pragmatic AI tools.  ',
   publish_status: 'published',
+  visibility: 'public',
   extra_sensitive_field: 'should not leak',
 }
 
@@ -52,7 +53,33 @@ assert.deepStrictEqual(mapped, {
   stream: 'Tools for Thought',
   published_at: '2025-12-27T03:00:00+00:00',
   excerpt: 'An introduction to pragmatic AI tools.',
+  visibility: 'public',
 })
 assert.strictEqual(mapped.extra_sensitive_field, undefined, 'Does not leak unneeded fields')
+
+// 5. Members-only non-public post mapping
+const membersRow = {
+  id: 'mem-456',
+  title: 'Exclusive Members Post',
+  slug: 'exclusive-members-post',
+  content_type: 'structured_thoughts',
+  published_at: '2026-01-15T12:00:00+00:00',
+  excerpt: 'Members only insight.',
+  publish_status: 'published',
+  visibility: 'free',
+  content: { type: 'doc', content: [] },
+}
+const mappedMember = mapPostToSearchResult(membersRow)
+assert.strictEqual(mappedMember.visibility, 'free')
+assert.strictEqual(mappedMember.content, undefined, 'Never leaks content field')
+assert.strictEqual(mappedMember.extra_sensitive_field, undefined)
+
+// Default visibility fallback to 'public' when null/omitted
+const defaultVisibilityRow = {
+  title: 'Fallback Post',
+  slug: 'fallback-post',
+}
+const mappedDefault = mapPostToSearchResult(defaultVisibilityRow)
+assert.strictEqual(mappedDefault.visibility, 'public')
 
 console.log('✔ All search helper tests passed successfully!')

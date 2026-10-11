@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import { sanitizeSearchQuery, mapPostToSearchResult } from '@/lib/search'
 
 export const dynamic = 'force-dynamic'
@@ -36,14 +36,13 @@ export async function GET(request: NextRequest) {
     const sanitized = sanitizeSearchQuery(q)
     const pattern = `%${sanitized}%`
     const now = new Date().toISOString()
-    const supabase = await createClient()
+    const supabase = createAdminClient()
 
     // 1. Title search (parameterized ILIKE)
     const titlePromise = supabase
       .from('posts')
       .select('id, title, slug, excerpt, content_type, published_at, publish_status, visibility')
       .eq('publish_status', 'published')
-      .eq('visibility', 'public')
       .not('published_at', 'is', null)
       .lte('published_at', now)
       .ilike('title', pattern)
@@ -55,7 +54,6 @@ export async function GET(request: NextRequest) {
       .from('posts')
       .select('id, title, slug, excerpt, content_type, published_at, publish_status, visibility')
       .eq('publish_status', 'published')
-      .eq('visibility', 'public')
       .not('published_at', 'is', null)
       .lte('published_at', now)
       .ilike('excerpt', pattern)
@@ -91,7 +89,6 @@ export async function GET(request: NextRequest) {
           .select('id, title, slug, excerpt, content_type, published_at, publish_status, visibility')
           .in('id', postIds)
           .eq('publish_status', 'published')
-          .eq('visibility', 'public')
           .not('published_at', 'is', null)
           .lte('published_at', now)
           .order('published_at', { ascending: false })
@@ -125,8 +122,9 @@ export async function GET(request: NextRequest) {
       if (!posts) return
       for (const p of posts) {
         if (!p || !p.id || !p.slug) continue
-        // Strict guardrails: only public published posts
-        if (p.publish_status !== 'published' || p.visibility !== 'public') continue
+        // Strict guardrails: only published posts (never drafts or scheduled)
+        if (p.publish_status !== 'published') continue
+        if (!p.published_at || new Date(p.published_at) > new Date()) continue
         if (!seenIds.has(p.id)) {
           seenIds.add(p.id)
           merged.push(p)
