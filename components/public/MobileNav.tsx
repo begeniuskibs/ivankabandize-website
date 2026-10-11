@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { computeScrollHeaderState, type ScrollHeaderState } from './scrollHeader'
+import { isWorkActive, isMeActive, isGardenActive, isNowActive } from './navActive'
+import { openSearch } from './searchStore'
 import type { User } from '@supabase/supabase-js'
 
 interface MobileNavProps {
@@ -26,6 +28,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
   }
 
   const menuButtonRef = useRef<HTMLButtonElement>(null)
+  const searchButtonRef = useRef<HTMLButtonElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const dialogRef = useRef<HTMLDivElement>(null)
   const lastScrollYRef = useRef(0)
@@ -146,33 +149,59 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
             <span className="text-[#CF3F29] text-[21px] font-[800]">.</span>
           </Link>
 
-          {/* 44x44 Menu button */}
-          <button
-            ref={menuButtonRef}
-            type="button"
-            onClick={handleOpen}
-            aria-label="Open menu"
-            aria-expanded={isOpen}
-            aria-controls="mobile-menu"
-            className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
-          >
-            {/* Hamburger icon 22px stroke #232536 */}
-            <svg
-              width="22"
-              height="22"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="#232536"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
+          {/* Header Action Buttons: 44x44 Search + 44x44 Menu */}
+          <div className="flex items-center gap-2">
+            <button
+              ref={searchButtonRef}
+              type="button"
+              onClick={() => openSearch(searchButtonRef.current)}
+              aria-label="Search"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
-              <line x1="4" y1="6" x2="20" y2="6" />
-              <line x1="4" y1="12" x2="20" y2="12" />
-              <line x1="4" y1="18" x2="20" y2="18" />
-            </svg>
-          </button>
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#232536"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+            </button>
+
+            {/* 44x44 Menu button */}
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={handleOpen}
+              aria-label="Open menu"
+              aria-expanded={isOpen}
+              aria-controls="mobile-menu"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+            >
+              {/* Hamburger icon 22px stroke #232536 */}
+              <svg
+                width="22"
+                height="22"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#232536"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <line x1="4" y1="6" x2="20" y2="6" />
+                <line x1="4" y1="12" x2="20" y2="12" />
+                <line x1="4" y1="18" x2="20" y2="18" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 
@@ -227,35 +256,49 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
             <Link
               href="/workwithme"
               onClick={handleClose}
+              {...(isWorkActive(pathname) ? { 'aria-current': 'page' } : {})}
               className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>Work with Me</span>
+              {isWorkActive(pathname) && (
+                <span className="w-2 h-2 rounded-full bg-[#CF3F29] shrink-0" aria-hidden="true" />
+              )}
             </Link>
 
             <Link
               href="/me"
               onClick={handleClose}
+              {...(isMeActive(pathname) ? { 'aria-current': 'page' } : {})}
               className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>Me</span>
+              {isMeActive(pathname) && (
+                <span className="w-2 h-2 rounded-full bg-[#CF3F29] shrink-0" aria-hidden="true" />
+              )}
             </Link>
 
             <Link
               href="/garden"
               onClick={handleClose}
+              {...(isGardenActive(pathname) ? { 'aria-current': 'page' } : {})}
               className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>The Garden</span>
-              {/* Small 8px coral dot on the right */}
-              <span className="w-2 h-2 rounded-full bg-[#CF3F29] shrink-0" aria-hidden="true" />
+              {isGardenActive(pathname) && (
+                <span className="w-2 h-2 rounded-full bg-[#CF3F29] shrink-0" aria-hidden="true" />
+              )}
             </Link>
 
             <Link
               href="/now"
               onClick={handleClose}
+              {...(isNowActive(pathname) ? { 'aria-current': 'page' } : {})}
               className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>Now</span>
+              {isNowActive(pathname) && (
+                <span className="w-2 h-2 rounded-full bg-[#CF3F29] shrink-0" aria-hidden="true" />
+              )}
             </Link>
           </nav>
 

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import NavLinks from './NavLinks'
 import MobileNav from './MobileNav'
+import SearchModal from './SearchModal'
 
 export default async function Navbar() {
   let displayName: string | null = null
@@ -50,6 +51,9 @@ export default async function Navbar() {
 
   return (
     <>
+      {/* Site Search Overlay Modal */}
+      <SearchModal />
+
       {/* Mobile Shell Header & Full-screen Navigation Dialog (< 768px) */}
       <MobileNav user={user} displayName={displayName} />
 
