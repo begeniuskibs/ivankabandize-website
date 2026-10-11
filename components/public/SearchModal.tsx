@@ -164,6 +164,11 @@ function SearchOverlayContent() {
         const targetSlug = results[selectedIndex].slug
         closeSearch()
         router.push(`/garden/${targetSlug}`)
+      } else if (results.length > 0 && results[0]) {
+        e.preventDefault()
+        const targetSlug = results[0].slug
+        closeSearch()
+        router.push(`/garden/${targetSlug}`)
       }
     }
   }
@@ -221,7 +226,7 @@ function SearchOverlayContent() {
             aria-activedescendant={
               selectedIndex >= 0 ? `search-result-${selectedIndex}` : undefined
             }
-            className="flex-1 bg-transparent text-[#232536] text-[16px] sm:text-[17px] font-medium outline-none placeholder:text-[#8A8D9F]"
+            className="flex-1 bg-transparent text-[#232536] text-[16px] sm:text-[17px] font-medium outline-none placeholder:text-[#8A8D9F] [&::-webkit-search-cancel-button]:hidden [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:hidden [&::-ms-clear]:hidden"
           />
 
           {loading && (
@@ -281,9 +286,16 @@ function SearchOverlayContent() {
                       }`}
                     >
                       <div className="flex items-center justify-between gap-2 text-[11px] sm:text-xs font-semibold text-[#8A8D9F] mb-1">
-                        <span className="text-[#CF3F29] font-bold tracking-tight">
-                          {item.stream}
-                        </span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[#CF3F29] font-bold tracking-tight">
+                            {item.stream}
+                          </span>
+                          {item.visibility && item.visibility !== 'public' && (
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#2AA198]/10 text-[#2AA198] border border-[#2AA198]/20">
+                              Members
+                            </span>
+                          )}
+                        </div>
                         {item.published_at && (
                           <span className="text-[#8A8D9F]">
                             {formatDate(item.published_at)}

@@ -8,6 +8,7 @@ export interface SearchResultItem {
   stream: string
   published_at: string
   excerpt: string
+  visibility: string
 }
 
 /**
@@ -59,6 +60,7 @@ export function mapPostToSearchResult(post: {
   content_type?: string | null
   published_at?: string | null
   excerpt?: string | null
+  visibility?: string | null
 }): SearchResultItem {
   return {
     title: (post.title || '').trim(),
@@ -66,5 +68,6 @@ export function mapPostToSearchResult(post: {
     stream: mapStreamLabel(post.content_type),
     published_at: post.published_at || '',
     excerpt: formatSearchExcerpt(post.excerpt),
+    visibility: post.visibility || 'public',
   }
 }
