@@ -16,7 +16,7 @@ export default async function GardenPage() {
   // Query posts table directly with explicit published-only filters
   const { data: posts, error } = await supabase
     .from('posts')
-    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))')
     .eq('publish_status', 'published')
     .not('published_at', 'is', null)
     .lte('published_at', now)

@@ -1,9 +1,17 @@
 'use client'
 
 import Link from 'next/link'
-import { useState } from 'react'
-import { Leaf } from 'lucide-react'
 import PostCard from './PostCard'
+
+export interface TagDetails {
+  name?: string | null
+  slug?: string | null
+  is_internal?: boolean | null
+}
+
+export interface PostTagItem {
+  tag?: TagDetails | TagDetails[] | null
+}
 
 export interface PostItem {
   id: string
@@ -13,7 +21,7 @@ export interface PostItem {
   published_at?: string | null
   content_type?: 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought' | string
   featured_image_url?: string | null
-  post_tags?: { tag?: { name?: string; slug?: string } | null }[] | any[]
+  post_tags?: PostTagItem[] | null
 }
 
 export interface SeriesFeedItem {
@@ -27,69 +35,60 @@ export interface SeriesFeedItem {
   published_count: number
 }
 
+export interface TopicTagItem {
+  name: string
+  slug: string
+  is_internal?: boolean | null
+}
+
 interface GardenFeedProps {
   title: string
   eyebrow?: string
-  description: string
-  currentFilter: 'all' | 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought'
+  description?: string | null
+  currentFilter?: 'all' | 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought' | 'topic' | string
   posts: PostItem[]
   series?: SeriesFeedItem[]
   heroBannerImage?: string | null
-}
-
-const TYPE_CONFIG = {
-  all: {
-    label: 'All Entries',
-    href: '/garden',
-  },
-  random_thoughts: {
-    label: 'Random Thoughts',
-    href: '/random-thoughts',
-    badgeColor: 'bg-[#FDF3DC] text-[#C99424] border-[#F7C55C]/30',
-  },
-  structured_thoughts: {
-    label: 'Structured Thoughts',
-    href: '/structured-thoughts',
-    badgeColor: 'bg-[#FDF0EE] text-[#EF5B45] border-[#EF5B45]/20',
-  },
-  tools_for_thought: {
-    label: 'Tools for Thought',
-    href: '/tools-for-thought',
-    badgeColor: 'bg-[#EEEDF9] text-[#6B66C4] border-[#6B66C4]/20',
-  },
+  topicTags?: TopicTagItem[]
+  activeTopicSlug?: string | null
 }
 
 export default function GardenFeed({
   title,
   eyebrow = 'Writing & Garden',
   description,
-  currentFilter,
+  currentFilter = 'all',
   posts,
   series = [],
   heroBannerImage = null,
+  topicTags,
+  activeTopicSlug = null,
 }: GardenFeedProps) {
-  const [selectedTag, setSelectedTag] = useState<string | null>(null)
-
   const CATEGORY_NAMES = ['random thoughts', 'structured thoughts', 'tools for thought']
 
-  // Extract unique tags present in posts, strictly excluding stream/category names
-  const allTags = Array.from(
-    new Set(
-      posts.flatMap((post) =>
-        (post.post_tags as any[])
-          ?.map((pt: any) => pt.tag?.name)
-          .filter(Boolean) || []
-      )
-    )
-  ).filter((tag) => !CATEGORY_NAMES.includes(tag.toLowerCase().trim()))
+  // Extract unique tags present in posts if not explicitly provided
+  const derivedTopicTags: TopicTagItem[] = (() => {
+    if (topicTags && topicTags.length > 0) return topicTags
+    const tagMap = new Map<string, string>()
+    posts.forEach((post) => {
+      const ptList = post.post_tags || []
+      ptList.forEach((pt) => {
+        const tagObj = Array.isArray(pt.tag) ? pt.tag[0] : pt.tag
+        if (tagObj?.name && tagObj?.slug && !tagObj.is_internal) {
+          const name = tagObj.name.trim()
+          if (!CATEGORY_NAMES.includes(name.toLowerCase())) {
+            tagMap.set(name, tagObj.slug)
+          }
+        }
+      })
+    })
+    return Array.from(tagMap.entries())
+      .map(([name, slug]) => ({ name, slug }))
+      .sort((a, b) => a.name.localeCompare(b.name))
+  })()
 
-  const filteredPosts = posts.filter((post) => {
-    if (!selectedTag) return true
-    const postTagNames = (post.post_tags as any[])
-      ?.map((pt: any) => pt.tag?.name)
-      .filter(Boolean) || []
-    return postTagNames.includes(selectedTag)
-  })
+  const rawTopicList = topicTags && topicTags.length > 0 ? topicTags : derivedTopicTags
+  const topicList = rawTopicList.filter((t) => !t.is_internal)
 
   return (
     <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1]">
@@ -126,13 +125,15 @@ export default function GardenFeed({
           >
             {title}
           </h1>
-          <p
-            className={`text-lg max-w-2xl leading-relaxed ${
-              heroBannerImage ? 'text-[#FDF8F1]/85 font-light' : 'text-[#5A5D70]'
-            }`}
-          >
-            {description}
-          </p>
+          {description && description.trim() !== '' && (
+            <p
+              className={`text-lg max-w-2xl leading-relaxed ${
+                heroBannerImage ? 'text-[#FDF8F1]/85 font-light' : 'text-[#5A5D70]'
+              }`}
+            >
+              {description}
+            </p>
+          )}
 
           {/* Stream Type Navigation Pills */}
           <div
@@ -191,7 +192,7 @@ export default function GardenFeed({
           </div>
 
           {/* Topic Pillar Filter (if tags exist) */}
-          {allTags.length > 0 && (
+          {topicList.length > 0 && (
             <div
               className={`mt-4 flex flex-wrap items-center gap-2 pt-3 ${
                 heroBannerImage ? 'border-t border-white/10' : ''
@@ -204,26 +205,26 @@ export default function GardenFeed({
               >
                 Topics:
               </span>
-              <button
-                onClick={() => setSelectedTag(null)}
+              <Link
+                href="/garden"
                 className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                  selectedTag === null
+                  !activeTopicSlug
                     ? heroBannerImage
                       ? 'bg-white text-[#232536] font-bold'
                       : 'bg-[#232536] text-white'
                     : heroBannerImage
                     ? 'bg-white/10 text-[#FDF8F1]/80 hover:bg-white/20'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE]'
+                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
                 }`}
               >
                 All Topics
-              </button>
-              {allTags.map((tag, idx) => (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedTag(tag === selectedTag ? null : tag)}
+              </Link>
+              {topicList.map((tag) => (
+                <Link
+                  key={tag.slug}
+                  href={`/garden/topics/${tag.slug}`}
                   className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                    selectedTag === tag
+                    activeTopicSlug === tag.slug
                       ? heroBannerImage
                         ? 'bg-[#2AA198] text-white font-bold'
                         : 'bg-[#2AA198] text-white'
@@ -232,8 +233,8 @@ export default function GardenFeed({
                       : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#2AA198]'
                   }`}
                 >
-                  {tag}
-                </button>
+                  {tag.name}
+                </Link>
               ))}
             </div>
           )}
@@ -322,9 +323,9 @@ export default function GardenFeed({
             </div>
           )}
 
-          {filteredPosts && filteredPosts.length > 0 ? (
+          {posts && posts.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredPosts.map((post) => (
+              {posts.map((post) => (
                 <PostCard key={post.id} post={post} />
               ))}
             </div>
