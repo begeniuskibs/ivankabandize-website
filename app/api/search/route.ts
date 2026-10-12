@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { sanitizeSearchQuery, mapPostToSearchResult } from '@/lib/search'
+import { getClientIp, checkRateLimit } from '@/lib/rateLimit'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,6 +18,22 @@ interface PostRow {
 
 export async function GET(request: NextRequest) {
   try {
+    const ip = getClientIp(request.headers)
+    const rateLimitResult = await checkRateLimit(ip)
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        { error: 'busy' },
+        {
+          status: 429,
+          headers: {
+            'Retry-After': String(rateLimitResult.retryAfter || 60),
+            'Cache-Control': 'no-store',
+          },
+        }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const rawQ = searchParams.get('q') || ''
     const q = rawQ.slice(0, 80).trim()
@@ -143,7 +160,7 @@ export async function GET(request: NextRequest) {
       { results },
       {
         headers: {
-          'Cache-Control': 'no-store',
+          'Cache-Control': 'public, s-maxage=45, stale-while-revalidate=15',
         },
       }
     )

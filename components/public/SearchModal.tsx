@@ -30,6 +30,7 @@ function SearchOverlayContent() {
   const [results, setResults] = useState<SearchResultItem[]>([])
   const [loading, setLoading] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState<number>(-1)
+  const [isRateLimited, setIsRateLimited] = useState(false)
 
   const cardRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -66,14 +67,23 @@ function SearchOverlayContent() {
 
     const timer = setTimeout(() => {
       setLoading(true)
+      setIsRateLimited(false)
       fetch(`/api/search?q=${encodeURIComponent(trimmed)}`, {
         signal: abortController.signal,
       })
         .then((res) => {
+          if (res.status === 429) {
+            setIsRateLimited(true)
+            setResults([])
+            setLoading(false)
+            return null
+          }
           if (!res.ok) throw new Error('Search failed')
           return res.json()
         })
         .then((data) => {
+          if (!data) return
+          setIsRateLimited(false)
           setResults(data.results || [])
           setLoading(false)
           setSelectedIndex(-1)
@@ -140,6 +150,7 @@ function SearchOverlayContent() {
   function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
     const val = e.target.value
     setQuery(val)
+    setIsRateLimited(false)
     if (val.trim().length < 2) {
       setResults([])
       setLoading(false)
@@ -247,13 +258,19 @@ function SearchOverlayContent() {
 
         {/* Results List Area */}
         <div className="overflow-y-auto flex-1 overscroll-contain">
-          {showMinCharsHint && (
+          {isRateLimited && (
+            <div className="py-12 px-4 text-center text-[#8A8D9F] text-sm">
+              Search is busy, try again in a moment.
+            </div>
+          )}
+
+          {showMinCharsHint && !isRateLimited && (
             <div className="py-8 px-4 text-center text-[#8A8D9F] text-xs sm:text-sm">
               Type at least 2 characters to search
             </div>
           )}
 
-          {showNoResults && (
+          {showNoResults && !isRateLimited && (
             <div className="py-12 px-4 text-center text-[#8A8D9F] text-sm">
               No results found for &ldquo;<span className="text-[#232536] font-semibold">{trimmedQuery}</span>&rdquo;
             </div>
