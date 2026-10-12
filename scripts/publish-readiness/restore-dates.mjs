@@ -8,6 +8,7 @@
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { createClient } from '@supabase/supabase-js'
 
 const SOURCE_REPORT_PATH = path.resolve('scripts/ghost-import/preflight-report.json')
@@ -273,7 +274,13 @@ async function main() {
   console.log('Application completed successfully.')
 }
 
-main().catch((err) => {
-  console.error(err)
-  process.exit(1)
-})
+const isMain =
+  process.argv[1] &&
+  fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+
+if (isMain) {
+  main().catch((err) => {
+    console.error(err)
+    process.exit(1)
+  })
+}
