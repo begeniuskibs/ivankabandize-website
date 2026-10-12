@@ -136,7 +136,3 @@ export async function PATCH(request: NextRequest) {
     return NextResponse.json({ error: message }, { status: 500 })
   }
 }
-
-export async function PUT(request: NextRequest) {
-  return PATCH(request)
-}

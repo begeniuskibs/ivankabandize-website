@@ -6,6 +6,7 @@ import PostCard from './PostCard'
 export interface TagDetails {
   name?: string | null
   slug?: string | null
+  is_internal?: boolean | null
 }
 
 export interface PostTagItem {
@@ -37,6 +38,7 @@ export interface SeriesFeedItem {
 export interface TopicTagItem {
   name: string
   slug: string
+  is_internal?: boolean | null
 }
 
 interface GardenFeedProps {
@@ -72,7 +74,7 @@ export default function GardenFeed({
       const ptList = post.post_tags || []
       ptList.forEach((pt) => {
         const tagObj = Array.isArray(pt.tag) ? pt.tag[0] : pt.tag
-        if (tagObj?.name && tagObj?.slug) {
+        if (tagObj?.name && tagObj?.slug && !tagObj.is_internal) {
           const name = tagObj.name.trim()
           if (!CATEGORY_NAMES.includes(name.toLowerCase())) {
             tagMap.set(name, tagObj.slug)
@@ -85,7 +87,8 @@ export default function GardenFeed({
       .sort((a, b) => a.name.localeCompare(b.name))
   })()
 
-  const topicList = topicTags && topicTags.length > 0 ? topicTags : derivedTopicTags
+  const rawTopicList = topicTags && topicTags.length > 0 ? topicTags : derivedTopicTags
+  const topicList = rawTopicList.filter((t) => !t.is_internal)
 
   return (
     <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1]">

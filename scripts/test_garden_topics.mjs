@@ -57,9 +57,9 @@ async function runTests() {
   console.log('PASS (b): Made-up slug and zero-published-post slugs correctly return 404.\n')
 
   // --------------------------------------------------------------------------
-  // TEST (c): Topic page with members-only post does not contain second paragraph
+  // TEST (c): Topic page with members-only post does not appear for anonymous visitors
   // --------------------------------------------------------------------------
-  console.log('--- TEST (c): Members-only post on topic page does not leak content ---')
+  console.log('--- TEST (c): Members-only post on topic page is hidden from anonymous visitors ---')
 
   // 1. Initial count before creating temporary post
   const { count: countBefore, error: countBeforeErr } = await client
@@ -130,24 +130,24 @@ async function runTests() {
       throw new Error(`Failed to attach post_tags: ${ptErr.message}`)
     }
 
-    // 5. Fetch topic page from running server
+    // 5. Fetch topic page from running server as anonymous visitor
     const topicRes = await fetch(`${BASE_URL}/garden/topics/artificial-intelligence`)
     assert.strictEqual(topicRes.status, 200, `Expected 200 for topic page, got ${topicRes.status}`)
 
     const topicHtml = await topicRes.text()
 
-    // Post title must appear in feed
+    // Post title must NOT appear for anonymous visitor (RLS enforcement)
     assert(
-      topicHtml.includes('Temporary Members-Only Topic Security Test Post'),
-      'Topic page must display the temporary test post title'
+      !topicHtml.includes('Temporary Members-Only Topic Security Test Post'),
+      'Topic page must NOT display members-only test post title for anonymous visitors'
     )
 
     // Second paragraph of post MUST NOT be present in HTML
     assert(
       !topicHtml.includes(secretParagraph),
-      'SECURITY LEAK DETECTED: Topic page HTML contains second paragraph of members-only post!'
+      'Topic page HTML must NOT contain second paragraph of members-only post'
     )
-    console.log('Verified: Topic page displays members-only card without leaking second paragraph.')
+    console.log('Verified: Topic page does NOT display members-only post title or second paragraph to anonymous visitors.')
   } finally {
     // 6. Delete test post using delete-test-post pattern
     console.log(`Cleaning up temporary test post with slug "${testSlug}"...`)
@@ -178,7 +178,148 @@ async function runTests() {
       countAfter,
       `Post count before (${countBefore}) and after (${countAfter}) must match!`
     )
-    console.log('PASS (c): Temporary post deleted and database post counts match before and after.\n')
+    console.log('PASS (c): Members-only post is absent for anonymous visitors, cleanup succeeded, and post counts match before and after.\n')
+  }
+
+  // --------------------------------------------------------------------------
+  // TEST (d): Tag with is_internal = true returns 404
+  // --------------------------------------------------------------------------
+  console.log('--- TEST (d): Tag with is_internal = true returns 404 ---')
+
+  // 1. Initial tag and post counts before test (d)
+  const { count: tagCountBefore, error: tagCountBeforeErr } = await client
+    .from('tags')
+    .select('*', { count: 'exact', head: true })
+
+  if (tagCountBeforeErr) {
+    throw new Error(`Failed to get initial tag count: ${tagCountBeforeErr.message}`)
+  }
+
+  const { count: postCountBeforeD, error: postCountBeforeDErr } = await client
+    .from('posts')
+    .select('*', { count: 'exact', head: true })
+
+  if (postCountBeforeDErr) {
+    throw new Error(`Failed to get initial post count for test (d): ${postCountBeforeDErr.message}`)
+  }
+
+  console.log(`[test_garden_topics] Total tags count before test (d): ${tagCountBefore}`)
+  console.log(`[test_garden_topics] Total posts count before test (d): ${postCountBeforeD}`)
+
+  const internalTagSlug = 'zz-test-internal-tag-secret'
+  let createdInternalTagId = null
+
+  try {
+    // 2. Create temporary internal tag (is_internal = true)
+    const { data: internalTag, error: tagInsertErr } = await client
+      .from('tags')
+      .insert({
+        name: 'Temporary Internal Security Test Tag',
+        slug: internalTagSlug,
+        is_internal: true,
+        description: 'Internal tag for test (d) verification.',
+      })
+      .select('id, name, slug, is_internal')
+      .single()
+
+    if (tagInsertErr || !internalTag) {
+      throw new Error(`Failed to insert temporary internal tag: ${tagInsertErr?.message}`)
+    }
+
+    createdInternalTagId = internalTag.id
+    console.log(`Created temporary internal tag "${internalTag.name}" (slug: ${internalTag.slug}, ID: ${internalTag.id})`)
+
+    // 3. Test: Fetch internal topic page - must return 404
+    const internalRes = await fetch(`${BASE_URL}/garden/topics/${internalTagSlug}`)
+    assert.strictEqual(
+      internalRes.status,
+      404,
+      `Expected 404 for is_internal = true tag, got ${internalRes.status}`
+    )
+    console.log(`Verified: /garden/topics/${internalTagSlug} returned 404.`)
+
+    // 4. Attach to an existing published post and verify it still returns 404 and is excluded from /garden topics pill row
+    const { data: publishedPost } = await client
+      .from('posts')
+      .select('id')
+      .eq('publish_status', 'published')
+      .limit(1)
+      .single()
+
+    if (publishedPost) {
+      await client.from('post_tags').insert({
+        post_id: publishedPost.id,
+        tag_id: internalTag.id,
+      })
+
+      const internalWithPostRes = await fetch(`${BASE_URL}/garden/topics/${internalTagSlug}`)
+      assert.strictEqual(
+        internalWithPostRes.status,
+        404,
+        `Expected 404 for is_internal = true tag even with published posts, got ${internalWithPostRes.status}`
+      )
+
+      const gardenRes = await fetch(`${BASE_URL}/garden`)
+      if (gardenRes.status === 200) {
+        const gardenHtml = await gardenRes.text()
+        assert(
+          !gardenHtml.includes(`/garden/topics/${internalTagSlug}`),
+          'Topics pill row on /garden must NOT link to is_internal = true tag'
+        )
+      }
+      console.log('Verified: Internal tag with published post returns 404 and is excluded from Topics pill row.')
+    }
+  } finally {
+    // 5. Cleanup: delete post_tags entry and temporary internal tag
+    console.log(`Cleaning up temporary internal tag "${internalTagSlug}"...`)
+    if (createdInternalTagId) {
+      await client.from('post_tags').delete().eq('tag_id', createdInternalTagId)
+    }
+    const { data: deletedTag, error: delTagErr } = await client
+      .from('tags')
+      .delete()
+      .eq('slug', internalTagSlug)
+      .select('id, name, slug')
+
+    if (delTagErr) {
+      console.error(`Error deleting temporary tag: ${delTagErr.message}`)
+    } else {
+      console.log('Deleted temporary internal tag:', deletedTag)
+    }
+
+    // 6. Verify tag count matches initial count exactly
+    const { count: tagCountAfter, error: tagCountAfterErr } = await client
+      .from('tags')
+      .select('*', { count: 'exact', head: true })
+
+    if (tagCountAfterErr) {
+      throw new Error(`Failed to get final tag count: ${tagCountAfterErr.message}`)
+    }
+
+    console.log(`[test_garden_topics] Total tags count after test (d): ${tagCountAfter}`)
+    assert.strictEqual(
+      tagCountBefore,
+      tagCountAfter,
+      `Tag count before (${tagCountBefore}) and after (${tagCountAfter}) must match!`
+    )
+
+    // 7. Verify post count matches initial count exactly
+    const { count: postCountAfterD, error: postCountAfterDErr } = await client
+      .from('posts')
+      .select('*', { count: 'exact', head: true })
+
+    if (postCountAfterDErr) {
+      throw new Error(`Failed to get final post count for test (d): ${postCountAfterDErr.message}`)
+    }
+
+    console.log(`[test_garden_topics] Total posts count after test (d): ${postCountAfterD}`)
+    assert.strictEqual(
+      postCountBeforeD,
+      postCountAfterD,
+      `Post count before (${postCountBeforeD}) and after (${postCountAfterD}) must match!`
+    )
+
+    console.log('PASS (d): Tag with is_internal = true returns 404, cleanup succeeded, and tag/post counts match before and after.\n')
   }
 
   console.log('=== ALL GARDEN TOPICS TESTS PASSED SUCCESSFULLY! ===')

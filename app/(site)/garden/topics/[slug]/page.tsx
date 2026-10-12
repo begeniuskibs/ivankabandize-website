@@ -1,6 +1,6 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { createAdminClient } from '@/utils/supabase/admin'
+import { createClient } from '@/utils/supabase/server'
 import GardenFeed, { TopicTagItem } from '@/components/public/GardenFeed'
 
 export const dynamic = 'force-dynamic'
@@ -11,15 +11,15 @@ interface TopicPageProps {
 
 export async function generateMetadata({ params }: TopicPageProps): Promise<Metadata> {
   const { slug } = await params
-  const supabase = createAdminClient()
+  const supabase = await createClient()
 
   const { data: tag } = await supabase
     .from('tags')
-    .select('name, description')
+    .select('name, description, is_internal')
     .eq('slug', slug)
     .maybeSingle()
 
-  if (!tag) {
+  if (!tag || tag.is_internal) {
     return {
       title: 'Topic Not Found | The Garden | Ivan Kabandize',
     }
@@ -39,17 +39,18 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
 
 export default async function TopicPage({ params }: TopicPageProps) {
   const { slug } = await params
-  const supabase = createAdminClient()
+  const supabase = await createClient()
   const now = new Date().toISOString()
 
   // 1. Fetch tag record
   const { data: tag, error: tagError } = await supabase
     .from('tags')
-    .select('id, name, slug, description')
+    .select('id, name, slug, description, is_internal')
     .eq('slug', slug)
     .maybeSingle()
 
-  if (tagError || !tag) {
+  // Exclude is_internal = true tags from topic page route
+  if (tagError || !tag || tag.is_internal) {
     notFound()
   }
 
@@ -70,11 +71,12 @@ export default async function TopicPage({ params }: TopicPageProps) {
     notFound()
   }
 
-  // 3. Query published posts with this tag using the same filters as Garden page
+  // 3. Query visible published posts with this tag using the same filters as Garden page
+  // Uses RLS client so anonymous visitors see only what Garden page shows.
   // Security rule: Do NOT select or send content.
   const { data: posts, error: postsError } = await supabase
     .from('posts')
-    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))')
     .in('id', postIds)
     .eq('publish_status', 'published')
     .not('published_at', 'is', null)
@@ -90,9 +92,10 @@ export default async function TopicPage({ params }: TopicPageProps) {
   }
 
   // 4. Fetch all tags with at least 1 published post for topic pills row
+  // Exclude is_internal = true tags
   const { data: allPublishedPosts } = await supabase
     .from('posts')
-    .select('id, post_tags(tag:tags(name, slug))')
+    .select('id, post_tags(tag:tags(name, slug, is_internal))')
     .eq('publish_status', 'published')
     .not('published_at', 'is', null)
     .lte('published_at', now)
@@ -100,10 +103,10 @@ export default async function TopicPage({ params }: TopicPageProps) {
   const CATEGORY_NAMES = ['random thoughts', 'structured thoughts', 'tools for thought']
   const topicTagMap = new Map<string, string>()
   allPublishedPosts?.forEach((p) => {
-    const ptList = (p.post_tags as { tag?: { name?: string | null; slug?: string | null } | { name?: string | null; slug?: string | null }[] | null }[]) || []
+    const ptList = (p.post_tags as { tag?: { name?: string | null; slug?: string | null; is_internal?: boolean | null } | { name?: string | null; slug?: string | null; is_internal?: boolean | null }[] | null }[]) || []
     ptList.forEach((pt) => {
       const tagObj = Array.isArray(pt.tag) ? pt.tag[0] : pt.tag
-      if (tagObj?.name && tagObj?.slug) {
+      if (tagObj?.name && tagObj?.slug && !tagObj.is_internal) {
         const name = tagObj.name.trim()
         if (!CATEGORY_NAMES.includes(name.toLowerCase())) {
           topicTagMap.set(name, tagObj.slug)
