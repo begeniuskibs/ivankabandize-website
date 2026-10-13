@@ -189,5 +189,53 @@ input[type="search"]::-ms-clear {
   height: 0;
 }
 
+/* Print styles for public article view - Share and Print */
+@media print {
+  /* Hide navigation, footer, action bar, comments, and search */
+  header:not(article header),
+  footer,
+  nav,
+  aside,
+  #article-actions,
+  #reading-progress-bar,
+  #search-modal,
+  [aria-label="Site search"],
+  dialog,
+  #comments,
+  .comments,
+  .no-print {
+    display: none !important;
+  }
 
+  /* Ensure clean background and full width on printed pages */
+  body,
+  main,
+  article {
+    background: #ffffff !important;
+    color: #232536 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+  }
 
+  article {
+    max-width: 100% !important;
+  }
+
+  /* Prevent awkward page breaks in media */
+  figure,
+  img {
+    page-break-inside: avoid;
+    break-inside: avoid;
+    max-width: 100% !important;
+  }
+
+  /* Avoid orphaned section headings */
+  h1,
+  h2,
+  h3,
+  h4 {
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+}

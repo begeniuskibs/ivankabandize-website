@@ -5,6 +5,7 @@ import TipTapRenderer from '@/components/editor/TipTapRenderer'
 import ReadingProgressBar from '@/components/public/ReadingProgressBar'
 import WideContainer from '@/components/public/WideContainer'
 import { renderCaption } from '@/components/editor/captionLinks'
+import ArticleActions from '@/components/public/ArticleActions'
 
 export interface PostTagItem {
   tag?: {
@@ -118,7 +119,7 @@ export default function ArticleView({
   return (
     <>
       {isPreview && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-[#EF5B45] text-white text-center py-2 px-4 text-xs font-bold tracking-wide shadow-md">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-[#EF5B45] text-white text-center py-2 px-4 text-xs font-bold tracking-wide shadow-md print:hidden">
           Preview - this version is not published
         </div>
       )}
@@ -127,7 +128,7 @@ export default function ArticleView({
       <article className={`min-h-full font-sans py-12 md:py-24 bg-[#FDF8F1] ${isPreview ? 'pt-20 md:pt-24' : ''}`}>
         <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8">
           {/* Navigation Breadcrumb */}
-          <div className="mb-10">
+          <div className="mb-10 print:hidden">
             <Link
               href="/garden"
               className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
@@ -204,11 +205,14 @@ export default function ArticleView({
                 <span className="font-bold text-[#2AA198]">{readTime} min read</span>
               </div>
             </div>
+
+            {/* Article Action Bar - Share and Print only */}
+            <ArticleActions title={post.title} slug={post.slug} />
           </header>
 
           {/* 4. Optional Database-Driven Series Callout Box */}
           {seriesContext && (
-            <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)]">
+            <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] print:hidden">
               <div className="flex items-start gap-3.5 mb-2">
                 <span className="text-2xl" aria-hidden="true">📖</span>
                 <div className="min-w-0 flex-1">
@@ -287,9 +291,17 @@ export default function ArticleView({
             <TipTapRenderer content={post.content || {}} />
           </main>
 
+          {/* Print-Only Canonical Article Web Address */}
+          <div
+            className="hidden print:block pt-8 mt-12 border-t border-[#232536]/20 text-xs text-[#5A5D70] font-mono break-all"
+            aria-hidden="true"
+          >
+            {post.slug ? `https://ivankabandize.com/garden/${post.slug}` : ''}
+          </div>
+
           {/* 7. Optional "You Might Have Missed" Bookmark-Style Card */}
           {relatedPost && (
-            <section className="mt-16 pt-12 border-t border-[#F5ECDE]">
+            <section className="mt-16 pt-12 border-t border-[#F5ECDE] print:hidden">
               <p className="text-xs uppercase tracking-widest font-bold text-[#C99424] mb-4">
                 You might have missed
               </p>
