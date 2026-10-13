@@ -170,6 +170,11 @@ export default function AdminSidebar() {
       icon: '🏷️',
     },
     {
+      label: 'Library',
+      href: '/admin/library',
+      icon: '📖',
+    },
+    {
       label: 'Series',
       href: '/admin/series',
       icon: '📚',
@@ -221,6 +226,9 @@ export default function AdminSidebar() {
     }
     if (item.href === '/admin/pages') {
       return pathname.startsWith('/admin/pages') && !pathname.includes('/edit')
+    }
+    if (item.href === '/admin/library') {
+      return pathname.startsWith('/admin/library')
     }
     if (item.href === '/admin/series') {
       return pathname.startsWith('/admin/series')

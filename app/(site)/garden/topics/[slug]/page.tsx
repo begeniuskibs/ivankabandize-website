@@ -1,7 +1,7 @@
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
-import GardenFeed, { TopicTagItem } from '@/components/public/GardenFeed'
+import GardenFeed, { TopicTagItem, LibraryFeedItem, PostItem } from '@/components/public/GardenFeed'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,32 +66,57 @@ export default async function TopicPage({ params }: TopicPageProps) {
 
   const postIds = (postTagRows || []).map((row: { post_id: string }) => row.post_id)
 
-  // A tag with zero published items returns notFound(). No empty topic pages.
-  if (postIds.length === 0) {
+  // 3. Query visible published posts with this tag using safe fields (no content)
+  let posts: PostItem[] = []
+  if (postIds.length > 0) {
+    const { data: postsData, error: postsError } = await supabase
+      .from('posts')
+      .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))')
+      .in('id', postIds)
+      .eq('publish_status', 'published')
+      .not('published_at', 'is', null)
+      .lte('published_at', now)
+      .order('published_at', { ascending: false })
+
+    if (postsError) {
+      console.error('Error fetching topic posts:', postsError)
+    }
+    posts = postsData || []
+  }
+
+  // 4. Guarded query for library items matched through library_item_tags
+  // If the table does not exist yet, this must NOT throw and show articles only.
+  let libraryItems: LibraryFeedItem[] = []
+  try {
+    const { data: itemTagRows, error: itemTagError } = await supabase
+      .from('library_item_tags')
+      .select('library_item_id')
+      .eq('tag_id', tag.id)
+
+    if (!itemTagError && itemTagRows && itemTagRows.length > 0) {
+      const itemIds = itemTagRows.map((r: { library_item_id: string }) => r.library_item_id)
+      const { data: libData, error: libError } = await supabase
+        .from('library_items')
+        .select('id, title, creator, type, url, thumbnail_url, recommendation_note, created_at')
+        .in('id', itemIds)
+        .order('created_at', { ascending: false })
+
+      if (!libError && libData) {
+        libraryItems = libData
+      }
+    }
+  } catch (err) {
+    // Graceful fallback if library_item_tags table is missing
+    console.warn('library_item_tags query safely caught:', err)
+    libraryItems = []
+  }
+
+  // A tag with zero published items (neither articles nor library items) returns notFound()
+  if (posts.length === 0 && libraryItems.length === 0) {
     notFound()
   }
 
-  // 3. Query visible published posts with this tag using the same filters as Garden page
-  // Uses RLS client so anonymous visitors see only what Garden page shows.
-  // Security rule: Do NOT select or send content.
-  const { data: posts, error: postsError } = await supabase
-    .from('posts')
-    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))')
-    .in('id', postIds)
-    .eq('publish_status', 'published')
-    .not('published_at', 'is', null)
-    .lte('published_at', now)
-    .order('published_at', { ascending: false })
-
-  if (postsError) {
-    console.error('Error fetching topic posts:', postsError)
-  }
-
-  if (!posts || posts.length === 0) {
-    notFound()
-  }
-
-  // 4. Fetch all tags with at least 1 published post for topic pills row
+  // 5. Fetch all tags with at least 1 published post for topic pills row
   // Exclude is_internal = true tags
   const { data: allPublishedPosts } = await supabase
     .from('posts')
@@ -128,6 +153,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
       posts={posts}
       topicTags={topicTags}
       activeTopicSlug={tag.slug}
+      libraryItems={libraryItems}
     />
   )
 }
