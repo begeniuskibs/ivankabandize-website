@@ -9,7 +9,13 @@ export const metadata = {
     'A digital garden of essays, random notes, structured thoughts, and tools for thought.',
 }
 
-export default async function GardenPage() {
+interface GardenPageProps {
+  searchParams?: Promise<{ view?: string }>
+}
+
+export default async function GardenPage({ searchParams }: GardenPageProps) {
+  const params = (await searchParams) || {}
+  const isViewAllArticles = params.view === 'articles'
   const supabase = await createClient()
   const now = new Date().toISOString()
 
@@ -25,6 +31,28 @@ export default async function GardenPage() {
   if (error) {
     console.error('Error fetching garden posts:', error)
   }
+
+  // Fetch library items (latest 3 for landing section)
+  const { data: libraryItemsData, error: libraryError } = await supabase
+    .from('library_items')
+    .select('id, title, creator, type, url, thumbnail_url, recommendation_note, created_at')
+    .order('created_at', { ascending: false })
+    .limit(3)
+
+  if (libraryError) {
+    console.error('Error fetching library items for garden landing:', libraryError)
+  }
+
+  // Fetch report digests (only if any exist)
+  const { data: reportDigestsData } = await supabase
+    .from('posts')
+    .select('id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))')
+    .in('content_type', ['report_digest', 'report_digests'])
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', now)
+    .order('published_at', { ascending: false })
+    .limit(3)
 
   // Fetch series with published parts count
   const { data: seriesData, error: seriesError } = await supabase
@@ -54,7 +82,7 @@ export default async function GardenPage() {
     posts?: SeriesPostChild[]
   }
 
-  // Filter series with zero published parts (Part 4a requirement)
+  // Filter series with zero published parts
   const visibleSeries = ((seriesData || []) as unknown as SeriesRawItem[])
     .map((s) => {
       const publishedPosts = (s.posts || []).filter(
@@ -84,6 +112,9 @@ export default async function GardenPage() {
       currentFilter="all"
       posts={posts || []}
       series={visibleSeries}
+      libraryItems={libraryItemsData || []}
+      reportDigests={reportDigestsData || []}
+      isSectionedLanding={!isViewAllArticles}
     />
   )
 }
