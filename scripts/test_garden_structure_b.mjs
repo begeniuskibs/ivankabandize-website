@@ -3,6 +3,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { createClient } from '@supabase/supabase-js'
 
+export async function getAuthenticatedOwner() {
+  return (
+    globalThis.__mockAuthState || {
+      user: null,
+      isOwner: false,
+      error: 'Unauthorized: Authentication required',
+      status: 401,
+      supabase: null,
+    }
+  )
+}
+
 function loadEnvLocal(envFilePath = '.env.local') {
   const envPath = path.resolve(envFilePath)
   if (!fs.existsSync(envPath)) return {}
@@ -24,14 +36,19 @@ function loadEnvLocal(envFilePath = '.env.local') {
   return env
 }
 
+// Populate process.env for test runs so createAdminClient can access credentials
+const env = loadEnvLocal()
+for (const [k, v] of Object.entries(env)) {
+  if (!process.env[k]) {
+    process.env[k] = v
+  }
+}
+
 function getSupabaseClient() {
-  const env = loadEnvLocal()
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || env.NEXT_PUBLIC_SUPABASE_URL
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey =
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-    process.env.SUPABASE_SERVICE_ROLE_KEY ||
-    env.SUPABASE_SERVICE_ROLE_KEY
+    process.env.SUPABASE_SERVICE_ROLE_KEY
 
   if (!supabaseUrl || !supabaseKey) {
     throw new Error('Missing Supabase credentials in environment or .env.local')
@@ -195,10 +212,178 @@ async function runTests() {
     console.log(`  PASS: ${relPath} adheres strictly to spaced hyphen style.`)
   }
 
+  // 6. Test Admin Library Route Authentication and Input Validation
+  console.log('\n--- 6. Testing Admin Library Route Security and Input Validation ---')
+  const jitiModule = await import('jiti')
+  const createJiti = jitiModule.default || jitiModule
+  const jiti = createJiti(process.cwd(), {
+    alias: {
+      'server-only': path.resolve('node_modules/server-only/empty.js'),
+      '@/utils/supabase/auth': path.resolve('scripts/test_garden_structure_b.mjs'),
+      '@': process.cwd(),
+    },
+  })
+
+  const { GET, PATCH } = jiti('./app/api/admin/library/route.ts')
+
+  // (a) Route handlers with no session expect 401 or 403
+  globalThis.__mockAuthState = {
+    user: null,
+    isOwner: false,
+    error: 'Unauthorized: Authentication required',
+    status: 401,
+    supabase: null,
+  }
+
+  const getUnauthRes = await GET()
+  assert.strictEqual(getUnauthRes.status, 401, 'GET with no session must return 401')
+  const getUnauthJson = await getUnauthRes.json()
+  assert.strictEqual(getUnauthJson.error, 'Unauthorized: Authentication required')
+
+  const patchUnauthRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+  )
+  assert.strictEqual(patchUnauthRes.status, 401, 'PATCH with no session must return 401')
+  const patchUnauthJson = await patchUnauthRes.json()
+  assert.strictEqual(patchUnauthJson.error, 'Unauthorized: Authentication required')
+  console.log('  PASS (a.1): GET and PATCH return 401 when no session is present.')
+
+  // Non-owner session test (403)
+  globalThis.__mockAuthState = {
+    user: { id: 'reader-user-id' },
+    isOwner: false,
+    error: 'Forbidden: Owner privileges required',
+    status: 403,
+    supabase: null,
+  }
+
+  const getForbiddenRes = await GET()
+  assert.strictEqual(getForbiddenRes.status, 403, 'GET with non-owner session must return 403')
+
+  const patchForbiddenRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({}),
+    })
+  )
+  assert.strictEqual(patchForbiddenRes.status, 403, 'PATCH with non-owner session must return 403')
+  console.log('  PASS (a.2): GET and PATCH return 403 when authenticated user lacks owner privileges.')
+
+  // Set mockAuthState to authenticated owner for input validation tests (b) and (c)
+  globalThis.__mockAuthState = {
+    user: { id: 'owner-user-id' },
+    isOwner: true,
+    error: null,
+    status: 200,
+    supabase: null,
+  }
+
+  // (b) Reject javascript: and data: URLs
+  const sampleUuid = '11111111-1111-4111-a111-111111111111'
+
+  const patchJsUrlRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: sampleUuid,
+        type: 'podcast',
+        url: 'javascript:alert(1)',
+      }),
+    })
+  )
+  assert.strictEqual(patchJsUrlRes.status, 400, 'PATCH with javascript: url must return 400')
+  const patchJsUrlJson = await patchJsUrlRes.json()
+  assert.ok(
+    patchJsUrlJson.error && patchJsUrlJson.error.includes('javascript'),
+    'Error message must indicate disallowed protocol'
+  )
+  console.log('  PASS (b.1): PATCH strictly rejects javascript: url with status 400.')
+
+  const patchDataUrlRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: sampleUuid,
+        type: 'podcast',
+        url: 'data:text/html,<script>alert("xss")</script>',
+      }),
+    })
+  )
+  assert.strictEqual(patchDataUrlRes.status, 400, 'PATCH with data: url must return 400')
+  console.log('  PASS (b.2): PATCH strictly rejects data: url with status 400.')
+
+  const patchJsThumbRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: sampleUuid,
+        thumbnail_url: 'javascript:evil()',
+      }),
+    })
+  )
+  assert.strictEqual(patchJsThumbRes.status, 400, 'PATCH with javascript: thumbnail_url must return 400')
+  console.log('  PASS (b.3): PATCH strictly rejects javascript: thumbnail_url with status 400.')
+
+  // (c) Reject an invalid type
+  const patchInvalidTypeRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: sampleUuid,
+        type: 'magazine',
+      }),
+    })
+  )
+  assert.strictEqual(patchInvalidTypeRes.status, 400, 'PATCH with invalid type must return 400')
+  const patchInvalidTypeJson = await patchInvalidTypeRes.json()
+  assert.strictEqual(
+    patchInvalidTypeJson.error,
+    'Type must be one of: podcast, book, newsletter'
+  )
+  console.log('  PASS (c): PATCH strictly rejects invalid type with status 400.')
+
+  // Additional validations: invalid id (not uuid) and invalid tag_ids
+  const patchInvalidIdRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: 'not-a-valid-uuid',
+      }),
+    })
+  )
+  assert.strictEqual(patchInvalidIdRes.status, 400, 'PATCH with non-uuid id must return 400')
+  console.log('  PASS: PATCH validates id must be a valid UUID.')
+
+  const patchInvalidTagsRes = await PATCH(
+    new Request('http://localhost/api/admin/library', {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: sampleUuid,
+        tag_ids: ['invalid-tag-uuid'],
+      }),
+    })
+  )
+  assert.strictEqual(patchInvalidTagsRes.status, 400, 'PATCH with non-uuid in tag_ids must return 400')
+  console.log('  PASS: PATCH validates tag_ids must contain valid UUIDs.')
+
   console.log('\n=== ALL GARDEN STRUCTURE PART B TESTS PASSED! ===')
 }
 
-runTests().catch((err) => {
-  console.error('\nFAIL: Test suite failed:', err)
-  process.exit(1)
-})
+if (!globalThis.__testsRunning) {
+  globalThis.__testsRunning = true
+  runTests().catch((err) => {
+    console.error('\nFAIL: Test suite failed:', err)
+    process.exit(1)
+  })
+}
