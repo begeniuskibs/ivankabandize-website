@@ -18,6 +18,7 @@ export interface PostItem {
   title: string
   slug: string
   excerpt?: string | null
+  preview?: string | null
   published_at?: string | null
   content_type?: 'random_thoughts' | 'structured_thoughts' | 'tools_for_thought' | string
   featured_image_url?: string | null

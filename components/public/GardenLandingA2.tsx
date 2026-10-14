@@ -7,6 +7,7 @@ export interface GardenA2Article {
   title: string
   slug: string
   excerpt?: string | null
+  preview?: string | null
   content_type?: string | null
   featured_image_url?: string | null
 }
@@ -262,15 +263,18 @@ export default function GardenLandingA2({
                       <span className="text-[10px] font-bold uppercase tracking-wider text-[#CF3F29] block mb-2">
                         {streamTag}
                       </span>
-                      <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] group-hover:text-[#CF3F29] transition-colors leading-snug mb-2">
+                      <h3
+                        className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] group-hover:text-[#CF3F29] transition-colors leading-snug mb-2 line-clamp-1"
+                        title={post.title}
+                      >
                         {post.title}
                       </h3>
                     </div>
-                    {post.excerpt && (
+                    {((post.preview && post.preview.trim()) || (post.excerpt && post.excerpt.trim())) ? (
                       <p className="text-xs text-[#5A5D70] leading-relaxed line-clamp-2 mt-2">
-                        {post.excerpt}
+                        {post.preview || post.excerpt}
                       </p>
-                    )}
+                    ) : null}
                   </div>
                 </Link>
               )
