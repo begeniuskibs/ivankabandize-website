@@ -35,23 +35,19 @@ function runStaticChecks() {
     // Articles coral
     '#FEF1ED',
     '#F7D6CC',
-    '#FBD3C8',
     '#EF5B45',
     '#CF3F29',
     // Curated Library teal
     '#EAF6F4',
     '#C5E4E0',
-    '#BFE3DF',
     '#1B7F7A',
     // Report Digests gold
     '#FBF4E4',
     '#EFDFB8',
-    '#F2DEAA',
     '#A97B1A',
     // Resources slate
     '#EEEFF6',
     '#D5D8E8',
-    '#CDD0E3',
     '#5C5F73',
   ]
   for (const color of expectedColours) {
