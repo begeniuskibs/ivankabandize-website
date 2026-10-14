@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import PostCard from '@/components/public/PostCard'
+import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -44,6 +45,13 @@ export default async function HomePage() {
     .lte('published_at', new Date().toISOString())
     .order('published_at', { ascending: false })
     .limit(3)
+
+  // Previews: excerpt if present, else first paragraph via helper
+  const cardPreviews = await getCardPreviews(posts || [])
+  const postsWithPreviews = (posts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+  }))
 
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
@@ -382,9 +390,9 @@ export default async function HomePage() {
             </div>
           </ScrollReveal>
 
-          {posts && posts.length > 0 ? (
+          {postsWithPreviews && postsWithPreviews.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {posts.map((post, idx) => (
+              {postsWithPreviews.map((post, idx) => (
                 <ScrollReveal key={post.id} delayMs={idx * 80} className="h-full">
                   <PostCard post={post} />
                 </ScrollReveal>

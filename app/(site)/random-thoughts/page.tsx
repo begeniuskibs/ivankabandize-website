@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
+import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,13 +28,20 @@ export default async function RandomThoughtsPage() {
     console.error('Error fetching random thoughts:', error)
   }
 
+  // Previews: excerpt if present, else first paragraph via helper
+  const cardPreviews = await getCardPreviews(posts || [])
+  const postsWithPreviews = (posts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+  }))
+
   return (
     <GardenFeed
       title="Random Thoughts"
       eyebrow="Sparks & Observations"
       description="Spontaneous ideas, fleeting observations, and short reflections captured in the moment."
       currentFilter="random_thoughts"
-      posts={posts || []}
+      posts={postsWithPreviews}
       heroBannerImage={HERO_BANNER}
     />
   )

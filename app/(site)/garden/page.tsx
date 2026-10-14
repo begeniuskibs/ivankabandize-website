@@ -116,7 +116,6 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
         series={visibleSeries}
         libraryItems={libraryItemsData || []}
         isSectionedLanding={false}
-        showPreviews={true}
       />
     )
   }

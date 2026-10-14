@@ -19,7 +19,7 @@ interface PostCardProps {
   showPreview?: boolean
 }
 
-export default function PostCard({ post, className = '', showPreview = false }: PostCardProps) {
+export default function PostCard({ post, className = '', showPreview = true }: PostCardProps) {
   const titleClass =
     CARD_TITLE_LINES === 1
       ? 'whitespace-nowrap overflow-hidden text-ellipsis'
@@ -54,7 +54,7 @@ export default function PostCard({ post, className = '', showPreview = false }: 
       {/* Title Area with 16px top, 20px horizontal & bottom padding */}
       <div
         className={
-          showPreview
+          showPreview && previewText
             ? 'p-5 flex-1 flex flex-col justify-between min-w-0'
             : 'pt-4 px-5 pb-5 flex-1 flex flex-col justify-center min-w-0'
         }

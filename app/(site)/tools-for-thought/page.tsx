@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
+import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,13 +28,20 @@ export default async function ToolsForThoughtPage() {
     console.error('Error fetching tools for thought:', error)
   }
 
+  // Previews: excerpt if present, else first paragraph via helper
+  const cardPreviews = await getCardPreviews(posts || [])
+  const postsWithPreviews = (posts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+  }))
+
   return (
     <GardenFeed
       title="Tools for Thought"
       eyebrow="Systems & Workflows"
       description="Software, tools, mental setups, and workflows designed to extend thinking and eliminate friction."
       currentFilter="tools_for_thought"
-      posts={posts || []}
+      posts={postsWithPreviews}
       heroBannerImage={HERO_BANNER}
     />
   )
