@@ -35,23 +35,19 @@ function runStaticChecks() {
     // Articles coral
     '#FEF1ED',
     '#F7D6CC',
-    '#FBD3C8',
     '#EF5B45',
     '#CF3F29',
     // Curated Library teal
     '#EAF6F4',
     '#C5E4E0',
-    '#BFE3DF',
     '#1B7F7A',
     // Report Digests gold
     '#FBF4E4',
     '#EFDFB8',
-    '#F2DEAA',
     '#A97B1A',
     // Resources slate
     '#EEEFF6',
     '#D5D8E8',
-    '#CDD0E3',
     '#5C5F73',
   ]
   for (const color of expectedColours) {
@@ -90,18 +86,21 @@ function runStaticChecks() {
   console.log(`[PASS] Library card has no description or preview text`)
   assert.ok(!hasDescriptionInLibrary, 'Library card in GardenLandingA2.tsx must not render description or recommendation_note')
 
-  // 6. 3D Icons & License Present
-  console.log('\n--- 6. Testing 3D Icons and License Files ---')
+  // 6. 3D Icons & License Files
+  console.log('\n--- 6. Testing 3D Icons and Card Art Files ---')
   const expectedFiles = [
-    'public/garden-icons/articles.png',
-    'public/garden-icons/library.png',
-    'public/garden-icons/digests.png',
-    'public/garden-icons/resources.png',
-    'public/garden-icons/LICENSE-fluentui-emoji.txt',
+    'public/garden-icons-3d/articles.svg',
+    'public/garden-icons-3d/library.svg',
+    'public/garden-icons-3d/digests.svg',
+    'public/garden-icons-3d/resources.svg',
+    'public/garden-card-art/articles.svg',
+    'public/garden-card-art/library.svg',
+    'public/garden-card-art/digests.svg',
+    'public/garden-card-art/resources.svg',
   ]
   for (const file of expectedFiles) {
     const fullPath = path.resolve(file)
-    assert.ok(fs.existsSync(fullPath), `Expected icon/license file ${file} must exist`)
+    assert.ok(fs.existsSync(fullPath), `Expected icon or card art file ${file} must exist`)
     const stats = fs.statSync(fullPath)
     assert.ok(stats.size > 0, `File ${file} must not be empty`)
     console.log(`[PASS] File verified: ${file} (${stats.size} bytes)`)
