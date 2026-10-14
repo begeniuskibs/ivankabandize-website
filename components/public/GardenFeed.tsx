@@ -66,7 +66,6 @@ interface GardenFeedProps {
   libraryItems?: LibraryFeedItem[]
   reportDigests?: PostItem[]
   isSectionedLanding?: boolean
-  showPreviews?: boolean
 }
 
 function LibraryCard({ item }: { item: LibraryFeedItem }) {
@@ -119,7 +118,6 @@ export default function GardenFeed({
   libraryItems = [],
   reportDigests = [],
   isSectionedLanding = false,
-  showPreviews = false,
 }: GardenFeedProps) {
   const CATEGORY_NAMES = ['random thoughts', 'structured thoughts', 'tools for thought']
 
@@ -519,11 +517,7 @@ export default function GardenFeed({
               {posts && posts.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                   {posts.map((post) => (
-                    <PostCard
-                      key={post.id}
-                      post={post}
-                      showPreview={showPreviews || currentFilter === 'all'}
-                    />
+                    <PostCard key={post.id} post={post} />
                   ))}
                 </div>
               ) : (

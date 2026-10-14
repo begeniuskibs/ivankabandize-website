@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import PostCard from '@/components/public/PostCard'
+import { getCardPreviews } from '@/lib/postTeaser'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 
@@ -64,7 +65,12 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
     console.error('Error fetching series parts:', partsError)
   }
 
-  const publishedParts = parts || []
+  // Previews: excerpt if present, else first paragraph via helper
+  const cardPreviews = await getCardPreviews(parts || [])
+  const publishedParts = (parts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+  }))
 
   return (
     <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1] py-16 md:py-24">

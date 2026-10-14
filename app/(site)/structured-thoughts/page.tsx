@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
+import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,13 +28,20 @@ export default async function StructuredThoughtsPage() {
     console.error('Error fetching structured thoughts:', error)
   }
 
+  // Previews: excerpt if present, else first paragraph via helper
+  const cardPreviews = await getCardPreviews(posts || [])
+  const postsWithPreviews = (posts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+  }))
+
   return (
     <GardenFeed
       title="Structured Thoughts"
       eyebrow="Essays & Deep Dives"
       description="Long-form essays, architectural explorations, and frameworks for leadership and systems."
       currentFilter="structured_thoughts"
-      posts={posts || []}
+      posts={postsWithPreviews}
       heroBannerImage={HERO_BANNER}
     />
   )
