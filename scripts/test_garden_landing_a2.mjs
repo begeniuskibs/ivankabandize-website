@@ -90,18 +90,21 @@ function runStaticChecks() {
   console.log(`[PASS] Library card has no description or preview text`)
   assert.ok(!hasDescriptionInLibrary, 'Library card in GardenLandingA2.tsx must not render description or recommendation_note')
 
-  // 6. 3D Icons & License Present
-  console.log('\n--- 6. Testing 3D Icons and License Files ---')
+  // 6. 3D Icons & License Files
+  console.log('\n--- 6. Testing 3D Icons and Card Art Files ---')
   const expectedFiles = [
-    'public/garden-icons/articles.png',
-    'public/garden-icons/library.png',
-    'public/garden-icons/digests.png',
-    'public/garden-icons/resources.png',
-    'public/garden-icons/LICENSE-fluentui-emoji.txt',
+    'public/garden-icons-3d/articles.svg',
+    'public/garden-icons-3d/library.svg',
+    'public/garden-icons-3d/digests.svg',
+    'public/garden-icons-3d/resources.svg',
+    'public/garden-card-art/articles.svg',
+    'public/garden-card-art/library.svg',
+    'public/garden-card-art/digests.svg',
+    'public/garden-card-art/resources.svg',
   ]
   for (const file of expectedFiles) {
     const fullPath = path.resolve(file)
-    assert.ok(fs.existsSync(fullPath), `Expected icon/license file ${file} must exist`)
+    assert.ok(fs.existsSync(fullPath), `Expected icon or card art file ${file} must exist`)
     const stats = fs.statSync(fullPath)
     assert.ok(stats.size > 0, `File ${file} must not be empty`)
     console.log(`[PASS] File verified: ${file} (${stats.size} bytes)`)

@@ -67,7 +67,7 @@ export default function GardenLandingA2({
             {/* Articles Card (Coral) */}
             <Link
               href="/garden?view=articles"
-              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
+              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] hover:bg-[#FBD3C8] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
             >
               {/* Full-card Background Art */}
               <Image
@@ -112,7 +112,7 @@ export default function GardenLandingA2({
             {/* Curated Library Card (Teal) */}
             <Link
               href="/library"
-              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EAF6F4] border border-[#C5E4E0] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B7F7A] focus-visible:ring-offset-2"
+              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EAF6F4] hover:bg-[#BFE3DF] border border-[#C5E4E0] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B7F7A] focus-visible:ring-offset-2"
             >
               {/* Full-card Background Art */}
               <Image
@@ -155,7 +155,7 @@ export default function GardenLandingA2({
             </Link>
 
             {/* Report Digests Card (Gold) - Non-link */}
-            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8]">
+            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] hover:bg-[#F2DEAA] border border-[#EFDFB8]">
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/digests.svg"
@@ -194,7 +194,7 @@ export default function GardenLandingA2({
             </div>
 
             {/* Resources Card (Slate) - Non-link */}
-            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8]">
+            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] hover:bg-[#CDD0E3] border border-[#D5D8E8]">
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/resources.svg"
