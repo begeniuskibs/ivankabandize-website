@@ -138,3 +138,77 @@ export async function getPostTeaser(slug: string): Promise<TeaserPost | null> {
     firstParagraph,
   }
 }
+
+/**
+ * Truncates text on a word boundary to approximately maxLength characters,
+ * appending an ellipsis if truncated.
+ */
+export function truncateOnWordBoundary(text: string, maxLength: number = 160): string {
+  const trimmed = text.trim()
+  if (trimmed.length <= maxLength) return trimmed
+  const cut = trimmed.slice(0, maxLength)
+  const lastSpace = cut.lastIndexOf(' ')
+  const boundary = lastSpace > 0 ? cut.slice(0, lastSpace) : cut
+  return `${boundary.replace(/[.,;:!?]+$/, '')}...`
+}
+
+/**
+ * Returns card previews for an array of posts.
+ * If a post already has an excerpt, uses that excerpt.
+ * For posts with an empty or missing excerpt, uses the server - only admin client
+ * to select ONLY id and content, extracts the first paragraph, truncates to
+ * approximately 160 characters on a word boundary with an ellipsis, and returns
+ * ONLY that string in a Record<string, string> map.
+ * Never returns content JSON or more than the first paragraph.
+ */
+export async function getCardPreviews(
+  posts: Array<{ id: string; excerpt?: string | null }>
+): Promise<Record<string, string>> {
+  const previews: Record<string, string> = {}
+  if (!posts || posts.length === 0) return previews
+
+  const missingIds: string[] = []
+
+  for (const post of posts) {
+    if (post.excerpt && post.excerpt.trim().length > 0) {
+      previews[post.id] = post.excerpt.trim()
+    } else if (post.id) {
+      missingIds.push(post.id)
+    }
+  }
+
+  if (missingIds.length === 0) {
+    return previews
+  }
+
+  const adminClient = createAdminClient()
+  const now = new Date().toISOString()
+
+  // Select ONLY id and content for published posts that are not in the future
+  const { data, error } = await adminClient
+    .from('posts')
+    .select('id, content')
+    .in('id', missingIds)
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', now)
+
+  if (error) {
+    console.error('getCardPreviews query error:', error)
+    return previews
+  }
+
+  if (data) {
+    for (const row of data) {
+      const firstPara = extractFirstParagraph(row.content)
+      if (firstPara) {
+        previews[row.id] = truncateOnWordBoundary(firstPara, 160)
+      } else {
+        previews[row.id] = ''
+      }
+    }
+  }
+
+  return previews
+}
+

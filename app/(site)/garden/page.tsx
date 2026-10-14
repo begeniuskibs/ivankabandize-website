@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
 import GardenLandingA2 from '@/components/public/GardenLandingA2'
+import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -35,6 +36,13 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
   if (error) {
     console.error('Error fetching garden posts:', error)
   }
+
+  // Previews: excerpt if present, else first paragraph via helper
+  const cardPreviews = await getCardPreviews(posts || [])
+  const postsWithPreviews = (posts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+  }))
 
   // Fetch library items (latest 6 for landing section, with exact count)
   const { data: libraryItemsData, count: totalLibraryCount, error: libraryError } = await supabase
@@ -104,10 +112,11 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
         eyebrow="Digital Garden & Notebook"
         description="A living repository of essays, sparks, reflections, and systems notes - tended across different streams of thought."
         currentFilter="all"
-        posts={posts || []}
+        posts={postsWithPreviews}
         series={visibleSeries}
         libraryItems={libraryItemsData || []}
         isSectionedLanding={false}
+        showPreviews={true}
       />
     )
   }
@@ -135,7 +144,7 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
 
   return (
     <GardenLandingA2
-      articles={posts || []}
+      articles={postsWithPreviews}
       totalArticlesCount={totalArticlesCount ?? (posts || []).length}
       libraryItems={libraryItemsData || []}
       totalLibraryCount={totalLibraryCount ?? (libraryItemsData || []).length}
