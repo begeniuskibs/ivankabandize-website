@@ -73,15 +73,15 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
   }))
 
   return (
-    <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1] py-16 md:py-24">
+    <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1] py-16 md:py-24 overflow-x-clip">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
         {/* Navigation Breadcrumb */}
         <div className="mb-10">
           <Link
-            href="/garden"
+            href="/garden?view=articles"
             className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
           >
-            <span>&larr; Back to The Garden</span>
+            <span>&larr; Back to Articles</span>
           </Link>
         </div>
 
@@ -128,7 +128,7 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
 
           {/* Header Image if set */}
           {series.header_image_url && (
-            <div className="relative aspect-[16/9] w-full rounded-[5px] overflow-hidden mb-8 border border-[#F5ECDE] shadow-sm">
+            <div className="w-screen relative left-1/2 -translate-x-1/2 aspect-[16/9] md:aspect-[21/9] md:max-h-[520px] overflow-hidden mb-8">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={series.header_image_url}
