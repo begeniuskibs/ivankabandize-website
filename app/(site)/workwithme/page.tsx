@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
@@ -62,10 +63,15 @@ export default async function WorkWithMePage() {
                 <div className="pt-2">
                   <Link
                     href={ctaUrl}
-                    className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>{ctaText}</span>
-                    <span aria-hidden="true">&rarr;</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </Link>
                 </div>
                 <p className="text-sm font-medium text-[#5A5D70] mt-4 max-w-xl">

@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
@@ -77,10 +78,15 @@ export default async function MePage() {
                 <div className="flex flex-wrap items-center gap-4 pt-4">
                   <Link
                     href="/lets-talk"
-                    className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>Let&apos;s Talk</span>
-                    <span aria-hidden="true">&rarr;</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </Link>
                   <Link
                     href={ctaUrl}
@@ -211,10 +217,15 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#EF5B45]/10">
                   <Link
                     href="/workwithme"
-                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#EF5B45] hover:text-[#D94834] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#EF5B45] hover:text-[#D94834] transition"
                   >
                     <span>Explore Advisory</span>
-                    <span aria-hidden="true">&rarr;</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </Link>
                 </div>
               </div>
@@ -241,10 +252,15 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#2AA198]/10">
                   <Link
                     href="/workwithme"
-                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#2AA198] hover:text-[#1D7A73] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#2AA198] hover:text-[#1D7A73] transition"
                   >
                     <span>Training Method</span>
-                    <span aria-hidden="true">&rarr;</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </Link>
                 </div>
               </div>
@@ -271,10 +287,15 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#F7C55C]/20">
                   <Link
                     href="/garden"
-                    className="inline-flex items-center gap-1.5 text-sm font-bold text-[#C99424] hover:text-[#9A7015] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#C99424] hover:text-[#9A7015] transition"
                   >
                     <span>Read The Garden</span>
-                    <span aria-hidden="true">&rarr;</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </Link>
                 </div>
               </div>

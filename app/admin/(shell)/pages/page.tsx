@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 
 interface PageRecord {
   id: string
@@ -170,9 +171,15 @@ export default function AdminPagesListPage() {
                     </a>
                     <Link
                       href={`/admin/pages/${page.slug}/edit`}
-                      className="px-5 py-2 text-xs font-semibold bg-black hover:bg-gray-800 text-white rounded-xl transition shadow-sm"
+                      className="group inline-flex items-center gap-1.5 px-5 py-2 text-xs font-semibold bg-black hover:bg-gray-800 text-white rounded-xl transition shadow-sm"
                     >
-                      Edit Fields &rarr;
+                      <span>Edit Fields</span>
+                      <ArrowRight
+                        size={14}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                      />
                     </Link>
                   </div>
                 </div>

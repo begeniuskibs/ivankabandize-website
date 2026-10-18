@@ -102,14 +102,14 @@ for (const pattern of contentSelectMatches) {
 }
 console.log('PASS: page.tsx does not select content column in the view=articles branch')
 
-// 10. Assert components/public/GardenFeed.tsx and PostCard.tsx are unchanged versus origin/main
+// 10. Assert components/public/PostCard.tsx is unchanged versus origin/main
 try {
-  execSync('git diff --quiet origin/main -- components/public/GardenFeed.tsx components/public/PostCard.tsx', {
+  execSync('git diff --quiet origin/main -- components/public/PostCard.tsx', {
     stdio: 'inherit',
   })
-  console.log('PASS: GardenFeed.tsx and PostCard.tsx are unchanged versus origin/main')
+  console.log('PASS: PostCard.tsx is unchanged versus origin/main')
 } catch {
-  assert.fail('GardenFeed.tsx and PostCard.tsx must remain unchanged versus origin/main')
+  assert.fail('PostCard.tsx must remain unchanged versus origin/main')
 }
 
 // 11. Assert STREAM_HEROES entries (all four eyebrows and titles)

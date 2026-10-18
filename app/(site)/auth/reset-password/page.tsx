@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 
@@ -302,9 +303,15 @@ function ResetPasswordForm() {
       <div className="mt-6 pt-6 border-t border-[#F5ECDE] text-center">
         <Link
           href="/login"
-          className="text-xs font-semibold text-[#5A5D70] hover:text-[#232536] transition font-sans"
+          className="group inline-flex items-center gap-1.5 text-xs font-semibold text-[#5A5D70] hover:text-[#232536] transition font-sans"
         >
-          &larr; Cancel and return to Sign In
+          <ArrowLeft
+            size={14}
+            strokeWidth={2.5}
+            aria-hidden="true"
+            className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+          />
+          <span>Cancel and return to Sign In</span>
         </Link>
       </div>
     </div>

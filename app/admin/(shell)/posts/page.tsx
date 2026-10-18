@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useMemo, useRef } from 'react'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import DeletePostModal, { PostToDelete } from '@/components/admin/DeletePostModal'
 
@@ -258,10 +259,15 @@ export default function AdminPostsListPage() {
                       <Link
                         href={`/admin/posts/editor?id=${post.id}`}
                         aria-label={`Edit ${post.title}`}
-                        className="px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition border border-gray-200 flex items-center gap-1"
+                        className="group px-3 py-1.5 text-xs font-semibold text-gray-700 hover:text-black hover:bg-gray-100 rounded-lg transition border border-gray-200 inline-flex items-center gap-1.5"
                       >
                         <span>Edit</span>
-                        <span>&rarr;</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </Link>
                       <button
                         type="button"

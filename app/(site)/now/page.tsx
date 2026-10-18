@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const metadata: Metadata = {
@@ -191,10 +192,15 @@ export default function NowPage() {
               <div>
                 <Link
                   href="/lets-talk"
-                  className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                  className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                 >
                   <span>Working on something similar? Let&rsquo;s Talk</span>
-                  <span aria-hidden="true">&rarr;</span>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                  />
                 </Link>
               </div>
             </div>

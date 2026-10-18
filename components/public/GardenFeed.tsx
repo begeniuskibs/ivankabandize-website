@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import PostCard from './PostCard'
 
 export interface TagDetails {
@@ -99,7 +100,14 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
       </div>
       <div className="pt-3 border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs text-[#5A5D70]">
         <span className="font-semibold text-[#2AA198]">Curated resource</span>
-        <span className="font-bold group-hover:text-[#EF5B45] transition-colors">&rarr;</span>
+        <span className="font-bold group-hover:text-[#EF5B45] transition-colors inline-flex items-center">
+          <ArrowRight
+            size={14}
+            strokeWidth={2.5}
+            aria-hidden="true"
+            className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+          />
+        </span>
       </div>
     </a>
   )
@@ -365,8 +373,14 @@ export default function GardenFeed({
                               ? `${item.published_count} ${item.published_count === 1 ? 'entry' : 'entries'}`
                               : `${item.published_count} ${item.published_count === 1 ? 'entry' : 'entries'} and counting`}
                           </span>
-                          <span className="text-[#5A5D70] group-hover:text-[#EF5B45] group-hover:translate-x-0.5 font-bold transition-all">
-                            Explore series &rarr;
+                          <span className="text-[#5A5D70] group-hover:text-[#EF5B45] font-bold transition-all inline-flex items-center gap-1.5">
+                            <span>Explore series</span>
+                            <ArrowRight
+                              size={14}
+                              strokeWidth={2.5}
+                              aria-hidden="true"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                            />
                           </span>
                         </div>
                       </Link>
@@ -390,9 +404,15 @@ export default function GardenFeed({
                     </div>
                     <Link
                       href="/garden?view=articles"
-                      className="text-xs font-bold text-[#EF5B45] hover:underline"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#EF5B45] hover:underline"
                     >
-                      See all articles &rarr;
+                      <span>See all articles</span>
+                      <ArrowRight
+                        size={14}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                      />
                     </Link>
                   </div>
 
@@ -419,9 +439,15 @@ export default function GardenFeed({
                     </div>
                     <Link
                       href="/library"
-                      className="text-xs font-bold text-[#2AA198] hover:underline"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#2AA198] hover:underline"
                     >
-                      See all in Library &rarr;
+                      <span>See all in Library</span>
+                      <ArrowRight
+                        size={14}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                      />
                     </Link>
                   </div>
 
@@ -448,9 +474,15 @@ export default function GardenFeed({
                     </div>
                     <Link
                       href="/garden?view=report_digests"
-                      className="text-xs font-bold text-[#C99424] hover:underline"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#C99424] hover:underline"
                     >
-                      See all digests &rarr;
+                      <span>See all digests</span>
+                      <ArrowRight
+                        size={14}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                      />
                     </Link>
                   </div>
 
@@ -494,9 +526,15 @@ export default function GardenFeed({
                     {activeTopicSlug && (
                       <Link
                         href={`/library?topic=${activeTopicSlug}`}
-                        className="text-xs font-bold text-[#2AA198] hover:underline"
+                        className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#2AA198] hover:underline"
                       >
-                        See in Library &rarr;
+                        <span>See in Library</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </Link>
                     )}
                   </div>
@@ -535,10 +573,15 @@ export default function GardenFeed({
                     <div className="mt-6">
                       <Link
                         href="/garden"
-                        className="inline-flex items-center text-xs font-bold text-[#EF5B45] hover:underline gap-1"
+                        className="group inline-flex items-center text-xs font-bold text-[#EF5B45] hover:underline gap-1.5"
                       >
                         <span>View all garden entries</span>
-                        <span aria-hidden="true">&rarr;</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </Link>
                     </div>
                   )}

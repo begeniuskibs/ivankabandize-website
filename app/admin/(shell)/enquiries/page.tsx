@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useMemo } from 'react'
+import { ArrowRight } from 'lucide-react'
 import { INQUIRY_STATUSES, type InquiryStatus } from '@/lib/inquiries'
 
 interface InquiryRecord {
@@ -256,7 +257,7 @@ export default function AdminEnquiriesPage() {
                     <div
                       key={inq.id}
                       onClick={() => handleSelect(inq)}
-                      className={`p-5 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition cursor-pointer ${
+                      className={`group p-5 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition cursor-pointer ${
                         isSelected
                           ? 'bg-[#FDF8F1] border-l-4 border-l-[#EF5B45]'
                           : 'hover:bg-gray-50/80'
@@ -325,9 +326,14 @@ export default function AdminEnquiriesPage() {
                       </div>
 
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-xs font-semibold text-[#EF5B45] transition flex items-center gap-1">
+                        <span className="text-xs font-semibold text-[#EF5B45] transition inline-flex items-center gap-1.5">
                           <span>View</span>
-                          <span>&rarr;</span>
+                          <ArrowRight
+                            size={14}
+                            strokeWidth={2.5}
+                            aria-hidden="true"
+                            className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                          />
                         </span>
                       </div>
                     </div>

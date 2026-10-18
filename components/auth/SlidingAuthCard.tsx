@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowLeft } from 'lucide-react'
 import { signIn, signUp } from '@/app/auth/actions'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
 import { AuthImage, AUTH_IMAGE_POOL } from '@/components/auth/auth-images'
@@ -49,9 +50,15 @@ export default function SlidingAuthCard({
         <div className="pt-4 border-t border-[#F5ECDE]">
           <Link
             href="/login"
-            className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black transition font-sans"
+            className="group inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black transition font-sans"
           >
-            &larr; Back to Sign In
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
+            <span>Back to Sign In</span>
           </Link>
         </div>
       </div>

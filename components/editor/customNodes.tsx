@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useRef, useEffect } from 'react'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { Node, mergeAttributes } from '@tiptap/core'
 import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
@@ -539,20 +540,30 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
                             <button
                               type="button"
                               onClick={() => handleMove(i, 'left')}
-                              className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                              className="group p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs inline-flex items-center justify-center"
                               title="Move Left"
                             >
-                              &larr;
+                              <ArrowLeft
+                                size={14}
+                                strokeWidth={2.5}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                              />
                             </button>
                           )}
                           {i < images.length - 1 && (
                             <button
                               type="button"
                               onClick={() => handleMove(i, 'right')}
-                              className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                              className="group p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs inline-flex items-center justify-center"
                               title="Move Right"
                             >
-                              &rarr;
+                              <ArrowRight
+                                size={14}
+                                strokeWidth={2.5}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                              />
                             </button>
                           )}
                           <button
@@ -593,20 +604,30 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
                       <button
                         type="button"
                         onClick={() => handleMove(i, 'left')}
-                        className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                        className="group p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs inline-flex items-center justify-center"
                         title="Move Left"
                       >
-                        &larr;
+                        <ArrowLeft
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                        />
                       </button>
                     )}
                     {i < images.length - 1 && (
                       <button
                         type="button"
                         onClick={() => handleMove(i, 'right')}
-                        className="p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs"
+                        className="group p-1 bg-white/90 rounded text-gray-800 hover:bg-white text-xs inline-flex items-center justify-center"
                         title="Move Right"
                       >
-                        &rarr;
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </button>
                     )}
                     <button

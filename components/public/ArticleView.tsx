@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import TipTapRenderer from '@/components/editor/TipTapRenderer'
 import ReadingProgressBar from '@/components/public/ReadingProgressBar'
 import WideContainer from '@/components/public/WideContainer'
@@ -131,9 +132,15 @@ export default function ArticleView({
           <div className="mb-10 print:hidden">
             <Link
               href="/garden"
-              className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
+              className="group inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
             >
-              <span>&larr; Back to The Garden</span>
+              <ArrowLeft
+                size={14}
+                strokeWidth={2.5}
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+              />
+              <span>Back to The Garden</span>
             </Link>
           </div>
 
@@ -233,10 +240,15 @@ export default function ArticleView({
                   {seriesContext.prevPost ? (
                     <Link
                       href={`/garden/${seriesContext.prevPost.slug}`}
-                      className="text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%]"
+                      className="group text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%]"
                       title={seriesContext.prevPost.title}
                     >
-                      <span aria-hidden="true">&larr;</span>
+                      <ArrowLeft
+                        size={14}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none shrink-0"
+                      />
                       <span className="truncate">Previous: {seriesContext.prevPost.title}</span>
                     </Link>
                   ) : (
@@ -246,11 +258,16 @@ export default function ArticleView({
                   {seriesContext.nextPost && (
                     <Link
                       href={`/garden/${seriesContext.nextPost.slug}`}
-                      className="text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%] ml-auto"
+                      className="group text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%] ml-auto"
                       title={seriesContext.nextPost.title}
                     >
                       <span className="truncate">Next: {seriesContext.nextPost.title}</span>
-                      <span aria-hidden="true">&rarr;</span>
+                      <ArrowRight
+                        size={14}
+                        strokeWidth={2.5}
+                        aria-hidden="true"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none shrink-0"
+                      />
                     </Link>
                   )}
                 </div>
@@ -331,8 +348,13 @@ export default function ArticleView({
                     />
                   </div>
                 ) : (
-                  <div className="hidden sm:flex w-12 h-12 rounded-full bg-[#FDF8F1] border border-[#F5ECDE] items-center justify-center text-[#EF5B45] group-hover:translate-x-1 transition-transform">
-                    &rarr;
+                  <div className="hidden sm:flex w-12 h-12 rounded-full bg-[#FDF8F1] border border-[#F5ECDE] items-center justify-center text-[#EF5B45]">
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </div>
                 )}
               </Link>

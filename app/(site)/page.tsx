@@ -1,6 +1,7 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import PostCard from '@/components/public/PostCard'
 import { getCardPreviews } from '@/lib/postTeaser'
@@ -93,10 +94,15 @@ export default async function HomePage() {
                 <div className="flex max-md:flex-col flex-wrap items-center max-md:gap-3 gap-4 pt-2 max-md:w-full">
                   <Link
                     href={ctaUrl}
-                    className="max-md:w-full max-md:h-[52px] inline-flex items-center justify-center gap-2 font-bold max-md:text-[17px] text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] md:bg-[#EF5B45] md:hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="group max-md:w-full max-md:h-[52px] inline-flex items-center justify-center gap-2 font-bold max-md:text-[17px] text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] md:bg-[#EF5B45] md:hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>{ctaText}</span>
-                    <span aria-hidden="true">&rarr;</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    />
                   </Link>
                   <a
                     href="#method"
@@ -201,9 +207,14 @@ export default async function HomePage() {
                     Your organisation runs on gut instinct and heroics. Let&rsquo;s replace that with systems your team can actually run.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#EF5B45]/15 font-bold text-sm text-[#EF5B45] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <div className="mt-6 pt-4 border-t border-[#EF5B45]/15 font-bold text-sm text-[#EF5B45] inline-flex items-center gap-1.5">
                   <span>Get started</span>
-                  <span aria-hidden="true">&rarr;</span>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                  />
                 </div>
               </Link>
             </ScrollReveal>
@@ -223,9 +234,14 @@ export default async function HomePage() {
                     Personal productivity that doesn&rsquo;t depend on willpower - how to design defaults instead of chasing goals.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#F7C55C]/25 font-bold text-sm text-[#C99424] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <div className="mt-6 pt-4 border-t border-[#F7C55C]/25 font-bold text-sm text-[#C99424] inline-flex items-center gap-1.5">
                   <span>Get started</span>
-                  <span aria-hidden="true">&rarr;</span>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                  />
                 </div>
               </Link>
             </ScrollReveal>
@@ -245,9 +261,14 @@ export default async function HomePage() {
                     Practical leadership for people who&rsquo;d rather build a healthy team than fight the same fire every week.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#2AA198]/15 font-bold text-sm text-[#2AA198] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <div className="mt-6 pt-4 border-t border-[#2AA198]/15 font-bold text-sm text-[#2AA198] inline-flex items-center gap-1.5">
                   <span>Get started</span>
-                  <span aria-hidden="true">&rarr;</span>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                  />
                 </div>
               </Link>
             </ScrollReveal>
@@ -267,9 +288,14 @@ export default async function HomePage() {
                     What actually changes for your work and your organisation - translated from the research, minus the hype.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#6B66C4]/15 font-bold text-sm text-[#6B66C4] flex items-center gap-1 group-hover:translate-x-0.5 transition-transform">
+                <div className="mt-6 pt-4 border-t border-[#6B66C4]/15 font-bold text-sm text-[#6B66C4] inline-flex items-center gap-1.5">
                   <span>Get started</span>
-                  <span aria-hidden="true">&rarr;</span>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                  />
                 </div>
               </Link>
             </ScrollReveal>
@@ -366,10 +392,15 @@ export default async function HomePage() {
             <div className="text-center mt-12">
               <Link
                 href="/workwithme"
-                className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>See how an engagement works</span>
-                <span aria-hidden="true">&rarr;</span>
+                <ArrowRight
+                  size={14}
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                />
               </Link>
             </div>
           </ScrollReveal>

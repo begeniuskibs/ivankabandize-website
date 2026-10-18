@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import TipTapEditor from '@/components/editor/TipTapEditor'
 import UnsplashModal from '@/components/editor/UnsplashModal'
 import CaptionInput from '@/components/editor/CaptionInput'
@@ -364,9 +365,14 @@ function PostEditorContent() {
         <div className="flex items-center gap-4">
           <Link
             href="/admin/posts"
-            className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition flex items-center gap-1.5"
+            className="group text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
           >
-            <span>&larr;</span>
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
             <span>Posts</span>
           </Link>
           <div className="h-4 w-[1px] bg-gray-300" />
@@ -424,10 +430,15 @@ function PostEditorContent() {
             type="button"
             disabled={!isPostLoaded || loading || emptyLoadBlocked}
             onClick={() => setIsDrawerOpen(true)}
-            className="px-5 py-2 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-sm transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="group px-5 py-2 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-lg shadow-sm transition inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <span>Publish Settings</span>
-            <span className="text-gray-400">&rarr;</span>
+            <ArrowRight
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="text-gray-400 transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+            />
           </button>
         </div>
       </header>
