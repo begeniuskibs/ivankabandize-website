@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import PostCard, { PostCardItem } from './PostCard'
 
 export interface GardenArticleTag {
@@ -53,10 +54,10 @@ interface GardenArticlesViewProps {
 }
 
 export const STREAM_PILLS = [
-  { label: 'All', value: 'all' },
-  { label: 'Random Thoughts', value: 'random_thoughts' },
-  { label: 'Structured Thoughts', value: 'structured_thoughts' },
-  { label: 'Tools for Thought', value: 'tools_for_thought' },
+  { label: 'All', shortLabel: 'All', value: 'all' },
+  { label: 'Random Thoughts', shortLabel: 'Random', value: 'random_thoughts' },
+  { label: 'Structured Thoughts', shortLabel: 'Structured', value: 'structured_thoughts' },
+  { label: 'Tools for Thought', shortLabel: 'Tools', value: 'tools_for_thought' },
 ] as const
 
 export type StreamFilterValue = (typeof STREAM_PILLS)[number]['value']
@@ -156,8 +157,8 @@ export default function GardenArticlesView({
     <div className="min-h-screen bg-[#FDF8F1] flex flex-col font-sans">
       {/* Hero band */}
       <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden py-16 md:py-24 max-md:py-0">
-        {/* Mobile: photo as visible strip on top (h-[160px], object-cover, no overlay) */}
-        <div className="block md:hidden relative w-full h-[160px] overflow-hidden">
+        {/* Mobile: photo as visible strip on top (h-[120px], object-cover, no overlay) */}
+        <div className="block md:hidden relative w-full h-[120px] overflow-hidden">
           <Image
             key={`mobile-${currentHero.image}`}
             src={currentHero.image}
@@ -181,53 +182,91 @@ export default function GardenArticlesView({
           <div className="absolute inset-0 bg-gradient-to-t from-[#232536] via-[#232536]/80 to-[#232536]/55" />
         </div>
 
-        {/* Content container: mobile has padding 20px (p-5), desktop uses standard layout */}
-        <div className="relative z-10 max-w-6xl mx-auto bg-[#232536] md:bg-transparent p-5 md:p-0 md:px-6 lg:px-8">
+        {/* Content container: mobile has tighter padding (px-5 py-4), desktop uses standard layout */}
+        <div className="relative z-10 max-w-6xl mx-auto bg-[#232536] md:bg-transparent px-5 py-4 md:p-0 md:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="mb-4">
-            {selectedStream === 'all' ? (
-              <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
+          <nav aria-label="Breadcrumb" className="mb-3 md:mb-4">
+            {/* Mobile single parent-level back link */}
+            <div className="md:hidden">
+              {selectedStream === 'all' ? (
                 <Link
                   href="/garden"
-                  className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs transition-colors"
                 >
-                  THE GARDEN
+                  <ArrowLeft
+                    size={12}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                  />
+                  <span>The Garden</span>
                 </Link>
-                <span className="text-[#FDF8F1]/50">/</span>
-                <span className="text-[#FDF8F1]">ARTICLES</span>
-              </div>
-            ) : (
-              <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
-                <Link
-                  href="/garden"
-                  className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
-                >
-                  THE GARDEN
-                </Link>
-                <span className="text-[#FDF8F1]/50">/</span>
+              ) : (
                 <Link
                   href="/garden?view=articles"
                   onClick={(e) => {
                     e.preventDefault()
                     handleStreamChange('all')
                   }}
-                  className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs transition-colors"
                 >
-                  ARTICLES
+                  <ArrowLeft
+                    size={12}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                  />
+                  <span>Articles</span>
                 </Link>
-                <span className="text-[#FDF8F1]/50">/</span>
-                <span className="text-[#FDF8F1]">{currentHero.title.toUpperCase()}</span>
-              </div>
-            )}
+              )}
+            </div>
+
+            {/* Desktop 3-part breadcrumb */}
+            <div className="hidden md:flex items-center">
+              {selectedStream === 'all' ? (
+                <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
+                  <Link
+                    href="/garden"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  >
+                    THE GARDEN
+                  </Link>
+                  <span className="text-[#FDF8F1]/50">/</span>
+                  <span className="text-[#FDF8F1]">ARTICLES</span>
+                </div>
+              ) : (
+                <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
+                  <Link
+                    href="/garden"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  >
+                    THE GARDEN
+                  </Link>
+                  <span className="text-[#FDF8F1]/50">/</span>
+                  <Link
+                    href="/garden?view=articles"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handleStreamChange('all')
+                    }}
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  >
+                    ARTICLES
+                  </Link>
+                  <span className="text-[#FDF8F1]/50">/</span>
+                  <span className="text-[#FDF8F1]">{currentHero.title.toUpperCase()}</span>
+                </div>
+              )}
+            </div>
           </nav>
 
           {/* H1 Title */}
-          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[36px] md:text-[52px] font-bold text-[#FDF8F1] leading-[1.15] mb-3">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[32px] leading-tight md:text-[52px] md:leading-[1.15] font-bold text-[#FDF8F1] mb-2 md:mb-3">
             {currentHero.title}
           </h1>
 
           {/* Intro line / description with inline eyebrow when set */}
-          <p className="text-[18px] text-[#FDF8F1]/85 font-light max-w-[620px] leading-relaxed mb-6">
+          <p className="text-[15px] md:text-[18px] text-[#FDF8F1]/85 font-light max-w-[620px] leading-relaxed mb-4 md:mb-6">
             {currentHero.eyebrow ? (
               <>
                 <span className="uppercase font-bold tracking-wider text-[#F7C55C]">
@@ -240,8 +279,8 @@ export default function GardenArticlesView({
             )}
           </p>
 
-          {/* Stream pills: mobile is horizontally scrollable row, desktop wraps */}
-          <div className="mt-8 pt-6 border-t border-white/15 flex overflow-x-auto whitespace-nowrap gap-2 sm:gap-2.5 pb-1 md:pb-0 md:flex-wrap [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          {/* Stream pills: mobile is single row with no wrap or horizontal scroll, desktop wraps */}
+          <div className="mt-5 pt-4 md:mt-8 md:pt-6 border-t border-white/15 flex flex-nowrap md:flex-wrap items-center gap-1.5 sm:gap-2 md:gap-2.5 overflow-x-hidden md:overflow-x-visible">
             {STREAM_PILLS.map((pill) => {
               const isActive = selectedStream === pill.value
               return (
@@ -249,14 +288,16 @@ export default function GardenArticlesView({
                   key={pill.value}
                   type="button"
                   aria-pressed={isActive}
+                  aria-label={pill.label}
                   onClick={() => handleStreamChange(pill.value)}
-                  className={`shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
+                  className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
                     isActive
                       ? 'bg-[#EF5B45] text-white shadow-sm'
                       : 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   }`}
                 >
-                  {pill.label}
+                  <span className="md:hidden">{pill.shortLabel}</span>
+                  <span className="hidden md:inline">{pill.label}</span>
                 </button>
               )
             })}
@@ -279,10 +320,10 @@ export default function GardenArticlesView({
               {series.map((item) => {
                 const count = item.published_count
                 const entryCountText = count === 1 ? '1 entry' : `${count} entries`
-                const exploreText =
+                const exploreLabel =
                   item.status === 'complete'
-                    ? `${entryCountText} - Explore series →`
-                    : `${entryCountText} and counting - Explore series →`
+                    ? `${entryCountText} - Explore series`
+                    : `${entryCountText} and counting - Explore series`
 
                 return (
                   <Link
@@ -323,8 +364,14 @@ export default function GardenArticlesView({
                           {item.title}
                         </h2>
                       </div>
-                      <p className="text-xs sm:text-sm text-[#5C5F73] mt-3 font-medium">
-                        {exploreText}
+                      <p className="text-xs sm:text-sm text-[#5C5F73] mt-3 font-medium inline-flex items-center gap-1.5">
+                        <span>{exploreLabel}</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </p>
                     </div>
                   </Link>

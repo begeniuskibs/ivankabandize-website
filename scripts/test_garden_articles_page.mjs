@@ -34,6 +34,70 @@ for (const label of streamLabels) {
 }
 console.log('PASS: All four stream pill labels are present')
 
+// 3b. Assert short pill labels and mobile/desktop markup
+const shortStreamLabels = ['All', 'Random', 'Structured', 'Tools']
+for (const label of shortStreamLabels) {
+  assert.ok(
+    componentCode.includes(label),
+    `GardenArticlesView.tsx must contain short stream pill label: "${label}"`
+  )
+}
+assert.ok(
+  componentCode.includes('className="md:hidden"'),
+  'GardenArticlesView.tsx must render short pill labels with md:hidden'
+)
+assert.ok(
+  componentCode.includes('className="hidden md:inline"'),
+  'GardenArticlesView.tsx must render full pill labels with hidden md:inline'
+)
+assert.ok(
+  componentCode.includes('aria-label={pill.label}'),
+  'GardenArticlesView.tsx stream pills must have aria-label with full name'
+)
+console.log('PASS: Short and full stream pill labels and aria-labels verified')
+
+// 3c. Assert mobile back link
+assert.ok(
+  componentCode.includes('href="/garden"'),
+  'GardenArticlesView.tsx must link back to /garden'
+)
+assert.ok(
+  componentCode.includes('href="/garden?view=articles"'),
+  'GardenArticlesView.tsx must link back to /garden?view=articles'
+)
+assert.ok(
+  componentCode.includes('The Garden') && componentCode.includes('Articles'),
+  'GardenArticlesView.tsx must have "The Garden" and "Articles" mobile back link text'
+)
+assert.ok(
+  componentCode.includes('<ArrowLeft') && componentCode.includes('group-hover:-translate-x-1'),
+  'GardenArticlesView.tsx must use ArrowLeft with group-hover:-translate-x-1 for mobile back link'
+)
+console.log('PASS: Mobile back link verified')
+
+// 3d. Assert hero mobile text sizes, photo strip height, and series arrow
+assert.ok(
+  componentCode.includes('text-[32px]'),
+  'GardenArticlesView.tsx must use text-[32px] for mobile hero title'
+)
+assert.ok(
+  componentCode.includes('text-[15px]'),
+  'GardenArticlesView.tsx must use text-[15px] for mobile hero description'
+)
+assert.ok(
+  componentCode.includes('h-[120px]'),
+  'GardenArticlesView.tsx must use h-[120px] for mobile photo strip'
+)
+assert.ok(
+  componentCode.includes('<ArrowRight') && componentCode.includes('group-hover:translate-x-1'),
+  'GardenArticlesView.tsx must use ArrowRight with group-hover:translate-x-1 for series cards'
+)
+assert.ok(
+  !componentCode.includes('Explore series →') && !componentCode.includes('Explore series ->'),
+  'GardenArticlesView.tsx must not contain text arrows in explore series link'
+)
+console.log('PASS: Hero mobile polish and lucide arrows verified')
+
 // 4. Assert contains "Load more articles"
 assert.ok(
   componentCode.includes('Load more articles'),
