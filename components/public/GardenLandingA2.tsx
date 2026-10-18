@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Leaf, BookOpen } from 'lucide-react'
+import { Leaf, BookOpen, ArrowRight } from 'lucide-react'
 
 export interface GardenA2Article {
   id: string
@@ -78,14 +78,14 @@ export default function GardenLandingA2({
                 unoptimized
               />
 
-              {/* Top-left Frosted Glass Tile with 3D Icon */}
-              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
+              {/* Top-left 3D Icon */}
+              <div className="relative z-10 shrink-0">
                 <Image
                   src="/garden-icons-3d/articles.svg"
                   alt=""
-                  width={92}
-                  height={92}
-                  className="w-[92px] h-[92px] object-contain"
+                  width={64}
+                  height={64}
+                  className="w-[64px] h-[64px] object-contain drop-shadow-md"
                   unoptimized
                 />
               </div>
@@ -95,15 +95,20 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Articles
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
                   Essays, sparks and tools for thinking, plus series that read in order.
                 </p>
                 <div className="pt-2.5 border-t border-[#F7D6CC]/60 flex items-center justify-between text-xs font-semibold">
                   <span className="text-[#CF3F29] font-bold">
                     {totalArticlesCount} articles
                   </span>
-                  <span className="text-[#CF3F29] font-bold group-hover:translate-x-0.5 transition-transform">
-                    Open -&gt;
+                  <span className="inline-flex items-center gap-1 text-[#CF3F29] font-bold">
+                    <span>Open</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0 motion-reduce:transition-none"
+                    />
                   </span>
                 </div>
               </div>
@@ -123,14 +128,14 @@ export default function GardenLandingA2({
                 unoptimized
               />
 
-              {/* Top-left Frosted Glass Tile with 3D Icon */}
-              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
+              {/* Top-left 3D Icon */}
+              <div className="relative z-10 shrink-0">
                 <Image
                   src="/garden-icons-3d/library.svg"
                   alt=""
-                  width={92}
-                  height={92}
-                  className="w-[92px] h-[92px] object-contain"
+                  width={64}
+                  height={64}
+                  className="w-[64px] h-[64px] object-contain drop-shadow-md"
                   unoptimized
                 />
               </div>
@@ -140,39 +145,44 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Curated Library
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
                   Podcasts, books and newsletters that shaped my thinking.
                 </p>
                 <div className="pt-2.5 border-t border-[#C5E4E0]/60 flex items-center justify-between text-xs font-semibold">
                   <span className="text-[#1B7F7A] font-bold">
                     {totalLibraryCount} items
                   </span>
-                  <span className="text-[#1B7F7A] font-bold group-hover:translate-x-0.5 transition-transform">
-                    Open -&gt;
+                  <span className="inline-flex items-center gap-1 text-[#1B7F7A] font-bold">
+                    <span>Open</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0 motion-reduce:transition-none"
+                    />
                   </span>
                 </div>
               </div>
             </Link>
 
             {/* Report Digests Card (Gold) - Non-link */}
-            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8]">
+            <div className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/digests.svg"
                 alt=""
                 fill
-                className="object-cover pointer-events-none"
+                className="object-cover pointer-events-none transition-transform duration-500 motion-reduce:transition-none group-hover:scale-110 motion-reduce:group-hover:scale-100"
                 unoptimized
               />
 
-              {/* Top-left Frosted Glass Tile with 3D Icon */}
-              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
+              {/* Top-left 3D Icon */}
+              <div className="relative z-10 shrink-0">
                 <Image
                   src="/garden-icons-3d/digests.svg"
                   alt=""
-                  width={92}
-                  height={92}
-                  className="w-[92px] h-[92px] object-contain"
+                  width={64}
+                  height={64}
+                  className="w-[64px] h-[64px] object-contain drop-shadow-md"
                   unoptimized
                 />
               </div>
@@ -182,7 +192,7 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Report Digests
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
                   Plain-language summaries of the research leaders should read.
                 </p>
                 <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs">
@@ -194,24 +204,24 @@ export default function GardenLandingA2({
             </div>
 
             {/* Resources Card (Slate) - Non-link */}
-            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8]">
+            <div className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/resources.svg"
                 alt=""
                 fill
-                className="object-cover pointer-events-none"
+                className="object-cover pointer-events-none transition-transform duration-500 motion-reduce:transition-none group-hover:scale-110 motion-reduce:group-hover:scale-100"
                 unoptimized
               />
 
-              {/* Top-left Frosted Glass Tile with 3D Icon */}
-              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
+              {/* Top-left 3D Icon */}
+              <div className="relative z-10 shrink-0">
                 <Image
                   src="/garden-icons-3d/resources.svg"
                   alt=""
-                  width={92}
-                  height={92}
-                  className="w-[92px] h-[92px] object-contain"
+                  width={64}
+                  height={64}
+                  className="w-[64px] h-[64px] object-contain drop-shadow-md"
                   unoptimized
                 />
               </div>
@@ -221,7 +231,7 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Resources
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
                   Templates and downloads you can put to work today.
                 </p>
                 <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs">
