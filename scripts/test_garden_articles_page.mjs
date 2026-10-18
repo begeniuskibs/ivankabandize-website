@@ -165,7 +165,50 @@ assert.ok(
 )
 console.log('PASS: 85% cream overlay is absent')
 
-// 14. Assert no em or en dashes in the changed files
+// 14. Assert series page header image full-bleed classes
+assert.ok(
+  seriesSlugCode.includes('w-screen relative left-1/2 -translate-x-1/2'),
+  'series/[slug]/page.tsx header image block must break out with w-screen full-bleed classes'
+)
+assert.ok(
+  seriesSlugCode.includes('overflow-x-clip'),
+  'series/[slug]/page.tsx page wrapper must have overflow-x-clip'
+)
+console.log('PASS: series/[slug]/page.tsx header image is full-bleed with w-screen and overflow-x-clip')
+
+// 15. Assert old thumbnail markup is back in GardenArticlesView.tsx
+assert.ok(
+  componentCode.includes('w-[120px] min-w-[120px] max-w-[120px]'),
+  'GardenArticlesView.tsx series card must have 120px left thumbnail markup'
+)
+console.log('PASS: Old 120px thumbnail markup is present')
+
+// 16. Assert dark gradient overlay exists in GardenArticlesView.tsx
+assert.ok(
+  componentCode.includes('from-[#232536] via-[#232536]/80 to-[#232536]/55'),
+  'GardenArticlesView.tsx must have "from-[#232536] via-[#232536]/80 to-[#232536]/55" overlay'
+)
+console.log('PASS: Dark gradient overlay is present')
+
+// 17. Assert old light gradient string is gone from GardenArticlesView.tsx
+assert.ok(
+  !componentCode.includes('#FEF1ED 30%'),
+  'GardenArticlesView.tsx must not contain old light gradient "#FEF1ED 30%"'
+)
+console.log('PASS: Old light gradient "#FEF1ED 30%" is gone')
+
+// 18. Assert eyebrow is rendered inside description paragraph with text-[#F7C55C]
+assert.ok(
+  componentCode.includes('text-[#F7C55C]'),
+  'GardenArticlesView.tsx must render eyebrow with text-[#F7C55C]'
+)
+assert.ok(
+  componentCode.includes('{currentHero.eyebrow}:'),
+  'GardenArticlesView.tsx must render eyebrow followed by a colon inside the description'
+)
+console.log('PASS: Eyebrow rendered inside description paragraph with text-[#F7C55C]')
+
+// 19. Assert no em or en dashes in the changed files
 const changedFilesToCheck = [
   'components/public/GardenArticlesView.tsx',
   'app/(site)/garden/page.tsx',
@@ -188,3 +231,4 @@ for (const relPath of changedFilesToCheck) {
 console.log('PASS: No em or en dashes found in changed files')
 
 console.log('\nAll garden articles page assertions passed successfully.')
+

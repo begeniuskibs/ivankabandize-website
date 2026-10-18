@@ -155,7 +155,7 @@ export default function GardenArticlesView({
   return (
     <div className="min-h-screen bg-[#FDF8F1] flex flex-col font-sans">
       {/* Hero band */}
-      <section className="relative w-full bg-[#FEF1ED] border-b border-[#F7D6CC] overflow-hidden md:pt-[36px] md:pb-[44px]">
+      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden py-16 md:py-24 max-md:py-0">
         {/* Mobile: photo as visible strip on top (h-[160px], object-cover, no overlay) */}
         <div className="block md:hidden relative w-full h-[160px] overflow-hidden">
           <Image
@@ -178,75 +178,70 @@ export default function GardenArticlesView({
             priority
             className="object-cover transition-opacity duration-300"
           />
-          {/* Desktop tint overlay: solid #FEF1ED at left, fully transparent by ~70% across */}
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'linear-gradient(90deg, #FEF1ED 0%, #FEF1ED 30%, rgba(254, 241, 237, 0.75) 50%, rgba(254, 241, 237, 0) 70%)',
-            }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#232536] via-[#232536]/80 to-[#232536]/55" />
         </div>
 
         {/* Content container: mobile has padding 20px (p-5), desktop uses standard layout */}
-        <div className="relative z-10 max-w-6xl mx-auto p-5 md:p-0 md:px-6 lg:px-8">
+        <div className="relative z-10 max-w-6xl mx-auto bg-[#232536] md:bg-transparent p-5 md:p-0 md:px-6 lg:px-8">
           {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="mb-3">
+          <nav aria-label="Breadcrumb" className="mb-4">
             {selectedStream === 'all' ? (
               <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
                 <Link
                   href="/garden"
-                  className="text-[#CF3F29] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
                 >
                   THE GARDEN
                 </Link>
-                <span className="text-[#5C5F73]">/</span>
-                <span className="text-[#5C5F73]">ARTICLES</span>
+                <span className="text-[#FDF8F1]/50">/</span>
+                <span className="text-[#FDF8F1]">ARTICLES</span>
               </div>
             ) : (
               <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
                 <Link
                   href="/garden"
-                  className="text-[#CF3F29] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
                 >
                   THE GARDEN
                 </Link>
-                <span className="text-[#5C5F73]">/</span>
+                <span className="text-[#FDF8F1]/50">/</span>
                 <Link
                   href="/garden?view=articles"
                   onClick={(e) => {
                     e.preventDefault()
                     handleStreamChange('all')
                   }}
-                  className="text-[#CF3F29] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                  className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
                 >
                   ARTICLES
                 </Link>
-                <span className="text-[#5C5F73]">/</span>
-                <span className="text-[#5C5F73]">{currentHero.title.toUpperCase()}</span>
+                <span className="text-[#FDF8F1]/50">/</span>
+                <span className="text-[#FDF8F1]">{currentHero.title.toUpperCase()}</span>
               </div>
             )}
           </nav>
 
-          {/* Eyebrow: small uppercase coral label above the title, only when set */}
-          {currentHero.eyebrow && (
-            <p className="text-[12px] font-bold uppercase tracking-[0.1em] text-[#CF3F29] mb-2">
-              {currentHero.eyebrow}
-            </p>
-          )}
-
           {/* H1 Title */}
-          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[36px] md:text-[52px] font-medium text-[#232536] leading-[1.15] mb-3">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[36px] md:text-[52px] font-bold text-[#FDF8F1] leading-[1.15] mb-3">
             {currentHero.title}
           </h1>
 
-          {/* Intro line / description */}
-          <p className="text-[18px] text-[#5C5F73] max-w-[620px] leading-relaxed mb-6">
-            {currentHero.description}
+          {/* Intro line / description with inline eyebrow when set */}
+          <p className="text-[18px] text-[#FDF8F1]/85 font-light max-w-[620px] leading-relaxed mb-6">
+            {currentHero.eyebrow ? (
+              <>
+                <span className="uppercase font-bold tracking-wider text-[#F7C55C]">
+                  {currentHero.eyebrow}:
+                </span>{' '}
+                {currentHero.description}
+              </>
+            ) : (
+              currentHero.description
+            )}
           </p>
 
           {/* Stream pills: mobile is horizontally scrollable row, desktop wraps */}
-          <div className="flex overflow-x-auto whitespace-nowrap gap-2 sm:gap-2.5 pb-1 md:pb-0 md:flex-wrap [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="mt-8 pt-6 border-t border-white/15 flex overflow-x-auto whitespace-nowrap gap-2 sm:gap-2.5 pb-1 md:pb-0 md:flex-wrap [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
             {STREAM_PILLS.map((pill) => {
               const isActive = selectedStream === pill.value
               return (
@@ -257,8 +252,8 @@ export default function GardenArticlesView({
                   onClick={() => handleStreamChange(pill.value)}
                   className={`shrink-0 px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
                     isActive
-                      ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
-                      : 'bg-white text-[#232536] border border-[#F0E4D2] hover:border-[#EF5B45]'
+                      ? 'bg-[#EF5B45] text-white shadow-sm'
+                      : 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   }`}
                 >
                   {pill.label}
@@ -280,7 +275,7 @@ export default function GardenArticlesView({
             >
               SERIES - READ IN ORDER
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {series.map((item) => {
                 const count = item.published_count
                 const entryCountText = count === 1 ? '1 entry' : `${count} entries`
@@ -293,36 +288,42 @@ export default function GardenArticlesView({
                   <Link
                     key={item.id}
                     href={`/garden/series/${item.slug}`}
-                    className="group relative flex flex-col justify-end p-3.5 sm:p-4 rounded-[18px] overflow-hidden min-h-[220px] border border-[#F0E4D2] hover:border-[#EF5B45] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
-                    style={{ backgroundColor: item.card_tint || '#FDE9E4' }}
+                    className="group flex flex-row items-stretch bg-white border border-[#F0E4D2] hover:border-[#EF5B45] rounded-[14px] overflow-hidden transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
                   >
-                    {/* Full-bleed background image or emoji fallback */}
-                    {item.header_image_url && item.header_image_url.trim() ? (
-                      <Image
-                        src={item.header_image_url}
-                        alt=""
-                        fill
-                        unoptimized
-                        className="object-cover pointer-events-none transition-transform duration-500 group-hover:scale-105 motion-reduce:group-hover:scale-100 motion-reduce:transition-none"
-                      />
-                    ) : item.cover_emoji && item.cover_emoji.trim() ? (
-                      <div
-                        className="absolute inset-0 flex items-center justify-center text-6xl select-none pointer-events-none transition-transform duration-500 group-hover:scale-105 motion-reduce:group-hover:scale-100 motion-reduce:transition-none"
-                        aria-hidden="true"
-                      >
-                        {item.cover_emoji}
-                      </div>
-                    ) : null}
+                    {/* Left 120px wide thumbnail */}
+                    <div className="w-[120px] min-w-[120px] max-w-[120px] shrink-0 self-stretch relative overflow-hidden bg-[#FDE9E4] flex items-center justify-center">
+                      {item.header_image_url && item.header_image_url.trim() ? (
+                        <Image
+                          src={item.header_image_url}
+                          alt=""
+                          fill
+                          unoptimized
+                          className="object-cover group-hover:scale-105 transition-transform duration-300 motion-reduce:group-hover:scale-100"
+                        />
+                      ) : item.cover_emoji && item.cover_emoji.trim() ? (
+                        <div
+                          className="w-full h-full flex items-center justify-center text-3xl select-none"
+                          style={{ backgroundColor: item.card_tint || '#FDE9E4' }}
+                          aria-hidden="true"
+                        >
+                          {item.cover_emoji}
+                        </div>
+                      ) : (
+                        <div className="w-full h-full bg-[#FDE9E4]" />
+                      )}
+                    </div>
 
-                    {/* Frosted plate at the bottom */}
-                    <div className="relative z-10 w-full rounded-[14px] bg-white/80 backdrop-blur-md border border-white/60 shadow-xs p-3.5 sm:p-4">
-                      <span className="text-[12px] font-bold uppercase tracking-wider text-[#A97B1A] block mb-1">
-                        {item.status === 'complete' ? 'SERIES - COMPLETE' : 'SERIES - GROWING'}
-                      </span>
-                      <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[19px] font-medium text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug line-clamp-1 mb-2">
-                        {item.title}
-                      </h2>
-                      <p className="text-xs sm:text-sm text-[#5C5F73] font-medium">
+                    {/* Right content */}
+                    <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
+                      <div>
+                        <span className="text-[12px] font-bold uppercase tracking-wider text-[#A97B1A] block mb-1">
+                          {item.status === 'complete' ? 'SERIES - COMPLETE' : 'SERIES - GROWING'}
+                        </span>
+                        <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[19px] font-medium text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug line-clamp-2">
+                          {item.title}
+                        </h2>
+                      </div>
+                      <p className="text-xs sm:text-sm text-[#5C5F73] mt-3 font-medium">
                         {exploreText}
                       </p>
                     </div>
