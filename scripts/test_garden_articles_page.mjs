@@ -112,10 +112,64 @@ try {
   assert.fail('GardenFeed.tsx and PostCard.tsx must remain unchanged versus origin/main')
 }
 
-// 11. Assert no em or en dashes in the changed files
+// 11. Assert STREAM_HEROES entries (all four eyebrows and titles)
+assert.ok(
+  componentCode.includes('STREAM_HEROES'),
+  'GardenArticlesView.tsx must define STREAM_HEROES'
+)
+
+const streamHeroesExpected = [
+  { key: 'all', title: 'Articles' },
+  { key: 'random_thoughts', eyebrow: 'Sparks & Observations', title: 'Random Thoughts' },
+  { key: 'structured_thoughts', eyebrow: 'Essays & Deep Dives', title: 'Structured Thoughts' },
+  { key: 'tools_for_thought', eyebrow: 'Systems & Workflows', title: 'Tools for Thought' },
+]
+
+for (const item of streamHeroesExpected) {
+  assert.ok(
+    componentCode.includes(item.title),
+    `STREAM_HEROES must include title "${item.title}"`
+  )
+  if (item.eyebrow) {
+    assert.ok(
+      componentCode.includes(item.eyebrow),
+      `STREAM_HEROES must include eyebrow "${item.eyebrow}"`
+    )
+  }
+}
+console.log('PASS: STREAM_HEROES has all four eyebrows and titles')
+
+// 12. Assert series back link in app/(site)/garden/series/[slug]/page.tsx
+const seriesSlugPagePath = path.resolve('app/(site)/garden/series/[slug]/page.tsx')
+assert.ok(fs.existsSync(seriesSlugPagePath), 'series/[slug]/page.tsx must exist')
+const seriesSlugCode = fs.readFileSync(seriesSlugPagePath, 'utf8')
+
+assert.ok(
+  seriesSlugCode.includes('href="/garden?view=articles"'),
+  'series/[slug]/page.tsx back link href must be "/garden?view=articles"'
+)
+assert.ok(
+  seriesSlugCode.includes('Back to Articles'),
+  'series/[slug]/page.tsx back link text must include "Back to Articles"'
+)
+console.log('PASS: series/[slug]/page.tsx back link text and href verified')
+
+// 13. Assert absence of "md:hidden bg-[#FEF1ED]/85" or "bg-[#FEF1ED]/85"
+assert.ok(
+  !componentCode.includes('bg-[#FEF1ED]/85'),
+  'GardenArticlesView.tsx must not contain "bg-[#FEF1ED]/85"'
+)
+assert.ok(
+  !componentCode.includes('md:hidden absolute inset-0 pointer-events-none bg-[#FEF1ED]/85'),
+  'GardenArticlesView.tsx must remove the md:hidden 85% cream overlay'
+)
+console.log('PASS: 85% cream overlay is absent')
+
+// 14. Assert no em or en dashes in the changed files
 const changedFilesToCheck = [
   'components/public/GardenArticlesView.tsx',
   'app/(site)/garden/page.tsx',
+  'app/(site)/garden/series/[slug]/page.tsx',
   'scripts/test_garden_articles_page.mjs',
 ]
 

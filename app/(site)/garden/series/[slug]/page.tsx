@@ -78,10 +78,10 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
         {/* Navigation Breadcrumb */}
         <div className="mb-10">
           <Link
-            href="/garden"
+            href="/garden?view=articles"
             className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
           >
-            <span>&larr; Back to The Garden</span>
+            <span>&larr; Back to Articles</span>
           </Link>
         </div>
 
