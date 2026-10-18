@@ -67,112 +67,168 @@ export default function GardenLandingA2({
             {/* Articles Card (Coral) */}
             <Link
               href="/garden?view=articles"
-              className="group flex flex-col justify-between p-6 rounded-[5px] transition-all duration-[180ms] bg-[#FEF1ED] border border-[#F7D6CC] hover:bg-[#FBD3C8] hover:shadow-[0_0_0_1px_#EF5B45] hover:-translate-y-[3px]"
+              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
             >
-              <div>
+              {/* Full-card Background Art */}
+              <Image
+                src="/garden-card-art/articles.svg"
+                alt=""
+                fill
+                className="object-cover pointer-events-none transition-transform duration-500 motion-reduce:transition-none group-hover:scale-110 motion-reduce:group-hover:scale-100"
+                unoptimized
+              />
+
+              {/* Top-left Frosted Glass Tile with 3D Icon */}
+              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
                 <Image
-                  src="/garden-icons/articles.png"
+                  src="/garden-icons-3d/articles.svg"
                   alt=""
-                  width={64}
-                  height={64}
-                  className="w-16 h-16 object-contain mb-4"
+                  width={92}
+                  height={92}
+                  className="w-[92px] h-[92px] object-contain"
                   unoptimized
                 />
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-2 leading-snug">
+              </div>
+
+              {/* Bottom Frosted Plate */}
+              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Articles
                 </h2>
-                <p className="text-xs text-[#5A5D70] leading-relaxed mb-4">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
                   Essays, sparks and tools for thinking, plus series that read in order.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-[#F7D6CC] flex items-center justify-between text-xs font-semibold">
-                <span className="text-[#CF3F29] font-bold">
-                  {totalArticlesCount} articles
-                </span>
-                <span className="text-[#CF3F29] font-bold group-hover:translate-x-0.5 transition-transform">
-                  Open -&gt;
-                </span>
+                <div className="pt-2.5 border-t border-[#F7D6CC]/60 flex items-center justify-between text-xs font-semibold">
+                  <span className="text-[#CF3F29] font-bold">
+                    {totalArticlesCount} articles
+                  </span>
+                  <span className="text-[#CF3F29] font-bold group-hover:translate-x-0.5 transition-transform">
+                    Open -&gt;
+                  </span>
+                </div>
               </div>
             </Link>
 
             {/* Curated Library Card (Teal) */}
             <Link
               href="/library"
-              className="group flex flex-col justify-between p-6 rounded-[5px] transition-all duration-[180ms] bg-[#EAF6F4] border border-[#C5E4E0] hover:bg-[#BFE3DF] hover:shadow-[0_0_0_1px_#1B7F7A] hover:-translate-y-[3px]"
+              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EAF6F4] border border-[#C5E4E0] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B7F7A] focus-visible:ring-offset-2"
             >
-              <div>
+              {/* Full-card Background Art */}
+              <Image
+                src="/garden-card-art/library.svg"
+                alt=""
+                fill
+                className="object-cover pointer-events-none transition-transform duration-500 motion-reduce:transition-none group-hover:scale-110 motion-reduce:group-hover:scale-100"
+                unoptimized
+              />
+
+              {/* Top-left Frosted Glass Tile with 3D Icon */}
+              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
                 <Image
-                  src="/garden-icons/library.png"
+                  src="/garden-icons-3d/library.svg"
                   alt=""
-                  width={64}
-                  height={64}
-                  className="w-16 h-16 object-contain mb-4"
+                  width={92}
+                  height={92}
+                  className="w-[92px] h-[92px] object-contain"
                   unoptimized
                 />
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-2 leading-snug">
+              </div>
+
+              {/* Bottom Frosted Plate */}
+              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Curated Library
                 </h2>
-                <p className="text-xs text-[#5A5D70] leading-relaxed mb-4">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
                   Podcasts, books and newsletters that shaped my thinking.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-[#C5E4E0] flex items-center justify-between text-xs font-semibold">
-                <span className="text-[#1B7F7A] font-bold">
-                  {totalLibraryCount} items
-                </span>
-                <span className="text-[#1B7F7A] font-bold group-hover:translate-x-0.5 transition-transform">
-                  Open -&gt;
-                </span>
+                <div className="pt-2.5 border-t border-[#C5E4E0]/60 flex items-center justify-between text-xs font-semibold">
+                  <span className="text-[#1B7F7A] font-bold">
+                    {totalLibraryCount} items
+                  </span>
+                  <span className="text-[#1B7F7A] font-bold group-hover:translate-x-0.5 transition-transform">
+                    Open -&gt;
+                  </span>
+                </div>
               </div>
             </Link>
 
             {/* Report Digests Card (Gold) - Non-link */}
-            <div className="flex flex-col justify-between p-6 rounded-[5px] transition-all duration-[180ms] bg-[#FBF4E4] border border-[#EFDFB8] hover:bg-[#F2DEAA] hover:shadow-[0_0_0_1px_#A97B1A] hover:-translate-y-[3px]">
-              <div>
+            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8]">
+              {/* Full-card Background Art */}
+              <Image
+                src="/garden-card-art/digests.svg"
+                alt=""
+                fill
+                className="object-cover pointer-events-none"
+                unoptimized
+              />
+
+              {/* Top-left Frosted Glass Tile with 3D Icon */}
+              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
                 <Image
-                  src="/garden-icons/digests.png"
+                  src="/garden-icons-3d/digests.svg"
                   alt=""
-                  width={64}
-                  height={64}
-                  className="w-16 h-16 object-contain mb-4"
+                  width={92}
+                  height={92}
+                  className="w-[92px] h-[92px] object-contain"
                   unoptimized
                 />
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-2 leading-snug">
+              </div>
+
+              {/* Bottom Frosted Plate */}
+              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Report Digests
                 </h2>
-                <p className="text-xs text-[#5A5D70] leading-relaxed mb-4">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
                   Plain-language summaries of the research leaders should read.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-[#EFDFB8] flex items-center justify-between text-xs">
-                <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#A97B1A] border border-[#A97B1A]/20">
-                  Coming soon
-                </span>
+                <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs">
+                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#A97B1A] border border-[#A97B1A]/20">
+                    Coming soon
+                  </span>
+                </div>
               </div>
             </div>
 
             {/* Resources Card (Slate) - Non-link */}
-            <div className="flex flex-col justify-between p-6 rounded-[5px] transition-all duration-[180ms] bg-[#EEEFF6] border border-[#D5D8E8] hover:bg-[#CDD0E3] hover:shadow-[0_0_0_1px_#5C5F73] hover:-translate-y-[3px]">
-              <div>
+            <div className="relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8]">
+              {/* Full-card Background Art */}
+              <Image
+                src="/garden-card-art/resources.svg"
+                alt=""
+                fill
+                className="object-cover pointer-events-none"
+                unoptimized
+              />
+
+              {/* Top-left Frosted Glass Tile with 3D Icon */}
+              <div className="relative z-10 w-[112px] h-[112px] rounded-[30px] bg-white/70 border border-white shadow-xs backdrop-blur-md flex items-center justify-center shrink-0">
                 <Image
-                  src="/garden-icons/resources.png"
+                  src="/garden-icons-3d/resources.svg"
                   alt=""
-                  width={64}
-                  height={64}
-                  className="w-16 h-16 object-contain mb-4"
+                  width={92}
+                  height={92}
+                  className="w-[92px] h-[92px] object-contain"
                   unoptimized
                 />
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-2 leading-snug">
+              </div>
+
+              {/* Bottom Frosted Plate */}
+              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Resources
                 </h2>
-                <p className="text-xs text-[#5A5D70] leading-relaxed mb-4">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-1">
                   Templates and downloads you can put to work today.
                 </p>
-              </div>
-              <div className="pt-4 border-t border-[#D5D8E8] flex items-center justify-between text-xs">
-                <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#5C5F73] border border-[#5C5F73]/20">
-                  Coming soon
-                </span>
+                <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs">
+                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#5C5F73] border border-[#5C5F73]/20">
+                    Coming soon
+                  </span>
+                </div>
               </div>
             </div>
           </div>

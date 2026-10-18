@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="92" height="92" viewBox="0 0 100 100"><defs><filter id="bl"><feGaussianBlur stdDeviation="2.5"/></filter></defs><ellipse cx="50" cy="93" rx="32" ry="5" fill="#232536" opacity=".22" filter="url(#bl)"/>
+<polygon points="12,62 20,54 39,54 31,62" fill="#F7D77A"/><polygon points="31,62 39,54 39,80 31,88" fill="#B27A10"/><rect x="12" y="62" width="19" height="26" rx="3" fill="#E3A92B"/>
+<polygon points="38,44 46,36 65,36 57,44" fill="#F2CB62"/><polygon points="57,44 65,36 65,80 57,88" fill="#8A5E0C"/><rect x="38" y="44" width="19" height="44" rx="3" fill="#C9921F"/>
+<polygon points="64,24 72,16 91,16 83,24" fill="#E8B94A"/><polygon points="83,24 91,16 91,80 83,88" fill="#6E4D0C"/><rect x="64" y="24" width="19" height="64" rx="3" fill="#A97B1A"/>
+<rect x="12" y="62" width="9" height="26" rx="3" fill="#fff" opacity=".18"/><rect x="38" y="44" width="9" height="44" rx="3" fill="#fff" opacity=".18"/><rect x="64" y="24" width="9" height="64" rx="3" fill="#fff" opacity=".18"/>
+<path d="M14 48L40 30l22-6" fill="none" stroke="#232536" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 6"/>
+<circle cx="76" cy="14" r="9" fill="#EF5B45"/><path d="M71.5 16.5l3.5-3.5 2.5 2 4-4.5" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
