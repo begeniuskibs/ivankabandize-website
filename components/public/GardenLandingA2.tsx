@@ -95,10 +95,10 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Articles
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Essays, sparks and tools for thinking, plus series that read in order.
                 </p>
-                <div className="pt-2.5 border-t border-[#F7D6CC]/60 flex items-center justify-between text-xs font-semibold">
+                <div className="pt-2.5 border-t border-[#F7D6CC]/60 flex items-center justify-between text-xs font-semibold min-h-[28px]">
                   <span className="text-[#CF3F29] font-bold">
                     {totalArticlesCount} articles
                   </span>
@@ -145,10 +145,10 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Curated Library
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Podcasts, books and newsletters that shaped my thinking.
                 </p>
-                <div className="pt-2.5 border-t border-[#C5E4E0]/60 flex items-center justify-between text-xs font-semibold">
+                <div className="pt-2.5 border-t border-[#C5E4E0]/60 flex items-center justify-between text-xs font-semibold min-h-[28px]">
                   <span className="text-[#1B7F7A] font-bold">
                     {totalLibraryCount} items
                   </span>
@@ -192,10 +192,10 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Report Digests
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Plain-language summaries of the research leaders should read.
                 </p>
-                <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs">
+                <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs min-h-[28px]">
                   <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#A97B1A] border border-[#A97B1A]/20">
                     Coming soon
                   </span>
@@ -231,10 +231,10 @@ export default function GardenLandingA2({
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Resources
                 </h2>
-                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3">
+                <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Templates and downloads you can put to work today.
                 </p>
-                <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs">
+                <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs min-h-[28px]">
                   <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#5C5F73] border border-[#5C5F73]/20">
                     Coming soon
                   </span>
