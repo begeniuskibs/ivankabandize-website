@@ -221,7 +221,16 @@ export default function ArticleView({
           {seriesContext && (
             <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] print:hidden">
               <div className="flex items-start gap-3.5 mb-2">
-                <span className="text-2xl" aria-hidden="true">📖</span>
+                <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                  <Image
+                    src="/icons/3d/books.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
+                </span>
                 <div className="min-w-0 flex-1">
                   <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-0.5">
                     Series - Part {seriesContext.partNumber} of {seriesContext.totalParts}

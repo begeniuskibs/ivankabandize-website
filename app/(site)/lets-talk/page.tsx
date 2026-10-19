@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { HELP_OPTIONS, TIMING_OPTIONS } from '@/lib/inquiries'
@@ -650,7 +651,15 @@ export default function LetsTalkPage() {
 
                       <div className="space-y-4">
                         <div className="flex items-start gap-3.5">
-                          <span className="text-xl flex-shrink-0">📧</span>
+                          <Image
+                            src="/icons/3d/mail.svg"
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain flex-shrink-0 mt-0.5"
+                            aria-hidden="true"
+                            unoptimized
+                          />
                           <div>
                             <h4 className="font-bold text-sm text-[#232536]">Within 2 business days</h4>
                             <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
@@ -660,7 +669,15 @@ export default function LetsTalkPage() {
                         </div>
 
                         <div className="flex items-start gap-3.5">
-                          <span className="text-xl flex-shrink-0">💬</span>
+                          <Image
+                            src="/icons/3d/comment.svg"
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain flex-shrink-0 mt-0.5"
+                            aria-hidden="true"
+                            unoptimized
+                          />
                           <div>
                             <h4 className="font-bold text-sm text-[#232536]">The call</h4>
                             <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
@@ -670,7 +687,15 @@ export default function LetsTalkPage() {
                         </div>
 
                         <div className="flex items-start gap-3.5">
-                          <span className="text-xl flex-shrink-0">🧭</span>
+                          <Image
+                            src="/icons/3d/compass.svg"
+                            alt=""
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain flex-shrink-0 mt-0.5"
+                            aria-hidden="true"
+                            unoptimized
+                          />
                           <div>
                             <h4 className="font-bold text-sm text-[#232536]">Meanwhile</h4>
                             <p className="text-xs sm:text-sm text-[#5A5D70] mt-0.5 leading-relaxed">
