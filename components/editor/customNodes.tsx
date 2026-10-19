@@ -7,6 +7,7 @@ import { ReactNodeViewRenderer, NodeViewWrapper } from '@tiptap/react'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
 import BookmarkCard from './BookmarkCard'
 import ButtonCard, { isValidButtonUrl, sanitizeButtonUrl } from './ButtonCard'
+import { ButtonBlockIcon } from '@/components/admin/icons'
 export { ButtonCard, isValidButtonUrl, sanitizeButtonUrl }
 
 export interface GalleryImageEntry {
@@ -1630,7 +1631,8 @@ function ButtonComponent({ node, updateAttributes, deleteNode }: ButtonComponent
       {/* Top action bar */}
       <div className="flex items-center justify-between pb-2 mb-3 border-b border-gray-200/80 text-xs text-gray-500">
         <span className="font-semibold text-gray-700 flex items-center gap-1.5">
-          <span>🔘 Button Block</span>
+          <ButtonBlockIcon size={16} />
+          <span>Button Block</span>
         </span>
         <button
           type="button"

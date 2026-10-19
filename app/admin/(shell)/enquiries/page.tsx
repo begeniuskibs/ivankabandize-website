@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { ArrowRight } from 'lucide-react'
 import { INQUIRY_STATUSES, type InquiryStatus } from '@/lib/inquiries'
+import { EnquiriesIcon, WarningIcon, DoneIcon } from '@/components/admin/icons'
 
 interface InquiryRecord {
   id: string
@@ -237,7 +238,9 @@ export default function AdminEnquiriesPage() {
             </div>
           ) : enquiries.length === 0 ? (
             <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center">
-              <span className="text-3xl block mb-2">📬</span>
+              <div className="flex justify-center mb-2">
+                <EnquiriesIcon size={24} className="text-[#EF5B45]" />
+              </div>
               <p className="text-gray-500 text-sm font-medium">No enquiries yet.</p>
             </div>
           ) : filteredEnquiries.length === 0 ? (
@@ -284,7 +287,7 @@ export default function AdminEnquiriesPage() {
                               title={inq.notify_error || 'Email notification failed'}
                               className="px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full bg-red-100 text-red-800 border border-red-200 flex items-center gap-1"
                             >
-                              <span>⚠️</span>
+                              <WarningIcon size={14} className="text-red-700 shrink-0" />
                               <span>Email not sent</span>
                             </span>
                           )}
@@ -415,7 +418,7 @@ export default function AdminEnquiriesPage() {
             {selectedInquiry.notify_error ? (
               <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl space-y-1">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-red-800">
-                  <span>⚠️</span>
+                  <WarningIcon size={14} className="text-red-700 shrink-0" />
                   <span>Email Notification Error</span>
                 </div>
                 <p className="text-[11px] text-red-700 font-mono break-words">
@@ -424,7 +427,7 @@ export default function AdminEnquiriesPage() {
               </div>
             ) : selectedInquiry.notified_at ? (
               <div className="p-2.5 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-800 font-medium flex items-center gap-1.5">
-                <span>✓</span>
+                <DoneIcon size={14} className="text-emerald-700 shrink-0" />
                 <span>Notified on {new Date(selectedInquiry.notified_at).toLocaleDateString()}</span>
               </div>
             ) : (
@@ -482,12 +485,14 @@ export default function AdminEnquiriesPage() {
                 </span>
                 <p className="text-gray-700 mt-0.5">
                   {selectedInquiry.confirmation_sent_at ? (
-                    <span className="text-emerald-700 font-medium">
-                      ✓ Sent on {new Date(selectedInquiry.confirmation_sent_at).toLocaleDateString()}
+                    <span className="text-emerald-700 font-medium inline-flex items-center gap-1">
+                      <DoneIcon size={14} className="text-emerald-700 shrink-0" />
+                      <span>Sent on {new Date(selectedInquiry.confirmation_sent_at).toLocaleDateString()}</span>
                     </span>
                   ) : selectedInquiry.confirmation_error ? (
-                    <span className="text-red-600 font-medium" title={selectedInquiry.confirmation_error}>
-                      ⚠️ {selectedInquiry.confirmation_error}
+                    <span className="text-red-600 font-medium inline-flex items-center gap-1" title={selectedInquiry.confirmation_error}>
+                      <WarningIcon size={14} className="text-red-600 shrink-0" />
+                      <span>{selectedInquiry.confirmation_error}</span>
                     </span>
                   ) : (
                     <span className="text-gray-500">Not sent</span>

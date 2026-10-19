@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { CloseIcon } from '@/components/admin/icons'
 
 interface LibraryItemRecord {
   id: string
@@ -184,9 +185,10 @@ export default function AdminLibraryPage() {
             <span>{success}</span>
             <button
               onClick={() => setSuccess(null)}
-              className="text-emerald-500 hover:text-emerald-700 text-xs font-bold"
+              aria-label="Dismiss notification"
+              className="text-emerald-500 hover:text-emerald-700 p-0.5 cursor-pointer"
             >
-              &times;
+              <CloseIcon size={14} />
             </button>
           </div>
         )}
@@ -255,9 +257,10 @@ export default function AdminLibraryPage() {
               <h3 className="text-lg font-bold text-gray-900">Edit Library Item</h3>
               <button
                 onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 text-xl font-bold"
+                aria-label="Close edit modal"
+                className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
               >
-                &times;
+                <CloseIcon size={18} />
               </button>
             </div>
 

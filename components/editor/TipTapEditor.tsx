@@ -15,6 +15,16 @@ import { useEffect, useRef, useState } from 'react'
 import { Video, Gallery, YouTube, Bookmark, Button, Callout, validateYouTubeUrl, ImageComponent } from './customNodes'
 import { SlashCommands, SlashMenuList, SlashItem } from './SlashCommand'
 import { UploadProgressCard, uploadFileDirect, formatBytes } from './UploadProgress'
+import {
+  WarningIcon,
+  ImageIcon,
+  LinkIcon,
+  VideoIcon,
+  BookmarkIcon,
+  ButtonBlockIcon,
+  DividerIcon,
+  CloseIcon,
+} from '@/components/admin/icons'
 
 export function sanitizeUrl(input: string): string | null {
   let url = (input || '').trim()
@@ -457,7 +467,7 @@ export default function TipTapEditor({
               },
               {
                 title: 'Callout',
-                icon: '💬',
+                icon: <WarningIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
                   handleToggleCallout(ed)
@@ -473,7 +483,7 @@ export default function TipTapEditor({
               },
               {
                 title: 'Image (upload)',
-                icon: '📷',
+                icon: <ImageIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
                   handleTriggerImageUpload()
@@ -481,7 +491,7 @@ export default function TipTapEditor({
               },
               {
                 title: 'Image (URL)',
-                icon: '🔗',
+                icon: <LinkIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
                   handleInsertImageUrl(ed)
@@ -489,7 +499,7 @@ export default function TipTapEditor({
               },
               {
                 title: 'Video (upload)',
-                icon: '🎥',
+                icon: <VideoIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
                   handleTriggerVideoUpload()
@@ -497,7 +507,7 @@ export default function TipTapEditor({
               },
               {
                 title: 'Video (URL)',
-                icon: '🎬',
+                icon: <VideoIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).run()
                   handleInsertVideoUrl(ed)
@@ -521,21 +531,21 @@ export default function TipTapEditor({
               },
               {
                 title: 'Bookmark',
-                icon: '🔖',
+                icon: <BookmarkIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   handleInsertBookmark(ed, range)
                 },
               },
               {
                 title: 'Button',
-                icon: '🔘',
+                icon: <ButtonBlockIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   handleInsertButton(ed, range)
                 },
               },
               {
                 title: 'Divider',
-                icon: '➖',
+                icon: <DividerIcon size={16} />,
                 command: ({ editor: ed, range }) => {
                   ed.chain().focus().deleteRange(range).setHorizontalRule().run()
                 },
@@ -1158,10 +1168,11 @@ export default function TipTapEditor({
         <button
           type="button"
           onClick={handleTriggerImageUpload}
-          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
           title="Upload image into post body"
         >
-          <span>📷 Upload Image</span>
+          <ImageIcon size={16} />
+          <span>Upload Image</span>
         </button>
         <button
           type="button"
@@ -1176,10 +1187,11 @@ export default function TipTapEditor({
         <button
           type="button"
           onClick={handleTriggerVideoUpload}
-          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
           title="Upload video into post body"
         >
-          <span>🎥 Upload Video</span>
+          <VideoIcon size={16} />
+          <span>Upload Video</span>
         </button>
         <button
           type="button"
@@ -1213,28 +1225,31 @@ export default function TipTapEditor({
         <button
           type="button"
           onClick={() => handleInsertBookmark()}
-          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1"
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5"
           title="Insert web bookmark card"
         >
-          <span>🔖 Bookmark</span>
+          <BookmarkIcon size={16} />
+          <span>Bookmark</span>
         </button>
         {/* Insert Button Control */}
         <button
           type="button"
           onClick={() => handleInsertButton()}
-          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1 cursor-pointer"
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5 cursor-pointer"
           title="Insert button card"
         >
-          <span>🔘 Button</span>
+          <ButtonBlockIcon size={16} />
+          <span>Button</span>
         </button>
         {/* Insert Divider Control */}
         <button
           type="button"
           onClick={() => editor.chain().focus().setHorizontalRule().run()}
-          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1 cursor-pointer"
+          className="px-2.5 py-1 rounded transition text-xs font-medium hover:bg-gray-200 text-gray-700 flex items-center gap-1.5 cursor-pointer"
           title="Insert horizontal divider"
         >
-          <span>➖ Divider</span>
+          <DividerIcon size={16} />
+          <span>Divider</span>
         </button>
       </div>
 
@@ -1291,9 +1306,9 @@ export default function TipTapEditor({
                 type="button"
                 onClick={handleLinkCancel}
                 aria-label="Cancel link edit"
-                className="p-1 text-gray-400 hover:text-white rounded-lg transition text-xs"
+                className="p-1 text-gray-400 hover:text-white rounded-lg transition"
               >
-                &times;
+                <CloseIcon size={14} />
               </button>
             </div>
           ) : (

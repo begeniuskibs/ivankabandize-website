@@ -10,7 +10,7 @@ export default function AdminPlaceholder({
 }: {
   title: string
   description: string
-  icon: string
+  icon: React.ReactNode
   futureSprint?: string
 }) {
   return (

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { CloseIcon, WarningIcon } from '@/components/admin/icons'
 
 interface UnsplashPhoto {
   id: string
@@ -101,9 +102,10 @@ export default function UnsplashModal({ isOpen, onClose, onSelect }: UnsplashMod
           <button
             type="button"
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 text-xl font-bold p-1 leading-none"
+            aria-label="Close Unsplash modal"
+            className="text-gray-400 hover:text-gray-600 p-1"
           >
-            &times;
+            <CloseIcon size={18} />
           </button>
         </div>
 
@@ -129,7 +131,10 @@ export default function UnsplashModal({ isOpen, onClose, onSelect }: UnsplashMod
 
           {isMissingKey && (
             <div className="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs sm:text-sm">
-              <p className="font-semibold mb-1">⚠️ Missing Unsplash API Key</p>
+              <p className="font-semibold mb-1 flex items-center gap-1.5">
+                <WarningIcon size={16} className="text-amber-600 shrink-0 inline" />
+                <span>Missing Unsplash API Key</span>
+              </p>
               <p>
                 <code>UNSPLASH_ACCESS_KEY</code> is not configured in your environment. Please add your Unsplash Access Key to <code>.env.local</code> / Vercel Environment Variables to enable live photo searches.
               </p>

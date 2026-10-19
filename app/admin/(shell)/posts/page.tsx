@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import DeletePostModal, { PostToDelete } from '@/components/admin/DeletePostModal'
+import { PostsIcon } from '@/components/admin/icons'
 
 interface PostRecord {
   id: string
@@ -182,6 +183,9 @@ export default function AdminPostsListPage() {
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="bg-white border border-dashed border-gray-300 rounded-2xl p-12 text-center">
+            <div className="flex justify-center mb-3">
+              <PostsIcon size={24} className="text-gray-400" />
+            </div>
             <p className="text-gray-500 text-sm mb-4">
               {statusFilter === 'all'
                 ? 'No posts created yet.'
