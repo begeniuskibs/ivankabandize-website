@@ -456,7 +456,7 @@ export default function AdminEnquiriesPage() {
                     Type of Help
                   </span>
                   <p className="text-gray-900 font-medium mt-0.5">
-                    {selectedInquiry.help_type || '—'}
+                    {selectedInquiry.help_type || '-'}
                   </p>
                 </div>
 
@@ -465,7 +465,7 @@ export default function AdminEnquiriesPage() {
                     Timing
                   </span>
                   <p className="text-gray-900 font-medium mt-0.5">
-                    {selectedInquiry.timing || '—'}
+                    {selectedInquiry.timing || '-'}
                   </p>
                 </div>
               </div>

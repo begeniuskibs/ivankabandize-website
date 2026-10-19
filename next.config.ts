@@ -43,6 +43,33 @@ const nextConfig: NextConfig = {
         destination: '/garden/:slug*',
         permanent: true,
       },
+      // Ghost post stream redirects
+      {
+        source: '/randomthoughts/:slug',
+        destination: '/garden/:slug',
+        permanent: true,
+      },
+      {
+        source: '/structuredthoughts/:slug',
+        destination: '/garden/:slug',
+        permanent: true,
+      },
+      {
+        source: '/toolsforthought/:slug',
+        destination: '/garden/:slug',
+        permanent: true,
+      },
+      // Ghost retired books section redirects
+      {
+        source: '/books',
+        destination: '/garden',
+        permanent: true,
+      },
+      {
+        source: '/books/:path*',
+        destination: '/garden',
+        permanent: true,
+      },
       // Ghost tag redirects - Streams
       {
         source: '/tag/random-thoughts',
