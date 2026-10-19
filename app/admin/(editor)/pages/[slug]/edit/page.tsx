@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, use } from 'react'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
 interface PageData {
@@ -158,9 +159,14 @@ export default function PageEditPage({
         <div className="flex items-center gap-4">
           <Link
             href="/admin/pages"
-            className="text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition flex items-center gap-1.5"
+            className="group text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
           >
-            <span>&larr;</span>
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
             <span>All Pages</span>
           </Link>
           <div className="h-4 w-[1px] bg-gray-300" />
@@ -433,9 +439,15 @@ export default function PageEditPage({
           <div className="pt-4 flex items-center justify-between border-t border-gray-200">
             <Link
               href="/admin/pages"
-              className="text-xs font-semibold text-gray-500 hover:text-gray-900 transition"
+              className="group text-xs font-semibold text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
             >
-              &larr; Back to Pages
+              <ArrowLeft
+                size={14}
+                strokeWidth={2.5}
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+              />
+              <span>Back to Pages</span>
             </Link>
 
             <button

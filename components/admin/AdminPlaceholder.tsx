@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
 export default function AdminPlaceholder({
   title,
@@ -33,9 +34,15 @@ export default function AdminPlaceholder({
         <div>
           <Link
             href="/admin/pages"
-            className="px-5 py-2.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-xl transition shadow-sm"
+            className="group inline-flex items-center gap-1.5 px-5 py-2.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-xl transition shadow-sm"
           >
-            &larr; Back to Pages
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
+            <span>Back to Pages</span>
           </Link>
         </div>
       </main>

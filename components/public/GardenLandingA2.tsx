@@ -107,6 +107,7 @@ export default function GardenLandingA2({
                     <ArrowRight
                       size={14}
                       strokeWidth={2.5}
+                      aria-hidden="true"
                       className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0 motion-reduce:transition-none"
                     />
                   </span>
@@ -157,6 +158,7 @@ export default function GardenLandingA2({
                     <ArrowRight
                       size={14}
                       strokeWidth={2.5}
+                      aria-hidden="true"
                       className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0 motion-reduce:transition-none"
                     />
                   </span>
@@ -351,9 +353,15 @@ export default function GardenLandingA2({
           <div className="pt-4 flex justify-center">
             <Link
               href="/garden?view=articles"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border border-[#CF3F29] text-[#CF3F29] hover:bg-[#CF3F29] hover:text-white transition"
+              className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border border-[#CF3F29] text-[#CF3F29] hover:bg-[#CF3F29] hover:text-white transition"
             >
-              See all articles -&gt;
+              <span>See all articles</span>
+              <ArrowRight
+                size={14}
+                strokeWidth={2.5}
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+              />
             </Link>
           </div>
         </section>
@@ -413,9 +421,15 @@ export default function GardenLandingA2({
           <div className="pt-4 flex justify-center">
             <Link
               href="/library"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border border-[#1B7F7A] text-[#1B7F7A] hover:bg-[#1B7F7A] hover:text-white transition"
+              className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border border-[#1B7F7A] text-[#1B7F7A] hover:bg-[#1B7F7A] hover:text-white transition"
             >
-              See the full Library -&gt;
+              <span>See the full Library</span>
+              <ArrowRight
+                size={14}
+                strokeWidth={2.5}
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+              />
             </Link>
           </div>
         </section>

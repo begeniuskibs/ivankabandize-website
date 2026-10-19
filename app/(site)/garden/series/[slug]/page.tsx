@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import PostCard from '@/components/public/PostCard'
 import { getCardPreviews } from '@/lib/postTeaser'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
 export const dynamic = 'force-dynamic'
@@ -79,9 +80,15 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
         <div className="mb-10">
           <Link
             href="/garden?view=articles"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
+            className="group inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
           >
-            <span>&larr; Back to Articles</span>
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
+            <span>Back to Articles</span>
           </Link>
         </div>
 

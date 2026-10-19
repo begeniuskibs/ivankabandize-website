@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { HELP_OPTIONS, TIMING_OPTIONS } from '@/lib/inquiries'
 
@@ -339,10 +340,15 @@ export default function LetsTalkPage() {
                       <button
                         type="button"
                         onClick={() => handleNextStep(1)}
-                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <span>Continue</span>
-                        <span aria-hidden="true">&rarr;</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </button>
                     </div>
                   </div>
@@ -430,17 +436,28 @@ export default function LetsTalkPage() {
                       <button
                         type="button"
                         onClick={() => handleBack(2)}
-                        className="text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition flex items-center gap-1 cursor-pointer"
+                        className="group text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition inline-flex items-center gap-1.5 cursor-pointer"
                       >
-                        &larr; Back
+                        <ArrowLeft
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                        />
+                        <span>Back</span>
                       </button>
                       <button
                         type="button"
                         onClick={() => handleNextStep(2)}
-                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <span>Review</span>
-                        <span aria-hidden="true">&rarr;</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        />
                       </button>
                     </div>
                   </div>
@@ -556,9 +573,15 @@ export default function LetsTalkPage() {
                         type="button"
                         onClick={() => handleBack(3)}
                         disabled={isSubmitting}
-                        className="text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition flex items-center gap-1 cursor-pointer disabled:opacity-50"
+                        className="group text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
                       >
-                        &larr; Back
+                        <ArrowLeft
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                        />
+                        <span>Back</span>
                       </button>
                       <button
                         type="button"

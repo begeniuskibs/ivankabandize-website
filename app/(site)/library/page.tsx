@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
@@ -215,9 +216,14 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             </h3>
                           </div>
 
-                          <div className="pt-2 flex items-center text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
                             <span>Listen / Watch</span>
-                            <span className="ml-1.5 transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+                            <ArrowRight
+                              size={14}
+                              strokeWidth={2.5}
+                              aria-hidden="true"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                            />
                           </div>
                         </div>
                       </a>
@@ -284,9 +290,14 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               </p>
                             </div>
 
-                            <div className="pt-2 flex items-center text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                            <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
                               <span>View Details</span>
-                              <span className="ml-1.5 transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+                              <ArrowRight
+                                size={14}
+                                strokeWidth={2.5}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                              />
                             </div>
                           </div>
                         </div>
@@ -353,9 +364,14 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             </h3>
                           </div>
 
-                          <div className="pt-2 flex items-center text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
                             <span>Read &amp; Subscribe</span>
-                            <span className="ml-1.5 transition-transform group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+                            <ArrowRight
+                              size={14}
+                              strokeWidth={2.5}
+                              aria-hidden="true"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                            />
                           </div>
                         </div>
                       </a>

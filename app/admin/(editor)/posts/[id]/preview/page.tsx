@@ -2,6 +2,7 @@
 
 import React, { useState, use } from 'react'
 import Link from 'next/link'
+import { ArrowLeft } from 'lucide-react'
 
 interface PreviewShellProps {
   params: Promise<{ id: string }>
@@ -19,9 +20,14 @@ export default function PostPreviewShellPage({ params }: PreviewShellProps) {
         <div className="flex items-center gap-3">
           <Link
             href={`/admin/posts/editor?id=${id}`}
-            className="text-xs font-semibold text-gray-600 hover:text-gray-900 transition flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-100"
+            className="group text-xs font-semibold text-gray-600 hover:text-gray-900 transition inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg hover:bg-gray-100"
           >
-            <span>&larr;</span>
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
             <span>Back to editor</span>
           </Link>
           <div className="h-4 w-[1px] bg-gray-200" />

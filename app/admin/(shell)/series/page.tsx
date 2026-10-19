@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState, useRef } from 'react'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import {
   uploadFileDirect,
   UploadProgressCard,
@@ -525,10 +526,15 @@ export default function AdminSeriesListPage() {
                               </span>
                               <Link
                                 href={`/admin/posts/editor?id=${post.id}`}
-                                className="text-xs text-gray-400 hover:text-black font-semibold"
+                                className="group inline-flex items-center text-xs text-gray-400 hover:text-black font-semibold"
                                 title="Edit post"
                               >
-                                &rarr;
+                                <ArrowRight
+                                  size={14}
+                                  strokeWidth={2.5}
+                                  aria-hidden="true"
+                                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                                />
                               </Link>
                             </div>
                           </div>

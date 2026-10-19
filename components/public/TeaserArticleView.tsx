@@ -1,6 +1,7 @@
 import React from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ArrowLeft } from 'lucide-react'
 import WideContainer from '@/components/public/WideContainer'
 import type { TeaserPost } from '@/lib/postTeaser'
 
@@ -38,9 +39,15 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
         <div className="mb-10">
           <Link
             href="/garden"
-            className="inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
+            className="group inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
           >
-            <span>&larr; Back to The Garden</span>
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            />
+            <span>Back to The Garden</span>
           </Link>
         </div>
 
