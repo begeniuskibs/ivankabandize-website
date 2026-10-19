@@ -5,11 +5,28 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import { signOut } from '@/app/auth/actions'
+import {
+  AnalyticsIcon,
+  ViewSiteIcon,
+  PostsIcon,
+  PagesIcon,
+  TagsIcon,
+  LibraryIcon,
+  MembersIcon,
+  CommentsIcon,
+  EnquiriesIcon,
+  AutomationsIcon,
+  SettingsIcon,
+  HelpIcon,
+  WhatsNewIcon,
+  AppearanceIcon,
+  SignOutIcon,
+} from '@/components/admin/icons'
 
 interface SidebarItem {
   label: string
   href?: string
-  icon: string
+  icon: React.ReactNode
   badge?: string
   isExternal?: boolean
   isDeferred?: boolean
@@ -132,7 +149,7 @@ export default function AdminSidebar() {
     {
       label: 'Analytics',
       href: '/admin/analytics',
-      icon: '📊',
+      icon: <AnalyticsIcon size={18} />,
     },
     {
       label: 'Network',
@@ -143,7 +160,7 @@ export default function AdminSidebar() {
     {
       label: 'View site',
       href: '/',
-      icon: '↗',
+      icon: <ViewSiteIcon size={18} />,
       isExternal: true,
     },
   ]
@@ -152,7 +169,7 @@ export default function AdminSidebar() {
     {
       label: 'Posts',
       href: '/admin/posts',
-      icon: '📝',
+      icon: <PostsIcon size={18} />,
       subItems: [
         { label: 'Drafts', href: '/admin/posts?status=draft' },
         { label: 'Scheduled', href: '/admin/posts?status=scheduled' },
@@ -162,17 +179,17 @@ export default function AdminSidebar() {
     {
       label: 'Pages',
       href: '/admin/pages',
-      icon: '📄',
+      icon: <PagesIcon size={18} />,
     },
     {
       label: 'Tags',
       href: '/admin/tags',
-      icon: '🏷️',
+      icon: <TagsIcon size={18} />,
     },
     {
       label: 'Library',
       href: '/admin/library',
-      icon: '📖',
+      icon: <LibraryIcon size={18} />,
     },
     {
       label: 'Series',
@@ -182,17 +199,17 @@ export default function AdminSidebar() {
     {
       label: 'Members',
       href: '/admin/members',
-      icon: '👥',
+      icon: <MembersIcon size={18} />,
     },
     {
       label: 'Comments',
       href: '/admin/comments',
-      icon: '💬',
+      icon: <CommentsIcon size={18} />,
     },
     {
       label: 'Enquiries',
       href: '/admin/enquiries',
-      icon: '📬',
+      icon: <EnquiriesIcon size={18} />,
       badge: newInquiriesCount > 0 ? String(newInquiriesCount) : undefined,
     },
   ]
@@ -200,7 +217,7 @@ export default function AdminSidebar() {
   const automationsNav: SidebarItem[] = [
     {
       label: 'Automations',
-      icon: '⚡',
+      icon: <AutomationsIcon size={18} />,
       isDeferred: true,
       badge: 'later',
     },
@@ -210,12 +227,12 @@ export default function AdminSidebar() {
     {
       label: 'Settings',
       href: '/admin/settings',
-      icon: '⚙️',
+      icon: <SettingsIcon size={18} />,
     },
     {
       label: 'Help & Docs',
       href: '/admin/help',
-      icon: '❓',
+      icon: <HelpIcon size={18} />,
     },
   ]
 
@@ -331,7 +348,7 @@ export default function AdminSidebar() {
                 onClick={() => setIsAccountMenuOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
               >
-                <span>✨</span>
+                <WhatsNewIcon size={18} className="shrink-0" />
                 <span>What&apos;s new?</span>
               </Link>
               <Link
@@ -353,7 +370,7 @@ export default function AdminSidebar() {
                 onClick={() => setIsAccountMenuOpen(false)}
                 className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
               >
-                <span>📖</span>
+                <HelpIcon size={18} className="shrink-0" />
                 <span>Resources &amp; guides</span>
               </Link>
 
@@ -363,7 +380,7 @@ export default function AdminSidebar() {
                 title="Theme switching is currently locked to Dark"
               >
                 <div className="flex items-center gap-2.5">
-                  <span>🌙</span>
+                  <AppearanceIcon size={18} className="shrink-0" />
                   <span>Appearance</span>
                 </div>
                 <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#8E92A6]">
@@ -382,7 +399,7 @@ export default function AdminSidebar() {
                   type="submit"
                   className="w-full text-left flex items-center gap-2.5 px-3 py-2 text-xs font-semibold text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition cursor-pointer"
                 >
-                  <span>🚪</span>
+                  <SignOutIcon size={18} className="shrink-0" />
                   <span>Sign out</span>
                 </button>
               </form>
@@ -432,7 +449,7 @@ function renderNavItem(item: SidebarItem, pathname: string, active: boolean) {
         title="Coming in a future sprint"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-sm opacity-50">{item.icon}</span>
+          <span className="text-sm opacity-50 flex items-center justify-center w-[18px] h-[18px] shrink-0">{item.icon}</span>
           <span>{item.label}</span>
         </div>
         {item.badge && (
@@ -454,7 +471,7 @@ function renderNavItem(item: SidebarItem, pathname: string, active: boolean) {
         className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium text-[#B2B5C6] hover:text-white hover:bg-[#222432] transition group"
       >
         <div className="flex items-center gap-2.5">
-          <span className="text-sm text-[#82869C] group-hover:text-white transition-colors">{item.icon}</span>
+          <span className="text-sm text-[#82869C] group-hover:text-white transition-colors flex items-center justify-center w-[18px] h-[18px] shrink-0">{item.icon}</span>
           <span>{item.label}</span>
         </div>
         <span className="text-[11px] text-[#6E7287] group-hover:text-[#B2B5C6]">↗</span>
@@ -475,7 +492,7 @@ function renderNavItem(item: SidebarItem, pathname: string, active: boolean) {
         }`}
       >
         <div className="flex items-center gap-2.5">
-          <span className={`text-sm ${active ? 'text-white' : 'text-[#82869C]'}`}>
+          <span className={`text-sm flex items-center justify-center w-[18px] h-[18px] shrink-0 ${active ? 'text-white' : 'text-[#82869C]'}`}>
             {item.icon}
           </span>
           <span>{item.label}</span>

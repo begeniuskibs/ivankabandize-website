@@ -8,6 +8,7 @@ import {
   UploadProgressCard,
   formatBytes,
 } from '@/components/editor/UploadProgress'
+import { ImageIcon, CloseIcon } from '@/components/admin/icons'
 
 interface SeriesPostItem {
   id: string
@@ -566,9 +567,10 @@ export default function AdminSeriesListPage() {
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 text-xl font-bold p-1 cursor-pointer"
+                aria-label="Close series modal"
+                className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
               >
-                &times;
+                <CloseIcon size={18} />
               </button>
             </div>
 
@@ -809,7 +811,7 @@ export default function AdminSeriesListPage() {
                     onClick={() => fileInputRef.current?.click()}
                     className="w-full py-6 border-2 border-dashed border-gray-200 rounded-xl flex flex-col items-center justify-center gap-1.5 hover:border-gray-400 transition cursor-pointer text-gray-500 hover:text-gray-700"
                   >
-                    <span className="text-xl">🖼️</span>
+                    <ImageIcon size={20} className="text-gray-500" />
                     <span className="text-xs font-semibold">
                       Upload Header Image
                     </span>
@@ -828,9 +830,10 @@ export default function AdminSeriesListPage() {
                   <button
                     type="button"
                     onClick={() => setModalError(null)}
-                    className="text-red-500 hover:text-red-800 font-bold ml-2 cursor-pointer"
+                    aria-label="Dismiss error"
+                    className="text-red-500 hover:text-red-800 p-0.5 ml-2 cursor-pointer"
                   >
-                    &times;
+                    <CloseIcon size={14} />
                   </button>
                 </div>
               )}

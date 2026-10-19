@@ -8,6 +8,7 @@ import TipTapEditor from '@/components/editor/TipTapEditor'
 import UnsplashModal from '@/components/editor/UnsplashModal'
 import CaptionInput from '@/components/editor/CaptionInput'
 import { renderCaption } from '@/components/editor/captionLinks'
+import { ImageIcon } from '@/components/admin/icons'
 
 interface Tag {
   id: string
@@ -570,7 +571,14 @@ function PostEditorContent() {
                       onClick={() => featureImageInputRef.current?.click()}
                       className="px-4 py-2 border border-gray-300 hover:bg-gray-50 text-gray-800 text-xs font-semibold rounded-xl transition disabled:opacity-50"
                     >
-                      {uploadingFeatureImage ? 'Uploading...' : '📁 Upload Image'}
+                      {uploadingFeatureImage ? (
+                        'Uploading...'
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5">
+                          <ImageIcon size={16} />
+                          <span>Upload Image</span>
+                        </span>
+                      )}
                     </button>
                   </div>
                 </div>

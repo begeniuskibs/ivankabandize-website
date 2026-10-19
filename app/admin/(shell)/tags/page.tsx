@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
+import { TagsIcon, CloseIcon } from '@/components/admin/icons'
 
 interface TagRecord {
   id: string
@@ -197,7 +198,9 @@ export default function AdminTagsPage() {
           </div>
         ) : tags.length === 0 ? (
           <div className="py-20 text-center bg-white rounded-2xl border border-gray-200 max-w-lg mx-auto p-8 shadow-sm">
-            <div className="text-4xl mb-3">&#127991;&#65039;</div>
+            <div className="flex justify-center mb-3">
+              <TagsIcon size={24} className="text-[#232536]" />
+            </div>
             <h3 className="text-base font-bold text-gray-900 mb-1">No tags created yet</h3>
             <p className="text-xs text-gray-500 mb-6">Create tags to organize posts into topics.</p>
             <button
@@ -272,9 +275,9 @@ export default function AdminTagsPage() {
               <button
                 type="button"
                 onClick={handleCloseModal}
-                className="text-gray-400 hover:text-gray-600 text-xl font-bold p-1 cursor-pointer"
+                className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer"
               >
-                &times;
+                <CloseIcon size={18} />
               </button>
             </div>
 

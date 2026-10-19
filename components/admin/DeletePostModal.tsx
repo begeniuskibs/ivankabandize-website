@@ -2,6 +2,7 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { isDeleteConfirmationValid } from '@/lib/postDelete'
+import { CloseIcon } from '@/components/admin/icons'
 
 export interface PostToDelete {
   id: string
@@ -163,9 +164,9 @@ export default function DeletePostModal({
             onClick={onClose}
             disabled={isDeleting}
             aria-label="Close delete confirmation"
-            className="text-gray-400 hover:text-gray-600 text-lg font-bold p-1 cursor-pointer disabled:opacity-50"
+            className="text-gray-400 hover:text-gray-600 p-1 cursor-pointer disabled:opacity-50"
           >
-            &times;
+            <CloseIcon size={16} />
           </button>
         </div>
 

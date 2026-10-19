@@ -2,30 +2,13 @@
 
 import React, { useRef, useState, useEffect } from 'react'
 import { isAllowedCaptionUrl, wrapSelectionAsLink } from './captionLinks'
+import { LinkIcon, CloseIcon } from '@/components/admin/icons'
 
 export interface CaptionInputProps {
   value: string
   onChange: (value: string) => void
   placeholder?: string
   className?: string
-}
-
-function LinkIcon({ className = 'w-3.5 h-3.5' }: { className?: string }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
-      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
-    </svg>
-  )
 }
 
 export default function CaptionInput({
@@ -223,9 +206,9 @@ export default function CaptionInput({
               type="button"
               onClick={handleCancel}
               aria-label="Close link dialog"
-              className="text-gray-400 hover:text-gray-600 font-bold p-0.5 cursor-pointer"
+              className="text-gray-400 hover:text-gray-600 p-0.5 cursor-pointer"
             >
-              &times;
+              <CloseIcon size={14} />
             </button>
           </div>
 
