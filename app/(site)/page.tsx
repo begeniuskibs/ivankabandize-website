@@ -101,7 +101,7 @@ export default async function HomePage() {
                       size={14}
                       strokeWidth={2.5}
                       aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                     />
                   </Link>
                   <a
@@ -213,7 +213,7 @@ export default async function HomePage() {
                     size={14}
                     strokeWidth={2.5}
                     aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
                 </div>
               </Link>
@@ -240,7 +240,7 @@ export default async function HomePage() {
                     size={14}
                     strokeWidth={2.5}
                     aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
                 </div>
               </Link>
@@ -267,7 +267,7 @@ export default async function HomePage() {
                     size={14}
                     strokeWidth={2.5}
                     aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
                 </div>
               </Link>
@@ -294,7 +294,7 @@ export default async function HomePage() {
                     size={14}
                     strokeWidth={2.5}
                     aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
                 </div>
               </Link>
@@ -399,7 +399,7 @@ export default async function HomePage() {
                   size={14}
                   strokeWidth={2.5}
                   aria-hidden="true"
-                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                 />
               </Link>
             </div>

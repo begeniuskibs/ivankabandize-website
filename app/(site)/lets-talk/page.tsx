@@ -347,7 +347,7 @@ export default function LetsTalkPage() {
                           size={14}
                           strokeWidth={2.5}
                           aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                         />
                       </button>
                     </div>
@@ -442,7 +442,7 @@ export default function LetsTalkPage() {
                           size={14}
                           strokeWidth={2.5}
                           aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
                         />
                         <span>Back</span>
                       </button>
@@ -456,7 +456,7 @@ export default function LetsTalkPage() {
                           size={14}
                           strokeWidth={2.5}
                           aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                         />
                       </button>
                     </div>
@@ -579,7 +579,7 @@ export default function LetsTalkPage() {
                           size={14}
                           strokeWidth={2.5}
                           aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+                          className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
                         />
                         <span>Back</span>
                       </button>
