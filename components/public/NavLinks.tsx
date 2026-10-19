@@ -12,6 +12,7 @@ import {
   isAuthActive,
 } from './navActive'
 import { openSearch } from './searchStore'
+import { SearchIcon } from '@/components/icons'
 
 interface NavLinksProps {
   user: any
@@ -103,20 +104,7 @@ export default function NavLinks({
         aria-label="Search"
         className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm hover:border-[#EF5B45]/40 hover:bg-[#FAF3E8] transition active:scale-95"
       >
-        <svg
-          width="22"
-          height="22"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="#232536"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          aria-hidden="true"
-        >
-          <circle cx="11" cy="11" r="8" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
+        <SearchIcon size={22} className="text-[#232536]" />
       </button>
     </nav>
   )

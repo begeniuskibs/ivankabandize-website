@@ -1,5 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
@@ -165,7 +166,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
               <section id="podcasts" className="space-y-8">
                 <ScrollReveal>
                   <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
-                    <span className="text-2xl" aria-hidden="true">🎙️</span>
+                    <Image
+                      src="/icons/3d/microphone.svg"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 object-contain shrink-0"
+                      aria-hidden="true"
+                      unoptimized
+                    />
                     <div>
                       <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                         Podcasts &amp; Conversations
@@ -196,8 +205,16 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-3xl text-[#5A5D70]/40">
-                              🎙️
+                            <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                              <Image
+                                src="/icons/3d/microphone.svg"
+                                alt=""
+                                width={48}
+                                height={48}
+                                className="w-12 h-12 object-contain opacity-40"
+                                aria-hidden="true"
+                                unoptimized
+                              />
                             </div>
                           )}
                           <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
@@ -222,7 +239,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               size={14}
                               strokeWidth={2.5}
                               aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                             />
                           </div>
                         </div>
@@ -238,7 +255,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
               <section id="books" className="space-y-8">
                 <ScrollReveal>
                   <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
-                    <span className="text-2xl" aria-hidden="true">📚</span>
+                    <Image
+                      src="/icons/3d/books.svg"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 object-contain shrink-0"
+                      aria-hidden="true"
+                      unoptimized
+                    />
                     <div>
                       <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                         Books &amp; Reading
@@ -270,8 +295,16 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                               />
                             ) : (
-                              <div className="w-full h-full flex items-center justify-center text-2xl text-[#5A5D70]/40">
-                                📚
+                              <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                                <Image
+                                  src="/icons/3d/books.svg"
+                                  alt=""
+                                  width={40}
+                                  height={40}
+                                  className="w-10 h-10 object-contain opacity-40"
+                                  aria-hidden="true"
+                                  unoptimized
+                                />
                               </div>
                             )}
                           </div>
@@ -296,7 +329,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                                 size={14}
                                 strokeWidth={2.5}
                                 aria-hidden="true"
-                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                               />
                             </div>
                           </div>
@@ -313,7 +346,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
               <section id="newsletters" className="space-y-8">
                 <ScrollReveal>
                   <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
-                    <span className="text-2xl" aria-hidden="true">📬</span>
+                    <Image
+                      src="/icons/3d/newsletter.svg"
+                      alt=""
+                      width={32}
+                      height={32}
+                      className="w-8 h-8 object-contain shrink-0"
+                      aria-hidden="true"
+                      unoptimized
+                    />
                     <div>
                       <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                         Newsletters &amp; Dispatches
@@ -344,8 +385,16 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-3xl text-[#5A5D70]/40">
-                              📬
+                            <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                              <Image
+                                src="/icons/3d/newsletter.svg"
+                                alt=""
+                                width={48}
+                                height={48}
+                                className="w-12 h-12 object-contain opacity-40"
+                                aria-hidden="true"
+                                unoptimized
+                              />
                             </div>
                           )}
                           <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
@@ -370,7 +419,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               size={14}
                               strokeWidth={2.5}
                               aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                             />
                           </div>
                         </div>

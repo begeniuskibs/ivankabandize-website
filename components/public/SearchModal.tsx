@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import Link from 'next/link'
 import { useRouter, usePathname } from 'next/navigation'
 import { useSearchOpen, closeSearch } from './searchStore'
+import { SearchIcon } from '@/components/icons'
 import type { SearchResultItem } from '@/lib/search'
 
 function formatDate(iso: string): string {
@@ -208,21 +209,7 @@ function SearchOverlayContent() {
       >
         {/* Input Header Row */}
         <div className="p-3.5 sm:p-4 flex items-center gap-3 border-b border-[#F0E4D2]/80 shrink-0">
-          <svg
-            width="20"
-            height="20"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="#8A8D9F"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden="true"
-            className="shrink-0"
-          >
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
+          <SearchIcon size={20} className="text-[#8A8D9F] shrink-0" />
 
           <input
             ref={inputRef}

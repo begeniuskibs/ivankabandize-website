@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation'
 import { computeScrollHeaderState, type ScrollHeaderState } from './scrollHeader'
 import { isWorkActive, isMeActive, isGardenActive, isNowActive } from './navActive'
 import { openSearch } from './searchStore'
+import { SearchIcon, MenuIcon, CloseIcon } from '@/components/icons'
 import type { User } from '@supabase/supabase-js'
 
 interface MobileNavProps {
@@ -158,20 +159,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               aria-label="Search"
               className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#232536"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <line x1="21" y1="21" x2="16.65" y2="16.65" />
-              </svg>
+              <SearchIcon size={22} className="text-[#232536]" />
             </button>
 
             {/* 44x44 Menu button */}
@@ -184,22 +172,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               aria-controls="mobile-menu"
               className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
-              {/* Hamburger icon 22px stroke #232536 */}
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#232536"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="4" y1="6" x2="20" y2="6" />
-                <line x1="4" y1="12" x2="20" y2="12" />
-                <line x1="4" y1="18" x2="20" y2="18" />
-              </svg>
+              <MenuIcon size={22} className="text-[#232536]" />
             </button>
           </div>
         </div>
@@ -233,21 +206,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               aria-label="Close menu"
               className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
-              {/* Close (X) icon 22px stroke #232536 */}
-              <svg
-                width="22"
-                height="22"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#232536"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
+              <CloseIcon size={22} className="text-[#232536]" />
             </button>
           </div>
 

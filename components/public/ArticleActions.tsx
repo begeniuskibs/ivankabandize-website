@@ -1,7 +1,14 @@
 'use client'
 
 import React, { useState, useEffect, useRef } from 'react'
-import { Share2, Printer, Link2, Check, Mail, MessageCircle } from 'lucide-react'
+import {
+  ShareIcon,
+  PrintIcon,
+  LinkIcon,
+  CheckIcon,
+  MailIcon,
+  CommentIcon,
+} from '@/components/icons'
 
 export interface ArticleActionsProps {
   title: string
@@ -152,7 +159,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
           aria-label="Share article"
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#EF5B45]/40 hover:text-[#232536] hover:bg-[#FAF3E8]/40 transition shadow-2xs cursor-pointer select-none shrink-0"
         >
-          <Share2 className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
+          <ShareIcon size={14} className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
           <span>Share</span>
         </button>
 
@@ -172,9 +179,9 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
             >
               <div className="flex items-center gap-2">
                 {copied ? (
-                  <Check className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
+                  <CheckIcon size={14} className="w-3.5 h-3.5 text-emerald-600" aria-hidden="true" />
                 ) : (
-                  <Link2 className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
+                  <LinkIcon size={14} className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
                 )}
                 <span>{copied ? 'Copied' : 'Copy link'}</span>
               </div>
@@ -193,7 +200,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-[#232536] hover:bg-[#FAF3E8] rounded-lg transition font-medium"
             >
-              <MessageCircle className="w-3.5 h-3.5 text-[#25D366]" aria-hidden="true" />
+              <CommentIcon size={14} className="w-3.5 h-3.5 text-[#25D366]" aria-hidden="true" />
               <span>WhatsApp</span>
             </a>
 
@@ -237,7 +244,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-[#232536] hover:bg-[#FAF3E8] rounded-lg transition font-medium"
             >
-              <Mail className="w-3.5 h-3.5 text-[#EF5B45]" aria-hidden="true" />
+              <MailIcon size={14} className="w-3.5 h-3.5 text-[#EF5B45]" aria-hidden="true" />
               <span>Email</span>
             </a>
           </div>
@@ -251,7 +258,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
         aria-label="Print article"
         className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#EF5B45]/40 hover:text-[#232536] hover:bg-[#FAF3E8]/40 transition shadow-2xs cursor-pointer select-none shrink-0"
       >
-        <Printer className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
+        <PrintIcon size={14} className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
         <span>Print</span>
       </button>
     </div>

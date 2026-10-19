@@ -2,6 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
@@ -185,7 +186,15 @@ function ResetPasswordForm() {
     return (
       <div className="text-center space-y-6">
         <div className="w-16 h-16 rounded-full bg-[#FDF0EE] text-[#EF5B45] border border-[#EF5B45]/20 flex items-center justify-center mx-auto text-2xl">
-          ⚠️
+          <Image
+            src="/icons/3d/warning.svg"
+            alt=""
+            width={32}
+            height={32}
+            className="w-8 h-8 object-contain"
+            aria-hidden="true"
+            unoptimized
+          />
         </div>
         <div>
           <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
@@ -309,7 +318,7 @@ function ResetPasswordForm() {
             size={14}
             strokeWidth={2.5}
             aria-hidden="true"
-            className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:transform-none"
+            className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
           />
           <span>Cancel and return to Sign In</span>
         </Link>

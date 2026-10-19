@@ -105,7 +105,7 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
             size={14}
             strokeWidth={2.5}
             aria-hidden="true"
-            className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+            className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
           />
         </span>
       </div>
@@ -379,7 +379,7 @@ export default function GardenFeed({
                               size={14}
                               strokeWidth={2.5}
                               aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                             />
                           </span>
                         </div>
@@ -411,7 +411,7 @@ export default function GardenFeed({
                         size={14}
                         strokeWidth={2.5}
                         aria-hidden="true"
-                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                       />
                     </Link>
                   </div>
@@ -446,7 +446,7 @@ export default function GardenFeed({
                         size={14}
                         strokeWidth={2.5}
                         aria-hidden="true"
-                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                       />
                     </Link>
                   </div>
@@ -481,7 +481,7 @@ export default function GardenFeed({
                         size={14}
                         strokeWidth={2.5}
                         aria-hidden="true"
-                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                        className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                       />
                     </Link>
                   </div>
@@ -533,7 +533,7 @@ export default function GardenFeed({
                           size={14}
                           strokeWidth={2.5}
                           aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                         />
                       </Link>
                     )}
@@ -580,7 +580,7 @@ export default function GardenFeed({
                           size={14}
                           strokeWidth={2.5}
                           aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                         />
                       </Link>
                     </div>

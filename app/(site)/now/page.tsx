@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
@@ -57,8 +58,15 @@ export default function NowPage() {
             <ScrollReveal>
               <div className="relative">
                 {/* Date Dot */}
-                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#2AA198] flex items-center justify-center text-lg sm:text-xl shadow-sm z-10">
-                  🌿
+                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#2AA198] flex items-center justify-center shadow-sm z-10">
+                  <Image
+                    src="/icons/3d/seedling.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -82,19 +90,46 @@ export default function NowPage() {
                     </p>
                     <div className="space-y-3.5">
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="text-lg flex-shrink-0">🔧</span>
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                          <Image
+                            src="/icons/3d/tools.svg"
+                            alt=""
+                            aria-hidden="true"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain"
+                          />
+                        </span>
                         <p>
                           <strong className="text-[#232536]">Building:</strong> this website - a custom garden + CMS, designed to make publishing frictionless.
                         </p>
                       </div>
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="text-lg flex-shrink-0">🎓</span>
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                          <Image
+                            src="/icons/3d/graduation-cap.svg"
+                            alt=""
+                            aria-hidden="true"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain"
+                          />
+                        </span>
                         <p>
                           <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud - and publishing what I learn as I go.
                         </p>
                       </div>
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="text-lg flex-shrink-0">✍️</span>
+                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                          <Image
+                            src="/icons/3d/pen.svg"
+                            alt=""
+                            aria-hidden="true"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain"
+                          />
+                        </span>
                         <p>
                           <strong className="text-[#232536]">Writing:</strong> parts 3 and 4 of the Generative AI Leader series, plus notes on how organisations outgrow their founders.
                         </p>
@@ -115,8 +150,15 @@ export default function NowPage() {
             <ScrollReveal delayMs={60}>
               <div className="relative">
                 {/* Date Dot */}
-                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center text-lg sm:text-xl shadow-sm z-10">
-                  📚
+                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center shadow-sm z-10">
+                  <Image
+                    src="/icons/3d/books.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -140,8 +182,15 @@ export default function NowPage() {
             <ScrollReveal delayMs={120}>
               <div className="relative">
                 {/* Date Dot */}
-                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center text-lg sm:text-xl shadow-sm z-10">
-                  🤖
+                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center shadow-sm z-10">
+                  <Image
+                    src="/icons/3d/robot.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -162,8 +211,15 @@ export default function NowPage() {
             <ScrollReveal delayMs={180}>
               <div className="relative">
                 {/* Date Dot */}
-                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center text-lg sm:text-xl shadow-sm z-10">
-                  🎁
+                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center shadow-sm z-10">
+                  <Image
+                    src="/icons/3d/gift.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={24}
+                    height={24}
+                    className="w-6 h-6 object-contain"
+                  />
                 </div>
 
                 <div className="space-y-4">
@@ -199,7 +255,7 @@ export default function NowPage() {
                     size={14}
                     strokeWidth={2.5}
                     aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:transform-none"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
                 </Link>
               </div>
