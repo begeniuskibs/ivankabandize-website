@@ -306,7 +306,7 @@ export default function SlidingAuthCard({
             </h3>
             <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans">
               {isSignUp
-                ? 'Create an account to join discussions, bookmark articles, download resources and follow my thinking as it grows.'
+                ? 'Create an account to get new writing by email and follow my thinking as it grows.'
                 : 'Sign in to access your saved notes, follow threads in the garden, and manage your account.'}
             </p>
           </div>
