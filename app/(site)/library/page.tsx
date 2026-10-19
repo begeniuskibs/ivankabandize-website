@@ -141,7 +141,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
         {filteredItems.length === 0 ? (
           <div className="py-16 text-center bg-white rounded-2xl border border-[#F5ECDE] max-w-lg mx-auto p-8 shadow-xs">
-            <span className="text-3xl mb-3 block" aria-hidden="true">&#128218;</span>
+            <Image
+              src="/icons/3d/books.svg"
+              alt=""
+              aria-hidden="true"
+              width={48}
+              height={48}
+              className="w-12 h-12 object-contain drop-shadow-md mx-auto mb-3"
+              unoptimized
+            />
             <h3 className="font-bold text-lg text-[#232536] mb-1">
               No library items found
             </h3>

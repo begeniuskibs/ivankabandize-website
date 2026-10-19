@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import PostCard from './PostCard'
 
@@ -560,9 +561,14 @@ export default function GardenFeed({
                 </div>
               ) : (
                 <div className="py-20 text-center bg-white rounded-3xl border border-[#F5ECDE] max-w-2xl mx-auto px-6 shadow-sm">
-                  <div className="w-12 h-12 rounded-full bg-[#FDF8F1] border border-[#F5ECDE] flex items-center justify-center mx-auto mb-4 text-[#C99424] text-xl">
-                    &#127793;
-                  </div>
+                  <Image
+                    src="/icons/3d/seedling.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mx-auto mb-4"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-2">
                     New entries coming soon
                   </h3>

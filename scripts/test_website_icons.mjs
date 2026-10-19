@@ -25,7 +25,6 @@ if (icons3dFiles.length !== 24) {
 
 // Approved spares list for 3D icons not currently referenced in public copy
 const approvedSpares = new Set([
-  'building-blocks.svg',
   'link.svg',
   'print.svg',
   'share.svg',
@@ -187,6 +186,119 @@ for (const file of svgFilesToScan) {
 
 if (svgSafetyFailures === 0) {
   console.log(`PASS: SVG safety scan passed for all ${svgFilesToScan.length} scanned icon files.`)
+}
+
+// 5. Assert the four home card icons exist in app/(site)/page.tsx
+const homePagePath = path.join(projectRoot, 'app', '(site)', 'page.tsx')
+const homePageContent = fs.readFileSync(homePagePath, 'utf8')
+const expectedHomeCardIcons = [
+  '/icons/3d/building-blocks.svg',
+  '/icons/3d/gear.svg',
+  '/icons/3d/compass.svg',
+  '/icons/3d/robot.svg',
+]
+
+for (const iconPath of expectedHomeCardIcons) {
+  if (!homePageContent.includes(iconPath)) {
+    console.error(`FAIL: Home page does not contain expected card icon: ${iconPath}`)
+    passed = false
+  }
+}
+console.log('PASS: All four home card 3D icons exist in app/(site)/page.tsx.')
+
+// 6. Assert removed frame class patterns are gone from target files
+const removedFrameChecks = [
+  {
+    file: 'app/(site)/workwithme/page.tsx',
+    pattern: /w-14\s+h-14\s+rounded-2xl\s+bg-white/,
+    desc: 'w-14 h-14 rounded-2xl bg-white on icon tiles',
+  },
+  {
+    file: 'app/(site)/me/page.tsx',
+    pattern: /w-14\s+h-14\s+rounded-2xl\s+bg-white/,
+    desc: 'w-14 h-14 rounded-2xl bg-white on icon tiles',
+  },
+  {
+    file: 'app/(site)/me/page.tsx',
+    pattern: /w-10\s+h-10\s+rounded-xl/,
+    desc: 'w-10 h-10 rounded-xl on small tinted squares',
+  },
+  {
+    file: 'app/(site)/forgot-password/ForgotPasswordClient.tsx',
+    pattern: /w-16\s+h-16\s+rounded-full\s+bg-\[#FDF0EE\]/,
+    desc: 'w-16 h-16 rounded-full bg-[#FDF0EE] circle',
+  },
+  {
+    file: 'app/(site)/auth/reset-password/page.tsx',
+    pattern: /w-16\s+h-16\s+rounded-full\s+bg-\[#FDF0EE\]/,
+    desc: 'w-16 h-16 rounded-full bg-[#FDF0EE] circle',
+  },
+  {
+    file: 'components/auth/SlidingAuthCard.tsx',
+    pattern: /w-16\s+h-16\s+rounded-full\s+bg-\[#FDF0EE\]/,
+    desc: 'w-16 h-16 rounded-full bg-[#FDF0EE] circle',
+  },
+]
+
+for (const check of removedFrameChecks) {
+  const filePath = path.join(projectRoot, check.file)
+  const content = fs.readFileSync(filePath, 'utf8')
+  if (check.pattern.test(content)) {
+    console.error(`FAIL: ${check.file} still contains removed frame pattern: ${check.desc}`)
+    passed = false
+  }
+}
+console.log('PASS: All removed frame patterns are completely gone from target files.')
+
+// 7. Assert no entity-encoded emoji remain outside the printed allowlist
+const entityEmojiRegex = /&#(?:x[0-9a-fA-F]+|\d+);/g
+const entityAllowlist = [
+  {
+    file: 'app/(site)/page.tsx',
+    entity: '&#128075;',
+    reason: "Waving hand on Hey Friends and Let's Talk CTA button",
+  },
+  {
+    file: 'app/(site)/workwithme/page.tsx',
+    entity: '&#128075;',
+    reason: "Waving hand on Let's Talk CTA button",
+  },
+  {
+    file: 'app/(site)/me/page.tsx',
+    entity: '&#128075;',
+    reason: "Waving hand on Let's Talk CTA button",
+  },
+]
+
+console.log('--- Explicit Allowlist of Entity Emojis ---')
+for (const item of entityAllowlist) {
+  console.log(`  - [${item.entity}] in ${item.file}: ${item.reason}`)
+}
+
+let unexpectedEntities = 0
+for (const file of publicTsxFiles) {
+  const relPath = path.relative(projectRoot, file).replace(/\\/g, '/')
+  const content = fs.readFileSync(file, 'utf8')
+  const lines = content.split('\n')
+  lines.forEach((line, idx) => {
+    const matches = line.match(entityEmojiRegex)
+    if (matches) {
+      for (const m of matches) {
+        const allowed = entityAllowlist.some(
+          (a) => relPath === a.file && m === a.entity
+        )
+        if (!allowed) {
+          console.error(`FAIL: Unexpected entity emoji [${m}] in ${relPath}:${idx + 1} -> ${line.trim()}`)
+          unexpectedEntities++
+          passed = false
+        }
+      }
+    }
+  })
+}
+
+if (unexpectedEntities === 0) {
+  console.log('PASS: No unapproved entity-encoded emojis found in public-site .tsx files.')
 }
 
 if (!passed) {

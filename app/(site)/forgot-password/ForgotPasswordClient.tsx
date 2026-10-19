@@ -66,17 +66,15 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
       <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-[#F5ECDE]">
         {submitted ? (
           <div className="text-center space-y-6">
-            <div className="w-16 h-16 rounded-full bg-[#FDF0EE] text-[#EF5B45] border border-[#EF5B45]/20 flex items-center justify-center mx-auto text-2xl">
-              <Image
-                src="/icons/3d/mail.svg"
-                alt=""
-                width={32}
-                height={32}
-                className="w-8 h-8 object-contain"
-                aria-hidden="true"
-                unoptimized
-              />
-            </div>
+            <Image
+              src="/icons/3d/mail.svg"
+              alt=""
+              width={56}
+              height={56}
+              className="w-14 h-14 object-contain mx-auto my-1 drop-shadow-md"
+              aria-hidden="true"
+              unoptimized
+            />
             <div>
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536]">
                 Check your email

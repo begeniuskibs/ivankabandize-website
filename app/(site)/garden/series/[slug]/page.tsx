@@ -2,6 +2,7 @@ import { createClient } from '@/utils/supabase/server'
 import PostCard from '@/components/public/PostCard'
 import { getCardPreviews } from '@/lib/postTeaser'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 
@@ -159,7 +160,14 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
 
           {publishedParts.length === 0 ? (
             <div className="py-16 text-center bg-white rounded-3xl border border-[#F5ECDE] max-w-lg mx-auto p-8 shadow-sm">
-              <div className="text-3xl mb-3">&#127793;</div>
+              <Image
+                src="/icons/3d/seedling.svg"
+                alt=""
+                aria-hidden="true"
+                width={48}
+                height={48}
+                className="w-12 h-12 object-contain drop-shadow-md mx-auto mb-3"
+              />
               <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-1">
                 Entries coming soon
               </h3>

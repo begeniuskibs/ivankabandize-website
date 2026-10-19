@@ -216,16 +216,14 @@ export default async function MePage() {
             <ScrollReveal delayMs={50}>
               <div className="bg-[#FCEBE7]/70 hover:bg-[#FCEBE7] border border-[#EF5B45]/15 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm mb-6">
-                    <Image
-                      src="/icons/3d/gear.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/icons/3d/gear.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-8"
+                  />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-2 block">
                     Consulting
                   </span>
@@ -258,16 +256,14 @@ export default async function MePage() {
             <ScrollReveal delayMs={120}>
               <div className="bg-[#EAF4F3]/70 hover:bg-[#EAF4F3] border border-[#2AA198]/15 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm mb-6">
-                    <Image
-                      src="/icons/3d/graduation-cap.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/icons/3d/graduation-cap.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-8"
+                  />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-2 block">
                     Training Lead
                   </span>
@@ -300,16 +296,14 @@ export default async function MePage() {
             <ScrollReveal delayMs={190}>
               <div className="bg-[#FDF3DC]/70 hover:bg-[#FDF3DC] border border-[#F7C55C]/30 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm mb-6">
-                    <Image
-                      src="/icons/3d/pen.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/icons/3d/pen.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-8"
+                  />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-2 block">
                     Broadcast &amp; Garden
                   </span>
@@ -359,17 +353,15 @@ export default async function MePage() {
             {/* Background 1: On Teaching */}
             <ScrollReveal delayMs={60}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="w-10 h-10 rounded-xl bg-[#EAF4F3] text-[#2AA198] flex items-center justify-center">
-                    <Image
-                      src="/icons/3d/graduation-cap.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 object-contain"
-                    />
-                  </span>
+                <div className="flex items-center gap-3 mb-7">
+                  <Image
+                    src="/icons/3d/graduation-cap.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 object-contain drop-shadow-md shrink-0"
+                  />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198]">
                     School of Community Leadership
                   </span>
@@ -383,17 +375,15 @@ export default async function MePage() {
             {/* Background 2: On The Method */}
             <ScrollReveal delayMs={120}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] transition-all duration-300">
-                <div className="flex items-center gap-3 mb-4">
-                  <span className="w-10 h-10 rounded-xl bg-[#FCEBE7] text-[#EF5B45] flex items-center justify-center">
-                    <Image
-                      src="/icons/3d/gear.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 object-contain"
-                    />
-                  </span>
+                <div className="flex items-center gap-3 mb-7">
+                  <Image
+                    src="/icons/3d/gear.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={28}
+                    height={28}
+                    className="w-7 h-7 object-contain drop-shadow-md shrink-0"
+                  />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#EF5B45]">
                     The Engagement Method
                   </span>

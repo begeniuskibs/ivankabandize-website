@@ -199,7 +199,14 @@ export default async function HomePage() {
                 className="bg-[#FCEBE7] hover:bg-[#fad8d1] border border-[#EF5B45]/15 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
-                  <span className="text-3xl block mb-4">&#127959;&#65039;</span>
+                  <Image
+                    src="/icons/3d/building-blocks.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-4"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Fix Your Operations
                   </h3>
@@ -226,7 +233,14 @@ export default async function HomePage() {
                 className="bg-[#FDF3DC] hover:bg-[#faeac4] border border-[#F7C55C]/30 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
-                  <span className="text-3xl block mb-4">&#9881;&#65039;</span>
+                  <Image
+                    src="/icons/3d/gear.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-4"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Build Better Systems
                   </h3>
@@ -253,7 +267,14 @@ export default async function HomePage() {
                 className="bg-[#EAF4F3] hover:bg-[#d5ebe9] border border-[#2AA198]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
-                  <span className="text-3xl block mb-4">&#129658;</span>
+                  <Image
+                    src="/icons/3d/compass.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-4"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Lead With Clarity
                   </h3>
@@ -280,7 +301,14 @@ export default async function HomePage() {
                 className="bg-[#EEEDF9] hover:bg-[#dfdcf5] border border-[#6B66C4]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
-                  <span className="text-3xl block mb-4">&#129302;</span>
+                  <Image
+                    src="/icons/3d/robot.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-4"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl sm:text-2xl font-semibold text-[#232536] mb-2">
                     Make Sense of AI
                   </h3>
@@ -439,9 +467,17 @@ export default async function HomePage() {
             <div className="text-center mt-12">
               <Link
                 href="/garden"
-                className="inline-flex items-center justify-center font-bold text-base px-8 py-4 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
-                Wander the Garden &#127793;
+                <span>Wander the Garden</span>
+                <Image
+                  src="/icons/3d/seedling.svg"
+                  alt=""
+                  aria-hidden="true"
+                  width={20}
+                  height={20}
+                  className="w-5 h-5 object-contain"
+                />
               </Link>
             </div>
           </ScrollReveal>

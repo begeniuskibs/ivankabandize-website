@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { MailIcon } from '@/components/icons'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { HELP_OPTIONS, TIMING_OPTIONS } from '@/lib/inquiries'
 
@@ -617,7 +618,7 @@ export default function LetsTalkPage() {
                         ) : (
                           <>
                             <span>Send enquiry</span>
-                            <span aria-hidden="true">&#128228;</span>
+                            <MailIcon size={16} strokeWidth={2} aria-hidden="true" />
                           </>
                         )}
                       </button>

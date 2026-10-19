@@ -120,16 +120,14 @@ export default async function WorkWithMePage() {
             <ScrollReveal delayMs={50}>
               <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm mb-6">
-                    <Image
-                      src="/icons/3d/search.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/icons/3d/search.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-8"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Audit
                   </h3>
@@ -149,16 +147,14 @@ export default async function WorkWithMePage() {
             <ScrollReveal delayMs={120}>
               <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm mb-6">
-                    <Image
-                      src="/icons/3d/tools.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/icons/3d/tools.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-8"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Build
                   </h3>
@@ -178,16 +174,14 @@ export default async function WorkWithMePage() {
             <ScrollReveal delayMs={190}>
               <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-14 h-14 rounded-2xl bg-white flex items-center justify-center shadow-sm mb-6">
-                    <Image
-                      src="/icons/3d/partnership.svg"
-                      alt=""
-                      aria-hidden="true"
-                      width={32}
-                      height={32}
-                      className="w-8 h-8 object-contain"
-                    />
-                  </div>
+                  <Image
+                    src="/icons/3d/partnership.svg"
+                    alt=""
+                    aria-hidden="true"
+                    width={48}
+                    height={48}
+                    className="w-12 h-12 object-contain drop-shadow-md mb-8"
+                  />
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Support
                   </h3>
