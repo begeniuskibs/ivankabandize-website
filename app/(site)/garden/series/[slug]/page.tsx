@@ -23,15 +23,20 @@ export async function generateMetadata({ params }: SeriesPageProps) {
     .maybeSingle()
 
   if (!series) {
-    return { title: 'Series Not Found | Ivan Kabandize' }
+    return { title: 'Series Not Found' }
   }
 
+  const title = `${series.title} - Series`
+  const description =
+    series.description ||
+    `A multi-part series of essays and notes on ${series.title} by Ivan Kabandize.`
+
   return {
-    title: `${series.title} | Series | Ivan Kabandize`,
-    description: series.description || undefined,
+    title,
+    description,
     openGraph: {
-      title: `${series.title} | Series | Ivan Kabandize`,
-      description: series.description || undefined,
+      title,
+      description,
       images: series.header_image_url ? [{ url: series.header_image_url }] : undefined,
     },
   }

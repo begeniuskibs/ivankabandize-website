@@ -22,15 +22,15 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
 
   if (!tag || tag.is_internal) {
     return {
-      title: 'Topic Not Found | The Garden | Ivan Kabandize',
+      title: 'Topic Not Found',
     }
   }
 
-  const title = `${tag.name} | The Garden | Ivan Kabandize`
+  const title = `${tag.name} - The Garden`
   const description =
     tag.description && tag.description.trim() !== ''
       ? tag.description.trim()
-      : `Explore essays, notes, and ideas tagged with ${tag.name} in The Garden by Ivan Kabandize.`
+      : `Essays, notes and resources on ${tag.name} in The Garden by Ivan Kabandize.`
 
   return {
     title,

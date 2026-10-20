@@ -1,7 +1,16 @@
+import type { Metadata } from 'next'
 import { headers } from 'next/headers'
 import ForgotPasswordClient from './ForgotPasswordClient'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Reset Password',
+  robots: {
+    index: false,
+    follow: false,
+  },
+}
 
 export default async function ForgotPasswordPage() {
   const headerList = await headers()

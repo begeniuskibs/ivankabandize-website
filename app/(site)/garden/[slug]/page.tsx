@@ -1,4 +1,6 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
+import { createAdminClient } from '@/utils/supabase/admin'
 import ArticleView, { RelatedPostData, ArticleSeriesContext } from '@/components/public/ArticleView'
 import TeaserArticleView from '@/components/public/TeaserArticleView'
 import { getPostTeaser } from '@/lib/postTeaser'
@@ -10,38 +12,45 @@ interface GardenPostPageProps {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata({ params }: GardenPostPageProps) {
+export async function generateMetadata({ params }: GardenPostPageProps): Promise<Metadata> {
   const { slug } = await params
-  const supabase = await createClient()
-  const { data: post } = await supabase
+  const adminClient = createAdminClient()
+  const now = new Date().toISOString()
+
+  // SECURITY RULE: select only whitelisted fields, never select content.
+  const { data: post } = await adminClient
     .from('posts')
-    .select('title, excerpt')
+    .select('id, slug, title, excerpt, published_at, updated_at, featured_image_url, visibility, publish_status')
     .eq('slug', slug)
     .eq('publish_status', 'published')
     .not('published_at', 'is', null)
-    .lte('published_at', new Date().toISOString())
+    .lte('published_at', now)
     .maybeSingle()
 
-  if (post) {
-    return {
-      title: `${post.title} | The Garden`,
-      description: post.excerpt || undefined,
-    }
+  if (!post) {
+    return { title: 'Post Not Found' }
   }
 
-  const teaser = await getPostTeaser(slug)
-  if (teaser) {
-    return {
-      title: `${teaser.title} | The Garden`,
-      description: teaser.excerpt || undefined,
-      robots: {
-        index: false,
-        follow: true,
-      },
-    }
-  }
+  const description = post.excerpt ? post.excerpt.trim() : undefined
+  const ogImages = post.featured_image_url ? [{ url: post.featured_image_url }] : undefined
 
-  return { title: 'Post Not Found | Ivan Kabandize' }
+  return {
+    title: post.title,
+    description,
+    openGraph: {
+      title: post.title,
+      description,
+      type: 'article',
+      publishedTime: post.published_at || undefined,
+      images: ogImages,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: post.title,
+      description,
+      images: post.featured_image_url ? [post.featured_image_url] : undefined,
+    },
+  }
 }
 
 export default async function GardenPostPage({ params }: GardenPostPageProps) {

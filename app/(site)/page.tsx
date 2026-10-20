@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -7,6 +8,14 @@ import PostCard from '@/components/public/PostCard'
 import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: {
+    absolute: 'Ivan Kabandize',
+  },
+  description:
+    'Ivan Kabandize writes about leadership, systems thinking, technology and faith, and helps organisations get their operations, systems and teams in order.',
+}
 
 export default async function HomePage() {
   const supabase = await createClient()
