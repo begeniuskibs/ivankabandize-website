@@ -6,6 +6,8 @@ import TeaserArticleView from '@/components/public/TeaserArticleView'
 import { getPostTeaser } from '@/lib/postTeaser'
 import { notFound } from 'next/navigation'
 
+import { getPostDescription } from '@/lib/postDescription'
+
 export const dynamic = 'force-dynamic'
 
 interface GardenPostPageProps {
@@ -27,29 +29,62 @@ export async function generateMetadata({ params }: GardenPostPageProps): Promise
     .lte('published_at', now)
     .maybeSingle()
 
-  if (!post) {
-    return { title: 'Post Not Found' }
+  let targetPost = post
+  if (!targetPost) {
+    const teaser = await getPostTeaser(slug)
+    if (teaser) {
+      targetPost = {
+        id: teaser.id,
+        slug: teaser.slug,
+        title: teaser.title,
+        excerpt: teaser.excerpt,
+        published_at: teaser.published_at,
+        updated_at: null,
+        featured_image_url: teaser.featured_image_url,
+        visibility: teaser.visibility,
+        publish_status: 'published',
+      }
+    }
   }
 
-  const description = post.excerpt ? post.excerpt.trim() : undefined
-  const ogImages = post.featured_image_url ? [{ url: post.featured_image_url }] : undefined
+  if (!targetPost) {
+    return {
+      title: 'Post Not Found',
+      robots: {
+        index: false,
+        follow: false,
+      },
+    }
+  }
+
+  const isPublic = targetPost.visibility === 'public'
+  const description = await getPostDescription(targetPost)
+  const ogImages = targetPost.featured_image_url ? [{ url: targetPost.featured_image_url }] : undefined
 
   return {
-    title: post.title,
+    title: targetPost.title,
     description,
     openGraph: {
-      title: post.title,
+      title: targetPost.title,
       description,
       type: 'article',
-      publishedTime: post.published_at || undefined,
+      publishedTime: targetPost.published_at || undefined,
       images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
-      title: post.title,
+      title: targetPost.title,
       description,
-      images: post.featured_image_url ? [post.featured_image_url] : undefined,
+      images: targetPost.featured_image_url ? [targetPost.featured_image_url] : undefined,
     },
+    ...(isPublic
+      ? {}
+      : {
+          robots: {
+            index: false,
+            follow: false,
+          },
+        }),
   }
 }
 
