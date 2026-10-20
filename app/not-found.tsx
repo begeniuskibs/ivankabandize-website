@@ -15,7 +15,9 @@ export default function NotFound() {
   return (
     <>
       <Navbar />
-      <NotFoundContent />
+      <main className="flex-1 flex flex-col">
+        <NotFoundContent />
+      </main>
       <Footer />
     </>
   )

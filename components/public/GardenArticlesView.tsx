@@ -292,7 +292,7 @@ export default function GardenArticlesView({
                   onClick={() => handleStreamChange(pill.value)}
                   className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
                     isActive
-                      ? 'bg-[#EF5B45] text-white shadow-sm'
+                      ? 'bg-[#CF3F29] text-white shadow-sm'
                       : 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   }`}
                 >

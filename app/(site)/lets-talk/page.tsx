@@ -342,7 +342,7 @@ export default function LetsTalkPage() {
                       <button
                         type="button"
                         onClick={() => handleNextStep(1)}
-                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <span>Continue</span>
                         <ArrowRight
@@ -451,7 +451,7 @@ export default function LetsTalkPage() {
                       <button
                         type="button"
                         onClick={() => handleNextStep(2)}
-                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <span>Review</span>
                         <ArrowRight
@@ -589,7 +589,7 @@ export default function LetsTalkPage() {
                         type="button"
                         onClick={() => handleSubmit()}
                         disabled={isSubmitting}
-                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
+                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
                       >
                         {isSubmitting ? (
                           <>
@@ -717,7 +717,7 @@ export default function LetsTalkPage() {
                       </Link>
                       <Link
                         href="/"
-                        className="inline-flex items-center justify-center font-bold text-sm px-6 py-3 rounded-full bg-[#EF5B45] hover:bg-[#D94834] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all"
+                        className="inline-flex items-center justify-center font-bold text-sm px-6 py-3 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all"
                       >
                         Back to home
                       </Link>
