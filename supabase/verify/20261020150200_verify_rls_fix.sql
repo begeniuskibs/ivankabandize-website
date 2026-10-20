@@ -61,7 +61,7 @@ BEGIN
     v_members_update_succeeded := true;
   EXCEPTION WHEN insufficient_privilege THEN
     RAISE NOTICE 'SUCCESS: UPDATE on public.members denied with insufficient_privilege.';
-  END IF;
+  END;
 
   IF v_members_update_succeeded THEN
     RAISE EXCEPTION 'FAILURE: UPDATE on public.members succeeded unexpectedly!';
