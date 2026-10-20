@@ -1363,7 +1363,7 @@ export const YouTube = Node.create({
         },
       },
       {
-        tag: 'iframe[src*="youtube.com"], iframe[src*="youtu.be"]',
+        tag: 'iframe[src*="youtube.com"], iframe[src*="youtu.be"], iframe[src*="youtube-nocookie.com"]',
         getAttrs: (element) => {
           const el = element as HTMLElement
           return {

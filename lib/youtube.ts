@@ -6,17 +6,21 @@ export function validateYouTubeUrl(input: string): { valid: boolean; embedUrl?: 
 
   try {
     const parsed = new URL(trimmed.startsWith('http://') || trimmed.startsWith('https://') ? trimmed : `https://${trimmed}`)
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return { valid: false, error: 'Only HTTP and HTTPS URLs are allowed.' }
+    }
+
     const host = parsed.hostname.toLowerCase().replace(/^www\./, '').replace(/^m\./, '')
 
-    if (host !== 'youtube.com' && host !== 'youtu.be') {
-      return { valid: false, error: 'Only youtube.com and youtu.be addresses are allowed.' }
+    if (host !== 'youtube.com' && host !== 'youtu.be' && host !== 'youtube-nocookie.com') {
+      return { valid: false, error: 'Only youtube.com, youtu.be, and youtube-nocookie.com addresses are allowed.' }
     }
 
     let videoId: string | null = null
 
     if (host === 'youtu.be') {
       videoId = parsed.pathname.slice(1).split('/')[0] || null
-    } else if (host === 'youtube.com') {
+    } else if (host === 'youtube.com' || host === 'youtube-nocookie.com') {
       if (parsed.pathname === '/watch') {
         videoId = parsed.searchParams.get('v')
       } else if (parsed.pathname.startsWith('/embed/')) {
@@ -37,7 +41,7 @@ export function validateYouTubeUrl(input: string): { valid: boolean; embedUrl?: 
 
     return {
       valid: true,
-      embedUrl: `https://www.youtube.com/embed/${cleanId}`,
+      embedUrl: `https://www.youtube-nocookie.com/embed/${cleanId}`,
     }
   } catch {
     return { valid: false, error: 'Invalid URL format.' }
