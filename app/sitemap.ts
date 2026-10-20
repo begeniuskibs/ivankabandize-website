@@ -60,6 +60,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .from('posts')
     .select('id, slug, title, excerpt, published_at, updated_at, featured_image_url, visibility, publish_status')
     .eq('publish_status', 'published')
+    .eq('visibility', 'public')
     .not('published_at', 'is', null)
     .lte('published_at', now)
     .order('published_at', { ascending: false })

@@ -49,14 +49,6 @@ export default function RootLayout({
       lang="en"
       className={`${geistMono.variable} h-full antialiased`}
     >
-      <head>
-        <link
-          rel="alternate"
-          type="application/rss+xml"
-          title="Ivan Kabandize"
-          href={`${SITE_URL}/feed.xml`}
-        />
-      </head>
       <body className="min-h-full flex flex-col bg-white text-gray-900 font-sans">
         {children}
       </body>

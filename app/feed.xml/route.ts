@@ -1,5 +1,6 @@
 import { createAdminClient } from '@/utils/supabase/admin'
 import { SITE_URL } from '@/lib/siteUrl'
+import { getPostDescriptions } from '@/lib/postDescription'
 
 export const dynamic = 'force-dynamic'
 
@@ -21,6 +22,7 @@ export async function GET() {
     .from('posts')
     .select('id, slug, title, excerpt, published_at, updated_at, featured_image_url, visibility, publish_status')
     .eq('publish_status', 'published')
+    .eq('visibility', 'public')
     .not('published_at', 'is', null)
     .lte('published_at', now)
     .order('published_at', { ascending: false })
@@ -30,12 +32,14 @@ export async function GET() {
     console.error('RSS feed error fetching posts:', error)
   }
 
+  const descriptions = await getPostDescriptions(posts || [])
+
   const itemsXml = (posts || [])
     .filter((p) => Boolean(p.slug))
     .map((p) => {
       const postUrl = `${SITE_URL}/garden/${p.slug}`
       const title = escapeXml(p.title || 'Untitled')
-      const description = escapeXml(p.excerpt ? p.excerpt.trim() : '')
+      const description = escapeXml(descriptions[p.id] || '')
       const pubDate = p.published_at ? new Date(p.published_at).toUTCString() : ''
 
       return `    <item>
