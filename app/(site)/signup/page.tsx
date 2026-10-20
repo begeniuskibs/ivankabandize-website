@@ -1,7 +1,16 @@
+import type { Metadata } from 'next'
 import SlidingAuthCard from '@/components/auth/SlidingAuthCard'
 import { AUTH_IMAGE_POOL } from '@/components/auth/auth-images'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Sign Up',
+  robots: {
+    index: false,
+    follow: false,
+  },
+}
 
 interface Props {
   searchParams: Promise<{

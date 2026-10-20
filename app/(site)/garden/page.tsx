@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import GardenLandingA2 from '@/components/public/GardenLandingA2'
 import GardenArticlesView from '@/components/public/GardenArticlesView'
@@ -5,10 +6,10 @@ import { getCardPreviews } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
-export const metadata = {
-  title: 'The Garden | Ivan Kabandize',
+export const metadata: Metadata = {
+  title: 'The Garden',
   description:
-    'A digital garden of essays, random notes, structured thoughts, and tools for thought.',
+    'A digital garden of essays, working notes and evolving ideas on technology, leadership and systems thinking.',
 }
 
 interface GardenPageProps {

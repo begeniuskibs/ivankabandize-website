@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -5,6 +6,12 @@ import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Library',
+  description:
+    "Curated books, podcasts and articles that shape Ivan Kabandize's thinking on leadership, systems and craft.",
+}
 
 interface LibraryItem {
   id: string

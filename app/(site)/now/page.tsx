@@ -5,9 +5,9 @@ import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const metadata: Metadata = {
-  title: 'Now | Ivan Kabandize',
+  title: 'Now',
   description:
-    'A sporadically updated log of what Ivan Kabandize is building, learning, and thinking about.',
+    'A sporadically updated log of what Ivan Kabandize is building, reading, learning and thinking about.',
 }
 
 export default function NowPage() {

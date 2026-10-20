@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -5,6 +6,12 @@ import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Me',
+  description:
+    'Background, operational philosophy and personal notes from Ivan Kabandize on work, leadership and life.',
+}
 
 export default async function MePage() {
   const supabase = await createClient()
