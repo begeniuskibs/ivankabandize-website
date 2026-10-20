@@ -57,7 +57,7 @@ export default function ButtonCard({
         target={isRealLink ? '_blank' : undefined}
         rel={isRealLink ? 'noopener noreferrer' : undefined}
         onClick={isEditor ? (e) => e.preventDefault() : undefined}
-        className="kg-btn kg-btn-accent inline-flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-[15px] px-7 py-3 rounded-full bg-[#EF5B45] text-white hover:bg-[#D94834] active:bg-[#B93A2A] shadow-sm hover:shadow-md transition-all duration-200 no-underline cursor-pointer select-none"
+        className="kg-btn kg-btn-accent inline-flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-[15px] px-7 py-3 rounded-full bg-[#CF3F29] text-white hover:bg-[#b83420] active:bg-[#B93A2A] shadow-sm hover:shadow-md transition-all duration-200 no-underline cursor-pointer select-none"
       >
         {displayLabel}
       </a>

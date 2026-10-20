@@ -211,7 +211,7 @@ export default function GardenFeed({
               href="/garden"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'all'
-                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  ? 'bg-[#CF3F29] text-white shadow-sm'
                   : heroBannerImage
                   ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
@@ -223,7 +223,7 @@ export default function GardenFeed({
               href="/random-thoughts"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'random_thoughts'
-                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  ? 'bg-[#CF3F29] text-white shadow-sm'
                   : heroBannerImage
                   ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
@@ -235,7 +235,7 @@ export default function GardenFeed({
               href="/structured-thoughts"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'structured_thoughts'
-                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  ? 'bg-[#CF3F29] text-white shadow-sm'
                   : heroBannerImage
                   ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
@@ -247,7 +247,7 @@ export default function GardenFeed({
               href="/tools-for-thought"
               className={`px-4 py-2 rounded-full text-xs sm:text-sm font-semibold transition ${
                 currentFilter === 'tools_for_thought'
-                  ? 'bg-[#EF5B45] text-white shadow-sm'
+                  ? 'bg-[#CF3F29] text-white shadow-sm'
                   : heroBannerImage
                   ? 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
                   : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'

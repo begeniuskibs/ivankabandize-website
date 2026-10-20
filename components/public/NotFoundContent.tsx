@@ -25,7 +25,7 @@ export default function NotFoundContent() {
           }
         }
       `}</style>
-      <main className="flex-1 flex items-center justify-center bg-[#FDF8F1] px-4 sm:px-6 py-20 sm:py-28 font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
+      <section className="flex-1 flex items-center justify-center bg-[#FDF8F1] px-4 sm:px-6 py-20 sm:py-28 font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
         <div className="max-w-lg w-full text-center space-y-6">
           <div className="flex justify-center">
             <svg
@@ -76,7 +76,7 @@ export default function NotFoundContent() {
             </Link>
           </div>
         </div>
-      </main>
+      </section>
     </>
   )
 }
