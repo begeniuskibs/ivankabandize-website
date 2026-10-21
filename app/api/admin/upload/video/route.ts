@@ -1,5 +1,10 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+  ALLOWED_VIDEO_EXTENSIONS,
+  MAX_VIDEO_SIZE_BYTES,
+  isAllowedVideoExtension,
+} from '@/lib/uploadRules'
 
 export async function POST(request: NextRequest) {
   const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
@@ -16,10 +21,30 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
+    const rawExt = file.name.includes('.') ? file.name.split('.').pop() || '' : ''
+    const ext = (rawExt || 'mp4').toLowerCase()
+
+    if (!isAllowedVideoExtension(ext)) {
+      return NextResponse.json(
+        {
+          error: `File extension .${ext} is not allowed for post-videos. Allowed extensions: ${ALLOWED_VIDEO_EXTENSIONS.join(
+            ', '
+          )}`,
+        },
+        { status: 400 }
+      )
+    }
+
+    if (file.size > MAX_VIDEO_SIZE_BYTES) {
+      return NextResponse.json(
+        { error: 'File size exceeds 100 MB limit for videos' },
+        { status: 413 }
+      )
+    }
+
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const ext = file.name.split('.').pop() || 'mp4'
     const cleanFileName = file.name
       .replace(/\.[^/.]+$/, '')
       .toLowerCase()
