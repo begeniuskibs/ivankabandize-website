@@ -1,5 +1,13 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+  ALLOWED_IMAGE_EXTENSIONS,
+  ALLOWED_VIDEO_EXTENSIONS,
+  MAX_IMAGE_SIZE_BYTES,
+  MAX_VIDEO_SIZE_BYTES,
+  isAllowedImageExtension,
+  isAllowedVideoExtension,
+} from '@/lib/uploadRules'
 
 export async function POST(request: NextRequest) {
   const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
@@ -16,14 +24,62 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'No file provided' }, { status: 400 })
     }
 
+    const requestedBucket = formData.get('bucket') as string | null
+    if (requestedBucket && requestedBucket !== 'post-images' && requestedBucket !== 'post-videos') {
+      return NextResponse.json(
+        { error: 'Invalid bucket. Allowed buckets: post-images, post-videos' },
+        { status: 400 }
+      )
+    }
+
+    const rawExt = file.name.includes('.') ? file.name.split('.').pop() || '' : ''
+    const isVideo =
+      file.type.startsWith('video/') ||
+      requestedBucket === 'post-videos' ||
+      isAllowedVideoExtension(rawExt)
+    const bucket = requestedBucket || (isVideo ? 'post-videos' : 'post-images')
+
+    const ext = (rawExt || (isVideo ? 'mp4' : 'jpg')).toLowerCase()
+
+    if (bucket === 'post-images') {
+      if (!isAllowedImageExtension(ext)) {
+        return NextResponse.json(
+          {
+            error: `File extension .${ext} is not allowed for post-images. Allowed extensions: ${ALLOWED_IMAGE_EXTENSIONS.join(
+              ', '
+            )}`,
+          },
+          { status: 400 }
+        )
+      }
+      if (file.size > MAX_IMAGE_SIZE_BYTES) {
+        return NextResponse.json(
+          { error: 'File size exceeds 10 MB limit for images' },
+          { status: 413 }
+        )
+      }
+    } else if (bucket === 'post-videos') {
+      if (!isAllowedVideoExtension(ext)) {
+        return NextResponse.json(
+          {
+            error: `File extension .${ext} is not allowed for post-videos. Allowed extensions: ${ALLOWED_VIDEO_EXTENSIONS.join(
+              ', '
+            )}`,
+          },
+          { status: 400 }
+        )
+      }
+      if (file.size > MAX_VIDEO_SIZE_BYTES) {
+        return NextResponse.json(
+          { error: 'File size exceeds 100 MB limit for videos' },
+          { status: 413 }
+        )
+      }
+    }
+
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
 
-    const requestedBucket = formData.get('bucket') as string | null
-    const isVideo = file.type.startsWith('video/') || requestedBucket === 'post-videos'
-    const bucket = requestedBucket || (isVideo ? 'post-videos' : 'post-images')
-
-    const ext = file.name.split('.').pop() || (isVideo ? 'mp4' : 'jpg')
     const cleanFileName = file.name
       .replace(/\.[^/.]+$/, '')
       .toLowerCase()

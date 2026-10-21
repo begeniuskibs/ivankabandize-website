@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
+import { safeRedirectPath } from '@/lib/safeRedirect'
 
 export async function signIn(formData: FormData) {
   const remember = formData.get('remember') === 'on' || formData.get('remember') === 'true'
@@ -11,8 +12,9 @@ export async function signIn(formData: FormData) {
 
   const email = formData.get('email') as string
   const password = formData.get('password') as string
-  const redirectTo = (formData.get('redirectTo') as string) || ''
-  const targetUrl = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/auth/account'
+  const rawRedirect = formData.get('redirectTo')
+  const targetUrl = safeRedirectPath(rawRedirect, '/auth/account')
+  const safeRedirect = typeof rawRedirect === 'string' && rawRedirect ? safeRedirectPath(rawRedirect, '') : ''
 
   const { error } = await supabase.auth.signInWithPassword({
     email,
@@ -22,7 +24,7 @@ export async function signIn(formData: FormData) {
   if (error) {
     redirect(
       `/login?error=${encodeURIComponent(error.message)}${
-        redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+        safeRedirect ? `&redirectTo=${encodeURIComponent(safeRedirect)}` : ''
       }`
     )
   }
@@ -37,8 +39,9 @@ export async function signUp(formData: FormData) {
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const fullName = (formData.get('full_name') as string) || ''
-  const redirectTo = (formData.get('redirectTo') as string) || ''
-  const targetUrl = redirectTo && redirectTo.startsWith('/') ? redirectTo : '/auth/account'
+  const rawRedirect = formData.get('redirectTo')
+  const targetUrl = safeRedirectPath(rawRedirect, '/auth/account')
+  const safeRedirect = typeof rawRedirect === 'string' && rawRedirect ? safeRedirectPath(rawRedirect, '') : ''
 
   const { data, error } = await supabase.auth.signUp({
     email,
@@ -51,9 +54,21 @@ export async function signUp(formData: FormData) {
   })
 
   if (error) {
+    const errorMsg = (error.message || '').toLowerCase()
+    if (
+      errorMsg.includes('already registered') ||
+      errorMsg.includes('already been registered')
+    ) {
+      redirect(
+        `/login?mode=signup-success&email=${encodeURIComponent(email)}${
+          safeRedirect ? `&redirectTo=${encodeURIComponent(safeRedirect)}` : ''
+        }`
+      )
+    }
+
     redirect(
       `/login?error=${encodeURIComponent(error.message)}${
-        redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+        safeRedirect ? `&redirectTo=${encodeURIComponent(safeRedirect)}` : ''
       }`
     )
   }
@@ -66,7 +81,7 @@ export async function signUp(formData: FormData) {
   // Redirect to clear post-signup confirmation state
   redirect(
     `/login?mode=signup-success&email=${encodeURIComponent(email)}${
-      redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+      safeRedirect ? `&redirectTo=${encodeURIComponent(safeRedirect)}` : ''
     }`
   )
 }

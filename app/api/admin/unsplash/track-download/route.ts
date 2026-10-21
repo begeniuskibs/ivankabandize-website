@@ -17,10 +17,22 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const { downloadLocation } = await request.json()
+    const body = await request.json()
+    const downloadLocation = body?.downloadLocation
 
-    if (!downloadLocation) {
-      return NextResponse.json({ error: 'downloadLocation is required' }, { status: 400 })
+    if (typeof downloadLocation !== 'string') {
+      return NextResponse.json({ error: 'Invalid download location' }, { status: 400 })
+    }
+
+    let parsedUrl: URL
+    try {
+      parsedUrl = new URL(downloadLocation)
+    } catch {
+      return NextResponse.json({ error: 'Invalid download location' }, { status: 400 })
+    }
+
+    if (parsedUrl.protocol !== 'https:' || parsedUrl.hostname !== 'api.unsplash.com') {
+      return NextResponse.json({ error: 'Invalid download location' }, { status: 400 })
     }
 
     // Call Unsplash download location endpoint

@@ -2,6 +2,7 @@
 
 import { createClient } from '@/utils/supabase/client'
 import { useState } from 'react'
+import { safeRedirectPath } from '@/lib/safeRedirect'
 
 interface GoogleSignInButtonProps {
   redirectTo?: string
@@ -16,10 +17,11 @@ export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonPro
       const supabase = createClient()
 
       // If a redirectTo destination exists, write it to a short-lived client cookie
-      if (redirectTo && redirectTo.startsWith('/')) {
+      const validRedirect = redirectTo ? safeRedirectPath(redirectTo, '') : ''
+      if (validRedirect) {
         const isSecure = window.location.protocol === 'https:' ? '; Secure' : ''
         document.cookie = `post_login_redirect=${encodeURIComponent(
-          redirectTo
+          validRedirect
         )}; Path=/; Max-Age=300; SameSite=Lax${isSecure}`
       } else {
         // Clear any stale post_login_redirect cookie
@@ -40,7 +42,7 @@ export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonPro
       if (error) {
         console.error('Google auth error:', error.message)
         window.location.href = `/login?error=${encodeURIComponent(error.message)}${
-          redirectTo ? `&redirectTo=${encodeURIComponent(redirectTo)}` : ''
+          validRedirect ? `&redirectTo=${encodeURIComponent(validRedirect)}` : ''
         }`
       }
     } catch (err) {

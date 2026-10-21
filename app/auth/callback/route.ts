@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { cookies } from 'next/headers'
 import { createClient } from '@/utils/supabase/server'
+import { safeRedirectPath } from '@/lib/safeRedirect'
 
 export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url)
@@ -11,16 +12,14 @@ export async function GET(request: Request) {
   const cookieRedirect = cookieStore.get('post_login_redirect')?.value
   const decodedCookieRedirect = cookieRedirect ? decodeURIComponent(cookieRedirect) : null
 
-  let next =
-    (decodedCookieRedirect && decodedCookieRedirect.startsWith('/') ? decodedCookieRedirect : null) ||
-    searchParams.get('next') ||
-    searchParams.get('redirectTo') ||
-    '/auth/account'
+  const cookieSafe = decodedCookieRedirect ? safeRedirectPath(decodedCookieRedirect, '') : ''
+  const nextParamSafe = searchParams.get('next') ? safeRedirectPath(searchParams.get('next'), '') : ''
+  const redirectToParamSafe = searchParams.get('redirectTo') ? safeRedirectPath(searchParams.get('redirectTo'), '') : ''
 
-  if (!next.startsWith('/')) {
-    // protect against open redirect attacks
-    next = '/auth/account'
-  }
+  const next = safeRedirectPath(
+    cookieSafe || nextParamSafe || redirectToParamSafe,
+    '/auth/account'
+  )
 
   if (code) {
     const supabase = await createClient()

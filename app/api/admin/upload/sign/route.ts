@@ -1,5 +1,11 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
+import {
+  ALLOWED_IMAGE_EXTENSIONS,
+  ALLOWED_VIDEO_EXTENSIONS,
+  isAllowedImageExtension,
+  isAllowedVideoExtension,
+} from '@/lib/uploadRules'
 
 export async function POST(request: NextRequest) {
   const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
@@ -12,17 +18,52 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { filename, contentType, bucket } = body
 
-    if (!filename) {
+    if (!filename || typeof filename !== 'string') {
       return NextResponse.json({ error: 'Filename is required' }, { status: 400 })
     }
 
+    if (bucket && bucket !== 'post-images' && bucket !== 'post-videos') {
+      return NextResponse.json(
+        { error: 'Invalid bucket. Allowed buckets: post-images, post-videos' },
+        { status: 400 }
+      )
+    }
+
+    const rawExt = filename.includes('.') ? filename.split('.').pop() || '' : ''
     const isVideo =
       (contentType && typeof contentType === 'string' && contentType.startsWith('video/')) ||
-      bucket === 'post-videos'
+      bucket === 'post-videos' ||
+      isAllowedVideoExtension(rawExt)
 
-    const targetBucket = bucket === 'post-videos' || isVideo ? 'post-videos' : 'post-images'
+    const targetBucket = bucket || (isVideo ? 'post-videos' : 'post-images')
     const defaultExt = targetBucket === 'post-videos' ? 'mp4' : 'jpg'
-    const ext = filename.split('.').pop() || defaultExt
+    const ext = (rawExt || defaultExt).toLowerCase()
+
+    if (targetBucket === 'post-images') {
+      if (!isAllowedImageExtension(ext)) {
+        return NextResponse.json(
+          {
+            error: `File extension .${ext} is not allowed for post-images. Allowed extensions: ${ALLOWED_IMAGE_EXTENSIONS.join(
+              ', '
+            )}`,
+          },
+          { status: 400 }
+        )
+      }
+    } else if (targetBucket === 'post-videos') {
+      if (!isAllowedVideoExtension(ext)) {
+        return NextResponse.json(
+          {
+            error: `File extension .${ext} is not allowed for post-videos. Allowed extensions: ${ALLOWED_VIDEO_EXTENSIONS.join(
+              ', '
+            )}`,
+          },
+          { status: 400 }
+        )
+      }
+    }
+
+    // No size check is possible on the signed URL because file bytes are uploaded directly by the client later.
 
     const cleanFileName = filename
       .replace(/\.[^/.]+$/, '')
