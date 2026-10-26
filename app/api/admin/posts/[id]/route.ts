@@ -1,5 +1,6 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
+import { revalidateTag } from 'next/cache'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -103,6 +104,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       }
     }
 
+    revalidateTag('card-meta', 'max')
     return NextResponse.json({ post })
   } catch (err) {
     console.error('[api/admin/posts/[id] PUT]', err instanceof Error ? err.message : err)
@@ -125,5 +127,6 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     return NextResponse.json({ error: 'Could not delete post' }, { status: 403 })
   }
 
+  revalidateTag('card-meta', 'max')
   return NextResponse.json({ success: true })
 }

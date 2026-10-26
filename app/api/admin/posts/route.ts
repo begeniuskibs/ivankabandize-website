@@ -1,5 +1,6 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
+import { revalidateTag } from 'next/cache'
 
 export async function GET() {
   const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
@@ -107,6 +108,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
+    revalidateTag('card-meta', 'max')
     return NextResponse.json({ post }, { status: 201 })
   } catch (err) {
     console.error('[api/admin/posts POST]', err instanceof Error ? err.message : err)

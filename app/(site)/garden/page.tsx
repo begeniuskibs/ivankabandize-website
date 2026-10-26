@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import GardenLandingA2 from '@/components/public/GardenLandingA2'
 import GardenArticlesView from '@/components/public/GardenArticlesView'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardMeta } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,52 +22,69 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
   const supabase = await createClient()
   const now = new Date().toISOString()
 
-  // Query posts table directly with explicit published-only filters (never select content)
-  const { data: posts, count: totalArticlesCount, error } = await supabase
-    .from('posts')
-    .select(
-      'id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))',
-      { count: 'exact' }
-    )
-    .eq('publish_status', 'published')
-    .not('published_at', 'is', null)
-    .lte('published_at', now)
-    .order('published_at', { ascending: false })
+  // Query posts table and library items in parallel (never select content)
+  const [
+    { data: posts, count: totalArticlesCount, error },
+    { data: libraryItemsData, count: totalLibraryCount, error: libraryError },
+  ] = await Promise.all([
+    supabase
+      .from('posts')
+      .select(
+        'id, title, slug, excerpt, published_at, visibility, publish_status, content_type, featured_image_url, post_tags(tag:tags(name, slug, is_internal))',
+        { count: 'exact' }
+      )
+      .eq('publish_status', 'published')
+      .not('published_at', 'is', null)
+      .lte('published_at', now)
+      .order('published_at', { ascending: false }),
+    supabase
+      .from('library_items')
+      .select('id, title, creator, type, url, thumbnail_url, created_at', { count: 'exact' })
+      .order('created_at', { ascending: false })
+      .limit(6),
+  ])
 
   if (error) {
     console.error('Error fetching garden posts:', error)
   }
-
-  // Previews: excerpt if present, else first paragraph via helper
-  const cardPreviews = await getCardPreviews(posts || [])
-  const postsWithPreviews = (posts || []).map((p) => ({
-    ...p,
-    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
-  }))
-
-  // Fetch library items (latest 6 for landing section, with exact count)
-  const { data: libraryItemsData, count: totalLibraryCount, error: libraryError } = await supabase
-    .from('library_items')
-    .select('id, title, creator, type, url, thumbnail_url, created_at', { count: 'exact' })
-    .order('created_at', { ascending: false })
-    .limit(6)
-
   if (libraryError) {
     console.error('Error fetching library items for garden landing:', libraryError)
   }
 
+  // Previews & read times via single cached helper, parallelized with series query if on view=articles
+  let cardPreviews: Record<string, string> = {}
+  let cardReadTimes: Record<string, number> = {}
+  let seriesData: unknown[] | null = null
+
+  if (isViewAllArticles) {
+    const [metaResult, seriesResult] = await Promise.all([
+      getCardMeta(posts || []),
+      supabase
+        .from('series')
+        .select('id, title, slug, description, cover_emoji, card_tint, header_image_url, status, sort_order, created_at, posts(id, publish_status, published_at)')
+        .order('sort_order', { ascending: true })
+        .order('created_at', { ascending: true }),
+    ])
+    cardPreviews = metaResult.previews
+    cardReadTimes = metaResult.readTimes
+    seriesData = seriesResult.data
+    if (seriesResult.error) {
+      console.error('Error fetching garden series:', seriesResult.error)
+    }
+  } else {
+    const metaResult = await getCardMeta(posts || [])
+    cardPreviews = metaResult.previews
+    cardReadTimes = metaResult.readTimes
+  }
+
+  const postsWithPreviews = (posts || []).map((p) => ({
+    ...p,
+    preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
+  }))
+
   // If view=articles is requested, render the flat all-articles feed with stream filters
   if (isViewAllArticles) {
-    // Fetch series for full feed
-    const { data: seriesData, error: seriesError } = await supabase
-      .from('series')
-      .select('id, title, slug, description, cover_emoji, card_tint, header_image_url, status, sort_order, created_at, posts(id, publish_status, published_at)')
-      .order('sort_order', { ascending: true })
-      .order('created_at', { ascending: true })
-
-    if (seriesError) {
-      console.error('Error fetching garden series:', seriesError)
-    }
 
     interface SeriesPostChild {
       id: string

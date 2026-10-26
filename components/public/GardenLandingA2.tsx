@@ -10,6 +10,8 @@ export interface GardenA2Article {
   preview?: string | null
   content_type?: string | null
   featured_image_url?: string | null
+  published_at?: string | null
+  readTime?: number | null
 }
 
 export interface GardenA2LibraryItem {
@@ -304,6 +306,37 @@ export default function GardenLandingA2({
               const streamTag = post.content_type
                 ? STREAM_NAMES[post.content_type] || post.content_type
                 : 'Article'
+              const previewText =
+                (post.preview && post.preview.trim()) ||
+                (post.excerpt && post.excerpt.trim()) ||
+                ''
+
+              let formattedDate: string | null = null
+              if (post.published_at) {
+                try {
+                  const d = new Date(post.published_at)
+                  if (!isNaN(d.getTime())) {
+                    formattedDate = d.toLocaleDateString('en-US', {
+                      month: 'short',
+                      day: 'numeric',
+                      year: 'numeric',
+                    })
+                  }
+                } catch {
+                  formattedDate = null
+                }
+              }
+
+              const readTimeText =
+                typeof post.readTime === 'number' && post.readTime > 0
+                  ? `${post.readTime} min read`
+                  : null
+
+              const metaText =
+                formattedDate && readTimeText
+                  ? `${formattedDate} - ${readTimeText}`
+                  : formattedDate || readTimeText || null
+
               return (
                 <Link
                   key={post.id}
@@ -337,11 +370,16 @@ export default function GardenLandingA2({
                       >
                         {post.title}
                       </h3>
+                      {previewText ? (
+                        <p className="text-xs text-[#5A5D70] leading-relaxed line-clamp-2 mt-2">
+                          {previewText}
+                        </p>
+                      ) : null}
                     </div>
-                    {((post.preview && post.preview.trim()) || (post.excerpt && post.excerpt.trim())) ? (
-                      <p className="text-xs text-[#5A5D70] leading-relaxed line-clamp-2 mt-2">
-                        {post.preview || post.excerpt}
-                      </p>
+                    {metaText ? (
+                      <div className="text-xs text-[#A97B1A] mt-2">
+                        {metaText}
+                      </div>
                     ) : null}
                   </div>
                 </Link>

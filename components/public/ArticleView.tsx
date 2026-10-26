@@ -7,6 +7,7 @@ import ReadingProgressBar from '@/components/public/ReadingProgressBar'
 import WideContainer from '@/components/public/WideContainer'
 import { renderCaption } from '@/components/editor/captionLinks'
 import ArticleActions from '@/components/public/ArticleActions'
+import { calculateReadTime } from '@/lib/readTime'
 
 export interface PostTagItem {
   tag?: {
@@ -83,21 +84,6 @@ const TYPE_CONFIG: Record<string, { label: string; href: string; badgeColor: str
     href: '/tools-for-thought',
     badgeColor: 'bg-[#EEEDF9] text-[#6B66C4] border-[#6B66C4]/20',
   },
-}
-
-// Calculate dynamic read time based on word count (approx 200 words per minute)
-function calculateReadTime(content: unknown, excerpt?: string | null): number {
-  let text = excerpt || ''
-  const extractText = (node: any) => {
-    if (!node) return
-    if (node.text) text += ' ' + node.text
-    if (Array.isArray(node.content)) node.content.forEach(extractText)
-  }
-  if (content && typeof content === 'object') {
-    extractText(content)
-  }
-  const words = text.trim().split(/\s+/).filter(Boolean).length
-  return Math.max(1, Math.ceil(words / 200))
 }
 
 export default function ArticleView({

@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import PostCard from '@/components/public/PostCard'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardMeta } from '@/lib/postTeaser'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
@@ -72,11 +72,12 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
     console.error('Error fetching series parts:', partsError)
   }
 
-  // Previews: excerpt if present, else first paragraph via helper
-  const cardPreviews = await getCardPreviews(parts || [])
+  // Previews & read times via single cached helper
+  const { previews: cardPreviews, readTimes: cardReadTimes } = await getCardMeta(parts || [])
   const publishedParts = (parts || []).map((p) => ({
     ...p,
     preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
   }))
 
   return (

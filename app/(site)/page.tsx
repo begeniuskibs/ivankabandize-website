@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import PostCard from '@/components/public/PostCard'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardMeta } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -20,12 +20,25 @@ export const metadata: Metadata = {
 export default async function HomePage() {
   const supabase = await createClient()
 
-  // Fetch page content for home from Supabase pages table
-  const { data: page } = await supabase
-    .from('pages')
-    .select('*')
-    .eq('slug', 'home')
-    .maybeSingle()
+  // Fetch page content and latest public published posts in parallel
+  const [
+    { data: page },
+    { data: posts },
+  ] = await Promise.all([
+    supabase
+      .from('pages')
+      .select('*')
+      .eq('slug', 'home')
+      .maybeSingle(),
+    supabase
+      .from('posts')
+      .select('id, title, slug, excerpt, published_at, featured_image_url, post_tags(tag:tags(name, slug))')
+      .eq('publish_status', 'published')
+      .not('published_at', 'is', null)
+      .lte('published_at', new Date().toISOString())
+      .order('published_at', { ascending: false })
+      .limit(3),
+  ])
 
   const headline =
     page?.hero_headline ||
@@ -46,21 +59,12 @@ export default async function HomePage() {
           "If you're a founder, director, or team leader building something you believe in - but the operational side isn't keeping up with the vision - we should talk.",
         ]
 
-  // Fetch latest public published posts with explicit published filters
-  const { data: posts } = await supabase
-    .from('posts')
-    .select('id, title, slug, excerpt, published_at, featured_image_url, post_tags(tag:tags(name, slug))')
-    .eq('publish_status', 'published')
-    .not('published_at', 'is', null)
-    .lte('published_at', new Date().toISOString())
-    .order('published_at', { ascending: false })
-    .limit(3)
-
-  // Previews: excerpt if present, else first paragraph via helper
-  const cardPreviews = await getCardPreviews(posts || [])
+  // Card meta (previews and read times) via single cached helper
+  const { previews: cardPreviews, readTimes: cardReadTimes } = await getCardMeta(posts || [])
   const postsWithPreviews = (posts || []).map((p) => ({
     ...p,
     preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
   }))
 
   return (
