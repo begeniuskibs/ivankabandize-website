@@ -88,6 +88,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Failed to search Unsplash'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/unsplash/search GET]', message)
+    return NextResponse.json({ error: 'Failed to search Unsplash' }, { status: 500 })
   }
 }

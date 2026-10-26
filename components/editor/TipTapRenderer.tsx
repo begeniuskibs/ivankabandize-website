@@ -4,6 +4,7 @@ import WideContainer from '@/components/public/WideContainer'
 import BookmarkCard from './BookmarkCard'
 import ButtonCard from './ButtonCard'
 import { renderCaption, stripCaptionMarkdown } from './captionLinks'
+import { safeHref } from '@/lib/safeUrl'
 
 interface TipTapNode {
   type: string
@@ -71,7 +72,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
           </ol>
         )
       case 'image': {
-        const src = String(node.attrs?.src || '')
+        const src = safeHref(node.attrs?.src, '')
         const rawAlt = String(node.attrs?.alt || node.attrs?.title || 'Article image')
         const alt = stripCaptionMarkdown(rawAlt)
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : (node.attrs?.title ? String(node.attrs?.title) : null)
@@ -87,7 +88,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         )
       }
       case 'video': {
-        const url = String(node.attrs?.url || node.attrs?.src || '')
+        const url = safeHref(node.attrs?.url || node.attrs?.src, '')
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : null
         const playAsGif = Boolean(node.attrs?.playAsGif)
         const flushBackground = Boolean(node.attrs?.flushBackground)
@@ -156,7 +157,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                           return (
                             <a
                               key={i}
-                              href={img.url}
+                              href={safeHref(img.url, '#')}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
@@ -169,7 +170,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                               title={img.caption ? stripCaptionMarkdown(img.caption) : 'View full-size image'}
                             >
                               <img
-                                src={img.url}
+                                src={safeHref(img.url, '')}
                                 alt={img.caption ? stripCaptionMarkdown(img.caption) : 'Gallery image'}
                                 className="w-full h-full block object-cover transition-transform duration-300 group-hover:scale-105"
                                 loading="lazy"
@@ -188,7 +189,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                   return (
                     <div key={groupIdx} className="w-full">
                       <a
-                        href={img.url}
+                        href={safeHref(img.url, '#')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group block w-full overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
@@ -198,7 +199,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                         title={img.caption ? stripCaptionMarkdown(img.caption) : 'View full-size image'}
                       >
                         <img
-                          src={img.url}
+                          src={safeHref(img.url, '')}
                           alt={img.caption ? stripCaptionMarkdown(img.caption) : 'Gallery image'}
                           className="w-full h-full block object-cover transition-transform duration-300 group-hover:scale-105"
                           loading="lazy"
@@ -400,7 +401,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
           element = (
             <a
               key={`a-${index}`}
-              href={String(mark.attrs?.href || '#')}
+              href={safeHref(mark.attrs?.href, '#')}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[#D94834] underline hover:text-[#B93A2A] visited:text-[#D94834]"

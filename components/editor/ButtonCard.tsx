@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { safeHref } from '@/lib/safeUrl'
 
 export interface ButtonCardProps {
   label?: string
@@ -11,27 +12,11 @@ export interface ButtonCardProps {
 }
 
 export function isValidButtonUrl(url?: string): boolean {
-  if (!url) return false
-  const trimmed = url.trim()
-  if (trimmed.startsWith('/')) {
-    if (trimmed.startsWith('//')) return false
-    return true
-  }
-  try {
-    const parsed = new URL(trimmed)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
+  return safeHref(url, '#') !== '#'
 }
 
 export function sanitizeButtonUrl(url?: string): string {
-  if (!url) return '#'
-  const trimmed = url.trim()
-  if (isValidButtonUrl(trimmed)) {
-    return trimmed
-  }
-  return '#'
+  return safeHref(url, '#')
 }
 
 export default function ButtonCard({

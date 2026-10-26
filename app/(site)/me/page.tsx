@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { safeHref } from '@/lib/safeUrl'
 
 export const dynamic = 'force-dynamic'
 
@@ -96,7 +97,7 @@ export default async function MePage() {
                     />
                   </Link>
                   <Link
-                    href={ctaUrl}
+                    href={safeHref(ctaUrl, '#')}
                     className="inline-flex items-center justify-center font-bold text-base px-7 py-3.5 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     {ctaText}
@@ -453,7 +454,7 @@ export default async function MePage() {
                 <span aria-hidden="true">&#128075;</span>
               </Link>
               <Link
-                href={ctaUrl}
+                href={safeHref(ctaUrl, '#')}
                 className="inline-flex items-center justify-center font-bold text-base px-8 py-4 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 {ctaText}

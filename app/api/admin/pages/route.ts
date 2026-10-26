@@ -14,7 +14,8 @@ export async function GET() {
     .order('slug', { ascending: true })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error('[api/admin/pages GET]', error.message)
+    return NextResponse.json({ error: 'Could not fetch pages' }, { status: 400 })
   }
 
   return NextResponse.json({ pages })

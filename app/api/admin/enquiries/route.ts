@@ -16,7 +16,8 @@ export async function GET() {
     .limit(200)
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error('[api/admin/enquiries GET]', error.message)
+    return NextResponse.json({ error: 'Could not fetch enquiries' }, { status: 400 })
   }
 
   return NextResponse.json({ enquiries: enquiries || [] })
@@ -52,13 +53,16 @@ export async function PATCH(request: NextRequest) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error('[api/admin/enquiries PATCH]', error.message)
+      return NextResponse.json({ error: 'Could not update enquiry' }, { status: 400 })
     }
 
     return NextResponse.json({ inquiry })
   } catch (err: any) {
+    const message = err?.message || 'Server error updating inquiry'
+    console.error('[api/admin/enquiries PATCH]', message)
     return NextResponse.json(
-      { error: err?.message || 'Server error updating inquiry' },
+      { error: 'Could not update enquiry' },
       { status: 500 }
     )
   }

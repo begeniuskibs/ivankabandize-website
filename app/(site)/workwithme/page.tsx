@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { safeHref } from '@/lib/safeUrl'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,7 +70,7 @@ export default async function WorkWithMePage() {
               <ScrollReveal delayMs={200}>
                 <div className="pt-2">
                   <Link
-                    href={ctaUrl}
+                    href={safeHref(ctaUrl, '#')}
                     className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>{ctaText}</span>
@@ -296,7 +297,7 @@ export default async function WorkWithMePage() {
           <ScrollReveal delayMs={140}>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
               <Link
-                href={ctaUrl}
+                href={safeHref(ctaUrl, '#')}
                 className="inline-flex items-center justify-center gap-2 font-bold text-base px-9 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>{ctaText}</span>
