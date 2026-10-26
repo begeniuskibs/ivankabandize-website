@@ -79,15 +79,6 @@ const nextConfig: NextConfig = {
         ],
       },
       {
-        source: '/me',
-        headers: [
-          {
-            key: 'X-Robots-Tag',
-            value: 'noindex, nofollow',
-          },
-        ],
-      },
-      {
         source: '/auth/:path*',
         headers: [
           {

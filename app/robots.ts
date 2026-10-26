@@ -14,7 +14,6 @@ export default function robots(): MetadataRoute.Robots {
         '/login',
         '/signup',
         '/forgot-password',
-        '/me',
       ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,

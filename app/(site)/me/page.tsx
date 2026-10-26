@@ -5,6 +5,8 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { safeHref } from '@/lib/safeUrl'
+import { SITE_URL } from '@/lib/siteUrl'
+import JsonLd from '@/components/seo/JsonLd'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,9 +14,8 @@ export const metadata: Metadata = {
   title: 'Me',
   description:
     'Background, operational philosophy and personal notes from Ivan Kabandize on work, leadership and life.',
-  robots: {
-    index: false,
-    follow: false,
+  alternates: {
+    canonical: `${SITE_URL}/me`,
   },
 }
 
@@ -58,8 +59,19 @@ export default async function MePage() {
   const ctaUrl = page?.cta_url || '/workwithme'
   const testimonials = Array.isArray(page?.testimonials) ? page.testimonials : []
 
+  const profileJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    name: 'Ivan Kabandize',
+    url: `${SITE_URL}/me`,
+    mainEntity: {
+      '@id': `${SITE_URL}/#person`,
+    },
+  }
+
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
+      <JsonLd data={profileJsonLd} />
       {/* ================= SECTION 1: HERO & INTRO ================= */}
       <section className="py-16 md:py-24 border-b border-[#F5ECDE] overflow-hidden">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
