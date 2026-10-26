@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { safeHref } from '@/lib/safeUrl'
 
 export const dynamic = 'force-dynamic'
 
@@ -205,7 +206,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                   {podcasts.map((item, idx) => (
                     <ScrollReveal key={item.id} delayMs={idx * 60}>
                       <a
-                        href={item.url}
+                        href={safeHref(item.url, '#')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex flex-col h-full bg-white rounded-[5px] overflow-hidden hover:-translate-y-1 transition-all duration-300"
@@ -294,7 +295,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                   {books.map((item, idx) => (
                     <ScrollReveal key={item.id} delayMs={idx * 80}>
                       <a
-                        href={item.url}
+                        href={safeHref(item.url, '#')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex flex-col h-full bg-white rounded-[5px] p-5 hover:-translate-y-1 transition-all duration-300"
@@ -385,7 +386,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                   {newsletters.map((item, idx) => (
                     <ScrollReveal key={item.id} delayMs={idx * 80}>
                       <a
-                        href={item.url}
+                        href={safeHref(item.url, '#')}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="group flex flex-col h-full bg-white rounded-[5px] overflow-hidden hover:-translate-y-1 transition-all duration-300"

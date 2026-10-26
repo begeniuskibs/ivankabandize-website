@@ -1,14 +1,19 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
+import type { User } from '@supabase/supabase-js'
 
-export async function updateSession(request: NextRequest) {
+export async function updateSession(
+  request: NextRequest
+): Promise<{ response: NextResponse; user: User | null }> {
   let supabaseResponse = NextResponse.next({
     request,
   })
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-    return supabaseResponse
+    return { response: supabaseResponse, user: null }
   }
+
+  let user: User | null = null
 
   try {
     const rememberCookie = request.cookies.get('sb-remember')?.value
@@ -59,10 +64,13 @@ export async function updateSession(request: NextRequest) {
       }
     )
 
-    await supabase.auth.getUser()
+    const {
+      data: { user: authUser },
+    } = await supabase.auth.getUser()
+    user = authUser
   } catch (err) {
     console.error('Middleware updateSession fallback:', err)
   }
 
-  return supabaseResponse
+  return { response: supabaseResponse, user }
 }

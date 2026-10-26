@@ -2,6 +2,7 @@
 'use client'
 
 import React from 'react'
+import { safeHref } from '@/lib/safeUrl'
 
 export interface BookmarkCardProps {
   url?: string
@@ -33,7 +34,7 @@ export default function BookmarkCard({
   return (
     <figure className={`kg-card kg-bookmark-card my-8 w-full ${className}`}>
       <a
-        href={url || '#'}
+        href={safeHref(url, '#')}
         target="_blank"
         rel="noopener noreferrer"
         aria-label={displayTitle}

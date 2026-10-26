@@ -14,7 +14,8 @@ export async function GET() {
     .order('name', { ascending: true })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error('[api/admin/tags GET]', error.message)
+    return NextResponse.json({ error: 'Could not fetch tags' }, { status: 400 })
   }
 
   return NextResponse.json({ tags })
@@ -63,13 +64,14 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 403 })
+      console.error('[api/admin/tags POST]', error.message)
+      return NextResponse.json({ error: 'Could not create tag' }, { status: 403 })
     }
 
     return NextResponse.json({ tag }, { status: 201 })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/tags POST]', err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: 'Could not create tag' }, { status: 500 })
   }
 }
 
@@ -127,12 +129,15 @@ export async function PATCH(request: NextRequest) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error('[api/admin/tags PATCH]', error.message)
+      return NextResponse.json({ error: 'Could not update tag' }, { status: 400 })
     }
 
     return NextResponse.json({ tag })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/tags PATCH]', message)
+    return NextResponse.json({ error: 'Could not update tag' }, { status: 500 })
   }
 }
+

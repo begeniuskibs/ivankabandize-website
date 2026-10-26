@@ -60,7 +60,8 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      return NextResponse.json({ error: uploadError.message }, { status: 500 })
+      console.error('[api/admin/upload/video POST]', uploadError.message)
+      return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
     }
 
     const {
@@ -70,6 +71,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ url: publicUrl, path: data.path, bucket: 'post-videos' }, { status: 201 })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Upload failed'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/upload/video POST]', message)
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
   }
 }

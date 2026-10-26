@@ -79,8 +79,11 @@ export async function POST(request: NextRequest) {
       .createSignedUploadUrl(path)
 
     if (signError || !data) {
+      if (signError) {
+        console.error('[api/admin/upload/sign POST]', signError.message)
+      }
       return NextResponse.json(
-        { error: signError?.message || 'Failed to create signed upload URL' },
+        { error: 'Failed to create signed upload URL' },
         { status: 500 }
       )
     }
@@ -97,6 +100,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (err) {
     const message = err instanceof Error ? err.message : 'Error creating signed upload URL'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/upload/sign POST]', message)
+    return NextResponse.json({ error: 'Failed to create signed upload URL' }, { status: 500 })
   }
 }

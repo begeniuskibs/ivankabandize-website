@@ -40,7 +40,8 @@ export async function GET() {
     .order('created_at', { ascending: true })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error('[api/admin/series GET]', error.message)
+    return NextResponse.json({ error: 'Could not fetch series' }, { status: 400 })
   }
 
   const records = (seriesList || []) as unknown as SeriesDbRecord[]
@@ -119,12 +120,13 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error('[api/admin/series POST]', error.message)
+      return NextResponse.json({ error: 'Could not save series' }, { status: 400 })
     }
 
     return NextResponse.json({ series: newSeries }, { status: 201 })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/series POST]', err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: 'Could not save series' }, { status: 500 })
   }
 }

@@ -20,7 +20,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     .single()
 
   if (error || !post) {
-    return NextResponse.json({ error: error?.message || 'Not found' }, { status: 404 })
+    if (error) console.error('[api/admin/posts/[id] GET]', error.message)
+    return NextResponse.json({ error: 'Post not found' }, { status: 404 })
   }
 
   return NextResponse.json({ post })
@@ -86,7 +87,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single()
 
     if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 403 })
+      console.error('[api/admin/posts/[id] PUT]', updateError.message)
+      return NextResponse.json({ error: 'Could not update post' }, { status: 403 })
     }
 
     // Update tags if provided
@@ -103,8 +105,8 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     return NextResponse.json({ post })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/posts/[id] PUT]', err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: 'Could not update post' }, { status: 500 })
   }
 }
 
@@ -119,7 +121,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { error } = await supabase.from('posts').delete().eq('id', id)
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 403 })
+    console.error('[api/admin/posts/[id] DELETE]', error.message)
+    return NextResponse.json({ error: 'Could not delete post' }, { status: 403 })
   }
 
   return NextResponse.json({ success: true })

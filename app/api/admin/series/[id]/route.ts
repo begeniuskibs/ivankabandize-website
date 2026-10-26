@@ -45,7 +45,8 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     .single()
 
   if (error || !seriesItem) {
-    return NextResponse.json({ error: error?.message || 'Series not found' }, { status: 404 })
+    if (error) console.error('[api/admin/series/[id] GET]', error.message)
+    return NextResponse.json({ error: 'Series not found' }, { status: 404 })
   }
 
   const record = seriesItem as unknown as SeriesDbRecord
@@ -116,13 +117,14 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error('[api/admin/series/[id] PUT]', error.message)
+      return NextResponse.json({ error: 'Could not update series' }, { status: 400 })
     }
 
     return NextResponse.json({ series: updatedSeries })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/series/[id] PUT]', err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: 'Could not update series' }, { status: 500 })
   }
 }
 
@@ -141,7 +143,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
     .eq('series_id', id)
 
   if (countError) {
-    return NextResponse.json({ error: countError.message }, { status: 400 })
+    console.error('[api/admin/series/[id] DELETE count]', countError.message)
+    return NextResponse.json({ error: 'Could not verify series posts' }, { status: 400 })
   }
 
   if (count && count > 0) {
@@ -154,7 +157,8 @@ export async function DELETE(request: NextRequest, { params }: RouteParams) {
   const { error: deleteError } = await supabase.from('series').delete().eq('id', id)
 
   if (deleteError) {
-    return NextResponse.json({ error: deleteError.message }, { status: 403 })
+    console.error('[api/admin/series/[id] DELETE]', deleteError.message)
+    return NextResponse.json({ error: 'Could not delete series' }, { status: 403 })
   }
 
   return NextResponse.json({ success: true })

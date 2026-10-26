@@ -20,7 +20,8 @@ export async function GET(
     .single()
 
   if (error || !page) {
-    return NextResponse.json({ error: error?.message || 'Page not found' }, { status: 404 })
+    if (error) console.error('[api/admin/pages/[slug] GET]', error.message)
+    return NextResponse.json({ error: 'Page not found' }, { status: 404 })
   }
 
   return NextResponse.json({ page })
@@ -84,12 +85,13 @@ export async function PATCH(
       .single()
 
     if (error) {
-      return NextResponse.json({ error: error.message }, { status: 400 })
+      console.error('[api/admin/pages/[slug] PATCH]', error.message)
+      return NextResponse.json({ error: 'Could not update page' }, { status: 400 })
     }
 
     return NextResponse.json({ page })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/pages/[slug] PATCH]', err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: 'Could not update page' }, { status: 500 })
   }
 }

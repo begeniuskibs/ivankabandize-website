@@ -28,7 +28,8 @@ export async function GET() {
       .order('created_at', { ascending: false })
 
     if (itemsError) {
-      return NextResponse.json({ error: itemsError.message }, { status: 500 })
+      console.error('[api/admin/library GET]', itemsError.message)
+      return NextResponse.json({ error: 'Could not fetch library items' }, { status: 500 })
     }
 
     // 2. Fetch non-internal tags
@@ -73,7 +74,8 @@ export async function GET() {
     })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/library GET]', message)
+    return NextResponse.json({ error: 'Could not fetch library items' }, { status: 500 })
   }
 }
 
@@ -167,7 +169,8 @@ export async function PATCH(request: Request) {
           .in('id', tag_ids)
 
         if (tagsQueryError) {
-          return NextResponse.json({ error: tagsQueryError.message }, { status: 400 })
+          console.error('[api/admin/library PATCH]', tagsQueryError.message)
+          return NextResponse.json({ error: 'Could not verify tags' }, { status: 400 })
         }
 
         const validNonInternalIds = new Set(
@@ -213,7 +216,8 @@ export async function PATCH(request: Request) {
       .eq('id', id)
 
     if (updateError) {
-      return NextResponse.json({ error: updateError.message }, { status: 500 })
+      console.error('[api/admin/library PATCH]', updateError.message)
+      return NextResponse.json({ error: 'Could not update library item' }, { status: 500 })
     }
 
     // 6. Sync tags if tag_ids provided and library_item_tags table exists
@@ -251,6 +255,7 @@ export async function PATCH(request: Request) {
     })
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : 'Unknown error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/library PATCH]', message)
+    return NextResponse.json({ error: 'Could not update library item' }, { status: 500 })
   }
 }

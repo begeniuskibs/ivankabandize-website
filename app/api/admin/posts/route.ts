@@ -14,7 +14,8 @@ export async function GET() {
     .order('created_at', { ascending: false })
 
   if (error) {
-    return NextResponse.json({ error: error.message }, { status: 400 })
+    console.error('[api/admin/posts GET]', error.message)
+    return NextResponse.json({ error: 'Could not fetch posts' }, { status: 400 })
   }
 
   return NextResponse.json({ posts })
@@ -87,7 +88,8 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (postError) {
-      return NextResponse.json({ error: postError.message }, { status: 403 })
+      console.error('[api/admin/posts POST]', postError.message)
+      return NextResponse.json({ error: 'Could not save post' }, { status: 403 })
     }
 
     // Attach tags if tag_ids are provided
@@ -107,7 +109,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ post }, { status: 201 })
   } catch (err) {
-    const message = err instanceof Error ? err.message : 'Unknown server error'
-    return NextResponse.json({ error: message }, { status: 500 })
+    console.error('[api/admin/posts POST]', err instanceof Error ? err.message : err)
+    return NextResponse.json({ error: 'Could not save post' }, { status: 500 })
   }
 }
