@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardPreviews, getCardReadTimes } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,9 +30,11 @@ export default async function RandomThoughtsPage() {
 
   // Previews: excerpt if present, else first paragraph via helper
   const cardPreviews = await getCardPreviews(posts || [])
+  const cardReadTimes = await getCardReadTimes(posts || [])
   const postsWithPreviews = (posts || []).map((p) => ({
     ...p,
     preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
   }))
 
   return (

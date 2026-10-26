@@ -1,5 +1,6 @@
 import 'server-only'
 import { createAdminClient } from '../utils/supabase/admin.ts'
+import { calculateReadTime } from './readTime.ts'
 
 export interface TeaserPostTagItem {
   tag?: {
@@ -210,5 +211,54 @@ export async function getCardPreviews(
   }
 
   return previews
+}
+
+/**
+ * Returns read times in whole minutes for an array of posts.
+ * Uses the server - only admin client to select ONLY id and content for the given
+ * post ids, runs calculateReadTime on each post, and returns ONLY a Record<string, number>
+ * map of post id to read time in minutes.
+ * Review for leakage: only a number per id leaves the server.
+ */
+export async function getCardReadTimes(
+  posts: Array<{ id: string; excerpt?: string | null }>
+): Promise<Record<string, number>> {
+  const readTimes: Record<string, number> = {}
+  if (!posts || posts.length === 0) return readTimes
+
+  const ids = posts.map((p) => p.id).filter(Boolean)
+  if (ids.length === 0) return readTimes
+
+  const excerptMap = new Map<string, string | null | undefined>()
+  for (const post of posts) {
+    if (post.id) {
+      excerptMap.set(post.id, post.excerpt)
+    }
+  }
+
+  const adminClient = createAdminClient()
+  const now = new Date().toISOString()
+
+  // Select ONLY id and content for published posts that are not in the future
+  const { data, error } = await adminClient
+    .from('posts')
+    .select('id, content')
+    .in('id', ids)
+    .eq('publish_status', 'published')
+    .not('published_at', 'is', null)
+    .lte('published_at', now)
+
+  if (error) {
+    console.error('getCardReadTimes query error:', error)
+    return readTimes
+  }
+
+  if (data) {
+    for (const row of data) {
+      readTimes[row.id] = calculateReadTime(row.content, excerptMap.get(row.id))
+    }
+  }
+
+  return readTimes
 }
 

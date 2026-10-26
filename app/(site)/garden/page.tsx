@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import GardenLandingA2 from '@/components/public/GardenLandingA2'
 import GardenArticlesView from '@/components/public/GardenArticlesView'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardPreviews, getCardReadTimes } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -40,9 +40,11 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
 
   // Previews: excerpt if present, else first paragraph via helper
   const cardPreviews = await getCardPreviews(posts || [])
+  const cardReadTimes = await getCardReadTimes(posts || [])
   const postsWithPreviews = (posts || []).map((p) => ({
     ...p,
     preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
   }))
 
   // Fetch library items (latest 6 for landing section, with exact count)

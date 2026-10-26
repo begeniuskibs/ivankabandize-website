@@ -8,6 +8,8 @@ export interface PostCardItem {
   featured_image_url?: string | null
   excerpt?: string | null
   preview?: string | null
+  published_at?: string | null
+  readTime?: number | null
 }
 
 // Configurable line clamping constant: edit this number to change title line display count
@@ -26,6 +28,32 @@ export default function PostCard({ post, className = '', showPreview = true }: P
       : `overflow-hidden text-ellipsis line-clamp-${CARD_TITLE_LINES}`
 
   const previewText = (post.preview && post.preview.trim()) || (post.excerpt && post.excerpt.trim()) || ''
+
+  let formattedDate: string | null = null
+  if (post.published_at) {
+    try {
+      const d = new Date(post.published_at)
+      if (!isNaN(d.getTime())) {
+        formattedDate = d.toLocaleDateString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+        })
+      }
+    } catch {
+      formattedDate = null
+    }
+  }
+
+  const readTimeText =
+    typeof post.readTime === 'number' && post.readTime > 0
+      ? `${post.readTime} min read`
+      : null
+
+  const metaText =
+    formattedDate && readTimeText
+      ? `${formattedDate} - ${readTimeText}`
+      : formattedDate || readTimeText || null
 
   return (
     <Link
@@ -54,7 +82,7 @@ export default function PostCard({ post, className = '', showPreview = true }: P
       {/* Title Area with 16px top, 20px horizontal & bottom padding */}
       <div
         className={
-          showPreview && previewText
+          (showPreview && previewText) || metaText
             ? 'p-5 flex-1 flex flex-col justify-between min-w-0'
             : 'pt-4 px-5 pb-5 flex-1 flex flex-col justify-center min-w-0'
         }
@@ -66,13 +94,19 @@ export default function PostCard({ post, className = '', showPreview = true }: P
           >
             {post.title}
           </h2>
+          {showPreview && previewText ? (
+            <p className="text-xs text-[#5A5D70] leading-relaxed line-clamp-2 mt-2">
+              {previewText}
+            </p>
+          ) : null}
         </div>
-        {showPreview && previewText ? (
-          <p className="text-xs text-[#5A5D70] leading-relaxed line-clamp-2 mt-2">
-            {previewText}
-          </p>
+        {metaText ? (
+          <div className="text-xs text-[#5C5F73] mt-2">
+            {metaText}
+          </div>
         ) : null}
       </div>
     </Link>
   )
 }
+

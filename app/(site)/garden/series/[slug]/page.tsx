@@ -1,6 +1,6 @@
 import { createClient } from '@/utils/supabase/server'
 import PostCard from '@/components/public/PostCard'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardPreviews, getCardReadTimes } from '@/lib/postTeaser'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
@@ -74,9 +74,11 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
 
   // Previews: excerpt if present, else first paragraph via helper
   const cardPreviews = await getCardPreviews(parts || [])
+  const cardReadTimes = await getCardReadTimes(parts || [])
   const publishedParts = (parts || []).map((p) => ({
     ...p,
     preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
   }))
 
   return (

@@ -5,7 +5,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import PostCard from '@/components/public/PostCard'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardPreviews, getCardReadTimes } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -58,9 +58,11 @@ export default async function HomePage() {
 
   // Previews: excerpt if present, else first paragraph via helper
   const cardPreviews = await getCardPreviews(posts || [])
+  const cardReadTimes = await getCardReadTimes(posts || [])
   const postsWithPreviews = (posts || []).map((p) => ({
     ...p,
     preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+    readTime: cardReadTimes[p.id] || null,
   }))
 
   return (

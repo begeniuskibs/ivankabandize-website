@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed, { TopicTagItem, LibraryFeedItem, PostItem } from '@/components/public/GardenFeed'
-import { getCardPreviews } from '@/lib/postTeaser'
+import { getCardPreviews, getCardReadTimes } from '@/lib/postTeaser'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,9 +83,11 @@ export default async function TopicPage({ params }: TopicPageProps) {
       console.error('Error fetching topic posts:', postsError)
     }
     const cardPreviews = await getCardPreviews(postsData || [])
+    const cardReadTimes = await getCardReadTimes(postsData || [])
     posts = (postsData || []).map((p) => ({
       ...p,
       preview: (p.excerpt && p.excerpt.trim()) ? p.excerpt.trim() : (cardPreviews[p.id] || ''),
+      readTime: cardReadTimes[p.id] || null,
     }))
   }
 
