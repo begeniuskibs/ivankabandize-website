@@ -1,4 +1,5 @@
 import 'server-only'
+import { unstable_cache } from 'next/cache'
 import { createAdminClient } from '../utils/supabase/admin.ts'
 import { calculateReadTime } from './readTime.ts'
 
@@ -154,111 +155,91 @@ export function truncateOnWordBoundary(text: string, maxLength: number = 160): s
 }
 
 /**
- * Returns card previews for an array of posts.
- * If a post already has an excerpt, uses that excerpt.
- * For posts with an empty or missing excerpt, uses the server - only admin client
- * to select ONLY id and content, extracts the first paragraph, truncates to
- * approximately 160 characters on a word boundary with an ellipsis, and returns
- * ONLY that string in a Record<string, string> map.
- * Never returns content JSON or more than the first paragraph.
+ * Returns card previews and read times for an array of posts.
+ * Cached using unstable_cache with revalidate: 300 and tags: ['card-meta'].
+ * Uses a single admin client query to select ONLY id and content for the given posts.
+ * Review for leakage: only derived strings and numbers leave the server.
  */
-export async function getCardPreviews(
+export async function getCardMeta(
   posts: Array<{ id: string; excerpt?: string | null }>
-): Promise<Record<string, string>> {
+): Promise<{ previews: Record<string, string>; readTimes: Record<string, number> }> {
   const previews: Record<string, string> = {}
-  if (!posts || posts.length === 0) return previews
-
-  const missingIds: string[] = []
-
-  for (const post of posts) {
-    if (post.excerpt && post.excerpt.trim().length > 0) {
-      previews[post.id] = post.excerpt.trim()
-    } else if (post.id) {
-      missingIds.push(post.id)
-    }
-  }
-
-  if (missingIds.length === 0) {
-    return previews
-  }
-
-  const adminClient = createAdminClient()
-  const now = new Date().toISOString()
-
-  // Select ONLY id and content for published posts that are not in the future
-  const { data, error } = await adminClient
-    .from('posts')
-    .select('id, content')
-    .in('id', missingIds)
-    .eq('publish_status', 'published')
-    .not('published_at', 'is', null)
-    .lte('published_at', now)
-
-  if (error) {
-    console.error('getCardPreviews query error:', error)
-    return previews
-  }
-
-  if (data) {
-    for (const row of data) {
-      const firstPara = extractFirstParagraph(row.content)
-      if (firstPara) {
-        previews[row.id] = truncateOnWordBoundary(firstPara, 160)
-      } else {
-        previews[row.id] = ''
-      }
-    }
-  }
-
-  return previews
-}
-
-/**
- * Returns read times in whole minutes for an array of posts.
- * Uses the server - only admin client to select ONLY id and content for the given
- * post ids, runs calculateReadTime on each post, and returns ONLY a Record<string, number>
- * map of post id to read time in minutes.
- * Review for leakage: only a number per id leaves the server.
- */
-export async function getCardReadTimes(
-  posts: Array<{ id: string; excerpt?: string | null }>
-): Promise<Record<string, number>> {
   const readTimes: Record<string, number> = {}
-  if (!posts || posts.length === 0) return readTimes
 
-  const ids = posts.map((p) => p.id).filter(Boolean)
-  if (ids.length === 0) return readTimes
+  if (!posts || posts.length === 0) {
+    return { previews, readTimes }
+  }
 
-  const excerptMap = new Map<string, string | null | undefined>()
-  for (const post of posts) {
-    if (post.id) {
-      excerptMap.set(post.id, post.excerpt)
+  // Build sorted list of post IDs and excerpt join to form cache key
+  const sortedPosts = [...posts]
+    .filter((p) => Boolean(p.id))
+    .sort((a, b) => a.id.localeCompare(b.id))
+
+  if (sortedPosts.length === 0) {
+    return { previews, readTimes }
+  }
+
+  const sortedIds = sortedPosts.map((p) => p.id)
+  const excerptJoin = sortedPosts.map((p) => `${p.id}:${p.excerpt ?? ''}`).join('|')
+  const cacheKeyParts = ['card-meta', sortedIds.join(','), excerptJoin]
+
+  const fetchCardMeta = unstable_cache(
+    async (): Promise<{ previews: Record<string, string>; readTimes: Record<string, number> }> => {
+      const cachedPreviews: Record<string, string> = {}
+      const cachedReadTimes: Record<string, number> = {}
+
+      const ids = sortedIds
+      const excerptMap = new Map<string, string | null | undefined>()
+
+      for (const post of sortedPosts) {
+        excerptMap.set(post.id, post.excerpt)
+        if (post.excerpt && post.excerpt.trim().length > 0) {
+          cachedPreviews[post.id] = post.excerpt.trim()
+        }
+      }
+
+      const adminClient = createAdminClient()
+      const now = new Date().toISOString()
+
+      // ONE query: admin client, select 'id, content' from posts
+      const { data, error } = await adminClient
+        .from('posts')
+        .select('id, content')
+        .in('id', ids)
+        .eq('publish_status', 'published')
+        .not('published_at', 'is', null)
+        .lte('published_at', now)
+
+      if (error) {
+        console.error('getCardMeta query error:', error)
+        return { previews: cachedPreviews, readTimes: cachedReadTimes }
+      }
+
+      if (data) {
+        for (const row of data) {
+          // Derive preview text: only posts with no excerpt get a preview, first paragraph only, length limit
+          if (!cachedPreviews[row.id]) {
+            const firstPara = extractFirstParagraph(row.content)
+            cachedPreviews[row.id] = firstPara ? truncateOnWordBoundary(firstPara, 160) : ''
+          }
+          // Derive read time: calculateReadTime from lib/readTime.ts, excerpt-plus-text rule
+          cachedReadTimes[row.id] = calculateReadTime(row.content, excerptMap.get(row.id))
+        }
+      }
+
+      return { previews: cachedPreviews, readTimes: cachedReadTimes }
+    },
+    cacheKeyParts,
+    {
+      revalidate: 300,
+      tags: ['card-meta'],
     }
+  )
+
+  const result = await fetchCardMeta()
+  return {
+    previews: result.previews,
+    readTimes: result.readTimes,
   }
-
-  const adminClient = createAdminClient()
-  const now = new Date().toISOString()
-
-  // Select ONLY id and content for published posts that are not in the future
-  const { data, error } = await adminClient
-    .from('posts')
-    .select('id, content')
-    .in('id', ids)
-    .eq('publish_status', 'published')
-    .not('published_at', 'is', null)
-    .lte('published_at', now)
-
-  if (error) {
-    console.error('getCardReadTimes query error:', error)
-    return readTimes
-  }
-
-  if (data) {
-    for (const row of data) {
-      readTimes[row.id] = calculateReadTime(row.content, excerptMap.get(row.id))
-    }
-  }
-
-  return readTimes
 }
 

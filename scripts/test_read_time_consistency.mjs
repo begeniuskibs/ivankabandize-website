@@ -32,17 +32,17 @@ assert.ok(
 )
 console.log('PASS: ArticleView.tsx imports calculateReadTime from @/lib/readTime and uses it')
 
-// 2. Verify lib/postTeaser.ts exports getCardReadTimes
+// 2. Verify lib/postTeaser.ts exports getCardMeta
 const postTeaserCode = fs.readFileSync(path.resolve('lib/postTeaser.ts'), 'utf8')
 assert.ok(
-  postTeaserCode.includes('export async function getCardReadTimes'),
-  'lib/postTeaser.ts must export getCardReadTimes'
+  postTeaserCode.includes('export async function getCardMeta'),
+  'lib/postTeaser.ts must export getCardMeta'
 )
 assert.ok(
   postTeaserCode.includes("from './readTime.ts'") || postTeaserCode.includes("from './readTime'"),
   'lib/postTeaser.ts must import calculateReadTime from ./readTime'
 )
-console.log('PASS: lib/postTeaser.ts exports getCardReadTimes helper')
+console.log('PASS: lib/postTeaser.ts exports getCardMeta helper')
 
 // Helper to create synthetic TipTap documents of arbitrary word count
 function makeSyntheticDoc(wordCount) {

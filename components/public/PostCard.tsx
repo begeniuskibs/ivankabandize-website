@@ -101,7 +101,7 @@ export default function PostCard({ post, className = '', showPreview = true }: P
           ) : null}
         </div>
         {metaText ? (
-          <div className="text-xs text-[#5C5F73] mt-2">
+          <div className="text-xs text-[#A97B1A] mt-2">
             {metaText}
           </div>
         ) : null}

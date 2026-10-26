@@ -35,11 +35,11 @@ for (const relPath of pagesToCheck) {
   assertNoContentSelected(fullPath)
   const code = fs.readFileSync(fullPath, 'utf8')
   assert.ok(
-    code.includes('getCardPreviews'),
-    `${relPath} must import and use getCardPreviews`
+    code.includes('getCardMeta'),
+    `${relPath} must import and use getCardMeta`
   )
 }
-console.log('PASS: All article feed pages query posts without content and use getCardPreviews')
+console.log('PASS: All article feed pages query posts without content and use getCardMeta')
 
 // 2. Check lib/postTeaser.ts helper
 const postTeaserPath = path.resolve('lib/postTeaser.ts')
@@ -51,18 +51,18 @@ assert.ok(
   "lib/postTeaser.ts must include import 'server-only'"
 )
 assert.ok(
-  postTeaserCode.includes('export async function getCardPreviews'),
-  'lib/postTeaser.ts must export getCardPreviews'
+  postTeaserCode.includes('export async function getCardMeta'),
+  'lib/postTeaser.ts must export getCardMeta'
 )
 assert.ok(
   postTeaserCode.includes("select('id, content')"),
-  "getCardPreviews must select ONLY 'id, content'"
+  "getCardMeta must select ONLY 'id, content'"
 )
 assert.ok(
-  postTeaserCode.includes('Promise<Record<string, string>>'),
-  'getCardPreviews must return Promise<Record<string, string>>'
+  postTeaserCode.includes('Promise<{ previews: Record<string, string>; readTimes: Record<string, number> }>'),
+  'getCardMeta must return Promise<{ previews: Record<string, string>; readTimes: Record<string, number> }>'
 )
-console.log('PASS: lib/postTeaser.ts helper conforms to server - only and string return type contract')
+console.log('PASS: lib/postTeaser.ts helper conforms to server - only and string/number return type contract')
 
 // 3. Check PostCard.tsx (default showPreview = true, line clamps)
 const postCardPath = path.resolve('components/public/PostCard.tsx')
