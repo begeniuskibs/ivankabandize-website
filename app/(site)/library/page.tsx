@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { safeHref } from '@/lib/safeUrl'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +13,9 @@ export const metadata: Metadata = {
   title: 'Library',
   description:
     "Curated books, podcasts and articles that shape Ivan Kabandize's thinking on leadership, systems and craft.",
+  alternates: {
+    canonical: `${SITE_URL}/library`,
+  },
 }
 
 interface LibraryItem {

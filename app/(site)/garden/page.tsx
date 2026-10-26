@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import GardenLandingA2 from '@/components/public/GardenLandingA2'
 import GardenArticlesView from '@/components/public/GardenArticlesView'
 import { getCardMeta } from '@/lib/postTeaser'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,6 +11,9 @@ export const metadata: Metadata = {
   title: 'The Garden',
   description:
     'A digital garden of essays, working notes and evolving ideas on technology, leadership and systems thinking.',
+  alternates: {
+    canonical: `${SITE_URL}/garden`,
+  },
 }
 
 interface GardenPageProps {

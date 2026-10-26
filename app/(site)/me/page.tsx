@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: 'Me',
   description:
     'Background, operational philosophy and personal notes from Ivan Kabandize on work, leadership and life.',
+  robots: {
+    index: false,
+    follow: false,
+  },
 }
 
 export default async function MePage() {

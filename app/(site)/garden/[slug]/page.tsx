@@ -6,12 +6,79 @@ import TeaserArticleView from '@/components/public/TeaserArticleView'
 import { getPostTeaser } from '@/lib/postTeaser'
 import { notFound } from 'next/navigation'
 
-import { getPostDescription } from '@/lib/postDescription'
+import { getPostDescription, formatDescription, DEFAULT_SITE_DESCRIPTION } from '@/lib/postDescription'
+import { SITE_URL } from '@/lib/siteUrl'
+import JsonLd from '@/components/seo/JsonLd'
 
 export const dynamic = 'force-dynamic'
 
 interface GardenPostPageProps {
   params: Promise<{ slug: string }>
+}
+
+function buildArticleJsonLd({
+  title,
+  slug,
+  excerpt,
+  publishedAt,
+  updatedAt,
+  featuredImageUrl,
+  isPublic,
+}: {
+  title: string
+  slug: string
+  excerpt?: string | null
+  publishedAt?: string | null
+  updatedAt?: string | null
+  featuredImageUrl?: string | null
+  isPublic: boolean
+}) {
+  const url = `${SITE_URL}/garden/${slug}`
+  const personId = `${SITE_URL}/#person`
+
+  // For members-only posts use the excerpt only, or a generic description if no excerpt.
+  // NEVER put article body text, first paragraph or teaser text into JSON-LD.
+  const description =
+    excerpt && excerpt.trim()
+      ? formatDescription(excerpt)
+      : DEFAULT_SITE_DESCRIPTION
+
+  const articleJsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: title,
+    description,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
+    url,
+    author: {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Ivan Kabandize',
+    },
+    publisher: {
+      '@type': 'Person',
+      '@id': personId,
+      name: 'Ivan Kabandize',
+    },
+  }
+
+  if (publishedAt) {
+    articleJsonLd.datePublished = publishedAt
+    articleJsonLd.dateModified = updatedAt || publishedAt
+  }
+
+  if (featuredImageUrl) {
+    articleJsonLd.image = featuredImageUrl
+  }
+
+  if (!isPublic) {
+    articleJsonLd.isAccessibleForFree = false
+  }
+
+  return articleJsonLd
 }
 
 export async function generateMetadata({ params }: GardenPostPageProps): Promise<Metadata> {
@@ -62,18 +129,24 @@ export async function generateMetadata({ params }: GardenPostPageProps): Promise
   const ogImages = targetPost.featured_image_url ? [{ url: targetPost.featured_image_url }] : undefined
 
   return {
-    title: targetPost.title,
+    title: {
+      absolute: `${targetPost.title} - Ivan Kabandize`,
+    },
     description,
+    alternates: {
+      canonical: `${SITE_URL}/garden/${targetPost.slug}`,
+    },
     openGraph: {
-      title: targetPost.title,
+      title: `${targetPost.title} - Ivan Kabandize`,
       description,
       type: 'article',
+      url: `${SITE_URL}/garden/${targetPost.slug}`,
       publishedTime: targetPost.published_at || undefined,
       images: ogImages,
     },
     twitter: {
       card: 'summary_large_image',
-      title: targetPost.title,
+      title: `${targetPost.title} - Ivan Kabandize`,
       description,
       images: targetPost.featured_image_url ? [targetPost.featured_image_url] : undefined,
     },
@@ -95,7 +168,7 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
   // Query post by slug - RLS restricts anon users to visibility='public' AND publish_status='published'
   const { data: post, error } = await supabase
     .from('posts')
-    .select('id, title, slug, content, excerpt, published_at, content_type, featured_image_url, header_image_width, series_id, post_tags(tag:tags(name, slug))')
+    .select('id, title, slug, content, excerpt, published_at, updated_at, visibility, content_type, featured_image_url, header_image_width, series_id, post_tags(tag:tags(name, slug))')
     .eq('slug', slug)
     .eq('publish_status', 'published')
     .not('published_at', 'is', null)
@@ -113,7 +186,22 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
     } = await supabase.auth.getUser()
     const isUpgrade = Boolean(user)
 
-    return <TeaserArticleView teaser={teaser} isUpgrade={isUpgrade} />
+    const teaserJsonLd = buildArticleJsonLd({
+      title: teaser.title,
+      slug: teaser.slug,
+      excerpt: teaser.excerpt,
+      publishedAt: teaser.published_at,
+      updatedAt: null,
+      featuredImageUrl: teaser.featured_image_url,
+      isPublic: teaser.visibility === 'public',
+    })
+
+    return (
+      <>
+        <JsonLd data={teaserJsonLd} />
+        <TeaserArticleView teaser={teaser} isUpgrade={isUpgrade} />
+      </>
+    )
   }
 
   // Fetch series context if post belongs to a series
@@ -171,5 +259,20 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
 
   const relatedPost = (relatedPosts && relatedPosts.length > 0 ? relatedPosts[0] : null) as RelatedPostData | null
 
-  return <ArticleView post={post} relatedPost={relatedPost} seriesContext={seriesContext} />
+  const postJsonLd = buildArticleJsonLd({
+    title: post.title,
+    slug: post.slug,
+    excerpt: post.excerpt,
+    publishedAt: post.published_at,
+    updatedAt: post.updated_at,
+    featuredImageUrl: post.featured_image_url,
+    isPublic: post.visibility === 'public',
+  })
+
+  return (
+    <>
+      <JsonLd data={postJsonLd} />
+      <ArticleView post={post} relatedPost={relatedPost} seriesContext={seriesContext} />
+    </>
+  )
 }

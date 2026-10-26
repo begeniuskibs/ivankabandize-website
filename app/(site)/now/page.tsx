@@ -3,11 +3,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const metadata: Metadata = {
   title: 'Now',
   description:
     'A sporadically updated log of what Ivan Kabandize is building, reading, learning and thinking about.',
+  alternates: {
+    canonical: `${SITE_URL}/now`,
+  },
 }
 
 export default function NowPage() {

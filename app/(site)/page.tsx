@@ -7,14 +7,20 @@ import ScrollReveal from '@/components/public/ScrollReveal'
 import PostCard from '@/components/public/PostCard'
 import { getCardMeta } from '@/lib/postTeaser'
 
+import { SITE_URL } from '@/lib/siteUrl'
+import JsonLd from '@/components/seo/JsonLd'
+
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'Ivan Kabandize',
+    absolute: 'Ivan Kabandize - Leadership, Systems Thinking and Faith',
   },
   description:
     'Ivan Kabandize writes about leadership, systems thinking, technology and faith, and helps organisations get their operations, systems and teams in order.',
+  alternates: {
+    canonical: SITE_URL,
+  },
 }
 
 export default async function HomePage() {
@@ -67,8 +73,49 @@ export default async function HomePage() {
     readTime: cardReadTimes[p.id] || null,
   }))
 
+  const personId = `${SITE_URL}/#person`
+  const websiteId = `${SITE_URL}/#website`
+
+  const homeJsonLd = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Person',
+        '@id': personId,
+        name: 'Ivan Kabandize',
+        url: SITE_URL,
+        jobTitle:
+          'Ministry program leader and organizational development professional',
+        worksFor: {
+          '@type': 'Organization',
+          name: 'Watoto Church',
+        },
+        sameAs: [
+          'https://www.instagram.com/begeniuskibs/',
+          'https://www.facebook.com/kbegenius/',
+          'https://www.linkedin.com/in/ivan-kabandize-68b4a4130/',
+          'https://ivan-kabandize.medium.com/',
+        ],
+      },
+      {
+        '@type': 'WebSite',
+        '@id': websiteId,
+        name: 'Ivan Kabandize',
+        alternateName: 'Begenius Thoughts',
+        url: SITE_URL,
+        publisher: {
+          '@id': personId,
+        },
+        author: {
+          '@id': personId,
+        },
+      },
+    ],
+  }
+
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
+      <JsonLd data={homeJsonLd} />
       {/* ================= HERO SECTION ================= */}
       <section className="py-16 md:py-24 border-b border-[#F5ECDE] overflow-hidden">
         <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8">

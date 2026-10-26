@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import { safeHref } from '@/lib/safeUrl'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
 
@@ -12,6 +13,9 @@ export const metadata: Metadata = {
   title: 'Work with Me',
   description:
     'Advisory, systems design and operational support to help organisations get their systems, processes and teams in order.',
+  alternates: {
+    canonical: `${SITE_URL}/workwithme`,
+  },
 }
 
 export default async function WorkWithMePage() {
