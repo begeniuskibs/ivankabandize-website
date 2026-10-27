@@ -5,6 +5,8 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
+import { SITE_URL } from '@/lib/siteUrl'
+import { formatDescription } from '@/lib/postDescription'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,16 +29,21 @@ export async function generateMetadata({ params }: SeriesPageProps) {
   }
 
   const title = `${series.title} - Series`
-  const description =
+  const rawDescription =
     series.description ||
     `A multi-part series of essays and notes on ${series.title} by Ivan Kabandize.`
+  const description = formatDescription(rawDescription, 150)
 
   return {
     title,
     description,
+    alternates: {
+      canonical: `${SITE_URL}/garden/series/${slug}`,
+    },
     openGraph: {
       title,
       description,
+      url: `${SITE_URL}/garden/series/${slug}`,
       images: series.header_image_url ? [{ url: series.header_image_url }] : undefined,
     },
   }

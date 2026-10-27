@@ -1,15 +1,20 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
 import { getCardMeta } from '@/lib/postTeaser'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
 
 // Temporary hero banner image (swap with final image anytime)
 const HERO_BANNER = '/images/auth-pool/01-bookblock-notebook.jpg'
 
-export const metadata = {
-  title: 'Random Thoughts | Ivan Kabandize',
+export const metadata: Metadata = {
+  title: 'Random Thoughts',
   description: 'Spontaneous sparks, observations, raw reflections, and working notes.',
+  alternates: {
+    canonical: `${SITE_URL}/random-thoughts`,
+  },
 }
 
 export default async function RandomThoughtsPage() {

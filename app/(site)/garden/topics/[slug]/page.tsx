@@ -3,6 +3,8 @@ import { notFound } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed, { TopicTagItem, LibraryFeedItem, PostItem } from '@/components/public/GardenFeed'
 import { getCardMeta } from '@/lib/postTeaser'
+import { SITE_URL } from '@/lib/siteUrl'
+import { formatDescription } from '@/lib/postDescription'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,14 +29,23 @@ export async function generateMetadata({ params }: TopicPageProps): Promise<Meta
   }
 
   const title = `${tag.name} - The Garden`
-  const description =
+  const rawDescription =
     tag.description && tag.description.trim() !== ''
       ? tag.description.trim()
       : `Essays, notes and resources on ${tag.name} in The Garden by Ivan Kabandize.`
+  const description = formatDescription(rawDescription, 150)
 
   return {
     title,
     description,
+    alternates: {
+      canonical: `${SITE_URL}/garden/topics/${slug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `${SITE_URL}/garden/topics/${slug}`,
+    },
   }
 }
 

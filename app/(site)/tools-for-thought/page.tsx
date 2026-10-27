@@ -1,15 +1,20 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
 import { getCardMeta } from '@/lib/postTeaser'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
 
 // Temporary hero banner image (swap with final image anytime)
 const HERO_BANNER = '/images/auth-pool/08-nicholas-ng-laptop.jpg'
 
-export const metadata = {
-  title: 'Tools for Thought | Ivan Kabandize',
+export const metadata: Metadata = {
+  title: 'Tools for Thought',
   description: 'Workflows, software tools, personal operating systems, and cognitive instruments.',
+  alternates: {
+    canonical: `${SITE_URL}/tools-for-thought`,
+  },
 }
 
 export default async function ToolsForThoughtPage() {

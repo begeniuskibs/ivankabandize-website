@@ -1,15 +1,20 @@
+import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import GardenFeed from '@/components/public/GardenFeed'
 import { getCardMeta } from '@/lib/postTeaser'
+import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
 
 // Temporary hero banner image (swap with final image anytime)
 const HERO_BANNER = '/images/auth-pool/03-gery-wibowo-laptop-study.jpg'
 
-export const metadata = {
-  title: 'Structured Thoughts | Ivan Kabandize',
+export const metadata: Metadata = {
+  title: 'Structured Thoughts',
   description: 'In-depth essays, mental models, systems thinking, and long-form analysis.',
+  alternates: {
+    canonical: `${SITE_URL}/structured-thoughts`,
+  },
 }
 
 export default async function StructuredThoughtsPage() {
