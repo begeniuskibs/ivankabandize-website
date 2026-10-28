@@ -46,9 +46,17 @@ export default async function Footer() {
           <p className="font-['MTN_Brighter_Sans',_sans-serif] font-bold text-lg text-white">
             Ivan Kabandize<span className="text-[#EF5B45]">.</span>
           </p>
-          <p className="text-[#8A8D9F] text-xs sm:text-sm">
-            © {new Date().getFullYear()} All rights reserved.
-          </p>
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-[#8A8D9F] text-xs sm:text-sm">
+            <span>© {new Date().getFullYear()} All rights reserved.</span>
+            <span aria-hidden="true" className="text-[#5A5D70]">-</span>
+            <Link href="/privacy-policy" className="hover:text-white transition">
+              Privacy Policy
+            </Link>
+            <span aria-hidden="true" className="text-[#5A5D70]">-</span>
+            <Link href="/cookie-policy" className="hover:text-white transition">
+              Cookie Policy
+            </Link>
+          </div>
         </div>
 
         <div className="flex max-md:flex-col flex-wrap items-center justify-center max-md:gap-1 gap-6 font-medium max-md:w-full">
