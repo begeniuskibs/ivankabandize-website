@@ -273,42 +273,78 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
             if (!headerRow) return null
 
             return (
-              <div
-                key={idx}
-                className="max-md:overflow-x-auto max-md:block my-6 overflow-hidden rounded-xl border border-[#F0E4D2] bg-white"
-              >
-                <table className="w-full text-left border-collapse text-sm sm:text-base">
-                  <thead>
-                    <tr className="bg-[#FDF8F1] text-[#232536] border-b border-[#F0E4D2]">
-                      {headerRow.map((cell, cIdx) => (
-                        <th
-                          key={cIdx}
-                          className="p-3.5 sm:p-4 font-bold border-r last:border-r-0 border-[#F0E4D2] align-top text-[#232536]"
-                        >
-                          {renderInlineMarkdown(cell)}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {bodyRows.map((row, rIdx) => (
-                      <tr
-                        key={rIdx}
-                        className="border-b last:border-b-0 border-[#F0E4D2] hover:bg-[#FDF8F1]/50 transition-colors"
-                      >
-                        {row.map((cell, cIdx) => (
-                          <td
+              <React.Fragment key={idx}>
+                {/* Desktop Table (hidden below md breakpoint) */}
+                <div className="max-md:hidden my-6 overflow-hidden rounded-xl border border-[#F0E4D2] bg-white">
+                  <table className="w-full text-left border-collapse text-sm sm:text-base">
+                    <thead>
+                      <tr className="bg-[#FDF8F1] text-[#232536] border-b border-[#F0E4D2]">
+                        {headerRow.map((cell, cIdx) => (
+                          <th
                             key={cIdx}
-                            className="p-3.5 sm:p-4 border-r last:border-r-0 border-[#F0E4D2] align-top text-[#232536] leading-relaxed"
+                            className="p-3.5 sm:p-4 font-bold border-r last:border-r-0 border-[#F0E4D2] align-top text-[#232536]"
                           >
                             {renderInlineMarkdown(cell)}
-                          </td>
+                          </th>
                         ))}
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {bodyRows.map((row, rIdx) => (
+                        <tr
+                          key={rIdx}
+                          className="border-b last:border-b-0 border-[#F0E4D2] hover:bg-[#FDF8F1]/50 transition-colors"
+                        >
+                          {row.map((cell, cIdx) => (
+                            <td
+                              key={cIdx}
+                              className="p-3.5 sm:p-4 border-r last:border-r-0 border-[#F0E4D2] align-top text-[#232536] leading-relaxed"
+                            >
+                              {renderInlineMarkdown(cell)}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Mobile Cards (hidden on md breakpoint and above) */}
+                <div className="md:hidden my-6 flex flex-col gap-3">
+                  {bodyRows.map((row, rIdx) => {
+                    const title = row[0] || ''
+                    const detailPairs = row.slice(1).map((val, i) => ({
+                      label: (headerRow[i + 1] || '').replace(/^\*\*(.*)\*\*$/, '$1').trim(),
+                      value: val,
+                    }))
+
+                    return (
+                      <div
+                        key={rIdx}
+                        className="rounded-xl border border-[#F0E4D2] bg-white p-4"
+                      >
+                        <div className="font-bold text-[#232536] text-base leading-snug break-words [overflow-wrap:anywhere]">
+                          {renderInlineMarkdown(title)}
+                        </div>
+                        {detailPairs.length > 0 && (
+                          <div className="mt-3 space-y-3">
+                            {detailPairs.map((pair, pIdx) => (
+                              <div key={pIdx} className="space-y-1">
+                                <div className="text-xs font-bold text-[#5C5F73] break-words [overflow-wrap:anywhere]">
+                                  {renderInlineMarkdown(pair.label)}
+                                </div>
+                                <div className="text-sm text-[#232536] leading-relaxed break-words [overflow-wrap:anywhere]">
+                                  {renderInlineMarkdown(pair.value)}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                </div>
+              </React.Fragment>
             )
           }
 
