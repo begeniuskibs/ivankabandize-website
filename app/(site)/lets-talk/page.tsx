@@ -570,12 +570,12 @@ export default function LetsTalkPage() {
                     </div>
 
                     {/* Navigation Buttons */}
-                    <div className="pt-2 flex items-center justify-between">
+                    <div className="pt-2 flex items-start justify-between gap-4">
                       <button
                         type="button"
                         onClick={() => handleBack(3)}
                         disabled={isSubmitting}
-                        className="group text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="group text-[#5A5D70] hover:text-[#232536] text-sm font-bold transition inline-flex items-center gap-1.5 cursor-pointer disabled:opacity-50 mt-3"
                       >
                         <ArrowLeft
                           size={14}
@@ -585,43 +585,55 @@ export default function LetsTalkPage() {
                         />
                         <span>Back</span>
                       </button>
-                      <button
-                        type="button"
-                        onClick={() => handleSubmit()}
-                        disabled={isSubmitting}
-                        className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
-                      >
-                        {isSubmitting ? (
-                          <>
-                            <svg
-                              className="animate-spin h-5 w-5 text-white"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                            >
-                              <circle
-                                className="opacity-25"
-                                cx="12"
-                                cy="12"
-                                r="10"
-                                stroke="currentColor"
-                                strokeWidth="4"
-                              />
-                              <path
-                                className="opacity-75"
-                                fill="currentColor"
-                                d="M4 12a8 8 0 018-8v8H4z"
-                              />
-                            </svg>
-                            <span>Sending enquiry...</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>Send enquiry</span>
-                            <MailIcon size={16} strokeWidth={2} aria-hidden="true" />
-                          </>
-                        )}
-                      </button>
+                      <div className="flex flex-col items-end gap-2 text-right">
+                        <button
+                          type="button"
+                          onClick={() => handleSubmit()}
+                          disabled={isSubmitting}
+                          className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
+                        >
+                          {isSubmitting ? (
+                            <>
+                              <svg
+                                className="animate-spin h-5 w-5 text-white"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="currentColor"
+                                  strokeWidth="4"
+                                />
+                                <path
+                                  className="opacity-75"
+                                  fill="currentColor"
+                                  d="M4 12a8 8 0 018-8v8H4z"
+                                />
+                              </svg>
+                              <span>Sending enquiry...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Send enquiry</span>
+                              <MailIcon size={16} strokeWidth={2} aria-hidden="true" />
+                            </>
+                          )}
+                        </button>
+                        <p className="text-xs text-[#5C5F73]">
+                          I use your details only to reply to you. See the{' '}
+                          <Link
+                            href="/privacy-policy"
+                            className="text-[#CF3F29] hover:text-[#b83420] underline transition"
+                          >
+                            Privacy Policy
+                          </Link>
+                          .
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
