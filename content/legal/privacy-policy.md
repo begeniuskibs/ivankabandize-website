@@ -28,7 +28,7 @@ The table below shows, for action you might take on the site, what I collect, wh
 
 | **When you...** | **I collect** | **Why** | **Basis** |
 |---|---|---|---|
-| **Just visit** | Page address, referrer, browser and device type, country, and an anonymous identifier that is discarded after 24 hours (Vercel Web Analytics). Your IP address is seen by the host to deliver the page, and may be used for a few seconds to limit abuse of the search. I do not store it. | To see which pages are read and keep the site working | My legitimate interest in understanding and securing the site |
+| **Just visit** | Page address, referrer, browser and device type, country, and an anonymous identifier that is discarded after 24 hours (Vercel Web Analytics). Your IP address is seen by the host to deliver the page. If you use the site's search, it is also held for about 60 seconds to limit abuse, then discarded. | To see which pages are read and keep the site working | My legitimate interest in understanding and securing the site |
 | **Use** [Let's Talk](https://ivankabandize.com/lets-talk) | Name, email, organisation (optional), what you need help with, timing, your message | To reply to you and to send you an automatic confirmation email | Your request, then my legitimate interest in answering |
 | **Create an account** | Email, name, password (stored only as a salted hash), or your name and email from Google if you use Google sign-in | To let you sign in, comment, bookmark and download | Your agreement to the account |
 | **Subscribe to a newsletter** | Email address, the newsletter, the date you confirmed | To send you the newsletter you chose | Your consent (confirmed by email first) |
@@ -59,6 +59,7 @@ I use these services to run the site. They process data on my behalf. You can as
 |---|---|---|
 | **Supabase** | Database, sign-in and file storage | Ireland (eu-west-1) |
 | **Vercel** | Hosts the site and runs Web Analytics | United States (East) |
+| **Upstash (through Vercel)** | Counts your searches for about a minute to limit abuse | United States (East) |
 | **Resend** | Sends the site's emails (confirmations, newsletters) | United States and EU |
 | **ImprovMX and Gmail** | Forward and receive email sent to my site address | Global |
 | **Google** | Optional sign-in with Google | Global |
