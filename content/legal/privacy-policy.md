@@ -60,7 +60,7 @@ I use these services to run the site. They process data on my behalf. You can as
 | **Supabase** | Database, sign-in and file storage | Ireland (eu-west-1) |
 | **Vercel** | Hosts the site and runs Web Analytics | United States (East) |
 | **Upstash (through Vercel)** | Counts your searches for about a minute to limit abuse | United States (East) |
-| **Resend** | Sends the site's emails (confirmations, newsletters) | United States and EU |
+| **Resend** | Sends the site's emails (confirmations, newsletters) | Ireland (eu-west-1) |
 | **ImprovMX and Gmail** | Forward and receive email sent to my site address | Global |
 | **Google** | Optional sign-in with Google | Global |
 | **Unsplash** | Some article photos load from Unsplash, which can see your IP address when your browser fetches them | Global |
