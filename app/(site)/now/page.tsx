@@ -75,7 +75,7 @@ export default function NowPage() {
 
                 <div className="space-y-4">
                   <span className="inline-block text-xs sm:text-sm font-bold text-[#2AA198] uppercase tracking-wider">
-                    July 2026 &middot; Current
+                    October 2026 &middot; Current
                   </span>
                   <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] leading-snug">
                     Turning this website into a garden
@@ -120,7 +120,7 @@ export default function NowPage() {
                           />
                         </span>
                         <p>
-                          <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud - and publishing what I learn as I go.
+                          <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud and the AI Fundamentals journeys from the Google AI Professional Certificate on Coursera (started October 2026) - and publishing what I learn as I go.
                         </p>
                       </div>
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
@@ -247,7 +247,7 @@ export default function NowPage() {
             <div className="mt-20 pt-10 border-t border-[#F5ECDE] text-center space-y-6">
               <p className="text-sm sm:text-base text-[#5A5D70]">
                 This page updates when life does - roughly every season. Last tended:{' '}
-                <strong className="text-[#232536]">July 2026</strong>.
+                <strong className="text-[#232536]">October 2026</strong>.
               </p>
               <div>
                 <Link
