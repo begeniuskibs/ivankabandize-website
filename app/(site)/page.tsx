@@ -203,29 +203,36 @@ export default async function HomePage() {
               Where you might know me from
             </p>
 
-            {/* Placeholder only - do not replace with real client logos/names without confirmed permission. See Decision log. */}
-            <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-8 mb-12">
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-12 h-2.5 rounded-full bg-black/10" />
-              </div>
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-14 h-2.5 rounded-full bg-black/10" />
-              </div>
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-10 h-2.5 rounded-full bg-black/10" />
-              </div>
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-16 h-2.5 rounded-full bg-black/10" />
-              </div>
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-12 h-2.5 rounded-full bg-black/10" />
-              </div>
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-14 h-2.5 rounded-full bg-black/10" />
-              </div>
-              <div className="w-24 sm:w-28 h-10 rounded-xl bg-black/5 border border-black/5 flex items-center justify-center">
-                <div className="w-10 h-2.5 rounded-full bg-black/10" />
-              </div>
+            {/* Note: A Clients group may be added only after written permission from each client. */}
+            <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
+              <Image
+                src="/images/trust/watoto-church.png"
+                alt="Watoto Church"
+                width={926}
+                height={484}
+                className="h-10 w-auto object-contain grayscale opacity-70"
+              />
+              <Image
+                src="/images/trust/fundi-bots.png"
+                alt="Fundi Bots"
+                width={566}
+                height={200}
+                className="h-10 w-auto object-contain grayscale opacity-70"
+              />
+              <Image
+                src="/images/trust/40-days-over-40-smiles.png"
+                alt="40 Days Over 40 Smiles Foundation"
+                width={500}
+                height={500}
+                className="h-10 w-auto object-contain grayscale opacity-70"
+              />
+              <Image
+                src="/images/trust/the-red-notebook.png"
+                alt="The Red Notebook"
+                width={2832}
+                height={690}
+                className="h-10 w-auto object-contain grayscale opacity-70"
+              />
             </div>
 
             <div className="space-y-4 text-base sm:text-lg text-[#5A5D70] leading-relaxed max-w-3xl mx-auto text-center sm:text-left">

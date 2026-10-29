@@ -105,7 +105,7 @@ export default function SlidingAuthCard({
           </h2>
           <p className="text-sm text-[#5A5D70] mb-6 font-sans">
             {isSignUp
-              ? 'Create a free account to follow along as the garden grows. The Garden is a collection of my thinking and resources.'
+              ? 'Create a free account to follow along as the garden grows.'
               : 'Enter your credentials to continue.'}
           </p>
 
@@ -305,9 +305,15 @@ export default function SlidingAuthCard({
               {isSignUp ? 'Hey friend,' : 'Welcome back,'}
             </h3>
             <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans">
-              {isSignUp
-                ? 'Create an account to join the garden. Email updates are on the way, and I will let you know when they start.'
-                : 'Sign in to manage your account and pick up where you left off.'}
+              {isSignUp ? (
+                <>
+                  Create an account to join the garden. The Garden is a collection of my thinking and resources.
+                  <br />
+                  Email updates are on the way, and I will let you know when they start.
+                </>
+              ) : (
+                'Sign in to manage your account and pick up where you left off.'
+              )}
             </p>
           </div>
 
