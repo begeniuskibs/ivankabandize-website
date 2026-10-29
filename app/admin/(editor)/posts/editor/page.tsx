@@ -92,6 +92,7 @@ function PostEditorContent() {
   // Publish / Schedule
   const [publishStatus, setPublishStatus] = useState<'draft' | 'scheduled' | 'published'>('draft')
   const [scheduledDate, setScheduledDate] = useState('')
+  const [storedPublishedAt, setStoredPublishedAt] = useState<string | null>(null)
 
   // UI States
   const [isDrawerOpen, setIsDrawerOpen] = useState(false)
@@ -143,7 +144,8 @@ function PostEditorContent() {
               setContentType(post.content_type || 'structured_thoughts')
               setPublishStatus(post.publish_status || 'draft')
               setSeriesId(post.series_id || null)
-              if (post.published_at) {
+              setStoredPublishedAt(post.published_at || null)
+              if (post.published_at && post.publish_status !== 'draft') {
                 setScheduledDate(new Date(post.published_at).toISOString().slice(0, 16))
               }
               if (post.post_tags) {
@@ -277,7 +279,7 @@ function PostEditorContent() {
       if (scheduledDate) {
         targetPublishedAt = new Date(scheduledDate).toISOString()
       } else {
-        targetPublishedAt = new Date().toISOString()
+        targetPublishedAt = storedPublishedAt || new Date().toISOString()
       }
     } else if (status === 'scheduled') {
       if (!scheduledDate) {
@@ -286,6 +288,8 @@ function PostEditorContent() {
         return
       }
       targetPublishedAt = new Date(scheduledDate).toISOString()
+    } else {
+      targetPublishedAt = storedPublishedAt || null
     }
 
     // Embed featured_image_caption into content JSONB object
@@ -329,6 +333,9 @@ function PostEditorContent() {
       }
 
       setPublishStatus(status)
+      if (data.post?.published_at) {
+        setStoredPublishedAt(data.post.published_at)
+      }
       setSuccess(`Post successfully ${status === 'published' ? 'published' : status === 'scheduled' ? 'scheduled' : 'saved as draft'}!`)
       setIsDrawerOpen(false)
 

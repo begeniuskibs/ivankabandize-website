@@ -1,6 +1,7 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
 import { revalidateTag } from 'next/cache'
+import { resolvePublishedAt } from '@/lib/resolvePublishedAt'
 
 interface RouteParams {
   params: Promise<{ id: string }>
@@ -57,6 +58,17 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
       return NextResponse.json({ error: "The slug 'series' is reserved" }, { status: 400 })
     }
 
+    const { data: existingPost, error: fetchError } = await supabase
+      .from('posts')
+      .select('published_at, publish_status')
+      .eq('id', id)
+      .single()
+
+    if (fetchError || !existingPost) {
+      if (fetchError) console.error('[api/admin/posts/[id] PUT]', fetchError.message)
+      return NextResponse.json({ error: 'Post not found' }, { status: 404 })
+    }
+
     const updatePayload: Record<string, unknown> = {}
     if (title !== undefined) updatePayload.title = title
     if (slug !== undefined) updatePayload.slug = slug
@@ -69,15 +81,18 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     if (visibility !== undefined) updatePayload.visibility = visibility
     if (content_type !== undefined) updatePayload.content_type = content_type
     if (series_id !== undefined) updatePayload.series_id = series_id || null
+
+    const targetStatus = publish_status !== undefined ? publish_status : existingPost.publish_status
     if (publish_status !== undefined) {
       updatePayload.publish_status = publish_status
-      if (publish_status === 'published' && !published_at) {
-        updatePayload.published_at = new Date().toISOString()
-      } else if (published_at !== undefined) {
-        updatePayload.published_at = published_at
-      }
-    } else if (published_at !== undefined) {
-      updatePayload.published_at = published_at
+    }
+
+    if (publish_status !== undefined || published_at !== undefined) {
+      updatePayload.published_at = resolvePublishedAt({
+        incomingPublishedAt: published_at,
+        existingPublishedAt: existingPost.published_at,
+        publishStatus: targetStatus,
+      })
     }
 
     const { data: post, error: updateError } = await supabase

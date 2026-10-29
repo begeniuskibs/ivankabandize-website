@@ -1,6 +1,7 @@
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { NextResponse, type NextRequest } from 'next/server'
 import { revalidateTag } from 'next/cache'
+import { resolvePublishedAt } from '@/lib/resolvePublishedAt'
 
 export async function GET() {
   const { supabase, error: authError, status: authStatus } = await getAuthenticatedOwner()
@@ -79,10 +80,11 @@ export async function POST(request: NextRequest) {
         publish_status,
         content_type,
         series_id: series_id || null,
-        published_at:
-          publish_status === 'published' && !published_at
-            ? new Date().toISOString()
-            : published_at || null,
+        published_at: resolvePublishedAt({
+          incomingPublishedAt: published_at,
+          existingPublishedAt: null,
+          publishStatus: publish_status,
+        }),
         author_id: user.id,
       })
       .select()
