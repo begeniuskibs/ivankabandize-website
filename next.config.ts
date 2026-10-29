@@ -159,6 +159,17 @@ const nextConfig: NextConfig = {
         destination: '/garden/:slug*',
         permanent: true,
       },
+      // Ghost author redirects
+      {
+        source: '/author/:slug*',
+        destination: '/me',
+        permanent: true,
+      },
+      {
+        source: '/author',
+        destination: '/me',
+        permanent: true,
+      },
       // Ghost post stream redirects
       {
         source: '/randomthoughts/:slug',
