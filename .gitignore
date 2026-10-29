@@ -43,3 +43,7 @@ scripts/ghost-import/import.log
 next-env.d.ts
 
 scripts/ghost-import/backups/
+
+# MCP configs may hold tokens
+.agents/mcp_config.json
+.agents/**/mcp_config.local.json

@@ -210,28 +210,28 @@ export default async function HomePage() {
                 alt="Watoto Church"
                 width={926}
                 height={484}
-                className="h-10 w-auto object-contain grayscale opacity-70"
+                className="h-12 w-auto object-contain"
               />
               <Image
                 src="/images/trust/fundi-bots.png"
                 alt="Fundi Bots"
                 width={566}
                 height={200}
-                className="h-10 w-auto object-contain grayscale opacity-70"
+                className="h-12 w-auto object-contain"
               />
               <Image
                 src="/images/trust/40-days-over-40-smiles.png"
                 alt="40 Days Over 40 Smiles Foundation"
                 width={500}
                 height={500}
-                className="h-10 w-auto object-contain grayscale opacity-70"
+                className="h-12 w-auto object-contain"
               />
               <Image
                 src="/images/trust/the-red-notebook.png"
                 alt="The Red Notebook"
                 width={2832}
                 height={690}
-                className="h-10 w-auto object-contain grayscale opacity-70"
+                className="h-10 w-auto object-contain"
               />
             </div>
 
