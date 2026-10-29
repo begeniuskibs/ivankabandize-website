@@ -186,6 +186,53 @@ const nextConfig: NextConfig = {
         destination: '/garden/:slug',
         permanent: true,
       },
+      // Ghost legacy post and canonical address redirects
+      {
+        source: '/weeklyplanningforproductivity',
+        destination: '/garden/weekly-planning',
+        permanent: true,
+      },
+      {
+        source: '/tools-for-thought/notion-weekly-planner',
+        destination: '/garden/notion-weekly-planner',
+        permanent: true,
+      },
+      {
+        source: '/tools-for-thought/technology/apple-vision-pro-thoughts-and-impressions',
+        destination: '/garden/apple-vision-pro-thoughts-impressions',
+        permanent: true,
+      },
+      {
+        source: '/strategic-excellence-leveraging-mckinseys-7s-framework-for-growth',
+        destination: '/garden/leveraging-the-mckinsey-7s-framework-for-organizational-and-business-growth',
+        permanent: true,
+      },
+      {
+        source: '/notion-charts-a-game-changer-for-data-visualization',
+        destination: '/garden/notion-charts-a-game-changer-for-data-visualization-in-notion',
+        permanent: true,
+      },
+      {
+        source: '/chatgpt-vs-notion-ai',
+        destination: '/garden/chatgpt-vs-notion-ai',
+        permanent: true,
+      },
+      {
+        source: '/outgrow-your-implicit-bias',
+        destination: '/garden/outgrow-your-implicit-bias',
+        permanent: true,
+      },
+      // Ghost legacy preview link redirects
+      {
+        source: '/p/f9dcbbd6-750c-40a4-9244-57b7c1b8aa9a',
+        destination: '/garden/focusing-on-the-big-rocks',
+        permanent: true,
+      },
+      {
+        source: '/p/5516c853-1571-42d6-bc0f-649c6c78c346',
+        destination: '/garden/systems-over-goals',
+        permanent: true,
+      },
       // Ghost retired books section redirects
       {
         source: '/books',
