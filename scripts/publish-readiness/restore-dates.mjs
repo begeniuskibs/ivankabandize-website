@@ -11,7 +11,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createClient } from '@supabase/supabase-js'
 
-const SOURCE_REPORT_PATH = path.resolve('scripts/ghost-import/preflight-report.json')
+const DEFAULT_GHOST_EXPORT_PATH =
+  'C:/Users/ivan.kabandize/ghost-export/begenius-thoughts.ghost.2026-09-21-17-50-28.json'
 
 function loadEnvLocal() {
   const envPath = path.resolve('.env.local')
@@ -52,16 +53,27 @@ export function getSupabaseClient() {
   })
 }
 
-export function loadGhostSourceData() {
-  if (!fs.existsSync(SOURCE_REPORT_PATH)) {
-    throw new Error(`Source report not found at ${SOURCE_REPORT_PATH}`)
+export function loadGhostSourceData(
+  exportPath = process.env.GHOST_EXPORT_PATH || DEFAULT_GHOST_EXPORT_PATH
+) {
+  const resolved = path.resolve(exportPath)
+  if (!fs.existsSync(resolved)) {
+    throw new Error(`Ghost export not found at ${resolved}`)
   }
-  const raw = fs.readFileSync(SOURCE_REPORT_PATH, 'utf8')
+  const raw = fs.readFileSync(resolved, 'utf8')
   const data = JSON.parse(raw)
-  if (!Array.isArray(data.postsTable)) {
-    throw new Error('Invalid preflight-report.json: postsTable array missing')
+  const posts = data?.db?.[0]?.data?.posts
+  if (!Array.isArray(posts)) {
+    throw new Error('Invalid Ghost export file structure: db[0].data.posts array missing')
   }
-  return data.postsTable
+  return posts
+    .filter((p) => p.type === 'post')
+    .map((p) => ({
+      slug: p.slug,
+      title: p.title,
+      published_at: p.published_at,
+      status: p.status,
+    }))
 }
 
 export function buildPlan(sourceEntries, dbPosts) {
@@ -87,7 +99,9 @@ export function buildPlan(sourceEntries, dbPosts) {
     }
 
     let action = 'no source'
-    if (!originalDate) {
+    if (dbPost.publish_status === 'published') {
+      action = 'skipped - published'
+    } else if (!originalDate) {
       action = 'no source'
     } else if (currentPublishedAt) {
       const currentTime = new Date(currentPublishedAt).getTime()
@@ -183,13 +197,15 @@ async function main() {
     return
   }
 
-  const sourceEntries = loadGhostSourceData()
+  const exportPath = process.env.GHOST_EXPORT_PATH || DEFAULT_GHOST_EXPORT_PATH
+  const sourceEntries = loadGhostSourceData(exportPath)
   const slugs = sourceEntries.map((e) => e.slug)
 
   const { data: dbPosts, error: fetchError } = await supabase
     .from('posts')
     .select('id, slug, title, publish_status, visibility, content, published_at')
     .in('slug', slugs)
+    .limit(1000)
     .order('slug')
 
   if (fetchError) {
@@ -199,8 +215,8 @@ async function main() {
   const { rows, unmatchedSource } = buildPlan(sourceEntries, dbPosts || [])
 
   console.log('=== GHOST ORIGINAL DATES RESTORATION PLAN ===')
-  console.log(`Source file: scripts/ghost-import/preflight-report.json`)
-  console.log(`Source field: postsTable[].published_at`)
+  console.log(`Source file: ${exportPath}`)
+  console.log(`Source field: posts (type=post).published_at`)
   console.log(`Total source posts: ${sourceEntries.length}`)
   console.log(`Matched database posts: ${rows.length}`)
   console.log(`Unmatched source posts: ${unmatchedSource.length}`)
@@ -215,12 +231,13 @@ async function main() {
     total: rows.length,
     set: rows.filter((r) => r.action === 'set').length,
     alreadyCorrect: rows.filter((r) => r.action === 'already correct').length,
+    skippedPublished: rows.filter((r) => r.action === 'skipped - published').length,
     noSource: rows.filter((r) => r.action === 'no source').length,
   }
 
   console.log('')
   console.log(
-    `Summary: Total=${counts.total} | Set=${counts.set} | Already Correct=${counts.alreadyCorrect} | No Source=${counts.noSource}`
+    `Summary: Total=${counts.total} | Set=${counts.set} | Already Correct=${counts.alreadyCorrect} | Skipped (Published)=${counts.skippedPublished} | No Source=${counts.noSource}`
   )
 
   if (!isApply) {
