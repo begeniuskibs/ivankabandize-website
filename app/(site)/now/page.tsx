@@ -135,7 +135,7 @@ export default function NowPage() {
                           />
                         </span>
                         <p>
-                          <strong className="text-[#232536]">Writing:</strong> parts 3 and 4 of the Generative AI Leader series, plus notes on how organisations outgrow their founders.
+                          <strong className="text-[#232536]">Writing:</strong> continuing to share my reflections on the Generative AI Leader series.
                         </p>
                       </div>
                       <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
