@@ -3,6 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import { NOW_ENTRIES, type NowEntry } from '@/lib/nowEntries'
 import { SITE_URL } from '@/lib/siteUrl'
 
 export const metadata: Metadata = {
@@ -12,6 +13,128 @@ export const metadata: Metadata = {
   alternates: {
     canonical: `${SITE_URL}/now`,
   },
+}
+
+const TOP_NOW_ENTRIES = NOW_ENTRIES.slice(0, 2)
+const OLDER_NOW_ENTRIES = NOW_ENTRIES.slice(2)
+
+function renderDataEntry(entry: NowEntry, delayMs?: number) {
+  return (
+    <ScrollReveal key={entry.dateLabel} delayMs={delayMs}>
+      <div className="relative">
+        {/* Date Dot */}
+        <div
+          className={`absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] ${
+            entry.showCurrently ? 'border-[#2AA198]' : 'border-[#F5ECDE]'
+          } flex items-center justify-center shadow-sm z-10`}
+        >
+          <Image
+            src={`/icons/3d/${entry.icon}`}
+            alt=""
+            aria-hidden="true"
+            width={24}
+            height={24}
+            className="w-6 h-6 object-contain"
+          />
+        </div>
+
+        <div className="space-y-4">
+          <span
+            className={`inline-block text-xs sm:text-sm font-bold ${
+              entry.showCurrently ? 'text-[#2AA198]' : 'text-[#A9ACBC]'
+            } uppercase tracking-wider`}
+          >
+            {entry.dateLabel}
+          </span>
+          <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] leading-snug">
+            {entry.title}
+          </h2>
+          <div className="px-4 py-3 rounded-xl bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#232536] text-xs sm:text-sm leading-relaxed">
+            {entry.callout}
+          </div>
+          {entry.paragraphs.map((paragraph, idx) => (
+            <div key={idx} className="space-y-4">
+              <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
+                {paragraph}
+              </p>
+              {idx === 0 && entry.explainer && (
+                <div className="p-4 sm:p-5 rounded-xl bg-[#EAF4F3] border border-[#2AA198]/20 text-[#232536] text-sm sm:text-base leading-relaxed space-y-2">
+                  <p className="font-bold text-[#232536]">{entry.explainer.heading}</p>
+                  {entry.explainer.paragraphs.map((expParagraph, expIdx) => (
+                    <p key={expIdx} className="text-[#3A3D4E]">
+                      {expParagraph}
+                    </p>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {entry.showCurrently && (
+            /* "Currently..." Card */
+            <div className="mt-6 p-6 sm:p-7 rounded-2xl sm:rounded-3xl bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] space-y-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
+                Currently&hellip;
+              </p>
+              <div className="space-y-3.5">
+                <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
+                  <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                    <Image
+                      src="/icons/3d/tools.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 object-contain"
+                    />
+                  </span>
+                  <p>
+                    <strong className="text-[#232536]">Building:</strong> this website - a custom garden + CMS, designed to make publishing frictionless.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
+                  <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                    <Image
+                      src="/icons/3d/graduation-cap.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 object-contain"
+                    />
+                  </span>
+                  <p>
+                    <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud and the AI Fundamentals journeys from the Google AI Professional Certificate on Coursera (started October 2026) - and publishing what I learn as I go.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
+                  <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
+                    <Image
+                      src="/icons/3d/pen.svg"
+                      alt=""
+                      aria-hidden="true"
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 object-contain"
+                    />
+                  </span>
+                  <p>
+                    <strong className="text-[#232536]">Writing:</strong> continuing to share my reflections on the Generative AI Leader series.
+                  </p>
+                </div>
+                <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
+                  <span className="text-lg flex-shrink-0">📻</span>
+                  <p>
+                    <strong className="text-[#232536]">On air:</strong> regular conversations on Power FM about systems, leadership, and work that matters.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </ScrollReveal>
+  )
 }
 
 export default function NowPage() {
@@ -58,97 +181,7 @@ export default function NowPage() {
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <div className="relative pl-12 sm:pl-16 space-y-16 sm:space-y-20 before:content-[''] before:absolute before:left-[19px] sm:before:left-[21px] before:top-3 before:bottom-3 before:w-[3px] before:bg-[#F5ECDE] before:rounded-full">
             
-            {/* Entry 1: Current */}
-            <ScrollReveal>
-              <div className="relative">
-                {/* Date Dot */}
-                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#2AA198] flex items-center justify-center shadow-sm z-10">
-                  <Image
-                    src="/icons/3d/seedling.svg"
-                    alt=""
-                    aria-hidden="true"
-                    width={24}
-                    height={24}
-                    className="w-6 h-6 object-contain"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <span className="inline-block text-xs sm:text-sm font-bold text-[#2AA198] uppercase tracking-wider">
-                    October 2026 &middot; Current
-                  </span>
-                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] leading-snug">
-                    Turning this website into a garden
-                  </h2>
-                  <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    The big project of this season is the one you&rsquo;re standing in: rebuilding my website from a Ghost blog into a proper digital garden with a custom writing backend. The goal is a home where my consulting work, essays, notes, and tools all live together - structured the way I tell my clients to structure things. Physician, heal thyself.
-                  </p>
-                  <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    Alongside that, the consulting practice keeps growing - a handful of engagements with organisations getting their operations, systems, and teams in order. Different sectors, same three moves: diagnose, architect, sequence.
-                  </p>
-
-                  {/* "Currently..." Card */}
-                  <div className="mt-6 p-6 sm:p-7 rounded-2xl sm:rounded-3xl bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] space-y-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
-                      Currently&hellip;
-                    </p>
-                    <div className="space-y-3.5">
-                      <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
-                          <Image
-                            src="/icons/3d/tools.svg"
-                            alt=""
-                            aria-hidden="true"
-                            width={24}
-                            height={24}
-                            className="w-6 h-6 object-contain"
-                          />
-                        </span>
-                        <p>
-                          <strong className="text-[#232536]">Building:</strong> this website - a custom garden + CMS, designed to make publishing frictionless.
-                        </p>
-                      </div>
-                      <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
-                          <Image
-                            src="/icons/3d/graduation-cap.svg"
-                            alt=""
-                            aria-hidden="true"
-                            width={24}
-                            height={24}
-                            className="w-6 h-6 object-contain"
-                          />
-                        </span>
-                        <p>
-                          <strong className="text-[#232536]">Learning:</strong> the Generative AI Leader course by Google Cloud and the AI Fundamentals journeys from the Google AI Professional Certificate on Coursera (started October 2026) - and publishing what I learn as I go.
-                        </p>
-                      </div>
-                      <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
-                          <Image
-                            src="/icons/3d/pen.svg"
-                            alt=""
-                            aria-hidden="true"
-                            width={24}
-                            height={24}
-                            className="w-6 h-6 object-contain"
-                          />
-                        </span>
-                        <p>
-                          <strong className="text-[#232536]">Writing:</strong> continuing to share my reflections on the Generative AI Leader series.
-                        </p>
-                      </div>
-                      <div className="flex items-start gap-3 text-sm sm:text-base text-[#3A3D4E]">
-                        <span className="text-lg flex-shrink-0">📻</span>
-                        <p>
-                          <strong className="text-[#232536]">On air:</strong> regular conversations on Power FM about systems, leadership, and work that matters.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
+            {TOP_NOW_ENTRIES.map((entry, idx) => renderDataEntry(entry, idx * 40))}
 
             {/* Entry 2: March 2026 */}
             <ScrollReveal delayMs={60}>
@@ -211,34 +244,7 @@ export default function NowPage() {
               </div>
             </ScrollReveal>
 
-            {/* Entry 4: April 2025 */}
-            <ScrollReveal delayMs={180}>
-              <div className="relative">
-                {/* Date Dot */}
-                <div className="absolute -left-12 sm:-left-16 top-0 w-10 h-10 sm:w-11 sm:h-11 rounded-full bg-white border-[3px] border-[#F5ECDE] flex items-center justify-center shadow-sm z-10">
-                  <Image
-                    src="/icons/3d/gift.svg"
-                    alt=""
-                    aria-hidden="true"
-                    width={24}
-                    height={24}
-                    className="w-6 h-6 object-contain"
-                  />
-                </div>
-
-                <div className="space-y-4">
-                  <span className="inline-block text-xs sm:text-sm font-bold text-[#A9ACBC] uppercase tracking-wider">
-                    April 2025
-                  </span>
-                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] leading-snug">
-                    Closed the #30in30 chapter
-                  </h2>
-                  <p className="text-[#3A3D4E] text-base sm:text-lg leading-relaxed">
-                    Turned 30, and finished what I started: thirty daily lessons in the final thirty days of my 29th year, capped with A Letter To My Younger Self. Personal, raw, honest - and the most consistent writing streak of my life. It taught me that reflection scales when you give it structure.
-                  </p>
-                </div>
-              </div>
-            </ScrollReveal>
+            {OLDER_NOW_ENTRIES.map((entry, idx) => renderDataEntry(entry, 160 + idx * 40))}
 
           </div>
 
@@ -247,7 +253,7 @@ export default function NowPage() {
             <div className="mt-20 pt-10 border-t border-[#F5ECDE] text-center space-y-6">
               <p className="text-sm sm:text-base text-[#5A5D70]">
                 This page updates when life does - roughly every season. Last tended:{' '}
-                <strong className="text-[#232536]">October 2026</strong>.
+                <strong className="text-[#232536]">November 2026</strong>.
               </p>
               <div>
                 <Link
