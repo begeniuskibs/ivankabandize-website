@@ -205,34 +205,66 @@ export default async function HomePage() {
 
             {/* Note: A Clients group may be added only after written permission from each client. */}
             <div className="flex flex-wrap items-center justify-center gap-8 sm:gap-12 mb-12">
-              <Image
-                src="/images/trust/watoto-church.png"
-                alt="Watoto Church"
-                width={926}
-                height={484}
-                className="h-12 w-auto object-contain"
-              />
-              <Image
-                src="/images/trust/fundi-bots.png"
-                alt="Fundi Bots"
-                width={566}
-                height={200}
-                className="h-12 w-auto object-contain"
-              />
-              <Image
-                src="/images/trust/40-days-over-40-smiles.png"
-                alt="40 Days Over 40 Smiles Foundation"
-                width={500}
-                height={500}
-                className="h-12 w-auto object-contain"
-              />
-              <Image
-                src="/images/trust/the-red-notebook.png"
-                alt="The Red Notebook"
-                width={2832}
-                height={690}
-                className="h-10 w-auto object-contain"
-              />
+              <a
+                href="https://watotochurch.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Watoto Church (opens in a new tab)"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+              >
+                <Image
+                  src="/images/trust/watoto-church.png"
+                  alt="Watoto Church"
+                  width={926}
+                  height={484}
+                  className="h-12 w-auto object-contain"
+                />
+              </a>
+              <a
+                href="https://fundibots.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Fundi Bots (opens in a new tab)"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+              >
+                <Image
+                  src="/images/trust/fundi-bots.png"
+                  alt="Fundi Bots"
+                  width={566}
+                  height={200}
+                  className="h-12 w-auto object-contain"
+                />
+              </a>
+              <a
+                href="https://40daysover40smiles.org/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="40 Days Over 40 Smiles Foundation (opens in a new tab)"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+              >
+                <Image
+                  src="/images/trust/40-days-over-40-smiles.png"
+                  alt="40 Days Over 40 Smiles Foundation"
+                  width={500}
+                  height={500}
+                  className="h-12 w-auto object-contain"
+                />
+              </a>
+              <a
+                href="https://notebook.red/"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="The Red Notebook (opens in a new tab)"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+              >
+                <Image
+                  src="/images/trust/the-red-notebook.png"
+                  alt="The Red Notebook"
+                  width={2832}
+                  height={690}
+                  className="h-10 w-auto object-contain"
+                />
+              </a>
             </div>
 
             <div className="space-y-4 text-base sm:text-lg text-[#5A5D70] leading-relaxed max-w-3xl mx-auto text-center sm:text-left">
