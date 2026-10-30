@@ -123,6 +123,18 @@ export default function SlidingAuthCard({
 
           {/* Google OAuth Button */}
           <GoogleSignInButton redirectTo={redirectTo} />
+          {isSignUp && (
+            <p className="mt-2 text-center text-sm text-[#5C5F73] font-sans">
+              By creating an account you agree to the{' '}
+              <Link
+                href="/privacy-policy"
+                className="text-[#CF3F29] hover:text-[#b83420] underline"
+              >
+                Privacy Policy
+              </Link>
+              .
+            </p>
+          )}
 
           <div className="relative my-6">
             <div className="absolute inset-0 flex items-center">
@@ -247,6 +259,32 @@ export default function SlidingAuthCard({
               </button>
             </form>
           )}
+
+          <p className="mt-3 text-center text-sm text-[#5C5F73] font-sans">
+            {isSignUp ? (
+              <>
+                By creating an account you agree to the{' '}
+                <Link
+                  href="/privacy-policy"
+                  className="text-[#CF3F29] hover:text-[#b83420] underline"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </>
+            ) : (
+              <>
+                See our{' '}
+                <Link
+                  href="/privacy-policy"
+                  className="text-[#CF3F29] hover:text-[#b83420] underline"
+                >
+                  Privacy Policy
+                </Link>
+                .
+              </>
+            )}
+          </p>
 
           {/* Mobile Switch Link */}
           <div className="mt-6 text-center md:hidden">
