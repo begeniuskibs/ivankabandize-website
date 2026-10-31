@@ -28,6 +28,26 @@ export default function SlidingAuthCard({
   redirectTo,
 }: AuthCardProps) {
   const [isSignUp, setIsSignUp] = useState(initialMode === 'signup')
+  const [isSwappingToSignUp, setIsSwappingToSignUp] = useState(false)
+  const [isSwappingToSignIn, setIsSwappingToSignIn] = useState(false)
+
+  const handleToggleMode = () => {
+    const nextIsSignUp = !isSignUp
+    setIsSignUp(nextIsSignUp)
+    setIsSwappingToSignUp(nextIsSignUp)
+    setIsSwappingToSignIn(!nextIsSignUp)
+    if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(() => {
+        window.requestAnimationFrame(() => {
+          setIsSwappingToSignUp(false)
+          setIsSwappingToSignIn(false)
+        })
+      })
+    } else {
+      setIsSwappingToSignUp(false)
+      setIsSwappingToSignIn(false)
+    }
+  }
 
   if (isSignupSuccess) {
     return (
@@ -72,7 +92,7 @@ export default function SlidingAuthCard({
   }
 
   return (
-    <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F5ECDE] min-h-[660px]">
+    <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F5ECDE] min-h-[660px] max-md:min-h-0 max-md:grid max-md:grid-cols-1">
       {/* 
         DESKTOP TWO-PANEL SLIDING ARCHITECTURE:
         1. Form Container (takes 50% width on left, shifts to right on Sign Up)
@@ -83,6 +103,14 @@ export default function SlidingAuthCard({
       <div
         className={`w-full md:w-1/2 min-h-[660px] p-8 sm:p-12 flex flex-col justify-center transition-transform duration-700 ease-in-out bg-white z-10 ${
           isSignUp ? 'md:translate-x-full' : 'md:translate-x-0'
+        } max-md:min-h-0 max-md:p-6 max-md:motion-reduce:transition-none max-md:motion-reduce:translate-y-0 ${
+          isSignUp ? 'max-md:order-2' : 'max-md:order-1'
+        } ${
+          isSwappingToSignUp
+            ? 'max-md:transition-none max-md:-translate-y-[210px]'
+            : isSwappingToSignIn
+              ? 'max-md:transition-none max-md:translate-y-[210px]'
+              : 'max-md:transition-transform max-md:duration-500 max-md:ease-in-out max-md:translate-y-0'
         }`}
       >
         <div className="w-full max-w-sm mx-auto">
@@ -279,7 +307,7 @@ export default function SlidingAuthCard({
               {isSignUp ? 'Already have an account?' : "Don't have an account?"}{' '}
               <button
                 type="button"
-                onClick={() => setIsSignUp(!isSignUp)}
+                onClick={handleToggleMode}
                 className="font-semibold text-[#EF5B45] hover:underline cursor-pointer ml-1"
               >
                 {isSignUp ? 'Sign In' : 'Sign Up'}
@@ -293,6 +321,14 @@ export default function SlidingAuthCard({
       <div
         className={`w-full md:w-1/2 min-h-[320px] md:min-h-[660px] md:absolute md:top-0 md:right-0 md:h-full transition-transform duration-700 ease-in-out overflow-hidden z-20 ${
           isSignUp ? 'md:-translate-x-full' : 'md:translate-x-0'
+        } max-md:min-h-[200px] max-md:h-[210px] max-md:relative max-md:motion-reduce:transition-none max-md:motion-reduce:translate-y-0 ${
+          isSignUp ? 'max-md:order-1' : 'max-md:order-2'
+        } ${
+          isSwappingToSignUp
+            ? 'max-md:transition-none max-md:translate-y-full'
+            : isSwappingToSignIn
+              ? 'max-md:transition-none max-md:-translate-y-full'
+              : 'max-md:transition-transform max-md:duration-500 max-md:ease-in-out max-md:translate-y-0'
         }`}
       >
         {/* Background Image from Rotating Pool */}
@@ -310,7 +346,7 @@ export default function SlidingAuthCard({
         <div className="absolute inset-0 bg-[#14151E]/20 backdrop-blur-[0.5px]" />
 
         {/* Dynamic Overlay Content */}
-        <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between text-white z-30">
+        <div className="absolute inset-0 p-8 sm:p-12 flex flex-col justify-between text-white z-30 max-md:p-5 max-md:[&>div:last-child]:flex max-md:[&>div:last-child]:items-center max-md:[&>div:last-child]:justify-between max-md:[&>div:last-child]:gap-3 max-md:[&>div:last-child]:pt-2.5">
           {/* Top subtle badge with Photographer Credit */}
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2">
@@ -325,11 +361,11 @@ export default function SlidingAuthCard({
           </div>
 
           {/* Central Message */}
-          <div className="space-y-4 my-auto py-8">
-            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-[#FDF8F1]">
+          <div className="space-y-4 my-auto py-8 max-md:space-y-1 max-md:py-1">
+            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl font-bold leading-tight tracking-tight text-[#FDF8F1] max-md:text-2xl">
               {isSignUp ? 'Hey friend,' : 'Welcome back,'}
             </h3>
-            <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans">
+            <p className="text-sm sm:text-base text-[#FDF8F1]/85 max-w-sm leading-relaxed font-sans max-md:text-xs max-md:leading-snug max-md:line-clamp-2">
               {isSignUp ? (
                 <>
                   Create an account to join the garden. The Garden is a collection of my thinking and resources.
@@ -344,13 +380,13 @@ export default function SlidingAuthCard({
 
           {/* Bottom Switch Button (Desktop Toggle) */}
           <div className="hidden md:block pt-6 border-t border-white/15">
-            <p className="text-xs text-[#FDF8F1]/70 mb-3 font-sans">
+            <p className="text-xs text-[#FDF8F1]/70 mb-3 font-sans max-md:mb-0">
               {isSignUp ? 'Already registered?' : 'Need an account?'}
             </p>
             <button
               type="button"
-              onClick={() => setIsSignUp(!isSignUp)}
-              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider text-[#232536] bg-[#FDF8F1] hover:bg-white transition-all shadow-md cursor-pointer hover:scale-[1.02] active:scale-[0.98]"
+              onClick={handleToggleMode}
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider text-[#232536] bg-[#FDF8F1] hover:bg-white transition-all shadow-md cursor-pointer hover:scale-[1.02] active:scale-[0.98] max-md:min-h-[44px] max-md:px-4 max-md:py-2 max-md:shrink-0 max-md:motion-reduce:transition-none"
             >
               {isSignUp ? 'Switch to Sign In' : 'Create New Account'}
             </button>
