@@ -4,7 +4,6 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import PostCard from './PostCard'
-import { SHOW_PLACEHOLDER_SECTIONS } from '@/lib/launchFlags'
 
 export interface TagDetails {
   name?: string | null
@@ -463,7 +462,7 @@ export default function GardenFeed({
               )}
 
               {/* 4. Report Digests Section (ONLY if any exist) */}
-              {SHOW_PLACEHOLDER_SECTIONS && reportDigests && reportDigests.length > 0 && (
+              {reportDigests && reportDigests.length > 0 && (
                 <div id="report-digests">
                   <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
                     <div className="flex items-center gap-2">
@@ -561,7 +560,7 @@ export default function GardenFeed({
                     <PostCard key={post.id} post={post} />
                   ))}
                 </div>
-              ) : SHOW_PLACEHOLDER_SECTIONS ? (
+              ) : (
                 <div className="py-20 text-center bg-white rounded-3xl border border-[#F5ECDE] max-w-2xl mx-auto px-6 shadow-sm">
                   <Image
                     src="/icons/3d/seedling.svg"
@@ -594,7 +593,7 @@ export default function GardenFeed({
                     </div>
                   )}
                 </div>
-              ) : null}
+              )}
             </>
           )}
         </div>

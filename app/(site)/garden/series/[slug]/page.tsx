@@ -7,7 +7,6 @@ import { ArrowLeft } from 'lucide-react'
 import { notFound } from 'next/navigation'
 import { SITE_URL } from '@/lib/siteUrl'
 import { formatDescription } from '@/lib/postDescription'
-import { SHOW_PLACEHOLDER_SECTIONS } from '@/lib/launchFlags'
 
 export const dynamic = 'force-dynamic'
 
@@ -162,7 +161,6 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
         </header>
 
         {/* Parts Section */}
-        {(publishedParts.length > 0 || SHOW_PLACEHOLDER_SECTIONS) && (
         <section className="border-t border-[#F5ECDE] pt-12">
           <div className="flex items-center justify-between mb-8">
             <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536]">
@@ -174,7 +172,6 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
           </div>
 
           {publishedParts.length === 0 ? (
-            SHOW_PLACEHOLDER_SECTIONS ? (
             <div className="py-16 text-center bg-white rounded-3xl border border-[#F5ECDE] max-w-lg mx-auto p-8 shadow-sm">
               <Image
                 src="/icons/3d/seedling.svg"
@@ -191,7 +188,6 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
                 Parts for this series are currently being prepared. Check back soon.
               </p>
             </div>
-            ) : null
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {publishedParts.map((post, index) => (
@@ -212,7 +208,6 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
             </div>
           )}
         </section>
-        )}
       </div>
     </div>
   )

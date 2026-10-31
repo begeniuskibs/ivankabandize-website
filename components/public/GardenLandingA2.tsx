@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Leaf, BookOpen, ArrowRight } from 'lucide-react'
-import { SHOW_PLACEHOLDER_SECTIONS } from '@/lib/launchFlags'
 
 export interface GardenA2Article {
   id: string
@@ -66,7 +65,7 @@ export default function GardenLandingA2({
           </p>
 
           {/* 2. Four Category Cards */}
-          <div className={`mt-12 grid grid-cols-1 sm:grid-cols-2 ${SHOW_PLACEHOLDER_SECTIONS ? 'lg:grid-cols-4' : 'lg:grid-cols-2'} gap-6`}>
+          <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {/* Articles Card (Coral) */}
             <Link
               href="/garden?view=articles"
@@ -169,8 +168,6 @@ export default function GardenLandingA2({
               </div>
             </Link>
 
-            {SHOW_PLACEHOLDER_SECTIONS && (
-              <>
             {/* Report Digests Card (Gold) - Non-link */}
             <div className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
               {/* Full-card Background Art */}
@@ -248,8 +245,6 @@ export default function GardenLandingA2({
                 </div>
               </div>
             </div>
-              </>
-            )}
           </div>
 
           {/* 3. Browse by Topic Strip */}
@@ -478,7 +473,6 @@ export default function GardenLandingA2({
         </section>
 
         {/* 6. Section Report Digests & Section Resources (Coming Soon Panels) */}
-        {SHOW_PLACEHOLDER_SECTIONS && (
         <section id="digests-and-resources" className="space-y-12">
           {/* Report Digests */}
           <div className="space-y-4">
@@ -514,7 +508,6 @@ export default function GardenLandingA2({
             </div>
           </div>
         </section>
-        )}
       </div>
     </div>
   )
