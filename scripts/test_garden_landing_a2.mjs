@@ -48,7 +48,7 @@ function runStaticChecks() {
     // Resources slate
     '#EEEFF6',
     '#D5D8E8',
-    '#5C5F73',
+    '#5A5D70',
   ]
   for (const color of expectedColours) {
     const hasColor = componentContent.includes(color)

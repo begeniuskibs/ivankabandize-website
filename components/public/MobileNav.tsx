@@ -140,14 +140,14 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
         className={`fixed top-0 left-0 right-0 z-40 bg-[#FDF8F1] border-b border-[#F5ECDE] md:hidden transition-all duration-200 ease-in-out motion-reduce:transition-none ${heightClass} ${transformClass}`}
       >
         <div className="h-full px-5 flex items-center justify-between whitespace-nowrap">
-          {/* Logo text: "Ivan Kabandize." 21px, weight 800, nowrap, trailing dot in #CF3F29 */}
+          {/* Logo text: "Ivan Kabandize." 21px, weight 800, nowrap, trailing dot in #EF5B45 */}
           <Link
             href="/"
             onClick={() => setIsOpen(false)}
             className="font-['MTN_Brighter_Sans',_sans-serif] text-[21px] font-[800] tracking-tight text-[#232536] hover:opacity-90 transition inline-flex items-baseline whitespace-nowrap"
           >
             <span>Ivan Kabandize</span>
-            <span className="text-[#CF3F29] text-[21px] font-[800]">.</span>
+            <span className="text-[#EF5B45] text-[21px] font-[800]">.</span>
           </Link>
 
           {/* Header Action Buttons: 44x44 Search + 44x44 Menu */}
@@ -196,7 +196,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               className="font-['MTN_Brighter_Sans',_sans-serif] text-[21px] font-[800] tracking-tight text-[#232536] hover:opacity-90 transition inline-flex items-baseline whitespace-nowrap"
             >
               <span>Ivan Kabandize</span>
-              <span className="text-[#CF3F29] text-[21px] font-[800]">.</span>
+              <span className="text-[#EF5B45] text-[21px] font-[800]">.</span>
             </Link>
 
             <button
