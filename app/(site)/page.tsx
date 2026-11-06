@@ -130,7 +130,7 @@ export default async function HomePage() {
               </ScrollReveal>
 
               <ScrollReveal delayMs={80} className="order-2 md:order-none w-full max-md:my-1">
-                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] max-md:text-[36px] max-md:font-[800] max-md:tracking-[-0.02em] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
+                <h1 className="font-['MTN_Brighter_Sans',_sans-serif] max-md:text-[36px] max-md:font-[700] max-md:tracking-[-0.02em] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
                   {headline.includes('structure that works.') ? (
                     <>
                       {headline.replace('structure that works.', '')}
