@@ -167,7 +167,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
           )}
 
           {/* 6. Signup or Upgrade Card */}
-          <div className="my-10 p-8 sm:p-10 rounded-3xl bg-white border border-[#F0E4D2] shadow-[0_10px_30px_rgba(35,37,54,0.06)] text-center max-w-xl mx-auto">
+          <div className="my-10 p-8 sm:p-10 rounded-3xl bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] text-center max-w-xl mx-auto">
             {isUpgrade ? (
               <>
                 <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2AA198]/10 text-[#2AA198] border border-[#2AA198]/20 mb-4">

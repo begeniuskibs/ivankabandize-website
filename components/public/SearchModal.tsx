@@ -204,11 +204,11 @@ function SearchOverlayContent() {
       {/* Top-anchored White Card (Ghost style) */}
       <div
         ref={cardRef}
-        className="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-[#F0E4D2] overflow-hidden flex flex-col max-h-[calc(100dvh-24px-env(safe-area-inset-bottom,0px))] sm:max-h-[calc(100dvh-80px)] font-sans"
+        className="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-[#F5ECDE] overflow-hidden flex flex-col max-h-[calc(100dvh-24px-env(safe-area-inset-bottom,0px))] sm:max-h-[calc(100dvh-80px)] font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Input Header Row */}
-        <div className="p-3.5 sm:p-4 flex items-center gap-3 border-b border-[#F0E4D2]/80 shrink-0">
+        <div className="p-3.5 sm:p-4 flex items-center gap-3 border-b border-[#F5ECDE]/80 shrink-0">
           <SearchIcon size={20} className="text-[#8A8D9F] shrink-0" />
 
           <input
@@ -269,7 +269,7 @@ function SearchOverlayContent() {
               ref={listRef}
               role="listbox"
               aria-label="Search results"
-              className="divide-y divide-[#F0E4D2]/50 py-1"
+              className="divide-y divide-[#F5ECDE]/50 py-1"
             >
               {results.map((item, index) => {
                 const isSelected = selectedIndex === index

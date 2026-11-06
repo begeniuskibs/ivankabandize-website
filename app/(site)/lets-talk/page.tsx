@@ -623,7 +623,7 @@ export default function LetsTalkPage() {
                             </>
                           )}
                         </button>
-                        <p className="text-xs text-[#5C5F73]">
+                        <p className="text-xs text-[#5A5D70]">
                           I use your details only to reply to you. See the{' '}
                           <Link
                             href="/privacy-policy"

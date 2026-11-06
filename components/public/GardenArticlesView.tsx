@@ -329,7 +329,7 @@ export default function GardenArticlesView({
                   <Link
                     key={item.id}
                     href={`/garden/series/${item.slug}`}
-                    className="group flex flex-row items-stretch bg-white border border-[#F0E4D2] hover:border-[#EF5B45] rounded-[14px] overflow-hidden transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
+                    className="group flex flex-row items-stretch bg-white border border-[#F5ECDE] hover:border-[#EF5B45] rounded-[14px] overflow-hidden transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
                   >
                     {/* Left 120px wide thumbnail */}
                     <div className="w-[120px] min-w-[120px] max-w-[120px] shrink-0 self-stretch relative overflow-hidden bg-[#FDE9E4] flex items-center justify-center">
@@ -364,7 +364,7 @@ export default function GardenArticlesView({
                           {item.title}
                         </h2>
                       </div>
-                      <p className="text-xs sm:text-sm text-[#5C5F73] mt-3 font-medium inline-flex items-center gap-1.5">
+                      <p className="text-xs sm:text-sm text-[#5A5D70] mt-3 font-medium inline-flex items-center gap-1.5">
                         <span>{exploreLabel}</span>
                         <ArrowRight
                           size={14}
@@ -394,7 +394,7 @@ export default function GardenArticlesView({
               className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
                 selectedTopic === 'all'
                   ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
-                  : 'bg-white text-[#232536] border border-[#F0E4D2] hover:border-[#EF5B45]'
+                  : 'bg-white text-[#232536] border border-[#F5ECDE] hover:border-[#EF5B45]'
               }`}
             >
               All topics
@@ -410,7 +410,7 @@ export default function GardenArticlesView({
                   className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
                     isActive
                       ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
-                      : 'bg-white text-[#232536] border border-[#F0E4D2] hover:border-[#EF5B45]'
+                      : 'bg-white text-[#232536] border border-[#F5ECDE] hover:border-[#EF5B45]'
                   }`}
                 >
                   {topic.name}
@@ -442,8 +442,8 @@ export default function GardenArticlesView({
               )}
             </>
           ) : (
-            <div className="text-center py-16 px-4 bg-white rounded-[14px] border border-[#F0E4D2]">
-              <p className="text-base text-[#5C5F73] mb-4">
+            <div className="text-center py-16 px-4 bg-white rounded-[14px] border border-[#F5ECDE]">
+              <p className="text-base text-[#5A5D70] mb-4">
                 No articles match these filters yet.
               </p>
               <button

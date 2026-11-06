@@ -137,7 +137,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
 
       {/* Sticky, slimmer and hide-on-scroll mobile header */}
       <div
-        className={`fixed top-0 left-0 right-0 z-40 bg-[#FDF8F1] border-b border-[#F0E4D2] md:hidden transition-all duration-200 ease-in-out motion-reduce:transition-none ${heightClass} ${transformClass}`}
+        className={`fixed top-0 left-0 right-0 z-40 bg-[#FDF8F1] border-b border-[#F5ECDE] md:hidden transition-all duration-200 ease-in-out motion-reduce:transition-none ${heightClass} ${transformClass}`}
       >
         <div className="h-full px-5 flex items-center justify-between whitespace-nowrap">
           {/* Logo text: "Ivan Kabandize." 21px, weight 800, nowrap, trailing dot in #CF3F29 */}
@@ -157,7 +157,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               type="button"
               onClick={() => openSearch(searchButtonRef.current)}
               aria-label="Search"
-              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
               <SearchIcon size={22} className="text-[#232536]" />
             </button>
@@ -170,7 +170,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               aria-label="Open menu"
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
-              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
               <MenuIcon size={22} className="text-[#232536]" />
             </button>
@@ -189,7 +189,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
           className="fixed inset-0 z-50 bg-[#FDF8F1] flex flex-col h-[100dvh] overflow-hidden md:hidden font-sans"
         >
           {/* Top row: identical to header with close (X) button */}
-          <div className="h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] shrink-0 whitespace-nowrap">
+          <div className="h-[64px] px-5 flex items-center justify-between border-b border-[#F5ECDE] shrink-0 whitespace-nowrap">
             <Link
               href="/"
               onClick={handleClose}
@@ -204,19 +204,19 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               type="button"
               onClick={handleClose}
               aria-label="Close menu"
-              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F0E4D2] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
               <CloseIcon size={22} className="text-[#232536]" />
             </button>
           </div>
 
-          {/* Stacked Links: 24px, weight 700, letter-spacing -0.01em, min-height 64px, border-b #F0E4D2, px 20px */}
+          {/* Stacked Links: 24px, weight 700, letter-spacing -0.01em, min-height 64px, border-b #F5ECDE, px 20px */}
           <nav className="flex-1 overflow-y-auto flex flex-col">
             <Link
               href="/workwithme"
               onClick={handleClose}
               {...(isWorkActive(pathname) ? { 'aria-current': 'page' } : {})}
-              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
+              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F5ECDE] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>Work with Me</span>
               {isWorkActive(pathname) && (
@@ -228,7 +228,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               href="/me"
               onClick={handleClose}
               {...(isMeActive(pathname) ? { 'aria-current': 'page' } : {})}
-              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
+              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F5ECDE] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>Me</span>
               {isMeActive(pathname) && (
@@ -240,7 +240,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               href="/garden"
               onClick={handleClose}
               {...(isGardenActive(pathname) ? { 'aria-current': 'page' } : {})}
-              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
+              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F5ECDE] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>The Garden</span>
               {isGardenActive(pathname) && (
@@ -252,7 +252,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               href="/now"
               onClick={handleClose}
               {...(isNowActive(pathname) ? { 'aria-current': 'page' } : {})}
-              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F0E4D2] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
+              className="min-h-[64px] px-5 flex items-center justify-between border-b border-[#F5ECDE] text-[24px] font-bold tracking-[-0.01em] text-[#232536] hover:text-[#CF3F29] transition"
             >
               <span>Now</span>
               {isNowActive(pathname) && (
@@ -274,7 +274,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
             <Link
               href={user ? '/auth/account' : '/login'}
               onClick={handleClose}
-              className="w-full h-[56px] rounded-[28px] bg-white border border-[#F0E4D2] hover:bg-[#FAF3E8] text-[#232536] text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
+              className="w-full h-[56px] rounded-[28px] bg-white border border-[#F5ECDE] hover:bg-[#FAF3E8] text-[#232536] text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
             >
               {user ? (displayName || 'Account') : 'Sign in'}
             </Link>
