@@ -55,7 +55,7 @@ export default function NotFoundContent() {
           <p className="text-xs uppercase font-mono tracking-widest text-[#CF3F29] font-bold">
             404
           </p>
-          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl font-extrabold text-[#232536] tracking-tight leading-tight">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl font-bold text-[#232536] tracking-tight leading-tight">
             This page has wandered off.
           </h1>
           <p className="text-base sm:text-lg text-[#5A5D70] leading-relaxed max-w-md mx-auto">
