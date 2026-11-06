@@ -11,6 +11,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
+  manifest: '/site.webmanifest',
   title: {
     template: "%s - Ivan Kabandize",
     default: "Ivan Kabandize",
