@@ -35,13 +35,13 @@ export default function NotFoundContent() {
               role="img"
               aria-label="A compass needle searching for north"
             >
-              <circle cx="60" cy="60" r="54" fill="#fff" stroke="#F0E4D2" strokeWidth="4" />
+              <circle cx="60" cy="60" r="54" fill="#fff" stroke="#F5ECDE" strokeWidth="4" />
               <circle
                 cx="60"
                 cy="60"
                 r="44"
                 fill="none"
-                stroke="#F0E4D2"
+                stroke="#F5ECDE"
                 strokeWidth="1.5"
                 strokeDasharray="2 6"
               />
@@ -70,7 +70,7 @@ export default function NotFoundContent() {
             </Link>
             <Link
               href="/garden"
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-[#F0E4D2] hover:bg-[#FAF3E8] text-[#232536] text-sm font-semibold transition active:scale-[0.98] shadow-sm text-center"
+              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-[#F5ECDE] hover:bg-[#FAF3E8] text-[#232536] text-sm font-semibold transition active:scale-[0.98] shadow-sm text-center"
             >
               Browse the Garden
             </Link>

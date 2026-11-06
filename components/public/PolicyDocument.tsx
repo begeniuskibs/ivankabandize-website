@@ -217,12 +217,12 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
   return (
     <article className="font-sans text-[#232536]">
       {/* Document Header */}
-      <header className="mb-10 sm:mb-12 border-b border-[#F0E4D2] pb-6 sm:pb-8">
+      <header className="mb-10 sm:mb-12 border-b border-[#F5ECDE] pb-6 sm:pb-8">
         <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[#232536] leading-[1.15] mb-3">
           {h1}
         </h1>
         {version && (
-          <p className="text-sm sm:text-base text-[#5C5F73] font-medium">
+          <p className="text-sm sm:text-base text-[#5A5D70] font-medium">
             {version}
           </p>
         )}
@@ -275,14 +275,14 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
             return (
               <React.Fragment key={idx}>
                 {/* Desktop Table (hidden below md breakpoint) */}
-                <div className="max-md:hidden my-6 overflow-hidden rounded-xl border border-[#F0E4D2] bg-white">
+                <div className="max-md:hidden my-6 overflow-hidden rounded-xl border border-[#F5ECDE] bg-white">
                   <table className="w-full text-left border-collapse text-sm sm:text-base">
                     <thead>
-                      <tr className="bg-[#FDF8F1] text-[#232536] border-b border-[#F0E4D2]">
+                      <tr className="bg-[#FDF8F1] text-[#232536] border-b border-[#F5ECDE]">
                         {headerRow.map((cell, cIdx) => (
                           <th
                             key={cIdx}
-                            className="p-3.5 sm:p-4 font-bold border-r last:border-r-0 border-[#F0E4D2] align-top text-[#232536]"
+                            className="p-3.5 sm:p-4 font-bold border-r last:border-r-0 border-[#F5ECDE] align-top text-[#232536]"
                           >
                             {renderInlineMarkdown(cell)}
                           </th>
@@ -293,12 +293,12 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
                       {bodyRows.map((row, rIdx) => (
                         <tr
                           key={rIdx}
-                          className="border-b last:border-b-0 border-[#F0E4D2] hover:bg-[#FDF8F1]/50 transition-colors"
+                          className="border-b last:border-b-0 border-[#F5ECDE] hover:bg-[#FDF8F1]/50 transition-colors"
                         >
                           {row.map((cell, cIdx) => (
                             <td
                               key={cIdx}
-                              className="p-3.5 sm:p-4 border-r last:border-r-0 border-[#F0E4D2] align-top text-[#232536] leading-relaxed"
+                              className="p-3.5 sm:p-4 border-r last:border-r-0 border-[#F5ECDE] align-top text-[#232536] leading-relaxed"
                             >
                               {renderInlineMarkdown(cell)}
                             </td>
@@ -321,7 +321,7 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
                     return (
                       <div
                         key={rIdx}
-                        className="rounded-xl border border-[#F0E4D2] bg-white p-4"
+                        className="rounded-xl border border-[#F5ECDE] bg-white p-4"
                       >
                         <div className="font-bold text-[#232536] text-base leading-snug break-words [overflow-wrap:anywhere]">
                           {renderInlineMarkdown(title)}
@@ -330,7 +330,7 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
                           <div className="mt-3 space-y-3">
                             {detailPairs.map((pair, pIdx) => (
                               <div key={pIdx} className="space-y-1">
-                                <div className="text-xs font-bold text-[#5C5F73] break-words [overflow-wrap:anywhere]">
+                                <div className="text-xs font-bold text-[#5A5D70] break-words [overflow-wrap:anywhere]">
                                   {renderInlineMarkdown(pair.label)}
                                 </div>
                                 <div className="text-sm text-[#232536] leading-relaxed break-words [overflow-wrap:anywhere]">

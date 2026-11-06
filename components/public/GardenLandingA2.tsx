@@ -239,7 +239,7 @@ export default function GardenLandingA2({
                   Templates and downloads you can put to work today.
                 </p>
                 <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs min-h-[28px]">
-                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#5C5F73] border border-[#5C5F73]/20">
+                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#5A5D70] border border-[#5A5D70]/20">
                     Coming soon
                   </span>
                 </div>

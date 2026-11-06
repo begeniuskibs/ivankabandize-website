@@ -152,7 +152,7 @@ export default function SlidingAuthCard({
           {/* Google OAuth Button */}
           <GoogleSignInButton redirectTo={redirectTo} />
           {isSignUp && (
-            <p className="mt-2 text-center text-sm text-[#5C5F73] font-sans">
+            <p className="mt-2 text-center text-sm text-[#5A5D70] font-sans">
               By creating an account you agree to the{' '}
               <Link
                 href="/privacy-policy"
@@ -289,7 +289,7 @@ export default function SlidingAuthCard({
           )}
 
           {!isSignUp && (
-            <p className="mt-3 text-center text-sm text-[#5C5F73] font-sans">
+            <p className="mt-3 text-center text-sm text-[#5A5D70] font-sans">
               See our{' '}
               <Link
                 href="/privacy-policy"
