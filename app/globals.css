@@ -52,7 +52,34 @@
   src: url('/fonts/MTNBrighterSans-Regular.woff2') format('woff2'),
        url('/fonts/MTNBrighterSans-Regular.woff') format('woff'),
        url('/fonts/MTNBrighterSans-Regular.ttf') format('truetype');
-  font-weight: 100 900;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MTN Brighter Sans';
+  src: url('/fonts/MTNBrighterSans-Medium.woff2') format('woff2'),
+       url('/fonts/MTNBrighterSans-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MTN Brighter Sans';
+  src: url('/fonts/MTNBrighterSans-Bold.woff2') format('woff2'),
+       url('/fonts/MTNBrighterSans-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'MTN Brighter Sans';
+  src: url('/fonts/MTNBrighterSans-ExtraBold.woff2') format('woff2'),
+       url('/fonts/MTNBrighterSans-ExtraBold.woff') format('woff');
+  font-weight: 800;
   font-style: normal;
   font-display: swap;
 }
