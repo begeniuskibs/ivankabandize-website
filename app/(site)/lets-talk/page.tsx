@@ -118,12 +118,12 @@ export default function LetsTalkPage() {
           {/* ================= LEFT COLUMN: STATIC ================= */}
           <div className="lg:col-span-5 space-y-6">
             <ScrollReveal>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6FAF4] border border-[#147358]/20 text-[#147358] text-xs font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
                 <Link href="/" className="hover:underline text-[#5A5D70]">
                   Home
                 </Link>
                 <span className="text-[#5A5D70]">/</span>
-                <span>Let&rsquo;s Talk</span>
+                <span className="text-[#232536]">Let&rsquo;s Talk</span>
               </div>
             </ScrollReveal>
 
@@ -627,7 +627,7 @@ export default function LetsTalkPage() {
                           I use your details only to reply to you. See the{' '}
                           <Link
                             href="/privacy-policy"
-                            className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] transition"
+                            className="text-[#CF3F29] hover:text-[#b83420] underline transition"
                           >
                             Privacy Policy
                           </Link>

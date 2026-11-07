@@ -78,12 +78,6 @@ export default async function MePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6">
-              <ScrollReveal>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6FAF4] border border-[#147358]/20 text-[#147358] text-xs font-bold uppercase tracking-widest">
-                  <span>Background &amp; Story</span>
-                </div>
-              </ScrollReveal>
-
               <ScrollReveal delayMs={80}>
                 <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
                   {headline}

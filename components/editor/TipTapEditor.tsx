@@ -387,7 +387,7 @@ export default function TipTapEditor({
         isAllowedUri: (url) => !!sanitizeUrl(url),
         validate: (href) => !!sanitizeUrl(href),
         HTMLAttributes: {
-          class: 'text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] visited:text-[#147358]',
+          class: 'text-[#147358] hover:underline focus-visible:underline decoration-[#56E1BA] decoration-1 underline-offset-[3px] hover:text-[#0E5A45] visited:text-[#147358]',
         },
       }),
       CustomImage.configure({
@@ -995,14 +995,19 @@ export default function TipTapEditor({
         }
         .tiptap-editor-scope .ProseMirror a {
           color: #147358;
-          text-decoration: underline;
-          text-decoration-color: #56E1BA;
-          text-decoration-thickness: 3px;
-          text-underline-offset: 4px;
+          text-decoration: none;
           cursor: pointer;
         }
-        .tiptap-editor-scope .ProseMirror a:hover {
+        .tiptap-editor-scope .ProseMirror a:visited {
+          color: #147358;
+        }
+        .tiptap-editor-scope .ProseMirror a:hover,
+        .tiptap-editor-scope .ProseMirror a:focus-visible {
           color: #0E5A45;
+          text-decoration: underline;
+          text-decoration-color: #56E1BA;
+          text-decoration-thickness: 1px;
+          text-underline-offset: 3px;
         }
         .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container,
         .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container:hover,

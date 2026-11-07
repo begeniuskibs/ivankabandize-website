@@ -44,8 +44,10 @@ export default function NavLinks({
     }`
 
   const signInClass = (isActive: boolean) =>
-    `text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] transition ${
-      isActive ? 'font-bold' : ''
+    `text-coral-text hover:text-[#D94834] transition ${
+      isActive
+        ? 'underline decoration-2 decoration-[#EF5B45] underline-offset-[6px]'
+        : ''
     }`
 
   return (

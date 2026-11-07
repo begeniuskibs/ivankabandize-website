@@ -156,7 +156,7 @@ export default function SlidingAuthCard({
               By creating an account you agree to the{' '}
               <Link
                 href="/privacy-policy"
-                className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45]"
+                className="text-[#CF3F29] hover:text-[#b83420] underline"
               >
                 Privacy Policy
               </Link>
@@ -252,7 +252,7 @@ export default function SlidingAuthCard({
                   </label>
                   <Link
                     href="/forgot-password"
-                    className="text-xs font-semibold text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] font-sans"
+                    className="text-xs font-semibold text-coral-text hover:underline font-sans"
                   >
                     Forgot password?
                   </Link>
@@ -293,7 +293,7 @@ export default function SlidingAuthCard({
               See our{' '}
               <Link
                 href="/privacy-policy"
-                className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45]"
+                className="text-[#CF3F29] hover:text-[#b83420] underline"
               >
                 Privacy Policy
               </Link>
@@ -308,7 +308,7 @@ export default function SlidingAuthCard({
               <button
                 type="button"
                 onClick={handleToggleMode}
-                className="font-semibold text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] cursor-pointer ml-1"
+                className="font-semibold text-coral-text hover:underline cursor-pointer ml-1"
               >
                 {isSignUp ? 'Sign In' : 'Sign Up'}
               </button>
