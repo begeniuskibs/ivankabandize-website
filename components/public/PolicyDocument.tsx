@@ -174,7 +174,7 @@ export function renderInlineMarkdown(text: string): React.ReactNode {
           <Link
             key={index}
             href={normalizeInternalHref(href)}
-            className="text-[#CF3F29] hover:text-[#b83420] underline underline-offset-2 transition"
+            className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] transition"
           >
             {linkText}
           </Link>
@@ -186,7 +186,7 @@ export function renderInlineMarkdown(text: string): React.ReactNode {
           <a
             key={index}
             href={href}
-            className="text-[#CF3F29] hover:text-[#b83420] underline underline-offset-2 transition"
+            className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] transition"
           >
             {linkText}
           </a>
@@ -200,7 +200,7 @@ export function renderInlineMarkdown(text: string): React.ReactNode {
           href={href}
           target="_blank"
           rel="noopener noreferrer"
-          className="text-[#CF3F29] hover:text-[#b83420] underline underline-offset-2 transition"
+          className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] transition"
         >
           {linkText}
         </a>

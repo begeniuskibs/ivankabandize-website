@@ -387,7 +387,7 @@ export default function TipTapEditor({
         isAllowedUri: (url) => !!sanitizeUrl(url),
         validate: (href) => !!sanitizeUrl(href),
         HTMLAttributes: {
-          class: 'text-[#D94834] underline hover:text-[#B93A2A] visited:text-[#D94834]',
+          class: 'text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] visited:text-[#147358]',
         },
       }),
       CustomImage.configure({
@@ -994,12 +994,15 @@ export default function TipTapEditor({
           margin-bottom: 1.5rem;
         }
         .tiptap-editor-scope .ProseMirror a {
-          color: #D94834;
+          color: #147358;
           text-decoration: underline;
+          text-decoration-color: #56E1BA;
+          text-decoration-thickness: 3px;
+          text-underline-offset: 4px;
           cursor: pointer;
         }
         .tiptap-editor-scope .ProseMirror a:hover {
-          color: #B93A2A;
+          color: #0E5A45;
         }
         .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container,
         .tiptap-editor-scope .ProseMirror .kg-bookmark-card a.kg-bookmark-container:hover,

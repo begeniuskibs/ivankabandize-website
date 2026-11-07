@@ -44,10 +44,8 @@ export default function NavLinks({
     }`
 
   const signInClass = (isActive: boolean) =>
-    `text-coral-text hover:text-[#D94834] transition ${
-      isActive
-        ? 'underline decoration-2 decoration-[#EF5B45] underline-offset-[6px]'
-        : ''
+    `text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] transition ${
+      isActive ? 'font-bold' : ''
     }`
 
   return (
@@ -102,7 +100,7 @@ export default function NavLinks({
         type="button"
         onClick={() => openSearch(searchButtonRef.current)}
         aria-label="Search"
-        className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm hover:border-[#EF5B45]/40 hover:bg-[#FAF3E8] transition active:scale-95"
+        className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm hover:border-[#232536]/25 hover:bg-[#FAF3E8] transition active:scale-95"
       >
         <SearchIcon size={22} className="text-[#232536]" />
       </button>

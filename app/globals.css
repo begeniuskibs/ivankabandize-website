@@ -180,16 +180,19 @@ body {
 }
 
 .prose a {
-  color: #D94834;
+  color: #147358;
   text-decoration: underline;
+  text-decoration-color: #56E1BA;
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
 }
 
 .prose a:visited {
-  color: #D94834;
+  color: #147358;
 }
 
 .prose a:hover {
-  color: #B93A2A;
+  color: #0E5A45;
 }
 
 .prose .kg-bookmark-card a.kg-bookmark-container,

@@ -210,7 +210,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                     Already a member?{' '}
                     <Link
                       href={`/login?redirectTo=${encodeURIComponent(`/garden/${teaser.slug}`)}`}
-                      className="text-[#CF3F29] hover:underline font-semibold"
+                      className="text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] font-semibold"
                     >
                       Sign in
                     </Link>

@@ -79,7 +79,7 @@ export default async function MePage() {
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6">
               <ScrollReveal>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6FAF4] border border-[#147358]/20 text-[#147358] text-xs font-bold uppercase tracking-widest">
                   <span>Background &amp; Story</span>
                 </div>
               </ScrollReveal>

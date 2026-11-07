@@ -91,7 +91,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <ScrollReveal>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E6FAF4] border border-[#147358]/20 text-[#147358] text-xs font-bold uppercase tracking-widest">
                 <Link href="/" className="hover:underline text-[#5A5D70]">
                   Home
                 </Link>

@@ -108,7 +108,7 @@ export default function UserAccountMenu({
         aria-label="Account menu"
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="w-9 h-9 rounded-full bg-[#232536] text-white text-[13px] font-semibold flex items-center justify-center cursor-pointer transition-all hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 select-none shadow-sm"
+        className="w-9 h-9 rounded-full bg-[#232536] text-white text-[13px] font-semibold flex items-center justify-center cursor-pointer transition-all hover:opacity-90 focus:outline-none focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 select-none shadow-sm"
       >
         {initials}
       </button>
@@ -180,7 +180,7 @@ export default function UserAccountMenu({
                 type="submit"
                 role="menuitem"
                 tabIndex={0}
-                className="w-full text-left px-4 py-2 text-sm font-medium text-coral-text hover:bg-[#FDF8F1] focus:bg-[#FDF8F1] focus:outline-none transition-colors cursor-pointer"
+                className="w-full text-left px-4 py-2 text-sm font-medium text-[#147358] underline decoration-[#56E1BA] decoration-[3px] underline-offset-4 hover:text-[#0E5A45] hover:bg-[#FDF8F1] focus:bg-[#FDF8F1] focus:outline-none transition-colors cursor-pointer"
               >
                 Sign out
               </button>
