@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
+import Button from '@/components/Button'
 import { createClient } from '@/utils/supabase/client'
 
 interface ForgotPasswordClientProps {
@@ -89,9 +90,9 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
               </p>
             </div>
             <div className="pt-4 border-t border-[#F5ECDE]">
-              <Link
+              <Button
                 href="/login"
-                className="group inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black transition font-sans"
+                className="group gap-1.5 px-6 py-2.5 text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black font-sans"
               >
                 <ArrowLeft
                   size={14}
@@ -100,7 +101,7 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
                   className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
                 />
                 <span>Back to Sign In</span>
-              </Link>
+              </Button>
             </div>
           </div>
         ) : (
@@ -151,13 +152,14 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
                 />
               </div>
 
-              <button
+              <Button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2 disabled:opacity-50"
+                fullWidthMobile
+                className="w-full py-3 px-4 font-semibold text-sm text-white bg-[#232536] hover:bg-black shadow-sm font-sans cursor-pointer mt-2 disabled:opacity-50"
               >
                 {loading ? 'Sending link...' : 'Send Reset Link'}
-              </button>
+              </Button>
             </form>
 
             <div className="mt-6 pt-6 border-t border-[#F5ECDE] text-center">

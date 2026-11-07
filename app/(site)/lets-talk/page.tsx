@@ -3,9 +3,10 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft } from 'lucide-react'
 import { MailIcon } from '@/components/icons'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import Button from '@/components/Button'
 import { HELP_OPTIONS, TIMING_OPTIONS } from '@/lib/inquiries'
 
 interface FormData {
@@ -339,19 +340,14 @@ export default function LetsTalkPage() {
                     </div>
 
                     <div className="pt-4 flex justify-end">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleNextStep(1)}
-                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        showArrow
+                        className="text-base px-8 py-3.5 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <span>Continue</span>
-                        <ArrowRight
-                          size={14}
-                          strokeWidth={2.5}
-                          aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                        />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -448,19 +444,14 @@ export default function LetsTalkPage() {
                         />
                         <span>Back</span>
                       </button>
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleNextStep(2)}
-                        className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
+                        showArrow
+                        className="text-base px-8 py-3.5 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer"
                       >
                         <span>Review</span>
-                        <ArrowRight
-                          size={14}
-                          strokeWidth={2.5}
-                          aria-hidden="true"
-                          className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                        />
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 )}
@@ -586,11 +577,11 @@ export default function LetsTalkPage() {
                         <span>Back</span>
                       </button>
                       <div className="flex flex-col items-end gap-2 text-right">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => handleSubmit()}
                           disabled={isSubmitting}
-                          className="inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-3.5 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
+                          className="text-base px-8 py-3.5 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0 cursor-pointer disabled:opacity-50"
                         >
                           {isSubmitting ? (
                             <>
@@ -622,7 +613,7 @@ export default function LetsTalkPage() {
                               <MailIcon size={16} strokeWidth={2} aria-hidden="true" />
                             </>
                           )}
-                        </button>
+                        </Button>
                         <p className="text-xs text-[#5A5D70]">
                           I use your details only to reply to you. See the{' '}
                           <Link
@@ -721,18 +712,19 @@ export default function LetsTalkPage() {
 
                     {/* Return buttons */}
                     <div className="pt-4 flex flex-wrap items-center justify-center gap-3">
-                      <Link
+                      <Button
+                        variant="secondary"
                         href="/garden"
-                        className="inline-flex items-center justify-center font-bold text-sm px-6 py-3 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-sm transition-all"
+                        className="text-sm px-6 py-3 hover:bg-[#F5ECDE] shadow-sm"
                       >
                         Wander the Garden
-                      </Link>
-                      <Link
+                      </Button>
+                      <Button
                         href="/"
-                        className="inline-flex items-center justify-center font-bold text-sm px-6 py-3 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all"
+                        className="text-sm px-6 py-3 shadow-[0_6px_18px_rgba(239,91,69,0.32)]"
                       >
                         Back to home
-                      </Link>
+                      </Button>
                     </div>
                   </div>
                 )}

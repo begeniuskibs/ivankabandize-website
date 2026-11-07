@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { Leaf, BookOpen, ArrowRight } from 'lucide-react'
+import Button from '@/components/Button'
 
 export interface GardenA2Article {
   id: string
@@ -389,18 +390,14 @@ export default function GardenLandingA2({
 
           {/* Button See all articles */}
           <div className="pt-4 flex justify-center">
-            <Link
+            <Button
+              variant="secondary"
               href="/garden?view=articles"
-              className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border border-[#CF3F29] text-[#CF3F29] hover:bg-[#CF3F29] hover:text-white transition"
+              showArrow
+              className="px-6 py-2.5 font-semibold text-sm bg-transparent border border-[#CF3F29] text-[#CF3F29] hover:bg-[#CF3F29] hover:text-white"
             >
               <span>See all articles</span>
-              <ArrowRight
-                size={14}
-                strokeWidth={2.5}
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
+            </Button>
           </div>
         </section>
 
@@ -457,18 +454,14 @@ export default function GardenLandingA2({
 
           {/* Button See the full Library */}
           <div className="pt-4 flex justify-center">
-            <Link
+            <Button
+              variant="secondary"
               href="/library"
-              className="group inline-flex items-center gap-2 px-6 py-2.5 rounded-full font-semibold text-sm border border-[#1B7F7A] text-[#1B7F7A] hover:bg-[#1B7F7A] hover:text-white transition"
+              showArrow
+              className="px-6 py-2.5 font-semibold text-sm bg-transparent border border-[#1B7F7A] text-[#1B7F7A] hover:bg-[#1B7F7A] hover:text-white"
             >
               <span>See the full Library</span>
-              <ArrowRight
-                size={14}
-                strokeWidth={2.5}
-                aria-hidden="true"
-                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-              />
-            </Link>
+            </Button>
           </div>
         </section>
 

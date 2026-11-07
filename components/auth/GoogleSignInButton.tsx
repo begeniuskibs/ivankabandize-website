@@ -3,6 +3,7 @@
 import { createClient } from '@/utils/supabase/client'
 import { useState } from 'react'
 import { safeRedirectPath } from '@/lib/safeRedirect'
+import Button from '@/components/Button'
 
 interface GoogleSignInButtonProps {
   redirectTo?: string
@@ -52,11 +53,13 @@ export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonPro
   }
 
   return (
-    <button
+    <Button
+      variant="secondary"
       type="button"
       onClick={handleGoogleSignIn}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-md font-semibold text-sm text-[#232536] bg-white border border-[#F5ECDE] hover:bg-[#FDF8F1] transition shadow-sm disabled:opacity-50 cursor-pointer"
+      fullWidthMobile
+      className="w-full gap-3 py-3 px-4 font-semibold text-sm border hover:bg-[#FDF8F1] shadow-sm disabled:opacity-50 cursor-pointer"
     >
       <svg className="w-4 h-4" viewBox="0 0 24 24">
         <path
@@ -77,6 +80,6 @@ export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonPro
         />
       </svg>
       <span>{loading ? 'Connecting to Google...' : 'Continue with Google'}</span>
-    </button>
+    </Button>
   )
 }

@@ -1,8 +1,8 @@
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import Button from '@/components/Button'
 import { NOW_ENTRIES, type NowEntry } from '@/lib/nowEntries'
 import { SITE_URL } from '@/lib/siteUrl'
 
@@ -256,18 +256,13 @@ export default function NowPage() {
                 <strong className="text-[#232536]">November 2026</strong>.
               </p>
               <div>
-                <Link
+                <Button
                   href="/lets-talk"
-                  className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                  showArrow
+                  className="text-base px-8 py-4 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0"
                 >
                   <span>Working on something similar? Let&rsquo;s Talk</span>
-                  <ArrowRight
-                    size={14}
-                    strokeWidth={2.5}
-                    aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                  />
-                </Link>
+                </Button>
               </div>
             </div>
           </ScrollReveal>

@@ -3,6 +3,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
 import WideContainer from '@/components/public/WideContainer'
+import Button from '@/components/Button'
 import type { TeaserPost } from '@/lib/postTeaser'
 
 interface TeaserArticleViewProps {
@@ -179,12 +180,12 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                 <p className="text-[#5A5D70] text-sm sm:text-base leading-relaxed mb-6">
                   This post requires a higher membership tier. Upgrade your account to unlock full access.
                 </p>
-                <Link
+                <Button
                   href="/auth/account"
-                  className="inline-block px-6 py-3 rounded-md bg-[#232536] hover:bg-[#CF3F29] text-white font-bold text-sm tracking-wide transition shadow-sm hover:shadow"
+                  className="px-6 py-3 bg-[#232536] hover:bg-[#CF3F29] text-white font-bold text-sm tracking-wide shadow-sm hover:shadow"
                 >
                   Manage Membership
-                </Link>
+                </Button>
               </>
             ) : (
               <>
@@ -199,12 +200,13 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                 </p>
                 <div className="space-y-4">
                   <div>
-                    <Link
+                    <Button
                       href={`/signup?redirectTo=${encodeURIComponent(`/garden/${teaser.slug}`)}`}
-                      className="inline-block w-full sm:w-auto px-8 py-3.5 rounded-md bg-[#CF3F29] hover:bg-[#b53420] text-white font-bold text-sm sm:text-base tracking-wide transition shadow-sm hover:shadow"
+                      fullWidthMobile
+                      className="w-full sm:w-auto px-8 py-3.5 text-sm sm:text-base tracking-wide shadow-sm hover:shadow"
                     >
                       Sign up
-                    </Link>
+                    </Button>
                   </div>
                   <p className="text-sm text-[#5A5D70]">
                     Already a member?{' '}

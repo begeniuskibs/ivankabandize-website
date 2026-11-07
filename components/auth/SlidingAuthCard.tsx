@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
 import { signIn, signUp } from '@/app/auth/actions'
 import GoogleSignInButton from '@/components/auth/GoogleSignInButton'
+import Button from '@/components/Button'
 import { AuthImage, AUTH_IMAGE_POOL } from '@/components/auth/auth-images'
 
 interface AuthCardProps {
@@ -74,9 +75,9 @@ export default function SlidingAuthCard({
           </p>
         </div>
         <div className="pt-4 border-t border-[#F5ECDE]">
-          <Link
+          <Button
             href="/login"
-            className="group inline-flex items-center justify-center gap-1.5 px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black transition font-sans"
+            className="group gap-1.5 px-6 py-2.5 text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black font-sans"
           >
             <ArrowLeft
               size={14}
@@ -85,7 +86,7 @@ export default function SlidingAuthCard({
               className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
             />
             <span>Back to Sign In</span>
-          </Link>
+          </Button>
         </div>
       </div>
     )
@@ -221,12 +222,14 @@ export default function SlidingAuthCard({
                 />
               </div>
 
-              <button
+              <Button
+                type="submit"
                 formAction={signUp}
-                className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2"
+                fullWidthMobile
+                className="w-full py-3 px-4 font-semibold text-sm text-white bg-[#232536] hover:bg-black shadow-sm font-sans cursor-pointer mt-2"
               >
                 Create Account
-              </button>
+              </Button>
             </form>
           ) : (
             <form className="space-y-4">
@@ -279,12 +282,14 @@ export default function SlidingAuthCard({
                 </label>
               </div>
 
-              <button
+              <Button
+                type="submit"
                 formAction={signIn}
-                className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2"
+                fullWidthMobile
+                className="w-full py-3 px-4 font-semibold text-sm text-white bg-[#232536] hover:bg-black shadow-sm font-sans cursor-pointer mt-2"
               >
                 Sign In
-              </button>
+              </Button>
             </form>
           )}
 
@@ -383,13 +388,14 @@ export default function SlidingAuthCard({
             <p className="text-xs text-[#FDF8F1]/70 mb-3 font-sans max-md:mb-0">
               {isSignUp ? 'Already registered?' : 'Need an account?'}
             </p>
-            <button
+            <Button
+              variant="onDark"
               type="button"
               onClick={handleToggleMode}
-              className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-semibold uppercase tracking-wider text-[#232536] bg-[#FDF8F1] hover:bg-white transition-all shadow-md cursor-pointer hover:scale-[1.02] active:scale-[0.98] max-md:min-h-[44px] max-md:px-4 max-md:py-2 max-md:shrink-0 max-md:motion-reduce:transition-none"
+              className="px-6 py-2.5 text-xs font-semibold uppercase tracking-wider shadow-md cursor-pointer hover:scale-[1.02] active:scale-[0.98] max-md:min-h-[44px] max-md:px-4 max-md:py-2 max-md:shrink-0 max-md:motion-reduce:transition-none"
             >
               {isSignUp ? 'Switch to Sign In' : 'Create New Account'}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
