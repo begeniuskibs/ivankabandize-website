@@ -191,7 +191,7 @@ export default function GardenArticlesView({
               {selectedStream === 'all' ? (
                 <Link
                   href="/garden"
-                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -208,7 +208,7 @@ export default function GardenArticlesView({
                     e.preventDefault()
                     handleStreamChange('all')
                   }}
-                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -227,7 +227,7 @@ export default function GardenArticlesView({
                 <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
                   <Link
                     href="/garden"
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs"
                   >
                     THE GARDEN
                   </Link>
@@ -238,7 +238,7 @@ export default function GardenArticlesView({
                 <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
                   <Link
                     href="/garden"
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs"
                   >
                     THE GARDEN
                   </Link>
@@ -249,7 +249,7 @@ export default function GardenArticlesView({
                       e.preventDefault()
                       handleStreamChange('all')
                     }}
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] rounded-xs"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs"
                   >
                     ARTICLES
                   </Link>
@@ -290,7 +290,7 @@ export default function GardenArticlesView({
                   aria-pressed={isActive}
                   aria-label={pill.label}
                   onClick={() => handleStreamChange(pill.value)}
-                  className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
+                  className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 ${
                     isActive
                       ? 'bg-[#CF3F29] text-white shadow-sm'
                       : 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
@@ -329,7 +329,7 @@ export default function GardenArticlesView({
                   <Link
                     key={item.id}
                     href={`/garden/series/${item.slug}`}
-                    className="group flex flex-row items-stretch bg-white border border-[#F5ECDE] hover:border-[#EF5B45] rounded-[14px] overflow-hidden transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
+                    className="group flex flex-row items-stretch bg-white border border-[#F5ECDE] hover:border-[#232536]/25 rounded-[14px] overflow-hidden transition-all duration-200 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
                   >
                     {/* Left 120px wide thumbnail */}
                     <div className="w-[120px] min-w-[120px] max-w-[120px] shrink-0 self-stretch relative overflow-hidden bg-[#FDE9E4] flex items-center justify-center">
@@ -391,7 +391,7 @@ export default function GardenArticlesView({
               type="button"
               aria-pressed={selectedTopic === 'all'}
               onClick={() => handleTopicChange('all')}
-              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
+              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 ${
                 selectedTopic === 'all'
                   ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
                   : 'bg-white text-[#232536] border border-[#F5ECDE] hover:border-[#EF5B45]'
@@ -407,7 +407,7 @@ export default function GardenArticlesView({
                   type="button"
                   aria-pressed={isActive}
                   onClick={() => handleTopicChange(topic.slug)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 ${
+                  className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 ${
                     isActive
                       ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
                       : 'bg-white text-[#232536] border border-[#F5ECDE] hover:border-[#EF5B45]'
@@ -434,7 +434,7 @@ export default function GardenArticlesView({
                   <button
                     type="button"
                     onClick={() => setVisibleCount((prev) => prev + 9)}
-                    className="px-6 py-2.5 rounded-full border border-[#CF3F29] text-[#CF3F29] text-sm font-semibold hover:bg-[#FEF1ED] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
+                    className="px-6 py-2.5 rounded-full border border-[#CF3F29] text-[#CF3F29] text-sm font-semibold hover:bg-[#FEF1ED] transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
                   >
                     Load more articles
                   </button>
@@ -449,7 +449,7 @@ export default function GardenArticlesView({
               <button
                 type="button"
                 onClick={handleClearFilters}
-                className="px-5 py-2 rounded-full border border-[#CF3F29] text-[#CF3F29] text-sm font-semibold hover:bg-[#FEF1ED] transition-colors duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
+                className="px-5 py-2 rounded-full border border-[#CF3F29] text-[#CF3F29] text-sm font-semibold hover:bg-[#FEF1ED] transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
               >
                 Clear filters
               </button>

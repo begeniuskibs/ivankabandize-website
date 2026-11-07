@@ -404,7 +404,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
               href={safeHref(mark.attrs?.href, '#')}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#D94834] underline hover:text-[#B93A2A] visited:text-[#D94834]"
+              className="text-[#147358] hover:underline focus-visible:underline decoration-[#56E1BA] decoration-1 underline-offset-[3px] hover:text-[#0E5A45] visited:text-[#147358]"
             >
               {element}
             </a>

@@ -118,12 +118,12 @@ export default function LetsTalkPage() {
           {/* ================= LEFT COLUMN: STATIC ================= */}
           <div className="lg:col-span-5 space-y-6">
             <ScrollReveal>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
                 <Link href="/" className="hover:underline text-[#5A5D70]">
                   Home
                 </Link>
                 <span className="text-[#5A5D70]">/</span>
-                <span>Let&rsquo;s Talk</span>
+                <span className="text-[#232536]">Let&rsquo;s Talk</span>
               </div>
             </ScrollReveal>
 
@@ -204,9 +204,9 @@ export default function LetsTalkPage() {
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 1
-                          ? 'bg-[#EF5B45] text-white'
+                          ? 'bg-[#EF5B45] text-[#232536]'
                           : step > 1
-                          ? 'bg-[#2AA198] text-white'
+                          ? 'bg-[#2AA198] text-[#232536]'
                           : 'bg-[#F5ECDE] text-[#5A5D70]'
                       }`}>
                         {step > 1 ? '✓' : '1'}
@@ -223,9 +223,9 @@ export default function LetsTalkPage() {
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 2
-                          ? 'bg-[#EF5B45] text-white'
+                          ? 'bg-[#EF5B45] text-[#232536]'
                           : step > 2
-                          ? 'bg-[#2AA198] text-white'
+                          ? 'bg-[#2AA198] text-[#232536]'
                           : 'bg-[#F5ECDE] text-[#5A5D70]'
                       }`}>
                         {step > 2 ? '✓' : '2'}
@@ -242,7 +242,7 @@ export default function LetsTalkPage() {
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 3
-                          ? 'bg-[#EF5B45] text-white'
+                          ? 'bg-[#EF5B45] text-[#232536]'
                           : 'bg-[#F5ECDE] text-[#5A5D70]'
                       }`}>
                         3

@@ -45,10 +45,10 @@ export default async function WorkWithMePage() {
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6">
               <ScrollReveal>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
                   <Link href="/" className="hover:underline text-[#5A5D70]">Home</Link>
                   <span className="text-[#5A5D70]">/</span>
-                  <span>Work With Me</span>
+                  <span className="text-[#232536]">Work With Me</span>
                 </div>
               </ScrollReveal>
 

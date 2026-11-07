@@ -66,10 +66,10 @@ export default function GardenLandingA2({
 
           {/* 2. Four Category Cards */}
           <div className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Articles Card (Coral) */}
+            {/* Articles Card (Coral #EF5B45) */}
             <Link
               href="/garden?view=articles"
-              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2"
+              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
             >
               {/* Full-card Background Art */}
               <Image
@@ -341,7 +341,7 @@ export default function GardenLandingA2({
                 <Link
                   key={post.id}
                   href={`/garden/${post.slug}`}
-                  className="group flex flex-col h-full bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#F7D6CC] hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                  className="group flex flex-col h-full bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#232536]/25 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                 >
                   <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FDF3DC] shrink-0">
                     {post.featured_image_url ? (
@@ -440,7 +440,7 @@ export default function GardenLandingA2({
                 </div>
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAF6F4] text-[#1B7F7A] border border-[#C5E4E0] inline-block mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAF6F4] text-teal-text border border-[#C5E4E0] inline-block mb-2">
                       {item.type}
                     </span>
                     <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base font-bold text-[#232536] group-hover:text-[#1B7F7A] transition-colors leading-snug line-clamp-2 mb-1">

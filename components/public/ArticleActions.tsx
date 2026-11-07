@@ -157,7 +157,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
           aria-haspopup="true"
           aria-expanded={isMenuOpen}
           aria-label="Share article"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#EF5B45]/40 hover:text-[#232536] hover:bg-[#FAF3E8]/40 transition shadow-2xs cursor-pointer select-none shrink-0"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/25 hover:text-[#232536] hover:bg-[#FAF3E8]/40 transition shadow-2xs cursor-pointer select-none shrink-0"
         >
           <ShareIcon size={14} className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
           <span>Share</span>
@@ -256,7 +256,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
         type="button"
         onClick={handlePrint}
         aria-label="Print article"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#EF5B45]/40 hover:text-[#232536] hover:bg-[#FAF3E8]/40 transition shadow-2xs cursor-pointer select-none shrink-0"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/25 hover:text-[#232536] hover:bg-[#FAF3E8]/40 transition shadow-2xs cursor-pointer select-none shrink-0"
       >
         <PrintIcon size={14} className="w-3.5 h-3.5 text-[#5A5D70]" aria-hidden="true" />
         <span>Print</span>

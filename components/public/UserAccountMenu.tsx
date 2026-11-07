@@ -108,7 +108,7 @@ export default function UserAccountMenu({
         aria-label="Account menu"
         aria-haspopup="menu"
         aria-expanded={isOpen}
-        className="w-9 h-9 rounded-full bg-[#232536] text-white text-[13px] font-semibold flex items-center justify-center cursor-pointer transition-all hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 select-none shadow-sm"
+        className="w-9 h-9 rounded-full bg-[#232536] text-white text-[13px] font-semibold flex items-center justify-center cursor-pointer transition-all hover:opacity-90 focus:outline-none focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 select-none shadow-sm"
       >
         {initials}
       </button>

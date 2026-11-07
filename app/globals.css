@@ -180,16 +180,21 @@ body {
 }
 
 .prose a {
-  color: #D94834;
-  text-decoration: underline;
+  color: #147358;
+  text-decoration: none;
 }
 
 .prose a:visited {
-  color: #D94834;
+  color: #147358;
 }
 
-.prose a:hover {
-  color: #B93A2A;
+.prose a:hover,
+.prose a:focus-visible {
+  color: #0E5A45;
+  text-decoration: underline;
+  text-decoration-color: #56E1BA;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
 }
 
 .prose .kg-bookmark-card a.kg-bookmark-container,

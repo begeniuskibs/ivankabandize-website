@@ -77,7 +77,7 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
       href={item.url}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex flex-col justify-between bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#EF5B45]/40 p-5 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+      className="group flex flex-col justify-between bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#232536]/25 p-5 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
     >
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
@@ -330,7 +330,7 @@ export default function GardenFeed({
                       <Link
                         key={item.id}
                         href={`/garden/series/${item.slug}`}
-                        className="group relative flex flex-col justify-between p-6 bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#EF5B45]/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                        className="group relative flex flex-col justify-between p-6 bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#232536]/25 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
                         style={
                           item.card_tint
                             ? {

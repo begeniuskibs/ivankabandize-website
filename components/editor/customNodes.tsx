@@ -1493,7 +1493,7 @@ export const Bookmark = Node.create({
         'a',
         {
           href: HTMLAttributes.url || '#',
-          class: 'kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-[5px] border border-[#F5ECDE] shadow-sm hover:border-[#EF5B45]/40 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]',
+          class: 'kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-[5px] border border-[#F5ECDE] shadow-sm hover:border-[#232536]/25 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]',
           target: '_blank',
           rel: 'noopener noreferrer',
         },

@@ -210,7 +210,7 @@ export default async function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Watoto Church (opens in a new tab)"
-                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
               >
                 <Image
                   src="/images/trust/watoto-church.png"
@@ -225,7 +225,7 @@ export default async function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Fundi Bots (opens in a new tab)"
-                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
               >
                 <Image
                   src="/images/trust/fundi-bots.png"
@@ -240,7 +240,7 @@ export default async function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="40 Days Over 40 Smiles Foundation (opens in a new tab)"
-                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
               >
                 <Image
                   src="/images/trust/40-days-over-40-smiles.png"
@@ -255,7 +255,7 @@ export default async function HomePage() {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="The Red Notebook (opens in a new tab)"
-                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#CF3F29]"
+                className="cursor-pointer rounded-sm focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
               >
                 <Image
                   src="/images/trust/the-red-notebook.png"

@@ -78,12 +78,6 @@ export default async function MePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6">
-              <ScrollReveal>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
-                  <span>Background &amp; Story</span>
-                </div>
-              </ScrollReveal>
-
               <ScrollReveal delayMs={80}>
                 <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.12]">
                   {headline}
@@ -262,7 +256,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#EF5B45]/10">
                   <Link
                     href="/workwithme"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-coral-deep hover:text-[#D94834] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-coral-deep hover:text-[#9E2B1A] transition"
                   >
                     <span>Explore Advisory</span>
                     <ArrowRight
@@ -302,7 +296,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#2AA198]/10">
                   <Link
                     href="/workwithme"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-teal-text hover:text-[#1D7A73] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-teal-text hover:text-[#125E5A] transition"
                   >
                     <span>Training Method</span>
                     <ArrowRight
@@ -342,7 +336,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#F7C55C]/20">
                   <Link
                     href="/garden"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-gold-text hover:text-[#9A7015] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-gold-text hover:text-[#6E4E0B] transition"
                   >
                     <span>Read The Garden</span>
                     <ArrowRight

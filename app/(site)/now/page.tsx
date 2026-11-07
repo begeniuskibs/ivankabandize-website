@@ -144,12 +144,12 @@ export default function NowPage() {
       <section className="py-14 sm:py-20 border-b border-[#F5ECDE]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <ScrollReveal>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#5A5D70] mb-6">
               <Link href="/" className="hover:underline text-[#5A5D70]">
                 Home
               </Link>
               <span className="text-[#5A5D70]">/</span>
-              <span>Now</span>
+              <span className="text-[#232536]">Now</span>
             </div>
           </ScrollReveal>
 
@@ -166,7 +166,7 @@ export default function NowPage() {
                 href="https://nownownow.com/about"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-coral-text font-semibold hover:underline"
+                className="text-[#147358] font-semibold hover:underline focus-visible:underline decoration-[#56E1BA] decoration-1 underline-offset-[3px] hover:text-[#0E5A45]"
               >
                 /now page movement
               </a>{' '}
