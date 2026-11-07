@@ -157,7 +157,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               type="button"
               onClick={() => openSearch(searchButtonRef.current)}
               aria-label="Search"
-              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-md bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
               <SearchIcon size={22} className="text-[#232536]" />
             </button>
@@ -170,7 +170,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               aria-label="Open menu"
               aria-expanded={isOpen}
               aria-controls="mobile-menu"
-              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-md bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
               <MenuIcon size={22} className="text-[#232536]" />
             </button>
@@ -204,7 +204,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
               type="button"
               onClick={handleClose}
               aria-label="Close menu"
-              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-[12px] bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
+              className="w-[44px] h-[44px] min-w-[44px] min-h-[44px] rounded-md bg-white border border-[#F5ECDE] flex items-center justify-center cursor-pointer shadow-sm active:scale-95 transition"
             >
               <CloseIcon size={22} className="text-[#232536]" />
             </button>
@@ -266,7 +266,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
             <Link
               href="/lets-talk"
               onClick={handleClose}
-              className="w-full h-[56px] rounded-[28px] bg-[#CF3F29] hover:bg-[#b83420] text-white text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
+              className="w-full h-[56px] rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
             >
               Let&apos;s Talk
             </Link>
@@ -274,7 +274,7 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
             <Link
               href={user ? '/auth/account' : '/login'}
               onClick={handleClose}
-              className="w-full h-[56px] rounded-[28px] bg-white border border-[#F5ECDE] hover:bg-[#FAF3E8] text-[#232536] text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
+              className="w-full h-[56px] rounded-full bg-white border border-[#F5ECDE] hover:bg-[#FAF3E8] text-[#232536] text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
             >
               {user ? (displayName || 'Account') : 'Sign in'}
             </Link>

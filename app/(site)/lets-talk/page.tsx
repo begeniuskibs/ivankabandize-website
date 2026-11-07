@@ -193,7 +193,7 @@ export default function LetsTalkPage() {
           {/* ================= RIGHT COLUMN: INTERACTIVE CARD ================= */}
           <div className="lg:col-span-7">
             <ScrollReveal delayMs={100}>
-              <div className="bg-white border border-[#F5ECDE] rounded-[28px] p-6 sm:p-10 shadow-[0_18px_44px_rgba(35,37,54,0.1)]">
+              <div className="bg-white border border-[#F5ECDE] rounded-lg p-6 sm:p-10 shadow-[0_18px_44px_rgba(35,37,54,0.1)]">
                 
                 {/* Step Indicator (Steps 1-3) */}
                 {step < 4 && (
@@ -253,7 +253,7 @@ export default function LetsTalkPage() {
                 )}
 
                 {submitError && (
-                  <div className="mb-6 p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
+                  <div className="mb-6 p-4 rounded-md bg-red-50 border border-red-200 text-red-700 text-sm font-medium">
                     {submitError}
                   </div>
                 )}
@@ -293,7 +293,7 @@ export default function LetsTalkPage() {
                           setFormData({ ...formData, name: e.target.value })
                           if (errors.name) setErrors({ ...errors, name: undefined })
                         }}
-                        className={`w-full px-4 py-3.5 rounded-2xl border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition ${
+                        className={`w-full px-4 py-3.5 rounded-md border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition ${
                           errors.name ? 'border-[#EF5B45]' : 'border-[#F5ECDE] focus:border-[#EF5B45]'
                         }`}
                       />
@@ -315,7 +315,7 @@ export default function LetsTalkPage() {
                           setFormData({ ...formData, email: e.target.value })
                           if (errors.email) setErrors({ ...errors, email: undefined })
                         }}
-                        className={`w-full px-4 py-3.5 rounded-2xl border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition ${
+                        className={`w-full px-4 py-3.5 rounded-md border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition ${
                           errors.email ? 'border-[#EF5B45]' : 'border-[#F5ECDE] focus:border-[#EF5B45]'
                         }`}
                       />
@@ -334,7 +334,7 @@ export default function LetsTalkPage() {
                         placeholder="Your company, school, or nonprofit"
                         value={formData.organisation}
                         onChange={(e) => setFormData({ ...formData, organisation: e.target.value })}
-                        className="w-full px-4 py-3.5 rounded-2xl border-2 border-[#F5ECDE] text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
+                        className="w-full px-4 py-3.5 rounded-md border-2 border-[#F5ECDE] text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
                       />
                     </div>
 
@@ -372,7 +372,7 @@ export default function LetsTalkPage() {
                           setFormData({ ...formData, problem: e.target.value })
                           if (errors.problem) setErrors({ ...errors, problem: undefined })
                         }}
-                        className={`w-full px-4 py-3.5 rounded-2xl border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition min-h-[120px] ${
+                        className={`w-full px-4 py-3.5 rounded-md border-2 text-base bg-[#FDF8F1] text-[#232536] focus:bg-white focus:outline-none transition min-h-[120px] ${
                           errors.problem ? 'border-[#EF5B45]' : 'border-[#F5ECDE] focus:border-[#EF5B45]'
                         }`}
                       />
@@ -473,7 +473,7 @@ export default function LetsTalkPage() {
                     </p>
 
                     {/* Review card */}
-                    <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-2xl p-5 sm:p-6 space-y-4">
+                    <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-lg p-5 sm:p-6 space-y-4">
                       {/* Name */}
                       <div className="border-b border-[#F5ECDE] pb-3">
                         <span className="text-xs font-bold uppercase tracking-wider text-[#A9ACBC] block">
@@ -657,7 +657,7 @@ export default function LetsTalkPage() {
                     </div>
 
                     {/* Next Steps Box */}
-                    <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-2xl p-6 sm:p-7 text-left space-y-4 mt-6">
+                    <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-lg p-6 sm:p-7 text-left space-y-4 mt-6">
                       <p className="text-xs font-bold uppercase tracking-widest text-teal-text">
                         What happens next
                       </p>

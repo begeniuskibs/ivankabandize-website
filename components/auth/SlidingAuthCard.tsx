@@ -51,7 +51,7 @@ export default function SlidingAuthCard({
 
   if (isSignupSuccess) {
     return (
-      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-[#F5ECDE] text-center space-y-6">
+      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-lg shadow-xl border border-[#F5ECDE] text-center space-y-6">
         <Image
           src="/icons/3d/mail.svg"
           alt=""
@@ -92,7 +92,7 @@ export default function SlidingAuthCard({
   }
 
   return (
-    <div className="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden border border-[#F5ECDE] min-h-[660px] max-md:min-h-0 max-md:grid max-md:grid-cols-1">
+    <div className="relative w-full max-w-4xl bg-white rounded-lg shadow-2xl overflow-hidden border border-[#F5ECDE] min-h-[660px] max-md:min-h-0 max-md:grid max-md:grid-cols-1">
       {/* 
         DESKTOP TWO-PANEL SLIDING ARCHITECTURE:
         1. Form Container (takes 50% width on left, shifts to right on Sign Up)
@@ -139,12 +139,12 @@ export default function SlidingAuthCard({
 
           {/* Feedback alerts */}
           {error && (
-            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-xs sm:text-sm font-sans">
+            <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-xs sm:text-sm font-sans">
               {error}
             </div>
           )}
           {message && (
-            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-2xl text-xs sm:text-sm font-sans">
+            <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md text-xs sm:text-sm font-sans">
               {message}
             </div>
           )}
@@ -189,7 +189,7 @@ export default function SlidingAuthCard({
                   type="text"
                   required
                   placeholder="Jane Doe"
-                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
+                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-md text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
               </div>
 
@@ -203,7 +203,7 @@ export default function SlidingAuthCard({
                   type="email"
                   required
                   placeholder="jane@example.com"
-                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
+                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-md text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
               </div>
 
@@ -217,13 +217,13 @@ export default function SlidingAuthCard({
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
+                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-md text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
               </div>
 
               <button
                 formAction={signUp}
-                className="w-full py-3 px-4 rounded-xl font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2"
+                className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2"
               >
                 Create Account
               </button>
@@ -241,7 +241,7 @@ export default function SlidingAuthCard({
                   type="email"
                   required
                   placeholder="jane@example.com"
-                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
+                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-md text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
               </div>
 
@@ -263,7 +263,7 @@ export default function SlidingAuthCard({
                   type="password"
                   required
                   placeholder="••••••••"
-                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
+                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-md text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
               </div>
 
@@ -273,7 +273,7 @@ export default function SlidingAuthCard({
                     id="card-signin-remember"
                     name="remember"
                     type="checkbox"
-                    className="rounded border-[#F5ECDE] text-[#232536] focus:ring-[#232536] h-4 w-4 accent-[#232536] cursor-pointer"
+                    className="rounded-sm border-[#F5ECDE] text-[#232536] focus:ring-[#232536] h-4 w-4 accent-[#232536] cursor-pointer"
                   />
                   <span>Keep me signed in</span>
                 </label>
@@ -281,7 +281,7 @@ export default function SlidingAuthCard({
 
               <button
                 formAction={signIn}
-                className="w-full py-3 px-4 rounded-xl font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2"
+                className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2"
               >
                 Sign In
               </button>

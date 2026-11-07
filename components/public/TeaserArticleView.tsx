@@ -127,7 +127,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
         {teaser.featured_image_url && (() => {
           const figureElement = (
             <figure className={headerImageWidth === 'wide' ? '' : 'mb-10'}>
-              <div className="relative aspect-[16/9] w-full rounded-[5px] overflow-hidden">
+              <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden">
                 <Image
                   src={teaser.featured_image_url}
                   alt={teaser.title}
@@ -167,7 +167,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
           )}
 
           {/* 6. Signup or Upgrade Card */}
-          <div className="my-10 p-8 sm:p-10 rounded-3xl bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] text-center max-w-xl mx-auto">
+          <div className="my-10 p-8 sm:p-10 rounded-lg bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] text-center max-w-xl mx-auto">
             {isUpgrade ? (
               <>
                 <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2AA198]/10 text-teal-text border border-[#2AA198]/20 mb-4">
@@ -181,7 +181,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                 </p>
                 <Link
                   href="/auth/account"
-                  className="inline-block px-6 py-3 rounded-xl bg-[#232536] hover:bg-[#CF3F29] text-white font-bold text-sm tracking-wide transition shadow-sm hover:shadow"
+                  className="inline-block px-6 py-3 rounded-md bg-[#232536] hover:bg-[#CF3F29] text-white font-bold text-sm tracking-wide transition shadow-sm hover:shadow"
                 >
                   Manage Membership
                 </Link>
@@ -201,7 +201,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                   <div>
                     <Link
                       href={`/signup?redirectTo=${encodeURIComponent(`/garden/${teaser.slug}`)}`}
-                      className="inline-block w-full sm:w-auto px-8 py-3.5 rounded-xl bg-[#CF3F29] hover:bg-[#b53420] text-white font-bold text-sm sm:text-base tracking-wide transition shadow-sm hover:shadow"
+                      className="inline-block w-full sm:w-auto px-8 py-3.5 rounded-md bg-[#CF3F29] hover:bg-[#b53420] text-white font-bold text-sm sm:text-base tracking-wide transition shadow-sm hover:shadow"
                     >
                       Sign up
                     </Link>

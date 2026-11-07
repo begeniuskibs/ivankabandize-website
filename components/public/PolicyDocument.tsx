@@ -275,7 +275,7 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
             return (
               <React.Fragment key={idx}>
                 {/* Desktop Table (hidden below md breakpoint) */}
-                <div className="max-md:hidden my-6 overflow-hidden rounded-xl border border-[#F5ECDE] bg-white">
+                <div className="max-md:hidden my-6 overflow-hidden rounded-lg border border-[#F5ECDE] bg-white">
                   <table className="w-full text-left border-collapse text-sm sm:text-base">
                     <thead>
                       <tr className="bg-[#FDF8F1] text-[#232536] border-b border-[#F5ECDE]">
@@ -321,7 +321,7 @@ export default function PolicyDocument({ markdown }: { markdown: string }) {
                     return (
                       <div
                         key={rIdx}
-                        className="rounded-xl border border-[#F5ECDE] bg-white p-4"
+                        className="rounded-lg border border-[#F5ECDE] bg-white p-4"
                       >
                         <div className="font-bold text-[#232536] text-base leading-snug break-words [overflow-wrap:anywhere]">
                           {renderInlineMarkdown(title)}

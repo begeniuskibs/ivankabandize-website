@@ -191,7 +191,7 @@ export default function GardenArticlesView({
               {selectedStream === 'all' ? (
                 <Link
                   href="/garden"
-                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -208,7 +208,7 @@ export default function GardenArticlesView({
                     e.preventDefault()
                     handleStreamChange('all')
                   }}
-                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -227,7 +227,7 @@ export default function GardenArticlesView({
                 <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
                   <Link
                     href="/garden"
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm"
                   >
                     THE GARDEN
                   </Link>
@@ -238,7 +238,7 @@ export default function GardenArticlesView({
                 <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
                   <Link
                     href="/garden"
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm"
                   >
                     THE GARDEN
                   </Link>
@@ -249,7 +249,7 @@ export default function GardenArticlesView({
                       e.preventDefault()
                       handleStreamChange('all')
                     }}
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs"
+                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm"
                   >
                     ARTICLES
                   </Link>
@@ -329,7 +329,7 @@ export default function GardenArticlesView({
                   <Link
                     key={item.id}
                     href={`/garden/series/${item.slug}`}
-                    className="group flex flex-row items-stretch bg-white border border-[#F5ECDE] hover:border-[#232536]/25 rounded-[14px] overflow-hidden transition-all duration-200 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
+                    className="group flex flex-row items-stretch bg-white border border-[#F5ECDE] hover:border-[#232536]/25 rounded-lg overflow-hidden transition-all duration-200 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
                   >
                     {/* Left 120px wide thumbnail */}
                     <div className="w-[120px] min-w-[120px] max-w-[120px] shrink-0 self-stretch relative overflow-hidden bg-[#FDE9E4] flex items-center justify-center">
@@ -442,7 +442,7 @@ export default function GardenArticlesView({
               )}
             </>
           ) : (
-            <div className="text-center py-16 px-4 bg-white rounded-[14px] border border-[#F5ECDE]">
+            <div className="text-center py-16 px-4 bg-white rounded-lg border border-[#F5ECDE]">
               <p className="text-base text-[#5A5D70] mb-4">
                 No articles match these filters yet.
               </p>

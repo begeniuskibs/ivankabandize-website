@@ -205,7 +205,7 @@ export default function ArticleView({
 
           {/* 4. Optional Database-Driven Series Callout Box */}
           {seriesContext && (
-            <div className="mb-8 p-5 rounded-3xl bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] print:hidden">
+            <div className="mb-8 p-5 rounded-lg bg-white border-2 border-[#2AA198]/20 shadow-[0_4px_16px_rgba(42,161,152,0.06)] print:hidden">
               <div className="flex items-start gap-3.5 mb-2">
                 <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center mt-0.5">
                   <Image
@@ -274,7 +274,7 @@ export default function ArticleView({
           {post.featured_image_url && (() => {
             const figureElement = (
               <figure className={headerImageWidth === 'wide' ? '' : 'mb-10'}>
-                <div className="relative aspect-[16/9] w-full rounded-[5px] overflow-hidden">
+                <div className="relative aspect-[16/9] w-full rounded-xl overflow-hidden">
                   <img
                     src={post.featured_image_url}
                     alt={post.title}
@@ -319,7 +319,7 @@ export default function ArticleView({
               </p>
               <Link
                 href={`/garden/${relatedPost.slug}`}
-                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-3xl bg-white border border-[#F5ECDE] hover:border-[#EF5B45]/30 shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.08)] hover:-translate-y-1 transition-all duration-300"
+                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-lg bg-white border border-[#F5ECDE] hover:border-[#EF5B45]/30 shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.08)] hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="space-y-2 flex-1">
                   <span className="text-xs font-bold uppercase tracking-wider text-teal-text">
@@ -335,7 +335,7 @@ export default function ArticleView({
                   )}
                 </div>
                 {relatedPost.featured_image_url ? (
-                  <div className="w-full sm:w-36 h-28 flex-shrink-0 rounded-[5px] overflow-hidden">
+                  <div className="w-full sm:w-36 h-28 flex-shrink-0 rounded-xl overflow-hidden">
                     <img
                       src={relatedPost.featured_image_url}
                       alt={relatedPost.title}

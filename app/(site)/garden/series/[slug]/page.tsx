@@ -172,7 +172,7 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
           </div>
 
           {publishedParts.length === 0 ? (
-            <div className="py-16 text-center bg-white rounded-3xl border border-[#F5ECDE] max-w-lg mx-auto p-8 shadow-sm">
+            <div className="py-16 text-center bg-white rounded-lg border border-[#F5ECDE] max-w-lg mx-auto p-8 shadow-sm">
               <Image
                 src="/icons/3d/seedling.svg"
                 alt=""

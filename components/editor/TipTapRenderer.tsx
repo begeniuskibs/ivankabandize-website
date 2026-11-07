@@ -78,7 +78,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         const caption = node.attrs?.caption ? String(node.attrs?.caption) : (node.attrs?.title ? String(node.attrs?.title) : null)
         return (
           <figure key={index} className="my-8">
-            <img src={src} alt={alt} className="w-full rounded-[5px] object-cover" />
+            <img src={src} alt={alt} className="w-full rounded-xl object-cover" />
             {caption && (
               <figcaption className="mt-2.5 text-center text-xs sm:text-sm text-[#5A5D70]">
                 {renderCaption(caption)}
@@ -96,7 +96,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
 
         const videoClassName = flushBackground
           ? 'w-full block'
-          : 'w-full rounded-[5px] border border-[#F5ECDE] shadow-sm bg-black/5 block'
+          : 'w-full rounded-xl border border-[#F5ECDE] shadow-sm bg-black/5 block'
 
         return (
           <figure key={index} className="my-8">
@@ -160,7 +160,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                               href={safeHref(img.url, '#')}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="group block overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
+                              className="group block overflow-hidden rounded-xl border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
                               style={{
                                 flexGrow: ratio,
                                 flexBasis: 0,
@@ -192,7 +192,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
                         href={safeHref(img.url, '#')}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group block w-full overflow-hidden rounded-[4px] border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
+                        className="group block w-full overflow-hidden rounded-xl border border-[#F5ECDE] bg-[#FAF5EC] shadow-sm hover:shadow-md transition"
                         style={{
                           aspectRatio: `${w} / ${h}`,
                         }}
@@ -224,7 +224,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         if (!embedUrl) return null
         return (
           <figure key={index} className="my-8">
-            <div className="aspect-video w-full overflow-hidden rounded-[5px] border border-[#F5ECDE] shadow-sm bg-black/5">
+            <div className="aspect-video w-full overflow-hidden rounded-xl border border-[#F5ECDE] shadow-sm bg-black/5">
               <iframe
                 src={embedUrl}
                 title="YouTube video player"
@@ -359,7 +359,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         return (
           <pre
             key={index}
-            className="bg-[#232536] text-gray-100 p-4 rounded-2xl overflow-x-auto text-sm my-6 font-mono border border-black/10"
+            className="bg-[#232536] text-gray-100 p-4 rounded-lg overflow-x-auto text-sm my-6 font-mono border border-black/10"
           >
             <code>{node.content?.map(n => n.text).join('')}</code>
           </pre>
@@ -392,7 +392,7 @@ export default function TipTapRenderer({ content }: { content: TipTapDoc | Recor
         }
         if (mark.type === 'code') {
           element = (
-            <code key={`c-${index}`} className="bg-gray-100 text-red-600 px-1 py-0.5 rounded text-sm font-mono">
+            <code key={`c-${index}`} className="bg-gray-100 text-red-600 px-1 py-0.5 rounded-sm text-sm font-mono">
               {element}
             </code>
           )

@@ -39,7 +39,7 @@ export default function BookmarkCard({
         rel="noopener noreferrer"
         aria-label={displayTitle}
         onClick={isEditor ? (e) => e.preventDefault() : undefined}
-        className="kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-[5px] border border-[#F5ECDE] shadow-sm hover:border-[#232536]/25 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]"
+        className="kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-lg border border-[#F5ECDE] shadow-sm hover:border-[#232536]/25 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]"
       >
         {/* Content Column */}
         <div className="kg-bookmark-content flex flex-col justify-between flex-1 min-w-0 p-5 overflow-hidden">
@@ -60,7 +60,7 @@ export default function BookmarkCard({
                 <img
                   src={icon}
                   alt=""
-                  className="kg-bookmark-icon w-5 h-5 object-contain rounded-xs shrink-0"
+                  className="kg-bookmark-icon w-5 h-5 object-contain rounded-sm shrink-0"
                   onError={(e) => {
                     ;(e.currentTarget as HTMLElement).style.display = 'none'
                   }}

@@ -29,7 +29,7 @@ export default async function AccountPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
-      <div className="max-w-2xl mx-auto bg-white p-8 rounded-xl shadow-md border border-gray-100 space-y-6">
+      <div className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md border border-gray-100 space-y-6">
         <div className="flex justify-between items-center border-b border-gray-200 pb-4">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">Authenticated Account</h1>

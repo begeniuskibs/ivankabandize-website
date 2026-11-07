@@ -167,7 +167,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
           <div
             role="menu"
             aria-label="Share options"
-            className="absolute left-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-[#F5ECDE] p-1.5 z-40 animate-in fade-in zoom-in-95 duration-100"
+            className="absolute left-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-[#F5ECDE] p-1.5 z-40 animate-in fade-in zoom-in-95 duration-100"
           >
             {/* Copy Link */}
             <button
