@@ -252,7 +252,7 @@ export default function SlidingAuthCard({
                   </label>
                   <Link
                     href="/forgot-password"
-                    className="text-xs font-semibold text-[#EF5B45] hover:underline font-sans"
+                    className="text-xs font-semibold text-coral-text hover:underline font-sans"
                   >
                     Forgot password?
                   </Link>
@@ -308,7 +308,7 @@ export default function SlidingAuthCard({
               <button
                 type="button"
                 onClick={handleToggleMode}
-                className="font-semibold text-[#EF5B45] hover:underline cursor-pointer ml-1"
+                className="font-semibold text-coral-text hover:underline cursor-pointer ml-1"
               >
                 {isSignUp ? 'Sign In' : 'Sign Up'}
               </button>

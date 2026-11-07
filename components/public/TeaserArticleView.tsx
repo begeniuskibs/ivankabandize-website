@@ -14,17 +14,17 @@ const TYPE_CONFIG: Record<string, { label: string; href: string; badgeColor: str
   random_thoughts: {
     label: 'Random Thoughts',
     href: '/random-thoughts',
-    badgeColor: 'bg-[#FDF3DC] text-[#C99424] border-[#F7C55C]/30',
+    badgeColor: 'bg-[#FDF3DC] text-gold-text border-[#F7C55C]/30',
   },
   structured_thoughts: {
     label: 'Structured Thoughts',
     href: '/structured-thoughts',
-    badgeColor: 'bg-[#FDF0EE] text-[#EF5B45] border-[#EF5B45]/20',
+    badgeColor: 'bg-[#FDF0EE] text-coral-deep border-[#EF5B45]/20',
   },
   tools_for_thought: {
     label: 'Tools for Thought',
     href: '/tools-for-thought',
-    badgeColor: 'bg-[#EEEDF9] text-[#6B66C4] border-[#6B66C4]/20',
+    badgeColor: 'bg-[#EEEDF9] text-lav-text border-[#6B66C4]/20',
   },
 }
 
@@ -62,7 +62,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
             </Link>
           )}
 
-          <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#2AA198]/10 text-[#2AA198] border border-[#2AA198]/20">
+          <span className="px-2 py-0.5 rounded-full text-[11px] font-bold bg-[#2AA198]/10 text-teal-text border border-[#2AA198]/20">
             Members
           </span>
 
@@ -79,7 +79,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                   return (
                     <span
                       key={idx}
-                      className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
+                      className="bg-white text-teal-text border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
                     >
                       {tagObj?.name}
                     </span>
@@ -118,7 +118,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
                   : 'Recently published'}
               </time>
               <span className="text-[#5A5D70]/50">•</span>
-              <span className="font-bold text-[#2AA198]">Members Preview</span>
+              <span className="font-bold text-teal-text">Members Preview</span>
             </div>
           </div>
         </header>
@@ -170,7 +170,7 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
           <div className="my-10 p-8 sm:p-10 rounded-3xl bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] text-center max-w-xl mx-auto">
             {isUpgrade ? (
               <>
-                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2AA198]/10 text-[#2AA198] border border-[#2AA198]/20 mb-4">
+                <span className="inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#2AA198]/10 text-teal-text border border-[#2AA198]/20 mb-4">
                   Members Only
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-bold text-[#232536] mb-3 font-['MTN_Brighter_Sans',_sans-serif]">

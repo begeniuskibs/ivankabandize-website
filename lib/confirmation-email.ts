@@ -178,7 +178,7 @@ P.S. If one of those reads makes you want to argue back - good. That's the conve
       const safeTitle = escapeHtml(r.title)
       const safeHook = r.hook ? ` - ${escapeHtml(r.hook)}` : ''
       const url = `${normalizedSiteUrl}/garden/${r.slug}`
-      return `<li style="margin-bottom: 12px; line-height: 1.5;"><a href="${url}" style="color: #EF5B45; font-weight: 600; text-decoration: none;">${safeTitle}</a>${safeHook}</li>`
+      return `<li style="margin-bottom: 12px; line-height: 1.5;"><a href="${url}" style="color: #CF3F29; font-weight: 600; text-decoration: none;">${safeTitle}</a>${safeHook}</li>`
     })
     .join('')
 

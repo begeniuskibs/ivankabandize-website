@@ -91,7 +91,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl space-y-4">
             <ScrollReveal>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#EF5B45] text-xs font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
                 <Link href="/" className="hover:underline text-[#5A5D70]">
                   Home
                 </Link>
@@ -245,10 +245,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                         {/* Card Content */}
                         <div className="p-5 flex flex-col flex-grow justify-between gap-4">
                           <div className="space-y-2">
-                            <p className="text-xs font-semibold text-[#EF5B45] tracking-wide uppercase">
+                            <p className="text-xs font-semibold text-coral-text tracking-wide uppercase">
                               {item.creator}
                             </p>
-                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug line-clamp-2">
+                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug line-clamp-2">
                               {item.title}
                             </h3>
                           </div>
@@ -332,10 +332,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                           {/* Details */}
                           <div className="flex flex-col justify-between h-full space-y-3 flex-grow">
                             <div className="space-y-1.5">
-                              <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-[#2AA198] text-[10px] font-bold uppercase tracking-wider">
+                              <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold uppercase tracking-wider">
                                 Book
                               </span>
-                              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
+                              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug">
                                 {item.title}
                               </h3>
                               <p className="text-xs font-medium text-[#5A5D70]">
@@ -425,10 +425,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                         {/* Card Content */}
                         <div className="p-5 flex flex-col flex-grow justify-between gap-4">
                           <div className="space-y-1.5">
-                            <p className="text-xs font-semibold text-[#2AA198] tracking-wide uppercase">
+                            <p className="text-xs font-semibold text-teal-text tracking-wide uppercase">
                               {item.creator}
                             </p>
-                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug">
+                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug">
                               {item.title}
                             </h3>
                           </div>

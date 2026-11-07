@@ -89,7 +89,7 @@ export default function PostCard({ post, className = '', showPreview = true }: P
       >
         <div>
           <h2
-            className={`font-['MTN_Brighter_Sans',_sans-serif] text-[20px] font-bold text-[#232536] leading-[1.3] group-hover:text-[#EF5B45] transition-colors ${showPreview ? 'line-clamp-1' : titleClass}`}
+            className={`font-['MTN_Brighter_Sans',_sans-serif] text-[20px] font-bold text-[#232536] leading-[1.3] group-hover:text-coral-text transition-colors ${showPreview ? 'line-clamp-1' : titleClass}`}
             title={post.title}
           >
             {post.title}
@@ -101,7 +101,7 @@ export default function PostCard({ post, className = '', showPreview = true }: P
           ) : null}
         </div>
         {metaText ? (
-          <div className="text-xs text-[#A97B1A] mt-2">
+          <div className="text-xs text-gold-text mt-2">
             {metaText}
           </div>
         ) : null}

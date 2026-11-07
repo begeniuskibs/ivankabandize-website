@@ -104,6 +104,11 @@
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-coral-text: #CF3F29;
+  --color-coral-deep: #B83420;
+  --color-teal-text: #187570;
+  --color-gold-text: #86600F;
+  --color-lav-text: #5B56B5;
   --font-sans: 'Google Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   /* Trial swap: Fraunces -> MTN Brighter Sans */
   /* --font-serif: 'Fraunces', Georgia, serif; */

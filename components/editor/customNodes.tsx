@@ -462,7 +462,7 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
         </span>
         <div className="flex items-center gap-2">
           {hasActiveUploads && (
-            <span className="text-xs text-[#EF5B45] font-medium animate-pulse">
+            <span className="text-xs text-coral-text font-medium animate-pulse">
               Uploading {Object.keys(activeUploads).length} {Object.keys(activeUploads).length === 1 ? 'image' : 'images'}...
             </span>
           )}

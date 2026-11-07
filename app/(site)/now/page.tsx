@@ -41,7 +41,7 @@ function renderDataEntry(entry: NowEntry, delayMs?: number) {
         <div className="space-y-4">
           <span
             className={`inline-block text-xs sm:text-sm font-bold ${
-              entry.showCurrently ? 'text-[#2AA198]' : 'text-[#A9ACBC]'
+              entry.showCurrently ? 'text-teal-text' : 'text-[#A9ACBC]'
             } uppercase tracking-wider`}
           >
             {entry.dateLabel}
@@ -144,7 +144,7 @@ export default function NowPage() {
       <section className="py-14 sm:py-20 border-b border-[#F5ECDE]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
           <ScrollReveal>
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#EF5B45] text-xs font-bold uppercase tracking-widest mb-6">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest mb-6">
               <Link href="/" className="hover:underline text-[#5A5D70]">
                 Home
               </Link>
@@ -166,7 +166,7 @@ export default function NowPage() {
                 href="https://nownownow.com/about"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#EF5B45] font-semibold hover:underline"
+                className="text-coral-text font-semibold hover:underline"
               >
                 /now page movement
               </a>{' '}

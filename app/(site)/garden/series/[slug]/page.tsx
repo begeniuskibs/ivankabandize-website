@@ -193,7 +193,7 @@ export default async function SeriesLandingPage({ params }: SeriesPageProps) {
               {publishedParts.map((post, index) => (
                 <div key={post.id} className="flex flex-col h-full">
                   <div className="mb-2 flex items-center gap-2">
-                    <span className="text-xs font-bold font-mono tracking-wider text-[#EF5B45] uppercase">
+                    <span className="text-xs font-bold font-mono tracking-wider text-coral-text uppercase">
                       Part {index + 1}
                     </span>
                     {post.published_at && (

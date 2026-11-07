@@ -54,7 +54,7 @@ export default function GardenLandingA2({
       {/* 1. Hero Section */}
       <section className="relative pt-16 pb-12 md:pt-24 md:pb-16 border-b border-[#F5ECDE] bg-[#FDF8F1]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-xs uppercase tracking-widest font-bold mb-3 text-[#A97B1A]">
+          <p className="text-xs uppercase tracking-widest font-bold mb-3 text-gold-text">
             DIGITAL GARDEN &amp; NOTEBOOK
           </p>
           <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-tight mb-4 text-[#232536]">
@@ -200,7 +200,7 @@ export default function GardenLandingA2({
                   Plain-language summaries of the research leaders should read.
                 </p>
                 <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs min-h-[28px]">
-                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#A97B1A] border border-[#A97B1A]/20">
+                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-gold-text border border-[#A97B1A]/20">
                     Coming soon
                   </span>
                 </div>
@@ -377,7 +377,7 @@ export default function GardenLandingA2({
                       ) : null}
                     </div>
                     {metaText ? (
-                      <div className="text-xs text-[#A97B1A] mt-2">
+                      <div className="text-xs text-gold-text mt-2">
                         {metaText}
                       </div>
                     ) : null}

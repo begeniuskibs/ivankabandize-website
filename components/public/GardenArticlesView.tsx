@@ -312,7 +312,7 @@ export default function GardenArticlesView({
           <section aria-labelledby="series-row-heading">
             <p
               id="series-row-heading"
-              className="text-[13px] font-bold tracking-[0.1em] text-[#A97B1A] uppercase mb-4"
+              className="text-[13px] font-bold tracking-[0.1em] text-gold-text uppercase mb-4"
             >
               SERIES - READ IN ORDER
             </p>
@@ -357,10 +357,10 @@ export default function GardenArticlesView({
                     {/* Right content */}
                     <div className="flex-1 p-4 sm:p-5 flex flex-col justify-between min-w-0">
                       <div>
-                        <span className="text-[12px] font-bold uppercase tracking-wider text-[#A97B1A] block mb-1">
+                        <span className="text-[12px] font-bold uppercase tracking-wider text-gold-text block mb-1">
                           {item.status === 'complete' ? 'SERIES - COMPLETE' : 'SERIES - GROWING'}
                         </span>
-                        <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[19px] font-medium text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug line-clamp-2">
+                        <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[19px] font-medium text-[#232536] group-hover:text-coral-text transition-colors leading-snug line-clamp-2">
                           {item.title}
                         </h2>
                       </div>

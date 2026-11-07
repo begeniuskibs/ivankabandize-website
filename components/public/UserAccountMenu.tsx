@@ -180,7 +180,7 @@ export default function UserAccountMenu({
                 type="submit"
                 role="menuitem"
                 tabIndex={0}
-                className="w-full text-left px-4 py-2 text-sm font-medium text-[#EF5B45] hover:bg-[#FDF8F1] focus:bg-[#FDF8F1] focus:outline-none transition-colors cursor-pointer"
+                className="w-full text-left px-4 py-2 text-sm font-medium text-coral-text hover:bg-[#FDF8F1] focus:bg-[#FDF8F1] focus:outline-none transition-colors cursor-pointer"
               >
                 Sign out
               </button>

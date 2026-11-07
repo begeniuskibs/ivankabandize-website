@@ -81,14 +81,14 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
     >
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#E8F4F1] text-[#2AA198] border border-[#2AA198]/20">
+          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
             {item.type}
           </span>
-          <span className="text-xs font-semibold text-[#5A5D70] group-hover:text-[#EF5B45] transition-colors">
+          <span className="text-xs font-semibold text-[#5A5D70] group-hover:text-coral-text transition-colors">
             Visit ↗
           </span>
         </div>
-        <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors leading-snug mb-1 line-clamp-2">
+        <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] group-hover:text-coral-text transition-colors leading-snug mb-1 line-clamp-2">
           {item.title}
         </h3>
         <p className="text-xs font-medium text-[#5A5D70] mb-3">
@@ -101,8 +101,8 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
         )}
       </div>
       <div className="pt-3 border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs text-[#5A5D70]">
-        <span className="font-semibold text-[#2AA198]">Curated resource</span>
-        <span className="font-bold group-hover:text-[#EF5B45] transition-colors inline-flex items-center">
+        <span className="font-semibold text-teal-text">Curated resource</span>
+        <span className="font-bold group-hover:text-coral-text transition-colors inline-flex items-center">
           <ArrowRight
             size={14}
             strokeWidth={2.5}
@@ -180,7 +180,7 @@ export default function GardenFeed({
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <p
             className={`text-xs uppercase tracking-widest font-bold mb-3 ${
-              heroBannerImage ? 'text-[#F7C55C]' : 'text-[#C99424]'
+              heroBannerImage ? 'text-[#F7C55C]' : 'text-gold-text'
             }`}
           >
             {eyebrow}
@@ -315,7 +315,7 @@ export default function GardenFeed({
                 <div id="series">
                   <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#C99424]">
+                      <span className="text-xs font-bold uppercase tracking-widest text-gold-text">
                         Series
                       </span>
                       <span className="text-[#5A5D70]/40 text-xs">•</span>
@@ -358,7 +358,7 @@ export default function GardenFeed({
                             )}
                           </div>
 
-                          <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] group-hover:text-[#EF5B45] transition-colors mb-2 leading-snug">
+                          <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] group-hover:text-coral-text transition-colors mb-2 leading-snug">
                             {item.title}
                           </h3>
 
@@ -370,12 +370,12 @@ export default function GardenFeed({
                         </div>
 
                         <div className="pt-3 border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs">
-                          <span className="font-semibold text-[#2AA198]">
+                          <span className="font-semibold text-teal-text">
                             {item.status === 'complete'
                               ? `${item.published_count} ${item.published_count === 1 ? 'entry' : 'entries'}`
                               : `${item.published_count} ${item.published_count === 1 ? 'entry' : 'entries'} and counting`}
                           </span>
-                          <span className="text-[#5A5D70] group-hover:text-[#EF5B45] font-bold transition-all inline-flex items-center gap-1.5">
+                          <span className="text-[#5A5D70] group-hover:text-coral-text font-bold transition-all inline-flex items-center gap-1.5">
                             <span>Explore series</span>
                             <ArrowRight
                               size={14}
@@ -396,7 +396,7 @@ export default function GardenFeed({
                 <div id="articles">
                   <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#EF5B45]">
+                      <span className="text-xs font-bold uppercase tracking-widest text-coral-text">
                         Articles
                       </span>
                       <span className="text-[#5A5D70]/40 text-xs">•</span>
@@ -406,7 +406,7 @@ export default function GardenFeed({
                     </div>
                     <Link
                       href="/garden?view=articles"
-                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#EF5B45] hover:underline"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-coral-text hover:underline"
                     >
                       <span>See all articles</span>
                       <ArrowRight
@@ -431,7 +431,7 @@ export default function GardenFeed({
                 <div id="library">
                   <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#2AA198]">
+                      <span className="text-xs font-bold uppercase tracking-widest text-teal-text">
                         Library
                       </span>
                       <span className="text-[#5A5D70]/40 text-xs">•</span>
@@ -441,7 +441,7 @@ export default function GardenFeed({
                     </div>
                     <Link
                       href="/library"
-                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#2AA198] hover:underline"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-teal-text hover:underline"
                     >
                       <span>See all in Library</span>
                       <ArrowRight
@@ -466,7 +466,7 @@ export default function GardenFeed({
                 <div id="report-digests">
                   <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-widest text-[#C99424]">
+                      <span className="text-xs font-bold uppercase tracking-widest text-gold-text">
                         Report Digests
                       </span>
                       <span className="text-[#5A5D70]/40 text-xs">•</span>
@@ -476,7 +476,7 @@ export default function GardenFeed({
                     </div>
                     <Link
                       href="/garden?view=report_digests"
-                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#C99424] hover:underline"
+                      className="group inline-flex items-center gap-1.5 text-xs font-bold text-gold-text hover:underline"
                     >
                       <span>See all digests</span>
                       <ArrowRight
@@ -528,7 +528,7 @@ export default function GardenFeed({
                     {activeTopicSlug && (
                       <Link
                         href={`/library?topic=${activeTopicSlug}`}
-                        className="group inline-flex items-center gap-1.5 text-xs font-bold text-[#2AA198] hover:underline"
+                        className="group inline-flex items-center gap-1.5 text-xs font-bold text-teal-text hover:underline"
                       >
                         <span>See in Library</span>
                         <ArrowRight
@@ -580,7 +580,7 @@ export default function GardenFeed({
                     <div className="mt-6">
                       <Link
                         href="/garden"
-                        className="group inline-flex items-center text-xs font-bold text-[#EF5B45] hover:underline gap-1.5"
+                        className="group inline-flex items-center text-xs font-bold text-coral-text hover:underline gap-1.5"
                       >
                         <span>View all garden entries</span>
                         <ArrowRight

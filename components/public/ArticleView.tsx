@@ -72,17 +72,17 @@ const TYPE_CONFIG: Record<string, { label: string; href: string; badgeColor: str
   random_thoughts: {
     label: 'Random Thoughts',
     href: '/random-thoughts',
-    badgeColor: 'bg-[#FDF3DC] text-[#C99424] border-[#F7C55C]/30',
+    badgeColor: 'bg-[#FDF3DC] text-gold-text border-[#F7C55C]/30',
   },
   structured_thoughts: {
     label: 'Structured Thoughts',
     href: '/structured-thoughts',
-    badgeColor: 'bg-[#FDF0EE] text-[#EF5B45] border-[#EF5B45]/20',
+    badgeColor: 'bg-[#FDF0EE] text-coral-deep border-[#EF5B45]/20',
   },
   tools_for_thought: {
     label: 'Tools for Thought',
     href: '/tools-for-thought',
-    badgeColor: 'bg-[#EEEDF9] text-[#6B66C4] border-[#6B66C4]/20',
+    badgeColor: 'bg-[#EEEDF9] text-lav-text border-[#6B66C4]/20',
   },
 }
 
@@ -156,7 +156,7 @@ export default function ArticleView({
                     return (
                       <span
                         key={idx}
-                        className="bg-white text-[#2AA198] border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
+                        className="bg-white text-teal-text border border-[#F5ECDE] px-3 py-1 rounded-full text-[11px] font-semibold"
                       >
                         {tagObj?.name}
                       </span>
@@ -195,7 +195,7 @@ export default function ArticleView({
                     : 'Recently published'}
                 </time>
                 <span className="text-[#5A5D70]/50">•</span>
-                <span className="font-bold text-[#2AA198]">{readTime} min read</span>
+                <span className="font-bold text-teal-text">{readTime} min read</span>
               </div>
             </div>
 
@@ -218,12 +218,12 @@ export default function ArticleView({
                   />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-0.5">
+                  <p className="text-xs font-bold uppercase tracking-wider text-teal-text mb-0.5">
                     Series - Part {seriesContext.partNumber} of {seriesContext.totalParts}
                   </p>
                   <Link
                     href={`/garden/series/${seriesContext.series.slug}`}
-                    className="font-bold text-base text-[#232536] hover:text-[#EF5B45] transition inline-block"
+                    className="font-bold text-base text-[#232536] hover:text-coral-text transition inline-block"
                   >
                     {seriesContext.series.title}
                   </Link>
@@ -235,7 +235,7 @@ export default function ArticleView({
                   {seriesContext.prevPost ? (
                     <Link
                       href={`/garden/${seriesContext.prevPost.slug}`}
-                      className="group text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%]"
+                      className="group text-[#5A5D70] hover:text-coral-text font-semibold transition flex items-center gap-1.5 truncate max-w-[48%]"
                       title={seriesContext.prevPost.title}
                     >
                       <ArrowLeft
@@ -253,7 +253,7 @@ export default function ArticleView({
                   {seriesContext.nextPost && (
                     <Link
                       href={`/garden/${seriesContext.nextPost.slug}`}
-                      className="group text-[#5A5D70] hover:text-[#EF5B45] font-semibold transition flex items-center gap-1.5 truncate max-w-[48%] ml-auto"
+                      className="group text-[#5A5D70] hover:text-coral-text font-semibold transition flex items-center gap-1.5 truncate max-w-[48%] ml-auto"
                       title={seriesContext.nextPost.title}
                     >
                       <span className="truncate">Next: {seriesContext.nextPost.title}</span>
@@ -314,7 +314,7 @@ export default function ArticleView({
           {/* 7. Optional "You Might Have Missed" Bookmark-Style Card */}
           {relatedPost && (
             <section className="mt-16 pt-12 border-t border-[#F5ECDE] print:hidden">
-              <p className="text-xs uppercase tracking-widest font-bold text-[#C99424] mb-4">
+              <p className="text-xs uppercase tracking-widest font-bold text-gold-text mb-4">
                 You might have missed
               </p>
               <Link
@@ -322,10 +322,10 @@ export default function ArticleView({
                 className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-3xl bg-white border border-[#F5ECDE] hover:border-[#EF5B45]/30 shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.08)] hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="space-y-2 flex-1">
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-teal-text">
                     {(relatedPost.content_type && TYPE_CONFIG[relatedPost.content_type]?.label) || 'Article'}
                   </span>
-                  <h3 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-[#232536] group-hover:text-[#EF5B45] transition-colors">
+                  <h3 className="font-sans text-xl sm:text-2xl font-bold tracking-tight text-[#232536] group-hover:text-coral-text transition-colors">
                     {relatedPost.title}
                   </h3>
                   {relatedPost.excerpt && (
@@ -343,7 +343,7 @@ export default function ArticleView({
                     />
                   </div>
                 ) : (
-                  <div className="hidden sm:flex w-12 h-12 rounded-full bg-[#FDF8F1] border border-[#F5ECDE] items-center justify-center text-[#EF5B45]">
+                  <div className="hidden sm:flex w-12 h-12 rounded-full bg-[#FDF8F1] border border-[#F5ECDE] items-center justify-center text-coral-text">
                     <ArrowRight
                       size={14}
                       strokeWidth={2.5}
