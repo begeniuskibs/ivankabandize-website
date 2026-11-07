@@ -204,9 +204,9 @@ export default function LetsTalkPage() {
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 1
-                          ? 'bg-[#EF5B45] text-white'
+                          ? 'bg-[#EF5B45] text-[#232536]'
                           : step > 1
-                          ? 'bg-[#2AA198] text-white'
+                          ? 'bg-[#2AA198] text-[#232536]'
                           : 'bg-[#F5ECDE] text-[#5A5D70]'
                       }`}>
                         {step > 1 ? '✓' : '1'}
@@ -223,9 +223,9 @@ export default function LetsTalkPage() {
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 2
-                          ? 'bg-[#EF5B45] text-white'
+                          ? 'bg-[#EF5B45] text-[#232536]'
                           : step > 2
-                          ? 'bg-[#2AA198] text-white'
+                          ? 'bg-[#2AA198] text-[#232536]'
                           : 'bg-[#F5ECDE] text-[#5A5D70]'
                       }`}>
                         {step > 2 ? '✓' : '2'}
@@ -242,7 +242,7 @@ export default function LetsTalkPage() {
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 3
-                          ? 'bg-[#EF5B45] text-white'
+                          ? 'bg-[#EF5B45] text-[#232536]'
                           : 'bg-[#F5ECDE] text-[#5A5D70]'
                       }`}>
                         3

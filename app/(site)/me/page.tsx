@@ -262,7 +262,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#EF5B45]/10">
                   <Link
                     href="/workwithme"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-coral-deep hover:text-[#D94834] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-coral-deep hover:text-[#9E2B1A] transition"
                   >
                     <span>Explore Advisory</span>
                     <ArrowRight
@@ -302,7 +302,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#2AA198]/10">
                   <Link
                     href="/workwithme"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-teal-text hover:text-[#1D7A73] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-teal-text hover:text-[#125E5A] transition"
                   >
                     <span>Training Method</span>
                     <ArrowRight
@@ -342,7 +342,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#F7C55C]/20">
                   <Link
                     href="/garden"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-gold-text hover:text-[#9A7015] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-gold-text hover:text-[#6E4E0B] transition"
                   >
                     <span>Read The Garden</span>
                     <ArrowRight

@@ -440,7 +440,7 @@ export default function GardenLandingA2({
                 </div>
                 <div className="p-5 flex-1 flex flex-col justify-between">
                   <div>
-                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAF6F4] text-[#1B7F7A] border border-[#C5E4E0] inline-block mb-2">
+                    <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#EAF6F4] text-teal-text border border-[#C5E4E0] inline-block mb-2">
                       {item.type}
                     </span>
                     <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base font-bold text-[#232536] group-hover:text-[#1B7F7A] transition-colors leading-snug line-clamp-2 mb-1">
