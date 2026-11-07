@@ -204,7 +204,7 @@ function SearchOverlayContent() {
       {/* Top-anchored White Card (Ghost style) */}
       <div
         ref={cardRef}
-        className="w-full max-w-xl bg-white rounded-2xl shadow-2xl border border-[#F5ECDE] overflow-hidden flex flex-col max-h-[calc(100dvh-24px-env(safe-area-inset-bottom,0px))] sm:max-h-[calc(100dvh-80px)] font-sans"
+        className="w-full max-w-xl bg-white rounded-lg shadow-2xl border border-[#F5ECDE] overflow-hidden flex flex-col max-h-[calc(100dvh-24px-env(safe-area-inset-bottom,0px))] sm:max-h-[calc(100dvh-80px)] font-sans"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Input Header Row */}
@@ -295,7 +295,7 @@ function SearchOverlayContent() {
                             {item.stream}
                           </span>
                           {item.visibility && item.visibility !== 'public' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#2AA198]/10 text-teal-text border border-[#2AA198]/20">
+                            <span className="px-1.5 py-0.5 rounded-sm text-[10px] font-bold bg-[#2AA198]/10 text-teal-text border border-[#2AA198]/20">
                               Members
                             </span>
                           )}

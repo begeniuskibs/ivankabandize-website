@@ -63,7 +63,7 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
 
   return (
     <div className="min-h-[calc(100vh-140px)] flex items-center justify-center bg-[#FDF8F1] py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-[#E8DCC4]">
-      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-3xl shadow-xl border border-[#F5ECDE]">
+      <div className="w-full max-w-md bg-white p-8 sm:p-10 rounded-lg shadow-xl border border-[#F5ECDE]">
         {submitted ? (
           <div className="text-center space-y-6">
             <Image
@@ -126,7 +126,7 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
             </p>
 
             {error && (
-              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-2xl text-xs sm:text-sm font-sans">
+              <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md text-xs sm:text-sm font-sans">
                 {error}
               </div>
             )}
@@ -147,14 +147,14 @@ export default function ForgotPasswordClient({ siteUrl }: ForgotPasswordClientPr
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="jane@example.com"
-                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-xl text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
+                  className="w-full px-3.5 py-2.5 border border-[#F5ECDE] rounded-md text-sm text-[#232536] bg-[#FDF8F1]/30 focus:outline-none focus:ring-1 focus:ring-[#232536] font-sans"
                 />
               </div>
 
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-3 px-4 rounded-xl font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2 disabled:opacity-50"
+                className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2 disabled:opacity-50"
               >
                 {loading ? 'Sending link...' : 'Send Reset Link'}
               </button>

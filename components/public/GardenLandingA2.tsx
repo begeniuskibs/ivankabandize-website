@@ -69,7 +69,7 @@ export default function GardenLandingA2({
             {/* Articles Card (Coral #EF5B45) */}
             <Link
               href="/garden?view=articles"
-              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
+              className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FEF1ED] border border-[#F7D6CC] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
             >
               {/* Full-card Background Art */}
               <Image
@@ -93,7 +93,7 @@ export default function GardenLandingA2({
               </div>
 
               {/* Bottom Frosted Plate */}
-              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+              <div className="relative z-10 mt-auto rounded-lg bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Articles
                 </h2>
@@ -120,7 +120,7 @@ export default function GardenLandingA2({
             {/* Curated Library Card (Teal) */}
             <Link
               href="/library"
-              className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EAF6F4] border border-[#C5E4E0] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B7F7A] focus-visible:ring-offset-2"
+              className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EAF6F4] border border-[#C5E4E0] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1B7F7A] focus-visible:ring-offset-2"
             >
               {/* Full-card Background Art */}
               <Image
@@ -144,7 +144,7 @@ export default function GardenLandingA2({
               </div>
 
               {/* Bottom Frosted Plate */}
-              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+              <div className="relative z-10 mt-auto rounded-lg bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Curated Library
                 </h2>
@@ -169,7 +169,7 @@ export default function GardenLandingA2({
             </Link>
 
             {/* Report Digests Card (Gold) - Non-link */}
-            <div className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
+            <div className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/digests.svg"
@@ -192,7 +192,7 @@ export default function GardenLandingA2({
               </div>
 
               {/* Bottom Frosted Plate */}
-              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+              <div className="relative z-10 mt-auto rounded-lg bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Report Digests
                 </h2>
@@ -208,7 +208,7 @@ export default function GardenLandingA2({
             </div>
 
             {/* Resources Card (Slate) - Non-link */}
-            <div className="group relative flex flex-col justify-between p-4 rounded-[20px] overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
+            <div className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/resources.svg"
@@ -231,7 +231,7 @@ export default function GardenLandingA2({
               </div>
 
               {/* Bottom Frosted Plate */}
-              <div className="relative z-10 mt-auto rounded-[14px] bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
+              <div className="relative z-10 mt-auto rounded-lg bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
                   Resources
                 </h2>
@@ -341,7 +341,7 @@ export default function GardenLandingA2({
                 <Link
                   key={post.id}
                   href={`/garden/${post.slug}`}
-                  className="group flex flex-col h-full bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#232536]/25 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                  className="group flex flex-col h-full bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                 >
                   <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FDF3DC] shrink-0">
                     {post.featured_image_url ? (
@@ -420,7 +420,7 @@ export default function GardenLandingA2({
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col h-full bg-white rounded-[5px] border border-[#F5ECDE] hover:border-[#C5E4E0] hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                className="group flex flex-col h-full bg-white rounded-lg border border-[#F5ECDE] hover:border-[#C5E4E0] hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#EAF6F4] shrink-0">
                   {item.thumbnail_url ? (
@@ -481,7 +481,7 @@ export default function GardenLandingA2({
                 Report Digests
               </h2>
             </div>
-            <div className="border-2 border-dashed border-[#EFDFB8] bg-[#FBF4E4]/40 rounded-[5px] p-8 sm:p-10 text-center">
+            <div className="border-2 border-dashed border-[#EFDFB8] bg-[#FBF4E4]/40 rounded-lg p-8 sm:p-10 text-center">
               <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] mb-2">
                 The first digest is still growing
               </h3>
@@ -498,7 +498,7 @@ export default function GardenLandingA2({
                 Resources
               </h2>
             </div>
-            <div className="border-2 border-dashed border-[#D5D8E8] bg-[#EEEFF6]/40 rounded-[5px] p-8 sm:p-10 text-center">
+            <div className="border-2 border-dashed border-[#D5D8E8] bg-[#EEEFF6]/40 rounded-lg p-8 sm:p-10 text-center">
               <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] mb-2">
                 Seeds are being packed
               </h3>

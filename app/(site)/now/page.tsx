@@ -49,7 +49,7 @@ function renderDataEntry(entry: NowEntry, delayMs?: number) {
           <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] leading-snug">
             {entry.title}
           </h2>
-          <div className="px-4 py-3 rounded-xl bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#232536] text-xs sm:text-sm leading-relaxed">
+          <div className="px-4 py-3 rounded-md bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#232536] text-xs sm:text-sm leading-relaxed">
             {entry.callout}
           </div>
           {entry.paragraphs.map((paragraph, idx) => (
@@ -58,7 +58,7 @@ function renderDataEntry(entry: NowEntry, delayMs?: number) {
                 {paragraph}
               </p>
               {idx === 0 && entry.explainer && (
-                <div className="p-4 sm:p-5 rounded-xl bg-[#EAF4F3] border border-[#2AA198]/20 text-[#232536] text-sm sm:text-base leading-relaxed space-y-2">
+                <div className="p-4 sm:p-5 rounded-md bg-[#EAF4F3] border border-[#2AA198]/20 text-[#232536] text-sm sm:text-base leading-relaxed space-y-2">
                   <p className="font-bold text-[#232536]">{entry.explainer.heading}</p>
                   {entry.explainer.paragraphs.map((expParagraph, expIdx) => (
                     <p key={expIdx} className="text-[#3A3D4E]">
@@ -72,7 +72,7 @@ function renderDataEntry(entry: NowEntry, delayMs?: number) {
 
           {entry.showCurrently && (
             /* "Currently..." Card */
-            <div className="mt-6 p-6 sm:p-7 rounded-2xl sm:rounded-3xl bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] space-y-4">
+            <div className="mt-6 p-6 sm:p-7 rounded-lg bg-white border border-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.06)] space-y-4">
               <p className="text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
                 Currently&hellip;
               </p>

@@ -185,7 +185,7 @@ export default async function HomePage() {
                       width={420}
                       height={500}
                       priority
-                      className="w-full max-md:h-[300px] max-md:rounded-[24px] aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
+                      className="w-full max-md:h-[300px] aspect-[4/5] object-cover object-top rounded-xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
                     />
                   </div>
                 </div>
@@ -295,7 +295,7 @@ export default async function HomePage() {
             <ScrollReveal delayMs={40}>
               <Link
                 href="/workwithme"
-                className="bg-[#FCEBE7] hover:bg-[#fad8d1] border border-[#EF5B45]/15 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
+                className="bg-[#FCEBE7] hover:bg-[#fad8d1] border border-[#EF5B45]/15 rounded-lg p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
                   <Image
@@ -329,7 +329,7 @@ export default async function HomePage() {
             <ScrollReveal delayMs={80}>
               <Link
                 href="/garden"
-                className="bg-[#FDF3DC] hover:bg-[#faeac4] border border-[#F7C55C]/30 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
+                className="bg-[#FDF3DC] hover:bg-[#faeac4] border border-[#F7C55C]/30 rounded-lg p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
                   <Image
@@ -363,7 +363,7 @@ export default async function HomePage() {
             <ScrollReveal delayMs={120}>
               <Link
                 href="/garden"
-                className="bg-[#EAF4F3] hover:bg-[#d5ebe9] border border-[#2AA198]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
+                className="bg-[#EAF4F3] hover:bg-[#d5ebe9] border border-[#2AA198]/20 rounded-lg p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
                   <Image
@@ -397,7 +397,7 @@ export default async function HomePage() {
             <ScrollReveal delayMs={160}>
               <Link
                 href="/garden"
-                className="bg-[#EEEDF9] hover:bg-[#dfdcf5] border border-[#6B66C4]/20 rounded-3xl p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
+                className="bg-[#EEEDF9] hover:bg-[#dfdcf5] border border-[#6B66C4]/20 rounded-lg p-7 flex flex-col justify-between h-full shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] hover:-translate-y-1.5 transition-all duration-300 group"
               >
                 <div>
                   <Image
@@ -447,7 +447,7 @@ export default async function HomePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Step 1: Diagnose */}
             <ScrollReveal delayMs={50}>
-              <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-white border border-[#F5ECDE] rounded-lg p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <div className="w-12 h-12 rounded-full bg-[#EF5B45] text-[#232536] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     1
@@ -462,7 +462,7 @@ export default async function HomePage() {
                     Surface the problem you&apos;ve been operating around without naming. Most organisations know something isn&apos;t working. Few can articulate exactly what.
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
+                <div className="p-4 rounded-lg bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
                   &ldquo;A pest control company&apos;s founder discovery session surfaced financial leakage, manual processes, and data integrity gaps across five dimensions - none of which had been named before.&rdquo;
                 </div>
               </div>
@@ -470,7 +470,7 @@ export default async function HomePage() {
 
             {/* Step 2: Architect */}
             <ScrollReveal delayMs={120}>
-              <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-white border border-[#F5ECDE] rounded-lg p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <div className="w-12 h-12 rounded-full bg-[#2AA198] text-[#232536] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     2
@@ -485,7 +485,7 @@ export default async function HomePage() {
                     Design the structure that solves it. Systems, processes, frameworks, workflows, documentation. Not theory. Working structures your team can actually use.
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
+                <div className="p-4 rounded-lg bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
                   &ldquo;An international school being built from scratch needed everything - email infrastructure, admissions forms, branding, teacher onboarding - designed and delivered before doors opened.&rdquo;
                 </div>
               </div>
@@ -493,7 +493,7 @@ export default async function HomePage() {
 
             {/* Step 3: Sequence */}
             <ScrollReveal delayMs={190}>
-              <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-white border border-[#F5ECDE] rounded-lg p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <div className="w-12 h-12 rounded-full bg-[#F7C55C] text-[#232536] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     3
@@ -508,7 +508,7 @@ export default async function HomePage() {
                     Define what to do first, second, third. Doing things in the wrong order wastes everything.
                   </p>
                 </div>
-                <div className="p-4 rounded-2xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
+                <div className="p-4 rounded-lg bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] leading-relaxed">
                   &ldquo;A logistics startup needed strategic clarity before systems could be built - advisory work that shaped the founder&apos;s thinking on what to prioritise and defer.&rdquo;
                 </div>
               </div>
@@ -557,7 +557,7 @@ export default async function HomePage() {
               ))}
             </div>
           ) : (
-            <div className="py-12 text-center bg-white rounded-3xl border border-[#F5ECDE] text-[#5A5D70] text-base">
+            <div className="py-12 text-center bg-white rounded-lg border border-[#F5ECDE] text-[#5A5D70] text-base">
               Articles will appear here once published.
             </div>
           )}

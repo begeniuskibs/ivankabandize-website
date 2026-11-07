@@ -103,7 +103,7 @@ export default async function WorkWithMePage() {
                       width={420}
                       height={500}
                       priority
-                      className="w-full aspect-[4/5] object-cover object-center rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.13)] border-4 border-white"
+                      className="w-full aspect-[4/5] object-cover object-center rounded-xl shadow-[0_18px_44px_rgba(35,37,54,0.13)] border-4 border-white"
                     />
                   </div>
                 </div>
@@ -130,7 +130,7 @@ export default async function WorkWithMePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Phase 1: Audit */}
             <ScrollReveal delayMs={50}>
-              <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-lg p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <Image
                     src="/icons/3d/search.svg"
@@ -157,7 +157,7 @@ export default async function WorkWithMePage() {
 
             {/* Phase 2: Build */}
             <ScrollReveal delayMs={120}>
-              <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-lg p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <Image
                     src="/icons/3d/tools.svg"
@@ -184,7 +184,7 @@ export default async function WorkWithMePage() {
 
             {/* Phase 3: Support */}
             <ScrollReveal delayMs={190}>
-              <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-lg p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <Image
                     src="/icons/3d/partnership.svg"
@@ -226,7 +226,7 @@ export default async function WorkWithMePage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Yes Box */}
             <ScrollReveal delayMs={60}>
-              <div className="bg-[#EAF4F3] border border-[#2AA198]/20 rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.04)] h-full">
+              <div className="bg-[#EAF4F3] border border-[#2AA198]/20 rounded-lg p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.04)] h-full">
                 <h3 className="font-bold text-xl sm:text-2xl text-[#232536] mb-6 flex items-center gap-2">
                   <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
                     <Image
@@ -251,7 +251,7 @@ export default async function WorkWithMePage() {
 
             {/* No Box */}
             <ScrollReveal delayMs={120}>
-              <div className="bg-[#FCEBE7] border border-[#EF5B45]/20 rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.04)] h-full">
+              <div className="bg-[#FCEBE7] border border-[#EF5B45]/20 rounded-lg p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.04)] h-full">
                 <h3 className="font-bold text-xl sm:text-2xl text-[#232536] mb-6 flex items-center gap-2">
                   <span className="flex-shrink-0 w-6 h-6 flex items-center justify-center">
                     <Image

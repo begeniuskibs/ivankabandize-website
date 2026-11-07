@@ -56,7 +56,7 @@ export default function GoogleSignInButton({ redirectTo }: GoogleSignInButtonPro
       type="button"
       onClick={handleGoogleSignIn}
       disabled={loading}
-      className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl font-semibold text-sm text-[#232536] bg-white border border-[#F5ECDE] hover:bg-[#FDF8F1] transition shadow-sm disabled:opacity-50 cursor-pointer"
+      className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-md font-semibold text-sm text-[#232536] bg-white border border-[#F5ECDE] hover:bg-[#FDF8F1] transition shadow-sm disabled:opacity-50 cursor-pointer"
     >
       <svg className="w-4 h-4" viewBox="0 0 24 24">
         <path

@@ -120,7 +120,7 @@ export default function UserAccountMenu({
           role="menu"
           aria-orientation="vertical"
           aria-labelledby="account-menu-button"
-          className="absolute right-0 mt-2 w-64 origin-top-right rounded-[16px] bg-white border border-[#F0E6D6] shadow-[0_10px_30px_rgba(35,37,54,0.10)] py-2 z-50 focus:outline-none"
+          className="absolute right-0 mt-2 w-64 origin-top-right rounded-lg bg-white border border-[#F0E6D6] shadow-[0_10px_30px_rgba(35,37,54,0.10)] py-2 z-50 focus:outline-none"
         >
           {/* Header */}
           <div className="px-4 py-3 border-b border-[#F0E6D6] mb-1">

@@ -121,7 +121,7 @@ export default async function MePage() {
               <ScrollReveal delayMs={150} className="w-full max-w-sm sm:max-w-md">
                 <div className="relative mx-auto w-full pt-6 pb-10 px-4">
                   {/* Floating Badge Top */}
-                  <div className="absolute top-0 -left-2 sm:-left-6 z-20 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2 shadow-[0_10px_30px_rgba(35,37,54,0.1)] text-xs font-bold text-[#232536] transform -rotate-3 flex items-center gap-2">
+                  <div className="absolute top-0 -left-2 sm:-left-6 z-20 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-md px-4 py-2 shadow-[0_10px_30px_rgba(35,37,54,0.1)] text-xs font-bold text-[#232536] transform -rotate-3 flex items-center gap-2">
                     <Image
                       src="/icons/3d/location.svg"
                       alt=""
@@ -142,7 +142,7 @@ export default async function MePage() {
                       width={420}
                       height={500}
                       priority
-                      className="w-full aspect-[4/5] object-cover object-top rounded-3xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
+                      className="w-full aspect-[4/5] object-cover object-top rounded-xl shadow-[0_18px_44px_rgba(35,37,54,0.16)] border-4 border-white"
                     />
                   </div>
 
@@ -153,12 +153,12 @@ export default async function MePage() {
                       alt="Ivan at a leadership event"
                       width={280}
                       height={280}
-                      className="w-full aspect-square object-cover rounded-2xl shadow-[0_18px_44px_rgba(35,37,54,0.2)] border-[6px] border-white"
+                      className="w-full aspect-square object-cover rounded-xl shadow-[0_18px_44px_rgba(35,37,54,0.2)] border-[6px] border-white"
                     />
                   </div>
 
                   {/* Floating Badge Bottom */}
-                  <div className="absolute -bottom-8 right-0 z-30 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.1)] text-xs font-bold text-teal-text transform rotate-3 flex items-center gap-2">
+                  <div className="absolute -bottom-8 right-0 z-30 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-md px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.1)] text-xs font-bold text-teal-text transform rotate-3 flex items-center gap-2">
                     <Image
                       src="/icons/3d/microphone.svg"
                       alt=""
@@ -181,7 +181,7 @@ export default async function MePage() {
       <section className="py-20 bg-white border-b border-[#F5ECDE]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
-            <div className="bg-[#FDF8F1] border-2 border-[#F5ECDE] rounded-3xl p-8 sm:p-12 shadow-[0_10px_30px_rgba(35,37,54,0.06)] relative overflow-hidden">
+            <div className="bg-[#FDF8F1] border-2 border-[#F5ECDE] rounded-lg p-8 sm:p-12 shadow-[0_10px_30px_rgba(35,37,54,0.06)] relative overflow-hidden">
               <span className="text-xs uppercase font-bold tracking-widest text-coral-text mb-4 block">
                 The Central Philosophy
               </span>
@@ -232,7 +232,7 @@ export default async function MePage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Pillar 1: Systems Consulting */}
             <ScrollReveal delayMs={50}>
-              <div className="bg-[#FCEBE7]/70 hover:bg-[#FCEBE7] border border-[#EF5B45]/15 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-[#FCEBE7]/70 hover:bg-[#FCEBE7] border border-[#EF5B45]/15 rounded-lg p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <Image
                     src="/icons/3d/gear.svg"
@@ -272,7 +272,7 @@ export default async function MePage() {
 
             {/* Pillar 2: Training & People */}
             <ScrollReveal delayMs={120}>
-              <div className="bg-[#EAF4F3]/70 hover:bg-[#EAF4F3] border border-[#2AA198]/15 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-[#EAF4F3]/70 hover:bg-[#EAF4F3] border border-[#2AA198]/15 rounded-lg p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <Image
                     src="/icons/3d/graduation-cap.svg"
@@ -312,7 +312,7 @@ export default async function MePage() {
 
             {/* Pillar 3: Writing & Media */}
             <ScrollReveal delayMs={190}>
-              <div className="bg-[#FDF3DC]/70 hover:bg-[#FDF3DC] border border-[#F7C55C]/30 rounded-3xl p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
+              <div className="bg-[#FDF3DC]/70 hover:bg-[#FDF3DC] border border-[#F7C55C]/30 rounded-lg p-8 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
                   <Image
                     src="/icons/3d/pen.svg"
@@ -370,7 +370,7 @@ export default async function MePage() {
           <div className="space-y-8">
             {/* Background 1: On Teaching */}
             <ScrollReveal delayMs={60}>
-              <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] transition-all duration-300">
+              <div className="bg-white border border-[#F5ECDE] rounded-lg p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] transition-all duration-300">
                 <div className="flex items-center gap-3 mb-7">
                   <Image
                     src="/icons/3d/graduation-cap.svg"
@@ -392,7 +392,7 @@ export default async function MePage() {
 
             {/* Background 2: On The Method */}
             <ScrollReveal delayMs={120}>
-              <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] transition-all duration-300">
+              <div className="bg-white border border-[#F5ECDE] rounded-lg p-8 sm:p-10 shadow-[0_10px_30px_rgba(35,37,54,0.05)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.09)] transition-all duration-300">
                 <div className="flex items-center gap-3 mb-7">
                   <Image
                     src="/icons/3d/gear.svg"
@@ -429,7 +429,7 @@ export default async function MePage() {
             <div className="space-y-6">
               {testimonials.map((t: any, idx: number) => (
                 <ScrollReveal key={idx} delayMs={idx * 80}>
-                  <div className="bg-[#FDF8F1] p-8 rounded-3xl border border-[#F5ECDE] shadow-sm">
+                  <div className="bg-[#FDF8F1] p-8 rounded-lg border border-[#F5ECDE] shadow-sm">
                     <p className="text-lg text-[#232536] leading-relaxed mb-4">
                       &ldquo;{t.quote || t.content || t.text}&rdquo;
                     </p>
