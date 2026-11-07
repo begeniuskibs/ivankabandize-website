@@ -79,7 +79,7 @@ export default async function MePage() {
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6">
               <ScrollReveal>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#EF5B45] text-xs font-bold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
                   <span>Background &amp; Story</span>
                 </div>
               </ScrollReveal>
@@ -164,7 +164,7 @@ export default async function MePage() {
                   </div>
 
                   {/* Floating Badge Bottom */}
-                  <div className="absolute -bottom-8 right-0 z-30 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.1)] text-xs font-bold text-[#2AA198] transform rotate-3 flex items-center gap-2">
+                  <div className="absolute -bottom-8 right-0 z-30 bg-white/95 backdrop-blur-sm border border-[#F5ECDE] rounded-2xl px-4 py-2.5 shadow-[0_10px_30px_rgba(35,37,54,0.1)] text-xs font-bold text-teal-text transform rotate-3 flex items-center gap-2">
                     <Image
                       src="/icons/3d/microphone.svg"
                       alt=""
@@ -188,7 +188,7 @@ export default async function MePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="bg-[#FDF8F1] border-2 border-[#F5ECDE] rounded-3xl p-8 sm:p-12 shadow-[0_10px_30px_rgba(35,37,54,0.06)] relative overflow-hidden">
-              <span className="text-xs uppercase font-bold tracking-widest text-[#EF5B45] mb-4 block">
+              <span className="text-xs uppercase font-bold tracking-widest text-coral-text mb-4 block">
                 The Central Philosophy
               </span>
               <blockquote className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl lg:text-4xl text-[#232536] font-medium leading-snug pl-6 border-l-4 border-[#EF5B45] my-4">
@@ -208,7 +208,7 @@ export default async function MePage() {
                     <p className="text-xs text-[#5A5D70]">Systems Consultant &amp; Training Lead</p>
                   </div>
                 </div>
-                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#EAF4F3] text-[#2AA198]">
+                <span className="text-xs font-semibold px-3 py-1 rounded-full bg-[#EAF4F3] text-teal-text">
                   Operational Clarity
                 </span>
               </div>
@@ -223,7 +223,7 @@ export default async function MePage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="text-center max-w-2xl mx-auto mb-16">
-              <span className="text-xs uppercase font-bold tracking-widest text-[#2AA198] mb-2 block">
+              <span className="text-xs uppercase font-bold tracking-widest text-teal-text mb-2 block">
                 Areas of Practice
               </span>
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight">
@@ -248,7 +248,7 @@ export default async function MePage() {
                     height={48}
                     className="w-12 h-12 object-contain drop-shadow-md mb-8"
                   />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-2 block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-coral-deep mb-2 block">
                     Consulting
                   </span>
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-3">
@@ -262,7 +262,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#EF5B45]/10">
                   <Link
                     href="/workwithme"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#EF5B45] hover:text-[#D94834] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-coral-deep hover:text-[#D94834] transition"
                   >
                     <span>Explore Advisory</span>
                     <ArrowRight
@@ -288,7 +288,7 @@ export default async function MePage() {
                     height={48}
                     className="w-12 h-12 object-contain drop-shadow-md mb-8"
                   />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-2 block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-teal-text mb-2 block">
                     Training Lead
                   </span>
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-3">
@@ -302,7 +302,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#2AA198]/10">
                   <Link
                     href="/workwithme"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#2AA198] hover:text-[#1D7A73] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-teal-text hover:text-[#1D7A73] transition"
                   >
                     <span>Training Method</span>
                     <ArrowRight
@@ -328,7 +328,7 @@ export default async function MePage() {
                     height={48}
                     className="w-12 h-12 object-contain drop-shadow-md mb-8"
                   />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-2 block">
+                  <span className="text-xs font-bold uppercase tracking-wider text-gold-text mb-2 block">
                     Broadcast &amp; Garden
                   </span>
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-3">
@@ -342,7 +342,7 @@ export default async function MePage() {
                 <div className="pt-6 mt-6 border-t border-[#F7C55C]/20">
                   <Link
                     href="/garden"
-                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-[#C99424] hover:text-[#9A7015] transition"
+                    className="group inline-flex items-center gap-1.5 text-sm font-bold text-gold-text hover:text-[#9A7015] transition"
                   >
                     <span>Read The Garden</span>
                     <ArrowRight
@@ -364,7 +364,7 @@ export default async function MePage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <ScrollReveal>
             <div className="mb-12">
-              <span className="text-xs uppercase font-bold tracking-widest text-[#2AA198] mb-2 block">
+              <span className="text-xs uppercase font-bold tracking-widest text-teal-text mb-2 block">
                 Background
               </span>
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl font-bold text-[#232536] tracking-tight">
@@ -386,7 +386,7 @@ export default async function MePage() {
                     height={28}
                     className="w-7 h-7 object-contain drop-shadow-md shrink-0"
                   />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#2AA198]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-teal-text">
                     School of Community Leadership
                   </span>
                 </div>
@@ -408,7 +408,7 @@ export default async function MePage() {
                     height={28}
                     className="w-7 h-7 object-contain drop-shadow-md shrink-0"
                   />
-                  <span className="text-xs font-bold uppercase tracking-wider text-[#EF5B45]">
+                  <span className="text-xs font-bold uppercase tracking-wider text-coral-text">
                     The Engagement Method
                   </span>
                 </div>

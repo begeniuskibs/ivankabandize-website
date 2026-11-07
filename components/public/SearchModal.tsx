@@ -295,7 +295,7 @@ function SearchOverlayContent() {
                             {item.stream}
                           </span>
                           {item.visibility && item.visibility !== 'public' && (
-                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#2AA198]/10 text-[#2AA198] border border-[#2AA198]/20">
+                            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#2AA198]/10 text-teal-text border border-[#2AA198]/20">
                               Members
                             </span>
                           )}

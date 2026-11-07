@@ -45,7 +45,7 @@ export default async function WorkWithMePage() {
             {/* Left Narrative Column */}
             <div className="lg:col-span-7 space-y-6">
               <ScrollReveal>
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#EF5B45] text-xs font-bold uppercase tracking-widest">
+                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
                   <Link href="/" className="hover:underline text-[#5A5D70]">Home</Link>
                   <span className="text-[#5A5D70]">/</span>
                   <span>Work With Me</span>
@@ -143,7 +143,7 @@ export default async function WorkWithMePage() {
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Audit
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-coral-text mb-4">
                     Phase 1 &middot; Diagnose
                   </p>
                   <ul className="space-y-3 text-base text-[#5A5D70] leading-relaxed list-disc list-inside">
@@ -170,7 +170,7 @@ export default async function WorkWithMePage() {
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Build
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-teal-text mb-4">
                     Phase 2 &middot; Architect + Sequence
                   </p>
                   <ul className="space-y-3 text-base text-[#5A5D70] leading-relaxed list-disc list-inside">
@@ -197,7 +197,7 @@ export default async function WorkWithMePage() {
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-semibold text-[#232536] mb-1">
                     Support
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gold-text mb-4">
                     Phase 3 &middot; Embed
                   </p>
                   <ul className="space-y-3 text-base text-[#5A5D70] leading-relaxed list-disc list-inside">

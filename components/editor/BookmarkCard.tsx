@@ -44,7 +44,7 @@ export default function BookmarkCard({
         {/* Content Column */}
         <div className="kg-bookmark-content flex flex-col justify-between flex-1 min-w-0 p-5 overflow-hidden">
           <div className="w-full">
-            <div className="kg-bookmark-title font-['MTN_Brighter_Sans',_sans-serif] text-[15px] font-semibold text-[#232536] leading-[1.4] line-clamp-2 break-words group-hover:text-[#EF5B45] transition-colors">
+            <div className="kg-bookmark-title font-['MTN_Brighter_Sans',_sans-serif] text-[15px] font-semibold text-[#232536] leading-[1.4] line-clamp-2 break-words group-hover:text-coral-text transition-colors">
               {displayTitle}
             </div>
             {description ? (

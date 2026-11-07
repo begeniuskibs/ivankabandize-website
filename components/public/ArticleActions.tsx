@@ -244,7 +244,7 @@ export default function ArticleActions({ title, slug }: ArticleActionsProps) {
               onClick={() => setIsMenuOpen(false)}
               className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-[#232536] hover:bg-[#FAF3E8] rounded-lg transition font-medium"
             >
-              <MailIcon size={14} className="w-3.5 h-3.5 text-[#EF5B45]" aria-hidden="true" />
+              <MailIcon size={14} className="w-3.5 h-3.5 text-coral-text" aria-hidden="true" />
               <span>Email</span>
             </a>
           </div>

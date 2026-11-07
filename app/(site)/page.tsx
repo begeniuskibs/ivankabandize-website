@@ -313,7 +313,7 @@ export default async function HomePage() {
                     Your organisation runs on gut instinct and heroics. Let&rsquo;s replace that with systems your team can actually run.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#EF5B45]/15 font-bold text-sm text-[#EF5B45] inline-flex items-center gap-1.5">
+                <div className="mt-6 pt-4 border-t border-[#EF5B45]/15 font-bold text-sm text-coral-deep inline-flex items-center gap-1.5">
                   <span>Get started</span>
                   <ArrowRight
                     size={14}
@@ -347,7 +347,7 @@ export default async function HomePage() {
                     Personal productivity that doesn&rsquo;t depend on willpower - how to design defaults instead of chasing goals.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#F7C55C]/25 font-bold text-sm text-[#C99424] inline-flex items-center gap-1.5">
+                <div className="mt-6 pt-4 border-t border-[#F7C55C]/25 font-bold text-sm text-gold-text inline-flex items-center gap-1.5">
                   <span>Get started</span>
                   <ArrowRight
                     size={14}
@@ -381,7 +381,7 @@ export default async function HomePage() {
                     Practical leadership for people who&rsquo;d rather build a healthy team than fight the same fire every week.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#2AA198]/15 font-bold text-sm text-[#2AA198] inline-flex items-center gap-1.5">
+                <div className="mt-6 pt-4 border-t border-[#2AA198]/15 font-bold text-sm text-teal-text inline-flex items-center gap-1.5">
                   <span>Get started</span>
                   <ArrowRight
                     size={14}
@@ -415,7 +415,7 @@ export default async function HomePage() {
                     What actually changes for your work and your organisation - translated from the research, minus the hype.
                   </p>
                 </div>
-                <div className="mt-6 pt-4 border-t border-[#6B66C4]/15 font-bold text-sm text-[#6B66C4] inline-flex items-center gap-1.5">
+                <div className="mt-6 pt-4 border-t border-[#6B66C4]/15 font-bold text-sm text-lav-text inline-flex items-center gap-1.5">
                   <span>Get started</span>
                   <ArrowRight
                     size={14}
@@ -449,13 +449,13 @@ export default async function HomePage() {
             <ScrollReveal delayMs={50}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-12 h-12 rounded-full bg-[#EF5B45] text-white flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-[#EF5B45] text-[#232536] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     1
                   </div>
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
                     Diagnose
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#EF5B45] mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-coral-text mb-4">
                     See it clearly
                   </p>
                   <p className="text-base text-[#5A5D70] leading-relaxed mb-6">
@@ -472,13 +472,13 @@ export default async function HomePage() {
             <ScrollReveal delayMs={120}>
               <div className="bg-white border border-[#F5ECDE] rounded-3xl p-8 sm:p-10 h-full flex flex-col justify-between shadow-[0_10px_30px_rgba(35,37,54,0.06)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.1)] hover:-translate-y-1.5 transition-all duration-300">
                 <div>
-                  <div className="w-12 h-12 rounded-full bg-[#2AA198] text-white flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
+                  <div className="w-12 h-12 rounded-full bg-[#2AA198] text-[#232536] flex items-center justify-center font-['MTN_Brighter_Sans',_sans-serif] font-bold text-xl mb-6 shadow-sm">
                     2
                   </div>
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
                     Architect
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#2AA198] mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-teal-text mb-4">
                     Design the fix
                   </p>
                   <p className="text-base text-[#5A5D70] leading-relaxed mb-6">
@@ -501,7 +501,7 @@ export default async function HomePage() {
                   <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-semibold text-[#232536] mb-1">
                     Sequence
                   </h3>
-                  <p className="text-xs font-bold uppercase tracking-wider text-[#C99424] mb-4">
+                  <p className="text-xs font-bold uppercase tracking-wider text-gold-text mb-4">
                     Know what&apos;s first
                   </p>
                   <p className="text-base text-[#5A5D70] leading-relaxed mb-6">

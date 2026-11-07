@@ -118,7 +118,7 @@ export default function LetsTalkPage() {
           {/* ================= LEFT COLUMN: STATIC ================= */}
           <div className="lg:col-span-5 space-y-6">
             <ScrollReveal>
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-[#EF5B45] text-xs font-bold uppercase tracking-widest">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#FCEBE7] border border-[#EF5B45]/20 text-coral-deep text-xs font-bold uppercase tracking-widest">
                 <Link href="/" className="hover:underline text-[#5A5D70]">
                   Home
                 </Link>
@@ -200,7 +200,7 @@ export default function LetsTalkPage() {
                   <div className="flex items-center gap-2 sm:gap-3 mb-8">
                     {/* Step 1 badge */}
                     <div className={`flex items-center gap-2 text-xs sm:text-sm font-bold ${
-                      step === 1 ? 'text-[#232536]' : step > 1 ? 'text-[#2AA198]' : 'text-[#A9ACBC]'
+                      step === 1 ? 'text-[#232536]' : step > 1 ? 'text-teal-text' : 'text-[#A9ACBC]'
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 1
@@ -219,7 +219,7 @@ export default function LetsTalkPage() {
 
                     {/* Step 2 badge */}
                     <div className={`flex items-center gap-2 text-xs sm:text-sm font-bold ${
-                      step === 2 ? 'text-[#232536]' : step > 2 ? 'text-[#2AA198]' : 'text-[#A9ACBC]'
+                      step === 2 ? 'text-[#232536]' : step > 2 ? 'text-teal-text' : 'text-[#A9ACBC]'
                     }`}>
                       <div className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
                         step === 2
@@ -298,7 +298,7 @@ export default function LetsTalkPage() {
                         }`}
                       />
                       {errors.name && (
-                        <p className="text-xs font-bold text-[#EF5B45] mt-1.5">{errors.name}</p>
+                        <p className="text-xs font-bold text-coral-text mt-1.5">{errors.name}</p>
                       )}
                     </div>
 
@@ -320,7 +320,7 @@ export default function LetsTalkPage() {
                         }`}
                       />
                       {errors.email && (
-                        <p className="text-xs font-bold text-[#EF5B45] mt-1.5">{errors.email}</p>
+                        <p className="text-xs font-bold text-coral-text mt-1.5">{errors.email}</p>
                       )}
                     </div>
 
@@ -377,7 +377,7 @@ export default function LetsTalkPage() {
                         }`}
                       />
                       {errors.problem && (
-                        <p className="text-xs font-bold text-[#EF5B45] mt-1.5">{errors.problem}</p>
+                        <p className="text-xs font-bold text-coral-text mt-1.5">{errors.problem}</p>
                       )}
                     </div>
 
@@ -483,7 +483,7 @@ export default function LetsTalkPage() {
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                          className="text-xs font-bold text-coral-text hover:underline mt-1 cursor-pointer"
                         >
                           Edit
                         </button>
@@ -498,7 +498,7 @@ export default function LetsTalkPage() {
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                          className="text-xs font-bold text-coral-text hover:underline mt-1 cursor-pointer"
                         >
                           Edit
                         </button>
@@ -515,7 +515,7 @@ export default function LetsTalkPage() {
                         <button
                           type="button"
                           onClick={() => setStep(1)}
-                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                          className="text-xs font-bold text-coral-text hover:underline mt-1 cursor-pointer"
                         >
                           Edit
                         </button>
@@ -532,7 +532,7 @@ export default function LetsTalkPage() {
                         <button
                           type="button"
                           onClick={() => setStep(2)}
-                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                          className="text-xs font-bold text-coral-text hover:underline mt-1 cursor-pointer"
                         >
                           Edit
                         </button>
@@ -547,7 +547,7 @@ export default function LetsTalkPage() {
                         <button
                           type="button"
                           onClick={() => setStep(2)}
-                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                          className="text-xs font-bold text-coral-text hover:underline mt-1 cursor-pointer"
                         >
                           Edit
                         </button>
@@ -562,7 +562,7 @@ export default function LetsTalkPage() {
                         <button
                           type="button"
                           onClick={() => setStep(2)}
-                          className="text-xs font-bold text-[#EF5B45] hover:underline mt-1 cursor-pointer"
+                          className="text-xs font-bold text-coral-text hover:underline mt-1 cursor-pointer"
                         >
                           Edit
                         </button>
@@ -658,7 +658,7 @@ export default function LetsTalkPage() {
 
                     {/* Next Steps Box */}
                     <div className="bg-[#FDF8F1] border border-[#F5ECDE] rounded-2xl p-6 sm:p-7 text-left space-y-4 mt-6">
-                      <p className="text-xs font-bold uppercase tracking-widest text-[#2AA198]">
+                      <p className="text-xs font-bold uppercase tracking-widest text-teal-text">
                         What happens next
                       </p>
 
