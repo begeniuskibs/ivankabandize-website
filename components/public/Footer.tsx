@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { signOut } from '@/app/auth/actions'
+import SocialLinks from '@/components/public/SocialLinks'
 
 export default async function Footer() {
   let displayName: string | null = null
@@ -42,21 +43,24 @@ export default async function Footer() {
   return (
     <footer className="bg-[#232536] text-[#B8BAC9] py-14 mt-auto font-sans text-sm">
       <div className="max-w-6xl mx-auto max-md:px-5 px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between max-md:gap-8 gap-6">
-        <div className="flex flex-col items-center md:items-start gap-1 max-md:text-center">
-          <p className="font-['MTN_Brighter_Sans',_sans-serif] font-bold text-lg text-white">
-            Ivan Kabandize<span className="text-[#EF5B45]">.</span>
-          </p>
-          <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-[#8A8D9F] text-xs sm:text-sm">
-            <span>© {new Date().getFullYear()} All rights reserved.</span>
-            <span aria-hidden="true" className="text-[#5A5D70]">-</span>
-            <Link href="/privacy-policy" className="hover:text-white transition">
-              Privacy Policy
-            </Link>
-            <span aria-hidden="true" className="text-[#5A5D70]">-</span>
-            <Link href="/cookie-policy" className="hover:text-white transition">
-              Cookie Policy
-            </Link>
+        <div className="flex flex-col items-center md:items-start gap-3 max-md:text-center">
+          <div>
+            <p className="font-['MTN_Brighter_Sans',_sans-serif] font-bold text-lg text-white">
+              Ivan Kabandize<span className="text-[#EF5B45]">.</span>
+            </p>
+            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-2 gap-y-1 text-[#8A8D9F] text-xs sm:text-sm mt-1">
+              <span>© {new Date().getFullYear()} All rights reserved.</span>
+              <span aria-hidden="true" className="text-[#5A5D70]">-</span>
+              <Link href="/privacy-policy" className="hover:text-white transition">
+                Privacy Policy
+              </Link>
+              <span aria-hidden="true" className="text-[#5A5D70]">-</span>
+              <Link href="/cookie-policy" className="hover:text-white transition">
+                Cookie Policy
+              </Link>
+            </div>
           </div>
+          <SocialLinks variant="dark" className="-ml-2.5 max-md:ml-0" />
         </div>
 
         <div className="flex max-md:flex-col flex-wrap items-center justify-center max-md:gap-1 gap-6 font-medium max-md:w-full">
