@@ -17,7 +17,7 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode
 }) {
-  const { user, isOwner } = await getAuthenticatedOwner()
+  const { user, isOwner } = await getAuthenticatedOwner({ checkMfa: false })
 
   if (!user) {
     redirect('/login?redirectTo=/admin/posts/editor&error=Please+sign+in+to+access+the+Admin+Console')

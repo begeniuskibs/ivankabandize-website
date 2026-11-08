@@ -29,6 +29,14 @@ export async function signIn(formData: FormData) {
     )
   }
 
+  const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+  if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
+    revalidatePath('/', 'layout')
+    redirect(
+      `/auth/mfa-challenge?redirectTo=${encodeURIComponent(targetUrl)}`
+    )
+  }
+
   revalidatePath('/', 'layout')
   redirect(targetUrl)
 }

@@ -1,0 +1,249 @@
+'use client'
+
+import React, { useState, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+import { ShieldCheck, Smartphone, AlertCircle, Loader2 } from 'lucide-react'
+import { createClient } from '@/utils/supabase/client'
+import { safeRedirectPath } from '@/lib/safeRedirect'
+import { signOut } from '@/app/auth/actions'
+import Button from '@/components/Button'
+
+interface FactorItem {
+  id: string
+  friendly_name?: string
+  factor_type: string
+  status: string
+}
+
+interface MfaChallengeClientProps {
+  redirectTo?: string
+}
+
+export default function MfaChallengeClient({ redirectTo }: MfaChallengeClientProps) {
+  const router = useRouter()
+  const [code, setCode] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [initialChecking, setInitialChecking] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [factors, setFactors] = useState<FactorItem[]>([])
+  const [activeFactorId, setActiveFactorId] = useState<string>('')
+
+  useEffect(() => {
+    let isMounted = true
+
+    async function checkSessionAndFactors() {
+      try {
+        const supabase = createClient()
+        const {
+          data: { user },
+        } = await supabase.auth.getUser()
+
+        if (!user) {
+          router.replace(`/login?redirectTo=${encodeURIComponent(redirectTo || '/admin')}`)
+          return
+        }
+
+        const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+        if (aalData?.currentLevel === 'aal2') {
+          router.replace(safeRedirectPath(redirectTo, '/admin'))
+          return
+        }
+
+        const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors()
+        if (factorsError || !factorsData) {
+          if (isMounted) {
+            setError('Could not retrieve authentication factors. Please try again.')
+            setInitialChecking(false)
+          }
+          return
+        }
+
+        const verified = (factorsData.totp || []).filter(
+          (f) => f.status === 'verified'
+        )
+
+        if (verified.length === 0) {
+          router.replace(safeRedirectPath(redirectTo, '/admin'))
+          return
+        }
+
+        if (isMounted) {
+          setFactors(verified)
+          setActiveFactorId(verified[0].id)
+          setInitialChecking(false)
+        }
+      } catch {
+        if (isMounted) {
+          setError('An unexpected error occurred. Please try again.')
+          setInitialChecking(false)
+        }
+      }
+    }
+
+    checkSessionAndFactors()
+
+    return () => {
+      isMounted = false
+    }
+  }, [redirectTo, router])
+
+  async function handleVerify(e: React.FormEvent) {
+    e.preventDefault()
+    const trimmed = code.trim()
+    if (trimmed.length !== 6) {
+      setError('Please enter a valid 6-digit code.')
+      return
+    }
+
+    setLoading(true)
+    setError(null)
+
+    try {
+      const supabase = createClient()
+      let res = await supabase.auth.mfa.challengeAndVerify({
+        factorId: activeFactorId,
+        code: trimmed,
+      })
+
+      // If verifying the active factor fails and a second factor is enrolled, attempt fallback automatically
+      if (res.error && factors.length > 1) {
+        const other = factors.find((f) => f.id !== activeFactorId)
+        if (other) {
+          const fallbackRes = await supabase.auth.mfa.challengeAndVerify({
+            factorId: other.id,
+            code: trimmed,
+          })
+          if (!fallbackRes.error) {
+            res = fallbackRes
+          }
+        }
+      }
+
+      if (res.error) {
+        setError('Invalid verification code. Please check your authenticator app and try again.')
+        setLoading(false)
+        return
+      }
+
+      const destination = safeRedirectPath(redirectTo, '/admin')
+      router.push(destination)
+      router.refresh()
+    } catch {
+      setError('Verification could not be completed. Please try again.')
+      setLoading(false)
+    }
+  }
+
+  if (initialChecking) {
+    return (
+      <div className="w-full max-w-md p-8 bg-white border border-[#E8DCC4] rounded-2xl shadow-sm flex flex-col items-center justify-center min-h-[300px]">
+        <Loader2 className="w-8 h-8 text-[#CF3F29] animate-spin mb-3" />
+        <p className="text-sm font-medium text-[#6B7280]">Checking verification status...</p>
+      </div>
+    )
+  }
+
+  const activeFactor = factors.find((f) => f.id === activeFactorId)
+
+  return (
+    <div className="w-full max-w-md bg-white border border-[#E8DCC4] rounded-2xl shadow-sm p-6 sm:p-8">
+      <div className="flex flex-col items-center text-center mb-6">
+        <div className="w-12 h-12 rounded-full bg-[#EF5B45]/10 text-[#EF5B45] flex items-center justify-center mb-4">
+          <ShieldCheck className="w-6 h-6" />
+        </div>
+        <h1 className="text-xl sm:text-2xl font-bold text-[#232536] mb-1.5">
+          Two - Step Verification
+        </h1>
+        <p className="text-xs sm:text-sm text-[#6B7280] max-w-sm">
+          Enter the 6-digit verification code generated by your authenticator app to complete sign in.
+        </p>
+      </div>
+
+      {factors.length > 1 && (
+        <div className="mb-5 p-2.5 bg-gray-50 border border-gray-200 rounded-xl">
+          <div className="flex items-center justify-between text-xs text-gray-600 mb-1.5">
+            <span className="font-semibold text-gray-700">Authenticator device:</span>
+            <span className="flex items-center gap-1 text-gray-500">
+              <Smartphone className="w-3.5 h-3.5" />
+              {activeFactor?.friendly_name || 'Primary authenticator'}
+            </span>
+          </div>
+          <div className="flex gap-1.5">
+            {factors.map((f, idx) => (
+              <button
+                key={f.id}
+                type="button"
+                onClick={() => {
+                  setActiveFactorId(f.id)
+                  setError(null)
+                }}
+                className={`flex-1 text-xs py-1 px-2 rounded-lg font-medium transition cursor-pointer ${
+                  activeFactorId === f.id
+                    ? 'bg-black text-white'
+                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                }`}
+              >
+                {f.friendly_name || `Device ${idx + 1}`}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {error && (
+        <div className="mb-5 p-3.5 bg-red-50 border border-red-200 text-red-700 text-xs rounded-xl flex items-start gap-2.5">
+          <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+          <div className="leading-relaxed">{error}</div>
+        </div>
+      )}
+
+      <form onSubmit={handleVerify} className="space-y-4">
+        <div>
+          <label htmlFor="totp-code" className="block text-xs font-semibold text-gray-700 mb-1.5 text-center">
+            Security code
+          </label>
+          <input
+            id="totp-code"
+            name="code"
+            type="text"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            autoFocus
+            maxLength={6}
+            placeholder="000000"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+            className="w-full text-center tracking-[0.4em] font-mono text-2xl py-3 px-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black text-[#232536] transition"
+          />
+        </div>
+
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={loading || code.trim().length !== 6}
+          className="w-full justify-center"
+        >
+          {loading ? (
+            <span className="inline-flex items-center gap-2">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Verifying...
+            </span>
+          ) : (
+            'Verify and continue'
+          )}
+        </Button>
+      </form>
+
+      <div className="mt-6 pt-5 border-t border-gray-100 flex flex-col items-center gap-2">
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="text-xs text-gray-500 hover:text-gray-900 transition font-medium cursor-pointer"
+          >
+            Cancel and sign out
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
