@@ -25,7 +25,7 @@ interface LibraryItem {
   type: 'podcast' | 'book' | 'newsletter' | string
   url: string
   thumbnail_url: string | null
-  recommendation_note: string | null
+  recommendation_note?: string | null
   created_at: string
 }
 
@@ -39,9 +39,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const supabase = await createClient()
 
   // 1. Fetch all library items
+  // Explicit columns: library_items.take must never be selected through the public client.
   const { data: items } = await supabase
     .from('library_items')
-    .select('*')
+    .select('id, title, creator, type, url, thumbnail_url, created_at')
     .order('created_at', { ascending: true })
 
   const allItems: LibraryItem[] = items || []
