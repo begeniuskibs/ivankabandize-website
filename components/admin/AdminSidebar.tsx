@@ -357,7 +357,7 @@ export default function AdminSidebar() {
                 className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
               >
                 <span>🔐</span>
-                <span>Two - Step Verification</span>
+                <span>Two-step verification</span>
               </Link>
             </div>
 

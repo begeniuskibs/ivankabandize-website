@@ -4,7 +4,7 @@ import MfaChallengeClient from './MfaChallengeClient'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Two - Step Verification',
+  title: 'Two-step verification',
   robots: {
     index: false,
     follow: false,

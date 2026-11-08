@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import TipTapEditor from '@/components/editor/TipTapEditor'
 import UnsplashModal from '@/components/editor/UnsplashModal'
+import UnsavedChangesDialog from '@/components/admin/UnsavedChangesDialog'
 import CaptionInput from '@/components/editor/CaptionInput'
 import { renderCaption } from '@/components/editor/captionLinks'
 import { ImageIcon } from '@/components/admin/icons'
@@ -103,6 +104,9 @@ function PostEditorContent() {
   const [success, setSuccess] = useState<string | null>(null)
   const [isDirty, setIsDirty] = useState(false)
   const isDirtyRef = useRef(false)
+  const [isUnsavedDialogOpen, setIsUnsavedDialogOpen] = useState(false)
+  const [isSavingAndLeaving, setIsSavingAndLeaving] = useState(false)
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null)
 
   const markDirty = useCallback(() => {
     if (!isDirtyRef.current) {
@@ -126,6 +130,50 @@ function PostEditorContent() {
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
+
+  // Intercept same-origin anchor navigation when editor is dirty
+  useEffect(() => {
+    function handleAnchorClick(e: MouseEvent) {
+      if (!isDirtyRef.current) return
+      if (e.button !== 0) return
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+      const target = e.target as HTMLElement | null
+      if (!target) return
+
+      const anchor = target.closest('a')
+      if (!anchor) return
+      if (anchor.target === '_blank' || anchor.hasAttribute('download')) return
+
+      const href = anchor.getAttribute('href')
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+        return
+      }
+
+      try {
+        const url = new URL(anchor.href, window.location.href)
+        if (url.origin !== window.location.origin) return
+        if (url.pathname === window.location.pathname && url.search === window.location.search) {
+          return
+        }
+
+        e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
+
+        const dest = url.pathname + url.search + url.hash
+        setPendingUrl(dest)
+        setIsUnsavedDialogOpen(true)
+      } catch {
+        // Ignore invalid URLs
+      }
+    }
+
+    document.addEventListener('click', handleAnchorClick, true)
+    return () => {
+      document.removeEventListener('click', handleAnchorClick, true)
     }
   }, [])
 
@@ -286,9 +334,12 @@ function PostEditorContent() {
     markDirty()
   }
 
-  async function handleSave(status: 'draft' | 'scheduled' | 'published') {
+  async function handleSave(
+    status: 'draft' | 'scheduled' | 'published',
+    options: { redirectOnCreate?: boolean } = { redirectOnCreate: true }
+  ): Promise<boolean> {
     if (emptyLoadBlocked) {
-      return
+      return false
     }
     setError(null)
     setSuccess(null)
@@ -297,13 +348,13 @@ function PostEditorContent() {
     if (!title.trim()) {
       setError('Please provide a post title.')
       setLoading(false)
-      return
+      return false
     }
 
     if (slug && slug.trim().toLowerCase() === 'series') {
       setError("The slug 'series' is reserved.")
       setLoading(false)
-      return
+      return false
     }
 
     let targetPublishedAt: string | null = null
@@ -317,7 +368,7 @@ function PostEditorContent() {
       if (!scheduledDate) {
         setError('Please choose a future date & time for scheduled publishing.')
         setLoading(false)
-        return
+        return false
       }
       targetPublishedAt = new Date(scheduledDate).toISOString()
     } else {
@@ -372,15 +423,46 @@ function PostEditorContent() {
       setSuccess(`Post successfully ${status === 'published' ? 'published' : status === 'scheduled' ? 'scheduled' : 'saved as draft'}!`)
       setIsDrawerOpen(false)
 
-      if (!postId && data.post?.id) {
+      if (options.redirectOnCreate && !postId && data.post?.id) {
         router.push(`/admin/posts/editor?id=${data.post.id}`)
       }
+      return true
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Failed to save'
       setError(message)
+      return false
     } finally {
       setLoading(false)
     }
+  }
+
+  async function handleSaveAndLeave() {
+    setIsSavingAndLeaving(true)
+    const success = await handleSave(publishStatus, { redirectOnCreate: false })
+    setIsSavingAndLeaving(false)
+    if (success) {
+      setIsUnsavedDialogOpen(false)
+      const dest = pendingUrl || '/admin/posts'
+      setPendingUrl(null)
+      router.push(dest)
+    } else {
+      // If the save fails, stay on the page, close the dialog and show the existing error message
+      setIsUnsavedDialogOpen(false)
+      setPendingUrl(null)
+    }
+  }
+
+  function handleLeaveWithoutSaving() {
+    setIsUnsavedDialogOpen(false)
+    clearDirty()
+    const dest = pendingUrl || '/admin/posts'
+    setPendingUrl(null)
+    router.push(dest)
+  }
+
+  function handleKeepEditing() {
+    setIsUnsavedDialogOpen(false)
+    setPendingUrl(null)
   }
 
   return (
@@ -408,10 +490,9 @@ function PostEditorContent() {
             href="/admin/posts"
             onClick={(e) => {
               if (isDirtyRef.current) {
-                const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
-                if (!confirmed) {
-                  e.preventDefault()
-                }
+                e.preventDefault()
+                setPendingUrl('/admin/posts')
+                setIsUnsavedDialogOpen(true)
               }
             }}
             className="group text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
@@ -995,6 +1076,20 @@ function PostEditorContent() {
           </div>
         </div>
       )}
+
+      {/* Unsaved Changes In-App Dialog */}
+      <UnsavedChangesDialog
+        isOpen={isUnsavedDialogOpen}
+        isSaving={isSavingAndLeaving}
+        saveLabel={
+          publishStatus === 'published' || publishStatus === 'scheduled'
+            ? 'Update and leave'
+            : 'Save and leave'
+        }
+        onSaveAndLeave={handleSaveAndLeave}
+        onLeaveWithoutSaving={handleLeaveWithoutSaving}
+        onKeepEditing={handleKeepEditing}
+      />
     </div>
   )
 }

@@ -4,6 +4,7 @@ import React, { useEffect, useState, use, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
+import UnsavedChangesDialog from '@/components/admin/UnsavedChangesDialog'
 
 interface PageData {
   id: string
@@ -43,6 +44,9 @@ export default function PageEditPage({
   const [success, setSuccess] = useState<string | null>(null)
   const [isDirty, setIsDirty] = useState(false)
   const isDirtyRef = useRef(false)
+  const [isUnsavedDialogOpen, setIsUnsavedDialogOpen] = useState(false)
+  const [isSavingAndLeaving, setIsSavingAndLeaving] = useState(false)
+  const [pendingUrl, setPendingUrl] = useState<string | null>(null)
 
   const markDirty = useCallback(() => {
     if (!isDirtyRef.current) {
@@ -66,6 +70,50 @@ export default function PageEditPage({
     window.addEventListener('beforeunload', handleBeforeUnload)
     return () => {
       window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
+
+  // Intercept same-origin anchor navigation when editor is dirty
+  useEffect(() => {
+    function handleAnchorClick(e: MouseEvent) {
+      if (!isDirtyRef.current) return
+      if (e.button !== 0) return
+      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return
+
+      const target = e.target as HTMLElement | null
+      if (!target) return
+
+      const anchor = target.closest('a')
+      if (!anchor) return
+      if (anchor.target === '_blank' || anchor.hasAttribute('download')) return
+
+      const href = anchor.getAttribute('href')
+      if (!href || href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) {
+        return
+      }
+
+      try {
+        const url = new URL(anchor.href, window.location.href)
+        if (url.origin !== window.location.origin) return
+        if (url.pathname === window.location.pathname && url.search === window.location.search) {
+          return
+        }
+
+        e.preventDefault()
+        e.stopPropagation()
+        e.stopImmediatePropagation()
+
+        const dest = url.pathname + url.search + url.hash
+        setPendingUrl(dest)
+        setIsUnsavedDialogOpen(true)
+      } catch {
+        // Ignore invalid URLs
+      }
+    }
+
+    document.addEventListener('click', handleAnchorClick, true)
+    return () => {
+      document.removeEventListener('click', handleAnchorClick, true)
     }
   }, [])
 
@@ -112,14 +160,14 @@ export default function PageEditPage({
     }
   }
 
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault()
+  async function handleSave(e?: React.FormEvent): Promise<boolean> {
+    if (e) e.preventDefault()
     setError(null)
     setSuccess(null)
 
     if (!heroHeadline.trim()) {
       setError('Hero headline is required')
-      return
+      return false
     }
 
     try {
@@ -145,15 +193,47 @@ export default function PageEditPage({
         clearDirty()
         setSuccess('Page changes saved successfully!')
         setTimeout(() => setSuccess(null), 4000)
+        return true
       } else {
         const data = await res.json()
         setError(data.error || 'Failed to save page changes')
+        return false
       }
     } catch {
       setError('Network error saving page changes')
+      return false
     } finally {
       setSaving(false)
     }
+  }
+
+  async function handleSaveAndLeave() {
+    setIsSavingAndLeaving(true)
+    const success = await handleSave()
+    setIsSavingAndLeaving(false)
+    if (success) {
+      setIsUnsavedDialogOpen(false)
+      const dest = pendingUrl || '/admin/pages'
+      setPendingUrl(null)
+      router.push(dest)
+    } else {
+      // If the save fails, stay on the page, close the dialog and show the existing error message
+      setIsUnsavedDialogOpen(false)
+      setPendingUrl(null)
+    }
+  }
+
+  function handleLeaveWithoutSaving() {
+    setIsUnsavedDialogOpen(false)
+    clearDirty()
+    const dest = pendingUrl || '/admin/pages'
+    setPendingUrl(null)
+    router.push(dest)
+  }
+
+  function handleKeepEditing() {
+    setIsUnsavedDialogOpen(false)
+    setPendingUrl(null)
   }
 
   function handleParagraphChange(index: number, val: string) {
@@ -192,10 +272,9 @@ export default function PageEditPage({
             href="/admin/pages"
             onClick={(e) => {
               if (isDirtyRef.current) {
-                const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
-                if (!confirmed) {
-                  e.preventDefault()
-                }
+                e.preventDefault()
+                setPendingUrl('/admin/pages')
+                setIsUnsavedDialogOpen(true)
               }
             }}
             className="group text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
@@ -508,10 +587,9 @@ export default function PageEditPage({
               href="/admin/pages"
               onClick={(e) => {
                 if (isDirtyRef.current) {
-                  const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
-                  if (!confirmed) {
-                    e.preventDefault()
-                  }
+                  e.preventDefault()
+                  setPendingUrl('/admin/pages')
+                  setIsUnsavedDialogOpen(true)
                 }
               }}
               className="group text-xs font-semibold text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
@@ -535,6 +613,15 @@ export default function PageEditPage({
           </div>
         </form>
       </main>
+
+      {/* Unsaved Changes In-App Dialog */}
+      <UnsavedChangesDialog
+        isOpen={isUnsavedDialogOpen}
+        isSaving={isSavingAndLeaving}
+        onSaveAndLeave={handleSaveAndLeave}
+        onLeaveWithoutSaving={handleLeaveWithoutSaving}
+        onKeepEditing={handleKeepEditing}
+      />
     </div>
   )
 }
