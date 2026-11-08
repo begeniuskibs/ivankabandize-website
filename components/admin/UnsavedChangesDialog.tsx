@@ -6,6 +6,7 @@ import { AlertTriangle, Loader2, X } from 'lucide-react'
 export interface UnsavedChangesDialogProps {
   isOpen: boolean
   isSaving?: boolean
+  saveLabel?: string
   onSaveAndLeave: () => void | Promise<void>
   onLeaveWithoutSaving: () => void
   onKeepEditing: () => void
@@ -14,6 +15,7 @@ export interface UnsavedChangesDialogProps {
 export default function UnsavedChangesDialog({
   isOpen,
   isSaving = false,
+  saveLabel = 'Save and leave',
   onSaveAndLeave,
   onLeaveWithoutSaving,
   onKeepEditing,
@@ -141,7 +143,7 @@ export default function UnsavedChangesDialog({
               className="w-full sm:w-auto px-4 py-2 text-xs font-semibold text-white bg-black hover:bg-gray-800 rounded-xl transition motion-reduce:transition-none shadow-sm disabled:opacity-50 disabled:cursor-not-allowed inline-flex items-center justify-center gap-1.5"
             >
               {isSaving && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
-              <span>Save and leave</span>
+              <span>{saveLabel}</span>
             </button>
           </div>
         </div>

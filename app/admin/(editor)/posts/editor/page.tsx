@@ -438,7 +438,7 @@ function PostEditorContent() {
 
   async function handleSaveAndLeave() {
     setIsSavingAndLeaving(true)
-    const success = await handleSave('draft', { redirectOnCreate: false })
+    const success = await handleSave(publishStatus, { redirectOnCreate: false })
     setIsSavingAndLeaving(false)
     if (success) {
       setIsUnsavedDialogOpen(false)
@@ -1081,6 +1081,11 @@ function PostEditorContent() {
       <UnsavedChangesDialog
         isOpen={isUnsavedDialogOpen}
         isSaving={isSavingAndLeaving}
+        saveLabel={
+          publishStatus === 'published' || publishStatus === 'scheduled'
+            ? 'Update and leave'
+            : 'Save and leave'
+        }
         onSaveAndLeave={handleSaveAndLeave}
         onLeaveWithoutSaving={handleLeaveWithoutSaving}
         onKeepEditing={handleKeepEditing}
