@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState, use } from 'react'
+import React, { useEffect, useState, use, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -41,6 +41,33 @@ export default function PageEditPage({
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
+  const isDirtyRef = useRef(false)
+
+  const markDirty = useCallback(() => {
+    if (!isDirtyRef.current) {
+      isDirtyRef.current = true
+      setIsDirty(true)
+    }
+  }, [])
+
+  const clearDirty = useCallback(() => {
+    isDirtyRef.current = false
+    setIsDirty(false)
+  }, [])
+
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (isDirtyRef.current) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
 
   // Form State
   const [title, setTitle] = useState('')
@@ -115,6 +142,7 @@ export default function PageEditPage({
       })
 
       if (res.ok) {
+        clearDirty()
         setSuccess('Page changes saved successfully!')
         setTimeout(() => setSuccess(null), 4000)
       } else {
@@ -132,14 +160,17 @@ export default function PageEditPage({
     const updated = [...bodyParagraphs]
     updated[index] = val
     setBodyParagraphs(updated)
+    markDirty()
   }
 
   function addParagraph() {
     setBodyParagraphs([...bodyParagraphs, ''])
+    markDirty()
   }
 
   function removeParagraph(index: number) {
     setBodyParagraphs(bodyParagraphs.filter((_, i) => i !== index))
+    markDirty()
   }
 
   const livePath = PAGE_LIVE_PATHS[slug] || `/${slug}`
@@ -159,6 +190,14 @@ export default function PageEditPage({
         <div className="flex items-center gap-4">
           <Link
             href="/admin/pages"
+            onClick={(e) => {
+              if (isDirtyRef.current) {
+                const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
+                if (!confirmed) {
+                  e.preventDefault()
+                }
+              }
+            }}
             className="group text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
           >
             <ArrowLeft
@@ -173,6 +212,7 @@ export default function PageEditPage({
           <div className="flex items-center gap-2">
             <h1 className="text-sm font-bold text-gray-900">
               Editing: {title || slug}
+              {isDirty && ' *'}
             </h1>
             <span className="text-xs text-gray-400 font-mono">({livePath})</span>
           </div>
@@ -238,7 +278,10 @@ export default function PageEditPage({
                 <input
                   type="text"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e) => {
+                    setTitle(e.target.value)
+                    markDirty()
+                  }}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition"
                   placeholder="e.g. Home, Work With Me, Me"
                 />
@@ -251,7 +294,10 @@ export default function PageEditPage({
                 <textarea
                   rows={2}
                   value={heroHeadline}
-                  onChange={(e) => setHeroHeadline(e.target.value)}
+                  onChange={(e) => {
+                    setHeroHeadline(e.target.value)
+                    markDirty()
+                  }}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition resize-y"
                   placeholder="The primary statement in large display font"
                   required
@@ -265,7 +311,10 @@ export default function PageEditPage({
                 <textarea
                   rows={3}
                   value={heroSubheadline}
-                  onChange={(e) => setHeroSubheadline(e.target.value)}
+                  onChange={(e) => {
+                    setHeroSubheadline(e.target.value)
+                    markDirty()
+                  }}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition resize-y"
                   placeholder="Supporting narrative under the headline"
                 />
@@ -290,7 +339,10 @@ export default function PageEditPage({
                 <input
                   type="text"
                   value={ctaText}
-                  onChange={(e) => setCtaText(e.target.value)}
+                  onChange={(e) => {
+                    setCtaText(e.target.value)
+                    markDirty()
+                  }}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition"
                   placeholder="e.g. Let's Talk, Work With Me"
                 />
@@ -303,7 +355,10 @@ export default function PageEditPage({
                 <input
                   type="text"
                   value={ctaUrl}
-                  onChange={(e) => setCtaUrl(e.target.value)}
+                  onChange={(e) => {
+                    setCtaUrl(e.target.value)
+                    markDirty()
+                  }}
                   className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition font-mono"
                   placeholder="e.g. /lets-talk, /workwithme"
                 />
@@ -317,7 +372,10 @@ export default function PageEditPage({
               <input
                 type="text"
                 value={closingCtaHeadline}
-                onChange={(e) => setClosingCtaHeadline(e.target.value)}
+                onChange={(e) => {
+                  setClosingCtaHeadline(e.target.value)
+                  markDirty()
+                }}
                 className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition"
                 placeholder="Closing banner statement at page bottom"
               />
@@ -400,7 +458,10 @@ export default function PageEditPage({
                   <textarea
                     rows={2}
                     value={pullquote}
-                    onChange={(e) => setPullquote(e.target.value)}
+                    onChange={(e) => {
+                      setPullquote(e.target.value)
+                      markDirty()
+                    }}
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition resize-y italic"
                     placeholder="e.g. Most organisations don’t have a people problem - they have a structure problem..."
                   />
@@ -413,7 +474,10 @@ export default function PageEditPage({
                   <textarea
                     rows={3}
                     value={backgroundTeaching}
-                    onChange={(e) => setBackgroundTeaching(e.target.value)}
+                    onChange={(e) => {
+                      setBackgroundTeaching(e.target.value)
+                      markDirty()
+                    }}
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition resize-y"
                     placeholder="Specifics about teaching at Watoto School of Community Leadership..."
                   />
@@ -426,7 +490,10 @@ export default function PageEditPage({
                   <textarea
                     rows={3}
                     value={backgroundMethod}
-                    onChange={(e) => setBackgroundMethod(e.target.value)}
+                    onChange={(e) => {
+                      setBackgroundMethod(e.target.value)
+                      markDirty()
+                    }}
                     className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-black/10 focus:border-black transition resize-y"
                     placeholder="Specifics on the 3-step engagement pattern..."
                   />
@@ -439,6 +506,14 @@ export default function PageEditPage({
           <div className="pt-4 flex items-center justify-between border-t border-gray-200">
             <Link
               href="/admin/pages"
+              onClick={(e) => {
+                if (isDirtyRef.current) {
+                  const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
+                  if (!confirmed) {
+                    e.preventDefault()
+                  }
+                }
+              }}
               className="group text-xs font-semibold text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
             >
               <ArrowLeft

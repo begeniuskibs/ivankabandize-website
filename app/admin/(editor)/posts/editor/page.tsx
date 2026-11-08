@@ -101,6 +101,33 @@ function PostEditorContent() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<string | null>(null)
+  const [isDirty, setIsDirty] = useState(false)
+  const isDirtyRef = useRef(false)
+
+  const markDirty = useCallback(() => {
+    if (!isDirtyRef.current) {
+      isDirtyRef.current = true
+      setIsDirty(true)
+    }
+  }, [])
+
+  const clearDirty = useCallback(() => {
+    isDirtyRef.current = false
+    setIsDirty(false)
+  }, [])
+
+  useEffect(() => {
+    function handleBeforeUnload(e: BeforeUnloadEvent) {
+      if (isDirtyRef.current) {
+        e.preventDefault()
+        e.returnValue = ''
+      }
+    }
+    window.addEventListener('beforeunload', handleBeforeUnload)
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload)
+    }
+  }, [])
 
   useEffect(() => {
     let isMounted = true
@@ -202,6 +229,7 @@ function PostEditorContent() {
         if (data.url) {
           setFeaturedImageUrl(data.url)
           setFeaturedImageCaption(null)
+          markDirty()
         }
       } else {
         const data = await res.json()
@@ -221,12 +249,14 @@ function PostEditorContent() {
   function handleSelectUnsplash(imageUrl: string, captionHtml: string) {
     setFeaturedImageUrl(imageUrl)
     setFeaturedImageCaption(captionHtml)
+    markDirty()
   }
 
   function handleRemoveFeatureImage() {
     setFeaturedImageUrl(null)
     setFeaturedImageCaption(null)
     setHeaderImageWidth('standard')
+    markDirty()
   }
 
   async function handleCreateTag() {
@@ -242,6 +272,7 @@ function PostEditorContent() {
         setAvailableTags(prev => [...prev, tag])
         setSelectedTagIds(prev => [...prev, tag.id])
         setNewTagName('')
+        markDirty()
       }
     } catch (e) {
       console.error('Failed to create tag', e)
@@ -252,6 +283,7 @@ function PostEditorContent() {
     setSelectedTagIds(prev =>
       prev.includes(id) ? prev.filter(t => t !== id) : [...prev, id]
     )
+    markDirty()
   }
 
   async function handleSave(status: 'draft' | 'scheduled' | 'published') {
@@ -336,6 +368,7 @@ function PostEditorContent() {
       if (data.post?.published_at) {
         setStoredPublishedAt(data.post.published_at)
       }
+      clearDirty()
       setSuccess(`Post successfully ${status === 'published' ? 'published' : status === 'scheduled' ? 'scheduled' : 'saved as draft'}!`)
       setIsDrawerOpen(false)
 
@@ -373,6 +406,14 @@ function PostEditorContent() {
         <div className="flex items-center gap-4">
           <Link
             href="/admin/posts"
+            onClick={(e) => {
+              if (isDirtyRef.current) {
+                const confirmed = window.confirm('You have unsaved changes. Are you sure you want to leave?')
+                if (!confirmed) {
+                  e.preventDefault()
+                }
+              }
+            }}
             className="group text-xs font-semibold uppercase tracking-wider text-gray-500 hover:text-gray-900 transition inline-flex items-center gap-1.5"
           >
             <ArrowLeft
@@ -399,6 +440,7 @@ function PostEditorContent() {
               : 'bg-gray-100 text-gray-700'
           }`}>
             {publishStatus}
+            {isDirty && ' *'}
           </span>
         </div>
 
@@ -601,7 +643,10 @@ function PostEditorContent() {
                   <div className="inline-flex rounded-lg bg-gray-200/80 p-0.5 border border-gray-200 shrink-0">
                     <button
                       type="button"
-                      onClick={() => setHeaderImageWidth('standard')}
+                      onClick={() => {
+                        setHeaderImageWidth('standard')
+                        markDirty()
+                      }}
                       className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
                         headerImageWidth === 'standard'
                           ? 'bg-white text-gray-900 shadow-sm'
@@ -612,7 +657,10 @@ function PostEditorContent() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => setHeaderImageWidth('wide')}
+                      onClick={() => {
+                        setHeaderImageWidth('wide')
+                        markDirty()
+                      }}
                       className={`px-3 py-1 rounded-md text-xs font-semibold transition ${
                         headerImageWidth === 'wide'
                           ? 'bg-white text-gray-900 shadow-sm'
@@ -631,7 +679,10 @@ function PostEditorContent() {
               <input
                 type="text"
                 value={title}
-                onChange={e => setTitle(e.target.value)}
+                onChange={e => {
+                  setTitle(e.target.value)
+                  markDirty()
+                }}
                 placeholder="Post Title..."
                 className="w-full text-4xl sm:text-5xl font-extrabold placeholder-gray-300 border-0 focus:ring-0 focus:outline-none p-0 text-gray-900 tracking-tight bg-transparent"
               />
@@ -652,7 +703,10 @@ function PostEditorContent() {
               )}
               <TipTapEditor
                 content={content}
-                onChange={newJson => setContent(newJson)}
+                onChange={newJson => {
+                  setContent(newJson)
+                  markDirty()
+                }}
                 placeholder="Begin writing your post..."
                 onEditorReady={handleEditorReady}
               />
@@ -704,7 +758,10 @@ function PostEditorContent() {
                     <input
                       type="text"
                       value={slug}
-                      onChange={e => setSlug(e.target.value)}
+                      onChange={e => {
+                        setSlug(e.target.value)
+                        markDirty()
+                      }}
                       placeholder="e.g. my-post-slug"
                       className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                     />
@@ -717,7 +774,10 @@ function PostEditorContent() {
                     <textarea
                       rows={3}
                       value={excerpt}
-                      onChange={e => setExcerpt(e.target.value)}
+                      onChange={e => {
+                        setExcerpt(e.target.value)
+                        markDirty()
+                      }}
                       placeholder="Brief summary of the article..."
                       className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black resize-none"
                     />
@@ -747,7 +807,10 @@ function PostEditorContent() {
                         <button
                           key={opt.value}
                           type="button"
-                          onClick={() => setVisibility(opt.value as typeof visibility)}
+                          onClick={() => {
+                            setVisibility(opt.value as typeof visibility)
+                            markDirty()
+                          }}
                           className={`p-2.5 text-left border rounded-lg transition text-xs ${
                             visibility === opt.value
                               ? 'border-black bg-gray-50 text-black font-semibold ring-1 ring-black'
@@ -787,7 +850,10 @@ function PostEditorContent() {
                         <button
                           key={opt.value}
                           type="button"
-                          onClick={() => setContentType(opt.value as typeof contentType)}
+                          onClick={() => {
+                            setContentType(opt.value as typeof contentType)
+                            markDirty()
+                          }}
                           className={`w-full p-2.5 text-left border rounded-lg transition text-xs ${
                             contentType === opt.value
                               ? 'border-black bg-gray-50 text-black font-semibold ring-1 ring-black'
@@ -808,7 +874,10 @@ function PostEditorContent() {
                     </label>
                     <select
                       value={seriesId || ''}
-                      onChange={e => setSeriesId(e.target.value || null)}
+                      onChange={e => {
+                        setSeriesId(e.target.value || null)
+                        markDirty()
+                      }}
                       className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black bg-white"
                     >
                       <option value="">None (Standalone Post)</option>
@@ -876,7 +945,10 @@ function PostEditorContent() {
                     <input
                       type="datetime-local"
                       value={scheduledDate}
-                      onChange={e => setScheduledDate(e.target.value)}
+                      onChange={e => {
+                        setScheduledDate(e.target.value)
+                        markDirty()
+                      }}
                       className="w-full text-xs px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
                     />
                     {publishStatus === 'published' && (
