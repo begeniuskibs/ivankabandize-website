@@ -750,6 +750,7 @@ export default function TipTapEditor({
         },
       })
       editor.chain().focus().setImage({ src: res.url, alt: file.name }).run()
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     } catch (err: any) {
       console.error('Image direct upload error:', err)
       alert(`Failed to upload image: ${err?.message || 'Unknown error'}`)
@@ -794,6 +795,7 @@ export default function TipTapEditor({
           caption: '',
         },
       }).run()
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     } catch (err: any) {
       console.error('Video direct upload error:', err)
       alert(`Failed to upload video: ${err?.message || 'Unknown error'}`)

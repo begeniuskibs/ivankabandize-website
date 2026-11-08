@@ -217,6 +217,7 @@ export default function AdminSeriesListPage() {
       if (res.url) {
         setHeaderImageUrl(res.url)
         setImageError(null)
+        await new Promise((resolve) => setTimeout(resolve, 1000))
       } else {
         throw new Error('Upload succeeded but no image URL was returned')
       }
