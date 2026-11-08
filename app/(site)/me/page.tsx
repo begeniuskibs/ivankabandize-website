@@ -8,6 +8,7 @@ import Button from '@/components/Button'
 import { safeHref } from '@/lib/safeUrl'
 import { SITE_URL } from '@/lib/siteUrl'
 import JsonLd from '@/components/seo/JsonLd'
+import SocialLinks from '@/components/public/SocialLinks'
 
 export const dynamic = 'force-dynamic'
 
@@ -66,7 +67,16 @@ export default async function MePage() {
     name: 'Ivan Kabandize',
     url: `${SITE_URL}/me`,
     mainEntity: {
+      '@type': 'Person',
       '@id': `${SITE_URL}/#person`,
+      name: 'Ivan Kabandize',
+      url: SITE_URL,
+      sameAs: [
+        'https://www.instagram.com/begeniuskibs/',
+        'https://www.facebook.com/kbegenius/',
+        'https://www.linkedin.com/in/ivan-kabandize-68b4a4130/',
+        'https://ivan-kabandize.medium.com/',
+      ],
     },
   }
 
@@ -471,6 +481,9 @@ export default async function MePage() {
             <p className="text-xs text-[#5A5D70] font-medium mt-4">
               Direct consultation &middot; No sales pitch &middot; Actionable diagnostic
             </p>
+            <div className="pt-6 flex justify-center">
+              <SocialLinks variant="cream" />
+            </div>
           </ScrollReveal>
         </div>
       </section>
