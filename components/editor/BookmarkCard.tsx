@@ -3,6 +3,7 @@
 
 import React from 'react'
 import { safeHref } from '@/lib/safeUrl'
+import KTile from '@/components/brand/KTile'
 
 export interface BookmarkCardProps {
   url?: string
@@ -17,6 +18,65 @@ export interface BookmarkCardProps {
   className?: string
 }
 
+function isSameSiteUrl(urlStr: string): boolean {
+  if (!urlStr) return false
+  const trimmed = urlStr.trim()
+  if (trimmed.startsWith('/') && !trimmed.startsWith('//')) return true
+  return /^(https?:\/\/)?(www\.)?ivankabandize\.com(\/.*)?$/i.test(trimmed)
+}
+
+function getSameSiteSection(urlStr: string): string {
+  if (!urlStr) return 'Ivan Kabandize'
+  const trimmed = urlStr.trim()
+  let pathname = trimmed
+  if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+    try {
+      pathname = new URL(trimmed).pathname
+    } catch {
+      // fallback to pathname
+    }
+  } else if (/^(www\.)?ivankabandize\.com/i.test(trimmed)) {
+    pathname = trimmed.replace(/^(www\.)?ivankabandize\.com/i, '')
+    if (!pathname.startsWith('/')) {
+      pathname = `/${pathname}`
+    }
+  }
+
+  // Normalize: remove trailing slash unless root
+  const cleanPath = pathname.replace(/\/+$/, '') || '/'
+
+  if (cleanPath === '/garden') {
+    return 'The Garden'
+  }
+  if (cleanPath.startsWith('/garden/')) {
+    return 'Articles'
+  }
+  if (cleanPath === '/library' || cleanPath.startsWith('/library/')) {
+    return 'Library'
+  }
+  if (cleanPath === '/me' || cleanPath.startsWith('/me/')) {
+    return 'Me'
+  }
+  if (cleanPath === '/now' || cleanPath.startsWith('/now/')) {
+    return 'Now'
+  }
+  if (
+    cleanPath === '/work-with-me' ||
+    cleanPath.startsWith('/work-with-me/') ||
+    cleanPath === '/workwithme' ||
+    cleanPath.startsWith('/workwithme/')
+  ) {
+    return 'Work with Me'
+  }
+  return 'Ivan Kabandize'
+}
+
+function cleanTitle(rawTitle: string, isSameSite: boolean): string {
+  if (!isSameSite || !rawTitle) return rawTitle
+  const cleaned = rawTitle.replace(/\s*[-|\u2014\u2013]\s*Ivan\s+Kabandize\s*$/i, '').trim()
+  return cleaned || rawTitle
+}
+
 export default function BookmarkCard({
   url = '',
   title = '',
@@ -29,7 +89,12 @@ export default function BookmarkCard({
   isEditor = false,
   className = '',
 }: BookmarkCardProps) {
-  const displayTitle = title || url || 'Bookmark'
+  const isSameSite = isSameSiteUrl(url)
+  const rawTitle = title || url || 'Bookmark'
+  const displayTitle = cleanTitle(rawTitle, isSameSite)
+
+  const sectionName = isSameSite ? getSameSiteSection(url) : ''
+  const showAuthor = isSameSite ? sectionName !== 'Ivan Kabandize' : Boolean(author)
 
   return (
     <figure className={`kg-card kg-bookmark-card my-8 w-full ${className}`}>
@@ -39,7 +104,7 @@ export default function BookmarkCard({
         rel="noopener noreferrer"
         aria-label={displayTitle}
         onClick={isEditor ? (e) => e.preventDefault() : undefined}
-        className="kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-lg border border-[#F5ECDE] shadow-sm hover:border-[#232536]/25 hover:shadow-md transition overflow-hidden text-left no-underline text-[#232536]"
+        className="kg-bookmark-container group flex flex-row items-stretch justify-between w-full bg-white rounded-lg border border-[#F5ECDE] shadow-sm hover:border-[#232536]/25 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#232536] focus-visible:ring-offset-2 transition overflow-hidden text-left no-underline text-[#232536]"
       >
         {/* Content Column */}
         <div className="kg-bookmark-content flex flex-col justify-between flex-1 min-w-0 p-5 overflow-hidden">
@@ -54,7 +119,19 @@ export default function BookmarkCard({
             ) : null}
           </div>
 
-          {(icon || publisher || author) ? (
+          {isSameSite ? (
+            <div className="kg-bookmark-metadata flex items-center gap-1.5 mt-5 text-[14px] text-[#5A5D70] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+              <KTile size={20} className="shrink-0" />
+              <span className="kg-bookmark-publisher truncate max-w-[240px] text-[#232536]/80 font-medium">
+                {sectionName}
+              </span>
+              {showAuthor ? (
+                <span className="kg-bookmark-author truncate text-[#5A5D70] font-normal">
+                  {' - Ivan Kabandize'}
+                </span>
+              ) : null}
+            </div>
+          ) : (icon || publisher || author) ? (
             <div className="kg-bookmark-metadata flex items-center gap-1.5 mt-5 text-[14px] text-[#5A5D70] font-medium whitespace-nowrap overflow-hidden text-ellipsis">
               {icon ? (
                 <img
