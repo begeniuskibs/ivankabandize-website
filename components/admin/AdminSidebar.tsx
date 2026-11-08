@@ -359,6 +359,14 @@ export default function AdminSidebar() {
                 <span>👤</span>
                 <span>Your profile</span>
               </Link>
+              <Link
+                href="/admin/security"
+                onClick={() => setIsAccountMenuOpen(false)}
+                className="flex items-center gap-2.5 px-3 py-2 text-xs text-[#C5C8D8] hover:text-white hover:bg-[#2A2D3E] rounded-xl transition font-medium"
+              >
+                <span>🔐</span>
+                <span>Two - Step Verification</span>
+              </Link>
             </div>
 
             <div className="h-[1px] bg-[#2D3042] mx-2" />

@@ -28,11 +28,17 @@ export async function GET(request: Request) {
       const forwardedHost = request.headers.get('x-forwarded-host') // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === 'development'
 
+      const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      let destination = next
+      if (aalData?.currentLevel === 'aal1' && aalData?.nextLevel === 'aal2') {
+        destination = `/auth/mfa-challenge?redirectTo=${encodeURIComponent(next)}`
+      }
+
       const targetUrl = isLocalEnv
-        ? `${origin}${next}`
+        ? `${origin}${destination}`
         : forwardedHost
-        ? `https://${forwardedHost}${next}`
-        : `${origin}${next}`
+        ? `https://${forwardedHost}${destination}`
+        : `${origin}${destination}`
 
       const response = NextResponse.redirect(targetUrl)
       // Delete the post_login_redirect cookie so it doesn't leak to future logins

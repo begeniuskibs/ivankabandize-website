@@ -1,6 +1,11 @@
 import { createClient } from '@/utils/supabase/server'
 
-export async function getAuthenticatedOwner() {
+interface GetAuthenticatedOwnerOptions {
+  checkMfa?: boolean
+}
+
+export async function getAuthenticatedOwner(options: GetAuthenticatedOwnerOptions = {}) {
+  const { checkMfa = true } = options
   const supabase = await createClient()
   const {
     data: { user },
@@ -33,6 +38,20 @@ export async function getAuthenticatedOwner() {
     }
   }
 
+  if (checkMfa && process.env.ADMIN_REQUIRE_MFA === 'true') {
+    const { data: aalData, error: aalError } =
+      await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+    if (aalError || aalData?.currentLevel !== 'aal2') {
+      return {
+        supabase,
+        user,
+        isOwner: false,
+        error: 'Forbidden: Multi-factor authentication (AAL2) required',
+        status: 403 as const,
+      }
+    }
+  }
+
   return {
     supabase,
     user,
@@ -41,3 +60,6 @@ export async function getAuthenticatedOwner() {
     status: 200 as const,
   }
 }
+
+export const requireOwner = getAuthenticatedOwner
+

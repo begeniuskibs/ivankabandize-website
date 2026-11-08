@@ -4,16 +4,21 @@ import type { User } from '@supabase/supabase-js'
 
 export async function updateSession(
   request: NextRequest
-): Promise<{ response: NextResponse; user: User | null }> {
+): Promise<{
+  response: NextResponse
+  user: User | null
+  aal: { currentLevel: string | null; nextLevel: string | null } | null
+}> {
   let supabaseResponse = NextResponse.next({
     request,
   })
 
   if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
-    return { response: supabaseResponse, user: null }
+    return { response: supabaseResponse, user: null, aal: null }
   }
 
   let user: User | null = null
+  let aal: { currentLevel: string | null; nextLevel: string | null } | null = null
 
   try {
     const rememberCookie = request.cookies.get('sb-remember')?.value
@@ -68,9 +73,19 @@ export async function updateSession(
       data: { user: authUser },
     } = await supabase.auth.getUser()
     user = authUser
+
+    if (user) {
+      const { data: aalData } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel()
+      if (aalData) {
+        aal = {
+          currentLevel: aalData.currentLevel,
+          nextLevel: aalData.nextLevel,
+        }
+      }
+    }
   } catch (err) {
     console.error('Middleware updateSession fallback:', err)
   }
 
-  return { response: supabaseResponse, user }
+  return { response: supabaseResponse, user, aal }
 }

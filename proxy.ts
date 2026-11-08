@@ -2,7 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server'
 import { updateSession } from '@/utils/supabase/middleware'
 
 export async function proxy(request: NextRequest) {
-  const { response, user } = await updateSession(request)
+  const { response, user, aal } = await updateSession(request)
   const pathname = request.nextUrl.pathname
 
   if (pathname.startsWith('/api/admin')) {
@@ -25,6 +25,31 @@ export async function proxy(request: NextRequest) {
         res.cookies.set(cookie)
       })
       return res
+    }
+
+    if (process.env.ADMIN_REQUIRE_MFA === 'true') {
+      const currentLevel = aal?.currentLevel
+      const nextLevel = aal?.nextLevel
+
+      if (currentLevel !== 'aal2') {
+        if (nextLevel === 'aal2') {
+          const challengeUrl = new URL('/auth/mfa-challenge', request.url)
+          const fullPath = pathname + request.nextUrl.search
+          challengeUrl.searchParams.set('redirectTo', fullPath)
+          const res = NextResponse.redirect(challengeUrl)
+          response.cookies.getAll().forEach((cookie) => {
+            res.cookies.set(cookie)
+          })
+          return res
+        } else if (pathname !== '/admin/security') {
+          const securityUrl = new URL('/admin/security', request.url)
+          const res = NextResponse.redirect(securityUrl)
+          response.cookies.getAll().forEach((cookie) => {
+            res.cookies.set(cookie)
+          })
+          return res
+        }
+      }
     }
   }
 
