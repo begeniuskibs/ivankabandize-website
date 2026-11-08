@@ -19,7 +19,7 @@ export default function SettingsPage() {
             </div>
             <div>
               <h2 className="text-base font-bold text-gray-900">
-                Two - Step Verification (TOTP)
+                Two-step verification (TOTP)
               </h2>
               <p className="text-xs text-gray-500 mt-1 max-w-xl leading-relaxed">
                 Protect your admin console with authenticator apps. Register your primary phone and a backup device.
@@ -31,7 +31,7 @@ export default function SettingsPage() {
             href="/admin/security"
             className="inline-flex items-center gap-2 px-4 py-2.5 bg-black hover:bg-gray-800 text-white text-xs font-semibold rounded-xl transition shadow-sm shrink-0"
           >
-            <span>Manage Two - Step Verification</span>
+            <span>Manage Two-step verification</span>
             <ArrowRight size={14} />
           </Link>
         </div>

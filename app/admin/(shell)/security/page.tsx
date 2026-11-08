@@ -282,7 +282,7 @@ export default function AdminSecurityPage() {
           </Link>
           <span className="text-gray-300">/</span>
           <h1 className="text-base font-bold text-gray-900">
-            Security - Two - Step Verification
+            Security - Two-step verification
           </h1>
         </div>
       </header>
@@ -320,7 +320,7 @@ export default function AdminSecurityPage() {
               <div>
                 <div className="flex items-center gap-2">
                   <h2 className="text-base font-bold text-gray-900">
-                    Two - Step Verification is enabled
+                    Two-step verification is enabled
                   </h2>
                   <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800">
                     Active
@@ -355,7 +355,7 @@ export default function AdminSecurityPage() {
               </div>
               <div>
                 <h2 className="text-base font-bold text-gray-900">
-                  Two - Step Verification is not set up
+                  Two-step verification is not set up
                 </h2>
                 <p className="text-xs text-gray-500 mt-1 max-w-xl leading-relaxed">
                   Add an authenticator app (such as Google Authenticator, 1Password, or Apple Passwords) to protect access to the Admin Console.
