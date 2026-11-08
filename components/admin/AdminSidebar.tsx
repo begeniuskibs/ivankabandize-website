@@ -326,18 +326,10 @@ export default function AdminSidebar() {
         {/* Ghost-Style Popover Menu (Opens Upward) */}
         {isAccountMenuOpen && (
           <div className="absolute bottom-full left-3 right-3 mb-2 bg-[#222432] border border-[#2D3042] rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-bottom-2 duration-150">
-            {/* Popover Header: Avatar, Name, Email */}
-            <div className="p-3.5 pb-3 border-b border-[#2D3042] flex items-center gap-3">
-              <div className="w-9 h-9 rounded-full bg-[#EF5B45] text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-sm">
-                {userData.initials}
-              </div>
-              <div className="min-w-0">
-                <div className="text-xs font-bold text-white truncate">
-                  {userData.fullName}
-                </div>
-                <div className="text-[11px] text-[#8E92A6] truncate">
-                  {userData.email}
-                </div>
+            {/* Popover Header: Email */}
+            <div className="px-3.5 py-3 border-b border-[#2D3042]">
+              <div className="text-xs text-[#8E92A6] truncate font-medium">
+                {userData.email}
               </div>
             </div>
 

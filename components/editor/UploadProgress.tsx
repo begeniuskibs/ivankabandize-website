@@ -94,12 +94,13 @@ export async function uploadFileDirect({
   })
 }
 
-interface UploadProgressCardProps {
+export interface UploadProgressCardProps {
   filename: string
   percent: number
   loadedText?: string
   totalText?: string
   className?: string
+  status?: 'uploading' | 'success' | 'error'
 }
 
 export function UploadProgressCard({
@@ -108,48 +109,71 @@ export function UploadProgressCard({
   loadedText,
   totalText,
   className = '',
+  status = 'uploading',
 }: UploadProgressCardProps) {
+  const isSuccess = status === 'success' || percent >= 100
+
   // SVG circular ring calculation (r = 26, viewBox 0 0 64 64)
   const radius = 26
   const circumference = 2 * Math.PI * radius // ~163.36
   const strokeDashoffset = circumference - (circumference * Math.min(100, Math.max(0, percent))) / 100
 
-  const sizeFigure = loadedText && totalText ? `${loadedText} / ${totalText}` : totalText || ''
+  const sizeFigure = isSuccess
+    ? 'Uploaded'
+    : loadedText && totalText
+    ? `${loadedText} / ${totalText}`
+    : totalText || ''
 
   return (
     <div
       style={{ backgroundColor: '#232536' }}
       className={`text-white rounded-2xl p-4 flex flex-col items-center justify-center shadow-xl border border-white/10 w-44 sm:w-48 text-center select-none ${className}`}
     >
-      {/* Circular Progress Ring */}
+      {/* Circular Progress Ring or Success Checkmark */}
       <div className="relative w-16 h-16 flex items-center justify-center mb-2.5">
-        <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
-          {/* Gray Track */}
-          <circle
-            cx="32"
-            cy="32"
-            r={radius}
-            fill="none"
-            stroke="#3d3f52"
-            strokeWidth="5"
-          />
-          {/* Coral Progress Stroke */}
-          <circle
-            cx="32"
-            cy="32"
-            r={radius}
-            fill="none"
-            stroke="#EF5B45"
-            strokeWidth="5"
-            strokeLinecap="round"
-            strokeDasharray={circumference}
-            strokeDashoffset={strokeDashoffset}
-            className="transition-all duration-150 ease-out"
-          />
-        </svg>
-        <div className="absolute inset-0 flex items-center justify-center">
-          <span className="text-xs font-bold text-white tracking-tight">{percent}%</span>
-        </div>
+        {isSuccess ? (
+          <div className="w-16 h-16 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center transition-transform duration-200 motion-reduce:transition-none">
+            <svg
+              className="w-8 h-8 text-emerald-400 stroke-[2.5]"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden="true"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+        ) : (
+          <>
+            <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+              {/* Gray Track */}
+              <circle
+                cx="32"
+                cy="32"
+                r={radius}
+                fill="none"
+                stroke="#3d3f52"
+                strokeWidth="5"
+              />
+              {/* Coral Progress Stroke */}
+              <circle
+                cx="32"
+                cy="32"
+                r={radius}
+                fill="none"
+                stroke="#EF5B45"
+                strokeWidth="5"
+                strokeLinecap="round"
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                className="transition-all duration-150 ease-out motion-reduce:transition-none"
+              />
+            </svg>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="text-xs font-bold text-white tracking-tight">{percent}%</span>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Filename beneath, truncated with ellipsis, never wrapped */}
@@ -158,7 +182,9 @@ export function UploadProgressCard({
           {filename}
         </p>
         {sizeFigure && (
-          <p className="text-[10px] text-gray-400 mt-1 font-mono tracking-tight">
+          <p className={`text-[10px] mt-1 tracking-tight ${
+            isSuccess ? 'text-emerald-400 font-semibold uppercase tracking-wider' : 'text-gray-400 font-mono'
+          }`}>
             {sizeFigure}
           </p>
         )}

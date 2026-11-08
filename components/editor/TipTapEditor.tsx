@@ -1,7 +1,7 @@
 'use client'
 
 import { useEditor, EditorContent } from '@tiptap/react'
-import { BubbleMenu } from '@tiptap/react/menus'
+import { BubbleMenu, FloatingMenu } from '@tiptap/react/menus'
 import StarterKit from '@tiptap/starter-kit'
 import Placeholder from '@tiptap/extension-placeholder'
 import Link from '@tiptap/extension-link'
@@ -182,6 +182,8 @@ export default function TipTapEditor({
     loadedText?: string
     totalText?: string
   } | null>(null)
+  const [isPlusMenuOpen, setIsPlusMenuOpen] = useState(false)
+  const plusMenuRef = useRef<HTMLDivElement>(null)
 
   const handleToggleHeading1 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 1 }).run()
   const handleToggleHeading2 = (ed?: any) => (ed || editor)?.chain().focus().toggleHeading({ level: 2 }).run()
@@ -356,6 +358,209 @@ export default function TipTapEditor({
     }).run()
   }
 
+  const allSlashItems: SlashItem[] = [
+    {
+      title: 'Heading 1',
+      icon: 'H1',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleHeading1(ed)
+      },
+    },
+    {
+      title: 'Heading 2',
+      icon: 'H2',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleHeading2(ed)
+      },
+    },
+    {
+      title: 'Heading 3',
+      icon: 'H3',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleHeading3(ed)
+      },
+    },
+    {
+      title: 'Bullet list',
+      icon: '•',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleBulletList(ed)
+      },
+    },
+    {
+      title: 'Ordered list',
+      icon: '1.',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleOrderedList(ed)
+      },
+    },
+    {
+      title: 'Quote',
+      icon: '”',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        const $from = ed.state.selection.$from
+        const isCurrentBlockEmptyParagraph =
+          $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0
+        if (isCurrentBlockEmptyParagraph) {
+          insertQuoteBlock(ed)
+        } else {
+          ed.chain().focus().toggleBlockquote().run()
+        }
+      },
+    },
+    {
+      title: 'Callout',
+      icon: <WarningIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleCallout(ed)
+      },
+    },
+    {
+      title: 'Code',
+      icon: '</>',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleToggleCode(ed)
+      },
+    },
+    {
+      title: 'Image (upload)',
+      icon: <ImageIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleTriggerImageUpload()
+      },
+    },
+    {
+      title: 'Image (URL)',
+      icon: <LinkIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleInsertImageUrl(ed)
+      },
+    },
+    {
+      title: 'Video (upload)',
+      icon: <VideoIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleTriggerVideoUpload()
+      },
+    },
+    {
+      title: 'Video (URL)',
+      icon: <VideoIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleInsertVideoUrl(ed)
+      },
+    },
+    {
+      title: 'Gallery',
+      icon: '🖼️',
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleInsertGallery(ed)
+      },
+    },
+    {
+      title: 'YouTube',
+      icon: <YoutubeIcon className="w-3.5 h-3.5 text-red-500" />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).run()
+        } else {
+          ed.chain().focus().run()
+        }
+        handleInsertYouTube(ed)
+      },
+    },
+    {
+      title: 'Bookmark',
+      icon: <BookmarkIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        handleInsertBookmark(ed, range)
+      },
+    },
+    {
+      title: 'Button',
+      icon: <ButtonBlockIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        handleInsertButton(ed, range)
+      },
+    },
+    {
+      title: 'Divider',
+      icon: <DividerIcon size={16} />,
+      command: ({ editor: ed, range }) => {
+        if (range) {
+          ed.chain().focus().deleteRange(range).setHorizontalRule().run()
+        } else {
+          ed.chain().focus().setHorizontalRule().run()
+        }
+      },
+    },
+  ]
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -409,151 +614,9 @@ export default function TipTapEditor({
         suggestion: {
           char: '/',
           items: ({ query }: { query: string }) => {
-            const allItems: SlashItem[] = [
-              {
-                title: 'Heading 1',
-                icon: 'H1',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleHeading1(ed)
-                },
-              },
-              {
-                title: 'Heading 2',
-                icon: 'H2',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleHeading2(ed)
-                },
-              },
-              {
-                title: 'Heading 3',
-                icon: 'H3',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleHeading3(ed)
-                },
-              },
-              {
-                title: 'Bullet list',
-                icon: '•',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleBulletList(ed)
-                },
-              },
-              {
-                title: 'Ordered list',
-                icon: '1.',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleOrderedList(ed)
-                },
-              },
-              {
-                title: 'Quote',
-                icon: '”',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  const $from = ed.state.selection.$from
-                  const isCurrentBlockEmptyParagraph =
-                    $from.parent.type.name === 'paragraph' && $from.parent.content.size === 0
-                  if (isCurrentBlockEmptyParagraph) {
-                    insertQuoteBlock(ed)
-                  } else {
-                    ed.chain().focus().toggleBlockquote().run()
-                  }
-                },
-              },
-              {
-                title: 'Callout',
-                icon: <WarningIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleCallout(ed)
-                },
-              },
-              {
-                title: 'Code',
-                icon: '</>',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleToggleCode(ed)
-                },
-              },
-              {
-                title: 'Image (upload)',
-                icon: <ImageIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleTriggerImageUpload()
-                },
-              },
-              {
-                title: 'Image (URL)',
-                icon: <LinkIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleInsertImageUrl(ed)
-                },
-              },
-              {
-                title: 'Video (upload)',
-                icon: <VideoIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleTriggerVideoUpload()
-                },
-              },
-              {
-                title: 'Video (URL)',
-                icon: <VideoIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleInsertVideoUrl(ed)
-                },
-              },
-              {
-                title: 'Gallery',
-                icon: '🖼️',
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleInsertGallery(ed)
-                },
-              },
-              {
-                title: 'YouTube',
-                icon: <YoutubeIcon className="w-3.5 h-3.5 text-red-500" />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).run()
-                  handleInsertYouTube(ed)
-                },
-              },
-              {
-                title: 'Bookmark',
-                icon: <BookmarkIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  handleInsertBookmark(ed, range)
-                },
-              },
-              {
-                title: 'Button',
-                icon: <ButtonBlockIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  handleInsertButton(ed, range)
-                },
-              },
-              {
-                title: 'Divider',
-                icon: <DividerIcon size={16} />,
-                command: ({ editor: ed, range }) => {
-                  ed.chain().focus().deleteRange(range).setHorizontalRule().run()
-                },
-              },
-            ]
             const q = (query || '').toLowerCase().trim()
-            if (!q) return allItems
-            return allItems.filter((item) => item.title.toLowerCase().includes(q))
+            if (!q) return allSlashItems
+            return allSlashItems.filter((item) => item.title.toLowerCase().includes(q))
           },
           render: () => {
             let component: ReactRenderer<any> | null = null
@@ -693,6 +756,20 @@ export default function TipTapEditor({
     }
   }, [isEditingLink])
 
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (plusMenuRef.current && !plusMenuRef.current.contains(e.target as Node)) {
+        setIsPlusMenuOpen(false)
+      }
+    }
+    if (isPlusMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside)
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
+    }
+  }, [isPlusMenuOpen])
+
   const handleLinkSubmit = () => {
     if (!editor) return
     const raw = linkInputVal.trim()
@@ -750,6 +827,7 @@ export default function TipTapEditor({
         },
       })
       editor.chain().focus().setImage({ src: res.url, alt: file.name }).run()
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     } catch (err: any) {
       console.error('Image direct upload error:', err)
       alert(`Failed to upload image: ${err?.message || 'Unknown error'}`)
@@ -794,6 +872,7 @@ export default function TipTapEditor({
           caption: '',
         },
       }).run()
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     } catch (err: any) {
       console.error('Video direct upload error:', err)
       alert(`Failed to upload video: ${err?.message || 'Unknown error'}`)
@@ -1444,6 +1523,54 @@ export default function TipTapEditor({
 
       {/* Editor Body */}
       <EditorContent editor={editor} />
+
+      {/* Floating Plus Menu for Empty Lines */}
+      {editor && (
+        <FloatingMenu
+          editor={editor}
+          options={{
+            placement: 'right',
+            offset: 8,
+          }}
+          className="relative z-30"
+        >
+          <div ref={plusMenuRef} className="relative inline-block">
+            <button
+              type="button"
+              onClick={() => setIsPlusMenuOpen((prev) => !prev)}
+              aria-label="Add block"
+              aria-expanded={isPlusMenuOpen}
+              className={`w-7 h-7 rounded-full flex items-center justify-center transition-all duration-150 cursor-pointer shadow-xs border ${
+                isPlusMenuOpen
+                  ? 'bg-[#232536] text-white border-[#232536] rotate-45'
+                  : 'bg-white text-gray-500 border-gray-300 hover:text-gray-900 hover:border-gray-400 hover:bg-gray-50'
+              }`}
+            >
+              <svg
+                className="w-4 h-4 stroke-[2.5]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+            </button>
+
+            {isPlusMenuOpen && (
+              <div className="absolute left-full top-0 ml-2 z-50">
+                <SlashMenuList
+                  items={allSlashItems}
+                  command={(item) => {
+                    item.command({ editor, range: null })
+                    setIsPlusMenuOpen(false)
+                  }}
+                />
+              </div>
+            )}
+          </div>
+        </FloatingMenu>
+      )}
 
       {/* Editor Status Footer - Word Counter */}
       <div className="flex items-center justify-end px-6 py-2.5 bg-gray-50/70 border-t border-gray-100 text-xs text-[#5A5D70] select-none">

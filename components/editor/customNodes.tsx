@@ -100,6 +100,7 @@ function VideoComponent({ node, updateAttributes, deleteNode }: any) {
         },
       })
       updateAttributes({ url: res.url })
+      await new Promise((resolve) => setTimeout(resolve, 1000))
     } catch (err: any) {
       console.error('Video direct upload error:', err)
       alert(`Video upload failed: ${err?.message || 'Unknown error'}`)
@@ -378,6 +379,7 @@ function GalleryComponent({ node, updateAttributes, deleteNode }: any) {
           ]
           imagesRef.current = nextImages
           updateAttributes({ images: nextImages })
+          await new Promise((resolve) => setTimeout(resolve, 1000))
         })
         .catch((err: any) => {
           console.error(`Gallery direct upload failed for ${file.name}:`, err)
