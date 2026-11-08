@@ -2,8 +2,8 @@ import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import Button from '@/components/Button'
 import { safeHref } from '@/lib/safeUrl'
 import { SITE_URL } from '@/lib/siteUrl'
 
@@ -73,18 +73,13 @@ export default async function WorkWithMePage() {
 
               <ScrollReveal delayMs={200}>
                 <div className="pt-2">
-                  <Link
+                  <Button
                     href={safeHref(ctaUrl, '#')}
-                    className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    showArrow
+                    className="text-base px-8 py-4 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>{ctaText}</span>
-                    <ArrowRight
-                      size={14}
-                      strokeWidth={2.5}
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                    />
-                  </Link>
+                  </Button>
                 </div>
                 <p className="text-sm font-medium text-[#5A5D70] mt-4 max-w-xl">
                   Engagements are scoped to your situation - pricing is discussed in the first conversation, never before we understand the problem.
@@ -300,13 +295,13 @@ export default async function WorkWithMePage() {
 
           <ScrollReveal delayMs={140}>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <Link
+              <Button
                 href={safeHref(ctaUrl, '#')}
-                className="inline-flex items-center justify-center gap-2 font-bold text-base px-9 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="text-base px-9 py-4 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>{ctaText}</span>
                 <span aria-hidden="true">&#128075;</span>
-              </Link>
+              </Button>
             </div>
             <p className="text-xs text-[#5A5D70] font-medium mt-4">
               First conversation is a diagnosis, not a pitch.

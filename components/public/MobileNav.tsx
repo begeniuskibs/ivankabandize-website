@@ -7,6 +7,7 @@ import { computeScrollHeaderState, type ScrollHeaderState } from './scrollHeader
 import { isWorkActive, isMeActive, isGardenActive, isNowActive } from './navActive'
 import { openSearch } from './searchStore'
 import { SearchIcon, MenuIcon, CloseIcon } from '@/components/icons'
+import Button from '@/components/Button'
 import type { User } from '@supabase/supabase-js'
 
 interface MobileNavProps {
@@ -263,21 +264,22 @@ export default function MobileNav({ user, displayName }: MobileNavProps) {
 
           {/* Bottom Actions: Two pill buttons 56px high, radius 28, 18px/700 */}
           <div className="shrink-0 px-5 pt-4 pb-[calc(36px+env(safe-area-inset-bottom,0px))] flex flex-col gap-3 mt-auto bg-[#FDF8F1]">
-            <Link
+            <Button
               href="/lets-talk"
               onClick={handleClose}
-              className="w-full h-[56px] rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
+              className="w-full h-[56px] text-[18px] shadow-sm active:scale-[0.99]"
             >
               Let&apos;s Talk
-            </Link>
+            </Button>
 
-            <Link
+            <Button
+              variant="secondary"
               href={user ? '/auth/account' : '/login'}
               onClick={handleClose}
-              className="w-full h-[56px] rounded-full bg-white border border-[#F5ECDE] hover:bg-[#FAF3E8] text-[#232536] text-[18px] font-bold flex items-center justify-center transition shadow-sm active:scale-[0.99]"
+              className="w-full h-[56px] border hover:bg-[#FAF3E8] text-[18px] shadow-sm active:scale-[0.99]"
             >
               {user ? (displayName || 'Account') : 'Sign in'}
-            </Link>
+            </Button>
           </div>
         </div>
       )}

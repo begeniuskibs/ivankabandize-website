@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Button from '@/components/Button'
 
 export default function NotFoundContent() {
   return (
@@ -62,18 +62,21 @@ export default function NotFoundContent() {
             The link you followed may be broken, or the page may have been moved or retired.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <Link
+            <Button
               href="/"
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-[#FDF8F1] text-sm font-semibold transition active:scale-[0.98] shadow-sm text-center"
+              fullWidthMobile
+              className="w-full sm:w-auto px-6 py-3 text-[#FDF8F1] text-sm font-semibold active:scale-[0.98] shadow-sm text-center"
             >
               Go home
-            </Link>
-            <Link
+            </Button>
+            <Button
+              variant="secondary"
               href="/garden"
-              className="w-full sm:w-auto px-6 py-3 rounded-full bg-white border border-[#F5ECDE] hover:bg-[#FAF3E8] text-[#232536] text-sm font-semibold transition active:scale-[0.98] shadow-sm text-center"
+              fullWidthMobile
+              className="w-full sm:w-auto px-6 py-3 border hover:bg-[#FAF3E8] text-sm font-semibold active:scale-[0.98] shadow-sm text-center"
             >
               Browse the Garden
-            </Link>
+            </Button>
           </div>
         </div>
       </section>

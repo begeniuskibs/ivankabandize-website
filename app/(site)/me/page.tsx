@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import Button from '@/components/Button'
 import { safeHref } from '@/lib/safeUrl'
 import { SITE_URL } from '@/lib/siteUrl'
 import JsonLd from '@/components/seo/JsonLd'
@@ -94,24 +95,20 @@ export default async function MePage() {
 
               <ScrollReveal delayMs={200}>
                 <div className="flex flex-wrap items-center gap-4 pt-4">
-                  <Link
+                  <Button
                     href="/lets-talk"
-                    className="group inline-flex items-center justify-center gap-2 font-bold text-base px-8 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    showArrow
+                    className="text-base px-8 py-4 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0"
                   >
                     <span>Let&apos;s Talk</span>
-                    <ArrowRight
-                      size={14}
-                      strokeWidth={2.5}
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                    />
-                  </Link>
-                  <Link
+                  </Button>
+                  <Button
+                    variant="secondary"
                     href={safeHref(ctaUrl, '#')}
-                    className="inline-flex items-center justify-center font-bold text-base px-7 py-3.5 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                    className="text-base px-7 py-3.5 hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] hover:-translate-y-0.5 active:translate-y-0"
                   >
                     {ctaText}
-                  </Link>
+                  </Button>
                 </div>
               </ScrollReveal>
             </div>
@@ -456,19 +453,20 @@ export default async function MePage() {
 
           <ScrollReveal delayMs={100}>
             <div className="flex flex-wrap items-center justify-center gap-4 pt-4">
-              <Link
+              <Button
                 href="/lets-talk"
-                className="inline-flex items-center justify-center gap-2 font-bold text-base px-9 py-4 rounded-full bg-[#CF3F29] hover:bg-[#b83420] text-white shadow-[0_6px_18px_rgba(239,91,69,0.32)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="text-base px-9 py-4 shadow-[0_6px_18px_rgba(239,91,69,0.32)] hover:-translate-y-0.5 active:translate-y-0"
               >
                 <span>Let&apos;s Talk</span>
                 <span aria-hidden="true">&#128075;</span>
-              </Link>
-              <Link
+              </Button>
+              <Button
+                variant="secondary"
                 href={safeHref(ctaUrl, '#')}
-                className="inline-flex items-center justify-center font-bold text-base px-8 py-4 rounded-full bg-white text-[#232536] border-2 border-[#F5ECDE] hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] transition-all hover:-translate-y-0.5 active:translate-y-0"
+                className="text-base px-8 py-4 hover:bg-[#F5ECDE] shadow-[0_10px_30px_rgba(35,37,54,0.08)] hover:-translate-y-0.5 active:translate-y-0"
               >
                 {ctaText}
-              </Link>
+              </Button>
             </div>
             <p className="text-xs text-[#5A5D70] font-medium mt-4">
               Direct consultation &middot; No sales pitch &middot; Actionable diagnostic

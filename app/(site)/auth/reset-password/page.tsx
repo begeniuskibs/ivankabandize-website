@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Button from '@/components/Button'
 import { createClient } from '@/utils/supabase/client'
 
 function ResetPasswordForm() {
@@ -206,18 +207,19 @@ function ResetPasswordForm() {
           </p>
         </div>
         <div className="pt-4 border-t border-[#F5ECDE] flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
+          <Button
             href="/forgot-password"
-            className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black transition font-sans"
+            className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider bg-[#232536] text-white hover:bg-black font-sans"
           >
             Request New Link
-          </Link>
-          <Link
+          </Button>
+          <Button
+            variant="secondary"
             href="/login"
-            className="inline-flex items-center justify-center px-6 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider bg-[#FDF8F1] text-[#232536] border border-[#F5ECDE] hover:bg-white transition font-sans"
+            className="px-6 py-2.5 text-xs font-bold uppercase tracking-wider bg-[#FDF8F1] border hover:bg-white font-sans"
           >
             Back to Sign In
-          </Link>
+          </Button>
         </div>
       </div>
     )
@@ -298,13 +300,14 @@ function ResetPasswordForm() {
           />
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={loading || Boolean(successMessage)}
-          className="w-full py-3 px-4 rounded-md font-semibold text-sm text-white bg-[#232536] hover:bg-black transition shadow-sm font-sans cursor-pointer mt-2 disabled:opacity-50"
+          fullWidthMobile
+          className="w-full py-3 px-4 font-semibold text-sm text-white bg-[#232536] hover:bg-black shadow-sm font-sans cursor-pointer mt-2 disabled:opacity-50"
         >
           {loading ? 'Updating password...' : 'Update Password'}
-        </button>
+        </Button>
       </form>
 
       <div className="mt-6 pt-6 border-t border-[#F5ECDE] text-center">
