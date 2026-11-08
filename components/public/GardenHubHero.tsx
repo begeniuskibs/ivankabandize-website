@@ -38,39 +38,30 @@ export default function GardenHubHero({
   const parentHref = breadcrumb.parentHref || '/garden'
   const currentLabel = breadcrumb.currentLabel || title
 
-  // Mode with background image: dark brand overlay with light text, similar to Articles hero
+  // Mode with background image: approved hero (Desktop look + Mobile Style B)
   if (imageSrc) {
     return (
-      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden py-12 md:py-20 max-md:py-0">
-        {/* Mobile: photo as visible strip on top */}
-        <div className="block md:hidden relative w-full h-[120px] overflow-hidden">
+      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden min-h-[230px] md:min-h-[270px] flex flex-col justify-center">
+        {/* Background photo behind dark overlay */}
+        <div className="absolute inset-0 z-0">
           <Image
             src={imageSrc}
             alt={imageAlt}
             fill
             priority
-            className="object-cover"
+            quality={70}
+            sizes="100vw"
+            className="object-cover opacity-55"
           />
-        </div>
-
-        {/* Desktop: background image with gradient overlay */}
-        <div className="hidden md:block absolute inset-0 z-0">
-          <Image
-            src={imageSrc}
-            alt={imageAlt}
-            fill
-            priority
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#232536] via-[#232536]/80 to-[#232536]/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#232536]/60 via-[#232536]/80 to-[#232536]/92" />
         </div>
 
         {/* Content container */}
-        <div className="relative z-10 max-w-6xl mx-auto bg-[#232536] md:bg-transparent px-4 sm:px-6 lg:px-8 py-6 md:py-0">
-          <div className="max-w-3xl space-y-3 md:space-y-4">
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-[18px] pt-[22px] pb-[26px] md:px-12 md:py-9">
+          <div className="max-w-[620px] space-y-2 md:space-y-3">
             {/* Breadcrumb */}
             <nav aria-label="Breadcrumb">
-              <div className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-[#FDF8F1]/70">
+              <div className="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0]">
                 <Link
                   href={parentHref}
                   className="group inline-flex items-center gap-1 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
@@ -83,7 +74,7 @@ export default function GardenHubHero({
                   />
                   <span>{parentLabel}</span>
                 </Link>
-                <span className="text-[#FDF8F1]/40" aria-hidden="true">
+                <span className="text-[#E9E4F0]/40" aria-hidden="true">
                   /
                 </span>
                 <span className="text-[#FDF8F1]">{currentLabel}</span>
@@ -92,18 +83,18 @@ export default function GardenHubHero({
 
             {/* Optional eyebrow */}
             {eyebrow && eyebrow !== parentLabel && (
-              <p className="text-xs uppercase tracking-widest font-bold text-[#FDF8F1]/75">
+              <p className="text-[12px] uppercase tracking-[0.12em] font-bold text-[#E9E4F0]/80">
                 {eyebrow}
               </p>
             )}
 
             {/* Single H1 per page */}
-            <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-[#FDF8F1] leading-[1.15]">
+            <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[30px] md:text-[44px] font-bold text-[#FDF8F1] leading-tight md:leading-[1.15] tracking-tight">
               {title}
             </h1>
 
             {/* Intro */}
-            <p className="text-base sm:text-lg md:text-xl font-medium text-[#FDF8F1]/85 leading-relaxed">
+            <p className="text-[15px] md:text-[18px] font-normal text-[#F3EFF7] leading-relaxed">
               {intro}
             </p>
           </div>
@@ -112,8 +103,7 @@ export default function GardenHubHero({
     )
   }
 
-  // Plain branded hero without image (Curated Library style)
-  // Tone styling configurations
+  // Plain branded hero without image (fallback)
   const toneStyles = {
     cream: {
       section: 'border-[#F0E4D2] bg-[#FAF3E8]/60 text-[#232536]',
@@ -191,4 +181,3 @@ export default function GardenHubHero({
     </section>
   )
 }
-

@@ -156,34 +156,24 @@ export default function GardenArticlesView({
   return (
     <div className="min-h-screen bg-[#FDF8F1] flex flex-col font-sans">
       {/* Hero band */}
-      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden py-16 md:py-24 max-md:py-0">
-        {/* Mobile: photo as visible strip on top (h-[120px], object-cover, no overlay) */}
-        <div className="block md:hidden relative w-full h-[120px] overflow-hidden">
+      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden max-md:min-h-[230px] md:py-24">
+        {/* Background photo behind dark overlay for both mobile and desktop */}
+        <div className="absolute inset-0 z-0">
           <Image
-            key={`mobile-${currentHero.image}`}
+            key={currentHero.image}
             src={currentHero.image}
             alt=""
             fill
             priority
-            className="object-cover transition-opacity duration-300"
+            quality={70}
+            sizes="100vw"
+            className="object-cover opacity-55 transition-opacity duration-300"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#232536]/55 via-[#232536]/80 to-[#232536]/92 md:bg-gradient-to-t md:from-[#232536] md:via-[#232536]/80 md:to-[#232536]/55" />
         </div>
 
-        {/* Desktop: background image with gradient overlay */}
-        <div className="hidden md:block absolute inset-0 z-0">
-          <Image
-            key={`desktop-${currentHero.image}`}
-            src={currentHero.image}
-            alt=""
-            fill
-            priority
-            className="object-cover transition-opacity duration-300"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#232536] via-[#232536]/80 to-[#232536]/55" />
-        </div>
-
-        {/* Content container: mobile has tighter padding (px-5 py-4), desktop uses standard layout */}
-        <div className="relative z-10 max-w-6xl mx-auto bg-[#232536] md:bg-transparent px-5 py-4 md:p-0 md:px-6 lg:px-8">
+        {/* Content container: mobile has Style B padding (px-[18px] pt-[22px] pb-[26px]), desktop uses standard layout */}
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-[18px] pt-[22px] pb-[26px] md:p-0 md:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="mb-3 md:mb-4">
             {/* Mobile single parent-level back link */}
@@ -191,7 +181,7 @@ export default function GardenArticlesView({
               {selectedStream === 'all' ? (
                 <Link
                   href="/garden"
-                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-[12px] font-bold tracking-[0.12em] uppercase text-[#E9E4F0] hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -208,7 +198,7 @@ export default function GardenArticlesView({
                     e.preventDefault()
                     handleStreamChange('all')
                   }}
-                  className="group inline-flex items-center gap-1.5 text-[11px] font-bold tracking-[0.1em] uppercase text-[#FDF8F1]/70 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
+                  className="group inline-flex items-center gap-1.5 text-[12px] font-bold tracking-[0.12em] uppercase text-[#E9E4F0] hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -261,12 +251,12 @@ export default function GardenArticlesView({
           </nav>
 
           {/* H1 Title */}
-          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[32px] leading-tight md:text-[52px] md:leading-[1.15] font-bold text-[#FDF8F1] mb-2 md:mb-3">
+          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[30px] leading-tight md:text-[52px] md:leading-[1.15] font-bold text-[#FDF8F1] mb-2 md:mb-3">
             {currentHero.title}
           </h1>
 
           {/* Intro line / description with inline eyebrow when set */}
-          <p className="text-[15px] md:text-[18px] text-[#FDF8F1]/85 font-light max-w-[620px] leading-relaxed mb-4 md:mb-6">
+          <p className="text-[15px] md:text-[18px] text-[#F3EFF7] font-light max-w-[620px] leading-relaxed mb-4 md:mb-6">
             {currentHero.eyebrow ? (
               <>
                 <span className="uppercase font-bold tracking-wider text-[#F7C55C]">

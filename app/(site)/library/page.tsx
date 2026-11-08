@@ -4,6 +4,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { ArrowRight } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
+import GardenHubHero from '@/components/public/GardenHubHero'
 import { safeHref } from '@/lib/safeUrl'
 import { SITE_URL } from '@/lib/siteUrl'
 
@@ -88,67 +89,54 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
       {/* ================= HERO HEADER ================= */}
-      <section className="py-16 md:py-20 border-b border-[#F5ECDE] bg-[#FAF3E8]/60">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl space-y-4">
-            <ScrollReveal>
-              <div className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#5A5D70]">
-                <Link href="/" className="hover:underline text-[#5A5D70]">
-                  Home
+      <GardenHubHero
+        title="Curated Library"
+        intro="A collection of podcasts, books, and newsletters that have shaped my thinking on systems, work, leadership, and craft."
+        imageSrc="/garden-heroes/library.jpg"
+        breadcrumb={{
+          parentLabel: 'The Garden',
+          parentHref: '/garden',
+          currentLabel: 'Library',
+        }}
+      />
+
+      {/* Topic Filter Row */}
+      {topicTags.length > 0 && (
+        <section className="bg-[#FAF3E8]/60 border-b border-[#F5ECDE] py-4">
+          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <ScrollReveal delayMs={180}>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-semibold text-[#5A5D70] mr-1">
+                  Topics:
+                </span>
+                <Link
+                  href="/library"
+                  className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
+                    !activeTopicSlug
+                      ? 'bg-[#232536] text-white font-bold'
+                      : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
+                  }`}
+                >
+                  All Items
                 </Link>
-                <span className="text-[#5A5D70]">/</span>
-                <span className="text-[#232536]">Library</span>
-              </div>
-            </ScrollReveal>
-
-            <ScrollReveal delayMs={80}>
-              <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#232536] leading-[1.15]">
-                Curated <span className="text-[#EF5B45]">Library</span>
-              </h1>
-            </ScrollReveal>
-
-            <ScrollReveal delayMs={140}>
-              <p className="text-lg sm:text-xl font-medium text-[#5A5D70] leading-relaxed">
-                A collection of podcasts, books, and newsletters that have shaped my thinking on systems, work, leadership, and craft.
-              </p>
-            </ScrollReveal>
-
-            {/* Topic Filter Pills */}
-            {topicTags.length > 0 && (
-              <ScrollReveal delayMs={180}>
-                <div className="pt-4 flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-semibold text-[#5A5D70] mr-1">
-                    Topics:
-                  </span>
+                {topicTags.map((tag) => (
                   <Link
-                    href="/library"
+                    key={tag.slug}
+                    href={`/library?topic=${tag.slug}`}
                     className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                      !activeTopicSlug
-                        ? 'bg-[#232536] text-white font-bold'
-                        : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
+                      activeTopicSlug === tag.slug
+                        ? 'bg-[#2AA198] text-white font-bold'
+                        : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#2AA198]'
                     }`}
                   >
-                    All Items
+                    {tag.name}
                   </Link>
-                  {topicTags.map((tag) => (
-                    <Link
-                      key={tag.slug}
-                      href={`/library?topic=${tag.slug}`}
-                      className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                        activeTopicSlug === tag.slug
-                          ? 'bg-[#2AA198] text-white font-bold'
-                          : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#2AA198]'
-                      }`}
-                    >
-                      {tag.name}
-                    </Link>
-                  ))}
-                </div>
-              </ScrollReveal>
-            )}
+                ))}
+              </div>
+            </ScrollReveal>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* ================= CONTENT SECTIONS ================= */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">

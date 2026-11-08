@@ -22,10 +22,9 @@ export default function ResourcesPage() {
     <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4]">
       {/* Hub Hero */}
       <GardenHubHero
-        eyebrow="The Garden"
         title="Resources"
         intro="Templates and downloads you can put to work today."
-        tone="cream"
+        imageSrc="/garden-heroes/resources.jpg"
         breadcrumb={{
           parentLabel: 'The Garden',
           parentHref: '/garden',
