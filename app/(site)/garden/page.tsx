@@ -41,6 +41,7 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
       .not('published_at', 'is', null)
       .lte('published_at', now)
       .order('published_at', { ascending: false }),
+    // Explicit columns: library_items.take must never be selected through the public client.
     supabase
       .from('library_items')
       .select('id, title, creator, type, url, thumbnail_url, created_at', { count: 'exact' })
