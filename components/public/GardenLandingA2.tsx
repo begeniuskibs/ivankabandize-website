@@ -169,8 +169,12 @@ export default function GardenLandingA2({
               </div>
             </Link>
 
-            {/* Report Digests Card (Gold) - Non-link */}
-            <div className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
+            {/* Report Digests Card (Gold) */}
+            <Link
+              href="/garden/report-digests"
+              aria-label="Report Digests, coming soon"
+              className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A97B1A] focus-visible:ring-offset-2"
+            >
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/digests.svg"
@@ -206,10 +210,14 @@ export default function GardenLandingA2({
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
 
-            {/* Resources Card (Slate) - Non-link */}
-            <div className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none">
+            {/* Resources Card (Slate) */}
+            <Link
+              href="/garden/resources"
+              aria-label="Resources, coming soon"
+              className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C5F73] focus-visible:ring-offset-2"
+            >
               {/* Full-card Background Art */}
               <Image
                 src="/garden-card-art/resources.svg"
@@ -245,7 +253,7 @@ export default function GardenLandingA2({
                   </span>
                 </div>
               </div>
-            </div>
+            </Link>
           </div>
 
           {/* 3. Browse by Topic Strip */}

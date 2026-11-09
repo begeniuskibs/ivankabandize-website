@@ -23,10 +23,9 @@ export default function ReportDigestsPage() {
     <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4]">
       {/* Hub Hero */}
       <GardenHubHero
-        eyebrow="The Garden"
         title="Report Digests"
         intro="Plain-language summaries of the research leaders should read, with a button to get the original."
-        tone="cream"
+        imageSrc="/garden-heroes/digests.jpg"
         breadcrumb={{
           parentLabel: 'The Garden',
           parentHref: '/garden',
