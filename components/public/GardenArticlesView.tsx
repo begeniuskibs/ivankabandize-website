@@ -157,7 +157,7 @@ export default function GardenArticlesView({
     <div className="min-h-screen bg-[#FDF8F1] flex flex-col font-sans">
       {/* Hero band */}
       <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden max-md:min-h-[230px] md:py-24">
-        {/* Background photo behind dark overlay for both mobile and desktop */}
+        {/* Background photo behind dark overlay */}
         <div className="absolute inset-0 z-0">
           <Image
             key={currentHero.image}
@@ -167,13 +167,13 @@ export default function GardenArticlesView({
             priority
             quality={70}
             sizes="100vw"
-            className="object-cover opacity-55 transition-opacity duration-300"
+            className="object-cover max-md:opacity-55 transition-opacity duration-300"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[#232536]/55 via-[#232536]/80 to-[#232536]/92 md:bg-gradient-to-t md:from-[#232536] md:via-[#232536]/80 md:to-[#232536]/55" />
         </div>
 
         {/* Content container: mobile has Style B padding (px-[18px] pt-[22px] pb-[26px]), desktop uses standard layout */}
-        <div className="relative z-10 max-w-6xl mx-auto w-full px-[18px] pt-[22px] pb-[26px] md:p-0 md:px-6 lg:px-8">
+        <div className="relative z-10 max-w-6xl mx-auto px-[18px] pt-[22px] pb-[26px] md:p-0 md:px-6 lg:px-8">
           {/* Breadcrumb */}
           <nav aria-label="Breadcrumb" className="mb-3 md:mb-4">
             {/* Mobile single parent-level back link */}
@@ -256,7 +256,7 @@ export default function GardenArticlesView({
           </h1>
 
           {/* Intro line / description with inline eyebrow when set */}
-          <p className="text-[15px] md:text-[18px] text-[#F3EFF7] font-light max-w-[620px] leading-relaxed mb-4 md:mb-6">
+          <p className="text-[15px] md:text-[18px] text-[#F3EFF7] md:text-[#FDF8F1]/85 font-light max-w-[620px] leading-relaxed mb-4 md:mb-6">
             {currentHero.eyebrow ? (
               <>
                 <span className="uppercase font-bold tracking-wider text-[#F7C55C]">
