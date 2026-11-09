@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server'
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { validateUrlSafety } from '@/lib/urlSafety'
+import {
+  validateLibrarySlug,
+  validateLibraryVideoUrl,
+  validateLibraryLinks,
+} from '@/lib/libraryLinks'
 
 export const dynamic = 'force-dynamic'
 
@@ -90,7 +95,19 @@ export async function PATCH(request: Request) {
   try {
     const admin = createAdminClient()
     const body = await request.json()
-    const { id, title, creator, type, url, thumbnail_url, recommendation_note, tag_ids } = body
+    const {
+      id,
+      title,
+      creator,
+      type,
+      url,
+      thumbnail_url,
+      recommendation_note,
+      tag_ids,
+      slug,
+      links,
+      video_url,
+    } = body
 
     // 1. id must be a uuid
     if (!id || typeof id !== 'string' || !UUID_REGEX.test(id.trim())) {
@@ -211,6 +228,30 @@ export async function PATCH(request: Request) {
     if (thumbnail_url !== undefined) updatePayload.thumbnail_url = thumbnail_url ? thumbnail_url.trim() : null
     if (recommendation_note !== undefined) updatePayload.recommendation_note = recommendation_note ? recommendation_note.trim() : null
 
+    if (slug !== undefined) {
+      const slugCheck = validateLibrarySlug(slug)
+      if (!slugCheck.valid) {
+        return NextResponse.json({ error: slugCheck.error }, { status: 400 })
+      }
+      updatePayload.slug = slugCheck.value
+    }
+
+    if (video_url !== undefined) {
+      const videoCheck = await validateLibraryVideoUrl(video_url)
+      if (!videoCheck.valid) {
+        return NextResponse.json({ error: videoCheck.error }, { status: 400 })
+      }
+      updatePayload.video_url = videoCheck.value
+    }
+
+    if (links !== undefined) {
+      const linksCheck = await validateLibraryLinks(links)
+      if (!linksCheck.valid) {
+        return NextResponse.json({ error: linksCheck.error }, { status: 400 })
+      }
+      updatePayload.links = linksCheck.value
+    }
+
     const { error: updateError } = await admin
       .from('library_items')
       .update(updatePayload)
@@ -218,6 +259,16 @@ export async function PATCH(request: Request) {
 
     if (updateError) {
       console.error('[api/admin/library PATCH]', updateError.message)
+      if (
+        updateError.code === '23505' ||
+        updateError.message.includes('library_items_slug_idx') ||
+        updateError.message.toLowerCase().includes('unique')
+      ) {
+        return NextResponse.json(
+          { error: 'That page address is already used by another item.' },
+          { status: 409 }
+        )
+      }
       return NextResponse.json({ error: 'Could not update library item' }, { status: 500 })
     }
 

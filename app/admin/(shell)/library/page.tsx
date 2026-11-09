@@ -1,8 +1,65 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { CloseIcon } from '@/components/admin/icons'
+import {
+  ALLOWED_IMAGE_EXTENSIONS,
+  MAX_IMAGE_SIZE_BYTES,
+  isAllowedImageExtension,
+} from '@/lib/uploadRules'
+
+const ALLOWED_LINK_TYPES = [
+  'book',
+  'audible',
+  'spotify',
+  'apple_podcasts',
+  'youtube',
+  'website',
+] as const
+
+type LibraryLinkType = (typeof ALLOWED_LINK_TYPES)[number]
+
+const LINK_TYPE_LABELS: Record<LibraryLinkType, string> = {
+  book: 'Get the book',
+  audible: 'Listen on Audible',
+  spotify: 'Listen on Spotify',
+  apple_podcasts: 'Listen on Apple Podcasts',
+  youtube: 'Watch on YouTube',
+  website: 'Visit website',
+}
+
+interface LibraryLinkItem {
+  type: LibraryLinkType
+  url: string
+  label?: string
+}
+
+function safeParseLibraryLinks(raw: unknown): LibraryLinkItem[] {
+  if (!Array.isArray(raw)) return []
+  const result: LibraryLinkItem[] = []
+  for (const item of raw) {
+    if (!item || typeof item !== 'object' || Array.isArray(item)) continue
+    const { type, url, label } = item as Record<string, unknown>
+    if (
+      typeof type === 'string' &&
+      (ALLOWED_LINK_TYPES as readonly string[]).includes(type) &&
+      typeof url === 'string' &&
+      url.trim().length > 0
+    ) {
+      const parsed: LibraryLinkItem = {
+        type: type as LibraryLinkType,
+        url: url.trim(),
+      }
+      if (typeof label === 'string' && label.trim().length > 0) {
+        parsed.label = label.trim()
+      }
+      result.push(parsed)
+    }
+  }
+  return result
+}
 
 interface LibraryItemRecord {
   id: string
@@ -14,6 +71,9 @@ interface LibraryItemRecord {
   recommendation_note: string | null
   created_at: string
   tag_ids?: string[]
+  slug?: string | null
+  links?: LibraryLinkItem[] | null
+  video_url?: string | null
 }
 
 interface TagOption {
@@ -37,12 +97,19 @@ export default function AdminLibraryPage() {
   const [title, setTitle] = useState('')
   const [creator, setCreator] = useState('')
   const [type, setType] = useState('podcast')
+  const [slug, setSlug] = useState('')
   const [url, setUrl] = useState('')
+  const [videoUrl, setVideoUrl] = useState('')
   const [thumbnailUrl, setThumbnailUrl] = useState('')
   const [recommendationNote, setRecommendationNote] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
+  const [links, setLinks] = useState<LibraryLinkItem[]>([])
+  const [isUploading, setIsUploading] = useState(false)
+  const [uploadError, setUploadError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
   const [modalError, setModalError] = useState<string | null>(null)
+
+  const fileInputRef = useRef<HTMLInputElement | null>(null)
 
   useEffect(() => {
     fetchLibraryData()
@@ -73,10 +140,14 @@ export default function AdminLibraryPage() {
     setTitle(item.title)
     setCreator(item.creator)
     setType(item.type)
+    setSlug(item.slug || '')
     setUrl(item.url)
+    setVideoUrl(item.video_url || '')
     setThumbnailUrl(item.thumbnail_url || '')
     setRecommendationNote(item.recommendation_note || '')
     setSelectedTagIds(item.tag_ids || [])
+    setLinks(safeParseLibraryLinks(item.links))
+    setUploadError(null)
     setModalError(null)
     setIsModalOpen(true)
   }
@@ -85,11 +156,101 @@ export default function AdminLibraryPage() {
     setIsModalOpen(false)
     setEditingItem(null)
     setModalError(null)
+    setUploadError(null)
+    setIsUploading(false)
   }
 
   function toggleTag(tagId: string) {
     setSelectedTagIds((prev) =>
       prev.includes(tagId) ? prev.filter((id) => id !== tagId) : [...prev, tagId]
+    )
+  }
+
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    setUploadError(null)
+    const rawExt = file.name.includes('.') ? file.name.split('.').pop() || '' : ''
+    if (!isAllowedImageExtension(rawExt)) {
+      setUploadError(
+        `File extension .${rawExt} is not allowed. Allowed extensions: ${ALLOWED_IMAGE_EXTENSIONS.join(
+          ', '
+        )}`
+      )
+      return
+    }
+
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      setUploadError('File size exceeds 10 MB limit for images')
+      return
+    }
+
+    setIsUploading(true)
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+      formData.append('bucket', 'post-images')
+
+      const res = await fetch('/api/admin/upload', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await res.json()
+      if (res.ok && data.url) {
+        setThumbnailUrl(data.url)
+      } else {
+        setUploadError(data.error || 'Failed to upload image')
+      }
+    } catch {
+      setUploadError('Network error uploading image')
+    } finally {
+      setIsUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
+  }
+
+  function handleAddLink() {
+    if (links.length >= 8) return
+    setLinks((prev) => [...prev, { type: 'website', url: '', label: '' }])
+  }
+
+  function handleRemoveLink(index: number) {
+    setLinks((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  function handleMoveLinkUp(index: number) {
+    if (index === 0) return
+    setLinks((prev) => {
+      const copy = [...prev]
+      const temp = copy[index - 1]
+      copy[index - 1] = copy[index]
+      copy[index] = temp
+      return copy
+    })
+  }
+
+  function handleMoveLinkDown(index: number) {
+    if (index === links.length - 1) return
+    setLinks((prev) => {
+      const copy = [...prev]
+      const temp = copy[index + 1]
+      copy[index + 1] = copy[index]
+      copy[index] = temp
+      return copy
+    })
+  }
+
+  function handleLinkChange(
+    index: number,
+    field: keyof LibraryLinkItem,
+    value: string
+  ) {
+    setLinks((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     )
   }
 
@@ -106,6 +267,10 @@ export default function AdminLibraryPage() {
       setModalError('Creator is required')
       return
     }
+    if (!slug.trim()) {
+      setModalError('Page address cannot be empty.')
+      return
+    }
     if (!url.trim()) {
       setModalError('URL is required')
       return
@@ -113,6 +278,17 @@ export default function AdminLibraryPage() {
 
     setSaving(true)
     try {
+      const cleanLinks = links.map((l) => {
+        const item: LibraryLinkItem = {
+          type: l.type,
+          url: l.url.trim(),
+        }
+        if (l.label && l.label.trim()) {
+          item.label = l.label.trim()
+        }
+        return item
+      })
+
       const res = await fetch('/api/admin/library', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -121,10 +297,13 @@ export default function AdminLibraryPage() {
           title,
           creator,
           type,
+          slug: slug.trim(),
           url,
-          thumbnail_url: thumbnailUrl || null,
-          recommendation_note: recommendationNote || null,
+          video_url: videoUrl.trim() ? videoUrl.trim() : null,
+          thumbnail_url: thumbnailUrl ? thumbnailUrl.trim() : null,
+          recommendation_note: recommendationNote ? recommendationNote.trim() : null,
           tag_ids: selectedTagIds,
+          links: cleanLinks,
         }),
       })
 
@@ -252,7 +431,7 @@ export default function AdminLibraryPage() {
       {/* Edit Item Modal */}
       {isModalOpen && editingItem && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs animate-in fade-in duration-200">
-          <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-200 max-h-[90vh] overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-8 shadow-2xl border border-gray-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-4 border-b border-gray-100 mb-6">
               <h3 className="text-lg font-bold text-gray-900">Edit Library Item</h3>
               <button
@@ -312,6 +491,24 @@ export default function AdminLibraryPage() {
                 </select>
               </div>
 
+              {/* Page address (slug) */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                  Page address
+                </label>
+                <input
+                  type="text"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value.toLowerCase())}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45]/20 focus:border-[#EF5B45]"
+                  placeholder="e.g. entrepreneurship-masterclass"
+                  required
+                />
+                <p className="text-[11px] text-gray-500 mt-1">
+                  This becomes ivankabandize.com/library/your-address. Lowercase letters, numbers and hyphens only.
+                </p>
+              </div>
+
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
                   URL
@@ -325,17 +522,74 @@ export default function AdminLibraryPage() {
                 />
               </div>
 
+              {/* Video URL (YouTube) */}
+              <div>
+                <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                  Video URL (YouTube)
+                </label>
+                <input
+                  type="url"
+                  value={videoUrl}
+                  onChange={(e) => setVideoUrl(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45]/20 focus:border-[#EF5B45]"
+                  placeholder="https://www.youtube.com/watch?v=..."
+                />
+                <p className="text-[11px] text-gray-500 mt-1">
+                  Used for the video player on podcast pages. Leave empty if there is none.
+                </p>
+              </div>
+
+              {/* Thumbnail URL with Upload */}
               <div>
                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
                   Thumbnail URL
                 </label>
-                <input
-                  type="url"
-                  value={thumbnailUrl}
-                  onChange={(e) => setThumbnailUrl(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45]/20 focus:border-[#EF5B45]"
-                  placeholder="https://..."
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="url"
+                    value={thumbnailUrl}
+                    onChange={(e) => setThumbnailUrl(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45]/20 focus:border-[#EF5B45]"
+                    placeholder="https://..."
+                  />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileUpload}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isUploading}
+                    className="px-3 py-2 text-xs font-semibold rounded-lg border border-gray-300 bg-gray-50 hover:bg-gray-100 text-gray-700 transition disabled:opacity-50 cursor-pointer shrink-0"
+                  >
+                    {isUploading ? 'Uploading...' : 'Upload image'}
+                  </button>
+                </div>
+
+                {uploadError && (
+                  <p className="text-xs text-red-600 mt-1">{uploadError}</p>
+                )}
+
+                {thumbnailUrl && (
+                  <div className="mt-2.5 flex items-center gap-3 p-2 bg-gray-50 rounded-lg border border-gray-200">
+                    <div className="relative w-12 h-12 shrink-0 rounded-md overflow-hidden bg-gray-200 border border-gray-300">
+                      <Image
+                        src={thumbnailUrl}
+                        alt="Thumbnail preview"
+                        width={48}
+                        height={48}
+                        unoptimized
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="text-xs text-gray-500 truncate flex-1 font-mono">
+                      {thumbnailUrl}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div>
@@ -349,6 +603,118 @@ export default function AdminLibraryPage() {
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45]/20 focus:border-[#EF5B45]"
                   placeholder="Why this item is recommended..."
                 />
+              </div>
+
+              {/* Links List Section */}
+              <div className="pt-2 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-gray-700">
+                      Links
+                    </label>
+                    <span className="text-[11px] font-semibold text-gray-500">
+                      ({links.length}/8)
+                    </span>
+                  </div>
+                  {links.length < 8 && (
+                    <button
+                      type="button"
+                      onClick={handleAddLink}
+                      className="px-2.5 py-1 text-xs font-semibold bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-md transition cursor-pointer"
+                    >
+                      + Add link
+                    </button>
+                  )}
+                </div>
+
+                {links.length === 0 ? (
+                  <p className="text-xs text-gray-400 italic py-2">
+                    No links added yet. Click &quot;+ Add link&quot; to attach Spotify, Audible, YouTube, or other links.
+                  </p>
+                ) : (
+                  <div className="space-y-3">
+                    {links.map((link, idx) => (
+                      <div
+                        key={idx}
+                        className="p-3 bg-gray-50 border border-gray-200 rounded-xl space-y-2"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2 flex-1">
+                            <span className="text-[11px] font-bold text-gray-400 w-4">
+                              #{idx + 1}
+                            </span>
+                            <select
+                              value={link.type}
+                              onChange={(e) =>
+                                handleLinkChange(idx, 'type', e.target.value)
+                              }
+                              className="px-2.5 py-1 text-xs font-semibold border border-gray-300 rounded-md bg-white focus:outline-hidden focus:ring-1 focus:ring-[#EF5B45]"
+                            >
+                              {ALLOWED_LINK_TYPES.map((t) => (
+                                <option key={t} value={t}>
+                                  {LINK_TYPE_LABELS[t]} ({t})
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+
+                          <div className="flex items-center gap-1 shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => handleMoveLinkUp(idx)}
+                              disabled={idx === 0}
+                              className="px-2 py-0.5 text-[11px] font-medium border border-gray-200 rounded bg-white hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:hover:bg-white cursor-pointer disabled:cursor-not-allowed"
+                            >
+                              Move up
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleMoveLinkDown(idx)}
+                              disabled={idx === links.length - 1}
+                              className="px-2 py-0.5 text-[11px] font-medium border border-gray-200 rounded bg-white hover:bg-gray-100 text-gray-600 disabled:opacity-30 disabled:hover:bg-white cursor-pointer disabled:cursor-not-allowed"
+                            >
+                              Move down
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveLink(idx)}
+                              className="px-2 py-0.5 text-[11px] font-medium text-red-600 hover:text-red-800 hover:bg-red-50 rounded cursor-pointer"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                          <div>
+                            <input
+                              type="url"
+                              value={link.url}
+                              onChange={(e) =>
+                                handleLinkChange(idx, 'url', e.target.value)
+                              }
+                              placeholder="https://..."
+                              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-md bg-white focus:outline-hidden focus:ring-1 focus:ring-[#EF5B45]"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <input
+                              type="text"
+                              value={link.label || ''}
+                              maxLength={60}
+                              onChange={(e) =>
+                                handleLinkChange(idx, 'label', e.target.value)
+                              }
+                              placeholder="Optional label (max 60 chars)"
+                              className="w-full px-2.5 py-1.5 text-xs border border-gray-300 rounded-md bg-white focus:outline-hidden focus:ring-1 focus:ring-[#EF5B45]"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Topic Tags Multi-select Section */}
@@ -390,7 +756,7 @@ export default function AdminLibraryPage() {
                 <button
                   type="button"
                   onClick={handleCloseModal}
-                  className="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition"
+                  className="px-4 py-2 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition cursor-pointer"
                 >
                   Cancel
                 </button>
