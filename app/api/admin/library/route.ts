@@ -22,7 +22,8 @@ export async function GET() {
 
   try {
     // 1. Fetch library items
-    const { data: items, error: itemsError } = await supabase
+    const admin = createAdminClient()
+    const { data: items, error: itemsError } = await admin
       .from('library_items')
       .select('*')
       .order('created_at', { ascending: false })
