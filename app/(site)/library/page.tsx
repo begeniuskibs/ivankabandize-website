@@ -28,6 +28,8 @@ interface LibraryItem {
   thumbnail_url: string | null
   recommendation_note?: string | null
   created_at: string
+  slug?: string | null
+  take_published?: boolean | null
 }
 
 interface LibraryPageProps {
@@ -43,7 +45,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   // Explicit columns: library_items.take must never be selected through the public client.
   const { data: items } = await supabase
     .from('library_items')
-    .select('id, title, creator, type, url, thumbnail_url, created_at')
+    .select('id, title, creator, type, url, thumbnail_url, created_at, slug, take_published')
     .order('created_at', { ascending: true })
 
   const allItems: LibraryItem[] = items || []
@@ -196,14 +198,11 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 </ScrollReveal>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {podcasts.map((item, idx) => (
-                    <ScrollReveal key={item.id} delayMs={idx * 60}>
-                      <a
-                        href={safeHref(item.url, '#')}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex flex-col h-full bg-white rounded-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
-                      >
+                  {podcasts.map((item, idx) => {
+                    const cardClasses =
+                      "group flex flex-col h-full bg-white rounded-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
+                    const inner = (
+                      <>
                         {/* Thumbnail */}
                         <div className="relative aspect-video w-full bg-[#FAF3E8] overflow-hidden">
                           {item.thumbnail_url ? (
@@ -226,8 +225,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               />
                             </div>
                           )}
-                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
-                            Podcast
+                          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                            {item.take_published && (
+                              <span className="px-2.5 py-1 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20 shadow-xs">
+                                My take inside
+                              </span>
+                            )}
+                            <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
+                              Podcast
+                            </span>
                           </div>
                         </div>
 
@@ -243,7 +249,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                           </div>
 
                           <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
-                            <span>Listen / Watch</span>
+                            <span>{item.slug ? 'View Take & Details' : 'Listen / Watch'}</span>
                             <ArrowRight
                               size={14}
                               strokeWidth={2.5}
@@ -252,9 +258,28 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             />
                           </div>
                         </div>
-                      </a>
-                    </ScrollReveal>
-                  ))}
+                      </>
+                    )
+
+                    return (
+                      <ScrollReveal key={item.id} delayMs={idx * 60}>
+                        {item.slug ? (
+                          <Link href={`/library/${item.slug}`} className={cardClasses}>
+                            {inner}
+                          </Link>
+                        ) : (
+                          <a
+                            href={safeHref(item.url, '#')}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cardClasses}
+                          >
+                            {inner}
+                          </a>
+                        )}
+                      </ScrollReveal>
+                    )
+                  })}
                 </div>
               </section>
             )}
@@ -285,67 +310,88 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 </ScrollReveal>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {books.map((item, idx) => (
-                    <ScrollReveal key={item.id} delayMs={idx * 80}>
-                      <a
-                        href={safeHref(item.url, '#')}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex flex-col h-full bg-white rounded-lg p-5 hover:-translate-y-1 transition-all duration-300"
-                      >
-                        <div className="flex flex-col sm:flex-row gap-5 items-start flex-grow">
-                          {/* Book Cover */}
-                          <div className="relative w-28 sm:w-32 flex-shrink-0 aspect-[2/3] bg-[#FAF3E8] rounded-xl overflow-hidden transition-all">
-                            {item.thumbnail_url ? (
-                              <img
-                                src={item.thumbnail_url}
-                                alt={item.title}
-                                loading="lazy"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  {books.map((item, idx) => {
+                    const cardClasses =
+                      "group flex flex-col h-full bg-white rounded-lg p-5 hover:-translate-y-1 transition-all duration-300"
+                    const inner = (
+                      <div className="flex flex-col sm:flex-row gap-5 items-start flex-grow">
+                        {/* Book Cover */}
+                        <div className="relative w-28 sm:w-32 flex-shrink-0 aspect-[2/3] bg-[#FAF3E8] rounded-xl overflow-hidden transition-all">
+                          {item.thumbnail_url ? (
+                            <img
+                              src={item.thumbnail_url}
+                              alt={item.title}
+                              loading="lazy"
+                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                              <Image
+                                src="/icons/3d/books.svg"
+                                alt=""
+                                width={40}
+                                height={40}
+                                className="w-10 h-10 object-contain opacity-40"
+                                aria-hidden="true"
+                                unoptimized
                               />
-                            ) : (
-                              <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
-                                <Image
-                                  src="/icons/3d/books.svg"
-                                  alt=""
-                                  width={40}
-                                  height={40}
-                                  className="w-10 h-10 object-contain opacity-40"
-                                  aria-hidden="true"
-                                  unoptimized
-                                />
-                              </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
+                        </div>
 
-                          {/* Details */}
-                          <div className="flex flex-col justify-between h-full space-y-3 flex-grow">
-                            <div className="space-y-1.5">
+                        {/* Details */}
+                        <div className="flex flex-col justify-between h-full space-y-3 flex-grow">
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
                               <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold uppercase tracking-wider">
                                 Book
                               </span>
-                              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug">
-                                {item.title}
-                              </h3>
-                              <p className="text-xs font-medium text-[#5A5D70]">
-                                by <span className="font-semibold text-[#232536]">{item.creator}</span>
-                              </p>
+                              {item.take_published && (
+                                <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20">
+                                  My take inside
+                                </span>
+                              )}
                             </div>
+                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug">
+                              {item.title}
+                            </h3>
+                            <p className="text-xs font-medium text-[#5A5D70]">
+                              by <span className="font-semibold text-[#232536]">{item.creator}</span>
+                            </p>
+                          </div>
 
-                            <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
-                              <span>View Details</span>
-                              <ArrowRight
-                                size={14}
-                                strokeWidth={2.5}
-                                aria-hidden="true"
-                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                              />
-                            </div>
+                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                            <span>{item.slug ? 'View Take & Details' : 'View Details'}</span>
+                            <ArrowRight
+                              size={14}
+                              strokeWidth={2.5}
+                              aria-hidden="true"
+                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                            />
                           </div>
                         </div>
-                      </a>
-                    </ScrollReveal>
-                  ))}
+                      </div>
+                    )
+
+                    return (
+                      <ScrollReveal key={item.id} delayMs={idx * 80}>
+                        {item.slug ? (
+                          <Link href={`/library/${item.slug}`} className={cardClasses}>
+                            {inner}
+                          </Link>
+                        ) : (
+                          <a
+                            href={safeHref(item.url, '#')}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cardClasses}
+                          >
+                            {inner}
+                          </a>
+                        )}
+                      </ScrollReveal>
+                    )
+                  })}
                 </div>
               </section>
             )}
@@ -376,14 +422,11 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 </ScrollReveal>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {newsletters.map((item, idx) => (
-                    <ScrollReveal key={item.id} delayMs={idx * 80}>
-                      <a
-                        href={safeHref(item.url, '#')}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group flex flex-col h-full bg-white rounded-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
-                      >
+                  {newsletters.map((item, idx) => {
+                    const cardClasses =
+                      "group flex flex-col h-full bg-white rounded-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
+                    const inner = (
+                      <>
                         {/* Thumbnail / Header Graphic */}
                         <div className="relative aspect-[16/9] w-full bg-[#FAF3E8] overflow-hidden">
                           {item.thumbnail_url ? (
@@ -406,8 +449,15 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               />
                             </div>
                           )}
-                          <div className="absolute top-3 right-3 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
-                            Newsletter
+                          <div className="absolute top-3 right-3 flex items-center gap-1.5">
+                            {item.take_published && (
+                              <span className="px-2.5 py-1 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20 shadow-xs">
+                                My take inside
+                              </span>
+                            )}
+                            <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
+                              Newsletter
+                            </span>
                           </div>
                         </div>
 
@@ -423,7 +473,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                           </div>
 
                           <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
-                            <span>Read &amp; Subscribe</span>
+                            <span>{item.slug ? 'View Take & Details' : 'Read & Subscribe'}</span>
                             <ArrowRight
                               size={14}
                               strokeWidth={2.5}
@@ -432,9 +482,28 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                             />
                           </div>
                         </div>
-                      </a>
-                    </ScrollReveal>
-                  ))}
+                      </>
+                    )
+
+                    return (
+                      <ScrollReveal key={item.id} delayMs={idx * 80}>
+                        {item.slug ? (
+                          <Link href={`/library/${item.slug}`} className={cardClasses}>
+                            {inner}
+                          </Link>
+                        ) : (
+                          <a
+                            href={safeHref(item.url, '#')}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={cardClasses}
+                          >
+                            {inner}
+                          </a>
+                        )}
+                      </ScrollReveal>
+                    )
+                  })}
                 </div>
               </section>
             )}

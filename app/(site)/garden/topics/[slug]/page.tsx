@@ -105,7 +105,7 @@ export default async function TopicPage({ params }: TopicPageProps) {
       ? supabase
           .from('library_items')
           // Explicit columns: library_items.take must never be selected through the public client.
-          .select('id, title, creator, type, url, recommendation_note, created_at')
+          .select('id, title, creator, type, url, recommendation_note, created_at, slug, take_published')
           .in('id', itemIds)
           .order('created_at', { ascending: false })
       : Promise.resolve({ data: null, error: null }),

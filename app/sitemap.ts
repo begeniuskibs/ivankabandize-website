@@ -136,5 +136,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     }))
 
-  return [...staticRoutes, ...topicRoutes, ...seriesRoutes, ...postRoutes]
+  // 5. Library item routes
+  const { data: libraryItems } = await adminClient
+    .from('library_items')
+    .select('slug, created_at')
+
+  const libraryRoutes: MetadataRoute.Sitemap = (libraryItems || [])
+    .filter((item) => Boolean(item.slug))
+    .map((item) => ({
+      url: `${SITE_URL}/library/${item.slug}`,
+      lastModified: item.created_at ? new Date(item.created_at) : new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.5,
+    }))
+
+  return [...staticRoutes, ...topicRoutes, ...seriesRoutes, ...postRoutes, ...libraryRoutes]
 }
