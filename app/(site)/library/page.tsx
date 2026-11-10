@@ -32,13 +32,30 @@ interface LibraryItem {
   take_published?: boolean | null
 }
 
+const ALLOWED_TYPES = ['book', 'podcast', 'newsletter'] as const
+type AllowedType = (typeof ALLOWED_TYPES)[number]
+
+function buildLibraryHref(topic: string | null, type: string | null): string {
+  const q = new URLSearchParams()
+  if (topic) q.set('topic', topic)
+  if (type) q.set('type', type)
+  const qs = q.toString()
+  return qs ? `/library?${qs}` : '/library'
+}
+
 interface LibraryPageProps {
-  searchParams?: Promise<{ topic?: string }>
+  searchParams?: Promise<{ topic?: string; type?: string }>
 }
 
 export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const params = (await searchParams) || {}
   const activeTopicSlug = params.topic || null
+  const rawType = params.type || null
+  const activeType: AllowedType | null =
+    rawType && ALLOWED_TYPES.includes(rawType as AllowedType)
+      ? (rawType as AllowedType)
+      : null
+
   const supabase = await createClient()
 
   // 1. Fetch all library items
@@ -88,6 +105,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
   const books = filteredItems.filter((item) => item.type === 'book')
   const newsletters = filteredItems.filter((item) => item.type === 'newsletter')
 
+  const visibleItems = activeType
+    ? filteredItems.filter((item) => item.type === activeType)
+    : filteredItems
+
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
       {/* ================= HERO HEADER ================= */}
@@ -102,29 +123,79 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
         }}
       />
 
-      {/* Topic Filter Row */}
-      {topicTags.length > 0 && (
-        <section className="bg-[#FAF3E8]/60 border-b border-[#F5ECDE] py-4">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Filter Bar */}
+      <section className="bg-[#FAF3E8]/60 border-b border-[#F5ECDE] py-4 space-y-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
+          {/* Type Filter Row */}
+          <ScrollReveal delayMs={150}>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="text-xs font-semibold text-[#5A5D70] mr-1">
+                Type:
+              </span>
+              <Link
+                href={buildLibraryHref(activeTopicSlug, null)}
+                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
+                  !activeType
+                    ? 'bg-[#232536] text-white font-bold'
+                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
+                }`}
+              >
+                All
+              </Link>
+              <Link
+                href={buildLibraryHref(activeTopicSlug, 'book')}
+                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
+                  activeType === 'book'
+                    ? 'bg-[#232536] text-white font-bold'
+                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
+                }`}
+              >
+                Books
+              </Link>
+              <Link
+                href={buildLibraryHref(activeTopicSlug, 'podcast')}
+                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
+                  activeType === 'podcast'
+                    ? 'bg-[#232536] text-white font-bold'
+                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
+                }`}
+              >
+                Podcasts
+              </Link>
+              <Link
+                href={buildLibraryHref(activeTopicSlug, 'newsletter')}
+                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
+                  activeType === 'newsletter'
+                    ? 'bg-[#232536] text-white font-bold'
+                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
+                }`}
+              >
+                Newsletters
+              </Link>
+            </div>
+          </ScrollReveal>
+
+          {/* Topic Filter Row */}
+          {topicTags.length > 0 && (
             <ScrollReveal delayMs={180}>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-semibold text-[#5A5D70] mr-1">
                   Topics:
                 </span>
                 <Link
-                  href="/library"
+                  href={buildLibraryHref(null, activeType)}
                   className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
                     !activeTopicSlug
                       ? 'bg-[#232536] text-white font-bold'
                       : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
                   }`}
                 >
-                  All Items
+                  All
                 </Link>
                 {topicTags.map((tag) => (
                   <Link
                     key={tag.slug}
-                    href={`/library?topic=${tag.slug}`}
+                    href={buildLibraryHref(tag.slug, activeType)}
                     className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
                       activeTopicSlug === tag.slug
                         ? 'bg-[#2AA198] text-white font-bold'
@@ -136,13 +207,13 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 ))}
               </div>
             </ScrollReveal>
-          </div>
-        </section>
-      )}
+          )}
+        </div>
+      </section>
 
       {/* ================= CONTENT SECTIONS ================= */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
-        {filteredItems.length === 0 ? (
+        {visibleItems.length === 0 ? (
           <div className="py-16 text-center bg-white rounded-lg border border-[#F5ECDE] max-w-lg mx-auto p-8 shadow-xs">
             <Image
               src="/icons/3d/books.svg"
@@ -157,23 +228,27 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
               No library items found
             </h3>
             <p className="text-sm text-[#5A5D70] mb-6">
-              {activeTag
-                ? `No items are currently tagged with ${activeTag.name}.`
-                : 'No library items are currently available.'}
+              {activeTag && activeType
+                ? `No ${activeType}s found for ${activeTag.name}.`
+                : activeTag
+                  ? `No items are currently tagged with ${activeTag.name}.`
+                  : activeType
+                    ? `No ${activeType}s found in the library.`
+                    : 'No library items are currently available.'}
             </p>
-            {activeTopicSlug && (
+            {(activeTopicSlug || activeType) && (
               <Link
                 href="/library"
                 className="inline-flex items-center px-4 py-2 text-xs font-semibold bg-[#232536] text-white rounded-lg hover:bg-[#191A23] transition"
               >
-                Clear topic filter
+                Clear filters
               </Link>
             )}
           </div>
         ) : (
           <>
             {/* PODCASTS SECTION */}
-            {podcasts.length > 0 && (
+            {(!activeType || activeType === 'podcast') && podcasts.length > 0 && (
               <section id="podcasts" className="space-y-8">
                 <ScrollReveal>
                   <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
@@ -285,7 +360,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
             )}
 
             {/* BOOKS SECTION */}
-            {books.length > 0 && (
+            {(!activeType || activeType === 'book') && books.length > 0 && (
               <section id="books" className="space-y-8">
                 <ScrollReveal>
                   <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">
@@ -397,7 +472,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
             )}
 
             {/* NEWSLETTERS SECTION */}
-            {newsletters.length > 0 && (
+            {(!activeType || activeType === 'newsletter') && newsletters.length > 0 && (
               <section id="newsletters" className="space-y-8">
                 <ScrollReveal>
                   <div className="flex items-center gap-3 border-b border-[#F5ECDE] pb-4">

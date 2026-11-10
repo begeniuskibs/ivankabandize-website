@@ -446,7 +446,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
 
         {/* g) Previous and next item links */}
         <nav
-          aria-label="Previous and next items"
+          aria-label={`More in ${typeInfo.plural}`}
           className="border-t border-[#F0E4D2] pt-8 flex flex-col sm:flex-row justify-between gap-6"
         >
           {neighbours.prev ? (
@@ -456,7 +456,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
             >
               <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#5C5F73]">
                 <ArrowLeft size={12} aria-hidden="true" />
-                Previous item
+                Previous {item.type.toLowerCase()}
               </span>
               <span className="font-['MTN_Brighter_Sans',_sans-serif] text-base font-bold text-[#232536] group-hover:text-coral-text transition-colors line-clamp-2">
                 {neighbours.prev.title}
@@ -466,20 +466,20 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
             <span />
           )}
 
-          {neighbours.next && (
+          {neighbours.next ? (
             <Link
               href={`/library/${neighbours.next.slug}`}
               className="group flex flex-col gap-1 max-w-sm text-left sm:text-right sm:items-end"
             >
               <span className="inline-flex items-center gap-1 text-[11px] font-bold uppercase tracking-wider text-[#5C5F73]">
-                Next item
+                Next {item.type.toLowerCase()}
                 <ArrowRight size={12} aria-hidden="true" />
               </span>
               <span className="font-['MTN_Brighter_Sans',_sans-serif] text-base font-bold text-[#232536] group-hover:text-coral-text transition-colors line-clamp-2">
                 {neighbours.next.title}
               </span>
             </Link>
-          )}
+          ) : null}
         </nav>
 
         {/* h) "More on <first topic>" */}
@@ -494,35 +494,73 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
                 <Link
                   key={relItem.id}
                   href={`/library/${relItem.slug}`}
-                  className="group flex flex-col justify-between bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 p-5 shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+                  className="group flex flex-col bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 min-w-0"
                 >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
-                        {relItem.type}
-                      </span>
-                      {relItem.take_published && (
-                        <span className="text-[11px] font-bold text-teal-text">
-                          My take inside
-                        </span>
+                  {/* Top media header area */}
+                  {relItem.type === 'book' ? (
+                    <div className="relative aspect-video w-full bg-[#FAF3E8] flex items-center justify-center p-3 overflow-hidden">
+                      {relItem.thumbnail_url ? (
+                        <div className="relative h-full aspect-[2/3] rounded shadow-xs overflow-hidden">
+                          <Image
+                            src={relItem.thumbnail_url}
+                            alt={relItem.title}
+                            fill
+                            className="object-cover group-hover:scale-105 transition-transform duration-500"
+                            unoptimized
+                          />
+                        </div>
+                      ) : (
+                        <div className="w-16 aspect-[2/3] bg-[#EAE0D0] rounded shadow-xs flex items-center justify-center text-[10px] font-bold text-[#5C5F73] text-center p-1 uppercase">
+                          {relItem.creator}
+                        </div>
                       )}
                     </div>
+                  ) : (
+                    <div className="relative aspect-video w-full bg-[#FAF3E8] overflow-hidden">
+                      {relItem.thumbnail_url ? (
+                        <Image
+                          src={relItem.thumbnail_url}
+                          alt={relItem.title}
+                          fill
+                          className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                          unoptimized
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center p-4 text-center">
+                          <span className="font-['MTN_Brighter_Sans',_sans-serif] text-sm font-bold text-[#5C5F73]">
+                            {relItem.creator}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Card body */}
+                  <div className="p-4 flex flex-col flex-1 gap-2">
+                    <span className="inline-block self-start text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
+                      {relItem.type}
+                    </span>
                     <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base font-bold text-[#232536] group-hover:text-coral-text transition-colors leading-snug line-clamp-2">
                       {relItem.title}
                     </h3>
                     <p className="text-xs text-[#5C5F73]">
                       by <span className="font-semibold text-[#232536]">{relItem.creator}</span>
                     </p>
-                  </div>
 
-                  <div className="pt-3 mt-4 border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs text-[#5C5F73]">
-                    <span className="font-semibold text-teal-text">View details</span>
-                    <ArrowRight
-                      size={14}
-                      strokeWidth={2.5}
-                      aria-hidden="true"
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    />
+                    <div className="pt-3 mt-auto border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs text-[#5C5F73]">
+                      <span className="text-teal-text font-bold text-xs">
+                        {relItem.take_published ? 'My take inside' : ''}
+                      </span>
+                      <span className="font-bold inline-flex items-center gap-1.5 text-xs text-[#5C5F73] group-hover:text-coral-text transition-colors ml-auto">
+                        <span>View details</span>
+                        <ArrowRight
+                          size={14}
+                          strokeWidth={2.5}
+                          aria-hidden="true"
+                          className="transition-transform duration-300 group-hover:translate-x-1"
+                        />
+                      </span>
+                    </div>
                   </div>
                 </Link>
               ))}

@@ -157,35 +157,43 @@ export async function getPublishedTake(
 }
 
 export async function getLibraryNeighbours(
-  item: { id: string; created_at: string },
+  item: { id: string; type: string; created_at?: string },
   client?: unknown
 ): Promise<{ prev: LibraryNeighbour | null; next: LibraryNeighbour | null }> {
+  if (!item || !item.id || !item.type) {
+    return { prev: null, next: null }
+  }
+
   const supabase =
     (client as ClientLike) ||
     (await (await import('@/utils/supabase/server')).createClient())
 
-  const [prevRes, nextRes] = (await Promise.all([
-    supabase
-      .from('library_items')
-      .select('slug, title, type')
-      .lt('created_at', item.created_at)
-      .not('slug', 'is', null)
-      .order('created_at', { ascending: false })
-      .limit(1)
-      .maybeSingle(),
-    supabase
-      .from('library_items')
-      .select('slug, title, type')
-      .gt('created_at', item.created_at)
-      .not('slug', 'is', null)
-      .order('created_at', { ascending: true })
-      .limit(1)
-      .maybeSingle(),
-  ])) as Array<{ data: LibraryNeighbour | null }>
+  const { data, error } = (await supabase
+    .from('library_items')
+    .select('id, slug, title, type, created_at')
+    .eq('type', item.type)
+    .not('slug', 'is', null)
+    .order('created_at', { ascending: true })
+    .order('id', { ascending: true })) as {
+    data: Array<{ id: string; slug: string; title: string; type: string; created_at: string }> | null
+    error: unknown
+  }
+
+  if (error || !data || data.length === 0) {
+    return { prev: null, next: null }
+  }
+
+  const currentIndex = data.findIndex((row) => row.id === item.id)
+  if (currentIndex === -1) {
+    return { prev: null, next: null }
+  }
+
+  const prevItem = currentIndex > 0 ? data[currentIndex - 1] : null
+  const nextItem = currentIndex < data.length - 1 ? data[currentIndex + 1] : null
 
   return {
-    prev: prevRes?.data || null,
-    next: nextRes?.data || null,
+    prev: prevItem ? { slug: prevItem.slug, title: prevItem.title, type: prevItem.type } : null,
+    next: nextItem ? { slug: nextItem.slug, title: nextItem.title, type: nextItem.type } : null,
   }
 }
 
