@@ -7,6 +7,7 @@ import {
   validateLibraryVideoUrl,
   validateLibraryLinks,
 } from '@/lib/libraryLinks'
+import { validateLibraryTake, isTakeDocEmpty } from '@/lib/libraryTake'
 
 export const dynamic = 'force-dynamic'
 
@@ -107,6 +108,8 @@ export async function PATCH(request: Request) {
       slug,
       links,
       video_url,
+      take,
+      take_published,
     } = body
 
     // 1. id must be a uuid
@@ -250,6 +253,59 @@ export async function PATCH(request: Request) {
         return NextResponse.json({ error: linksCheck.error }, { status: 400 })
       }
       updatePayload.links = linksCheck.value
+    }
+
+    if (take_published !== undefined && typeof take_published !== 'boolean') {
+      return NextResponse.json(
+        { error: 'take_published must be a boolean' },
+        { status: 400 }
+      )
+    }
+
+    let isEffectiveTakeEmpty: boolean | null = null
+
+    if (take !== undefined) {
+      const takeCheck = validateLibraryTake(take)
+      if (!takeCheck.valid) {
+        return NextResponse.json({ error: takeCheck.error }, { status: 400 })
+      }
+      updatePayload.take = takeCheck.value ?? null
+      isEffectiveTakeEmpty = takeCheck.isEmpty ?? isTakeDocEmpty(takeCheck.value)
+    }
+
+    if (take_published === true) {
+      if (take !== undefined) {
+        if (isEffectiveTakeEmpty) {
+          return NextResponse.json(
+            { error: 'Add your take before publishing it.' },
+            { status: 400 }
+          )
+        }
+      } else {
+        const { data: existing, error: existError } = await admin
+          .from('library_items')
+          .select('take')
+          .eq('id', id)
+          .maybeSingle()
+
+        if (existError || !existing || isTakeDocEmpty(existing.take)) {
+          return NextResponse.json(
+            { error: 'Add your take before publishing it.' },
+            { status: 400 }
+          )
+        }
+      }
+      updatePayload.take_published = true
+    } else if (take_published === false) {
+      updatePayload.take_published = false
+    } else if (take !== undefined && isEffectiveTakeEmpty) {
+      // Clearing the take (null or empty doc) forces take_published to false
+      updatePayload.take_published = false
+    }
+
+    // Safety guard: if take was provided and is empty, force take_published to false
+    if (take !== undefined && isEffectiveTakeEmpty) {
+      updatePayload.take_published = false
     }
 
     const { error: updateError } = await admin

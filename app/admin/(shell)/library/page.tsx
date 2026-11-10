@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { CloseIcon } from '@/components/admin/icons'
+import TipTapEditor from '@/components/editor/TipTapEditor'
+import { getTipTapWordCount, isNonEmptyTipTapDoc } from '@/lib/libraryTake'
 import {
   ALLOWED_IMAGE_EXTENSIONS,
   MAX_IMAGE_SIZE_BYTES,
@@ -74,6 +76,8 @@ interface LibraryItemRecord {
   slug?: string | null
   links?: LibraryLinkItem[] | null
   video_url?: string | null
+  take?: Record<string, unknown> | null
+  take_published?: boolean | null
 }
 
 interface TagOption {
@@ -104,6 +108,8 @@ export default function AdminLibraryPage() {
   const [recommendationNote, setRecommendationNote] = useState('')
   const [selectedTagIds, setSelectedTagIds] = useState<string[]>([])
   const [links, setLinks] = useState<LibraryLinkItem[]>([])
+  const [take, setTake] = useState<Record<string, unknown> | null>(null)
+  const [takePublished, setTakePublished] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadError, setUploadError] = useState<string | null>(null)
   const [saving, setSaving] = useState(false)
@@ -147,6 +153,8 @@ export default function AdminLibraryPage() {
     setRecommendationNote(item.recommendation_note || '')
     setSelectedTagIds(item.tag_ids || [])
     setLinks(safeParseLibraryLinks(item.links))
+    setTake(item.take && typeof item.take === 'object' ? item.take : null)
+    setTakePublished(Boolean(item.take_published))
     setUploadError(null)
     setModalError(null)
     setIsModalOpen(true)
@@ -155,6 +163,8 @@ export default function AdminLibraryPage() {
   function handleCloseModal() {
     setIsModalOpen(false)
     setEditingItem(null)
+    setTake(null)
+    setTakePublished(false)
     setModalError(null)
     setUploadError(null)
     setIsUploading(false)
@@ -304,6 +314,8 @@ export default function AdminLibraryPage() {
           recommendation_note: recommendationNote ? recommendationNote.trim() : null,
           tag_ids: selectedTagIds,
           links: cleanLinks,
+          take,
+          take_published: takePublished,
         }),
       })
 
@@ -390,10 +402,25 @@ export default function AdminLibraryPage() {
                 className="p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition"
               >
                 <div className="space-y-1 min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full bg-gray-100 text-gray-700 border border-gray-200">
                       {item.type}
                     </span>
+                    {isNonEmptyTipTapDoc(item.take) ? (
+                      item.take_published ? (
+                        <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
+                          Take: published
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                          Take: draft
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-full bg-gray-50 text-gray-400 border border-gray-200">
+                        Take: none
+                      </span>
+                    )}
                     <h3 className="font-bold text-gray-900 truncate text-base">{item.title}</h3>
                   </div>
                   <p className="text-xs text-gray-500">
@@ -603,6 +630,84 @@ export default function AdminLibraryPage() {
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45]/20 focus:border-[#EF5B45]"
                   placeholder="Why this item is recommended..."
                 />
+              </div>
+
+              {/* My Take Section */}
+              <div className="pt-2 border-t border-gray-100 space-y-3">
+                <div>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-gray-700 mb-1">
+                    My Take
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Write your personal commentary, takeaways, and key insights for this resource.
+                  </p>
+                  <div className="border border-gray-300 rounded-xl overflow-hidden focus-within:border-[#EF5B45] focus-within:ring-2 focus-within:ring-[#EF5B45]/20 bg-white">
+                    <TipTapEditor
+                      key={editingItem.id}
+                      content={take || undefined}
+                      onChange={(doc) => setTake(doc)}
+                      placeholder="Write your take on this item..."
+                    />
+                  </div>
+                </div>
+
+                {/* Live word count and soft guidance */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 text-xs">
+                  <div className="flex items-center gap-1.5 font-semibold">
+                    <span className="text-gray-600">Word count:</span>
+                    <span
+                      className={
+                        getTipTapWordCount(take) >= 500
+                          ? 'text-emerald-600 font-bold'
+                          : 'text-amber-600 font-bold'
+                      }
+                    >
+                      {getTipTapWordCount(take)} words
+                    </span>
+                  </div>
+                  <span className="text-gray-400 italic text-[11px]">
+                    Aim for 500 words or more. You can still save with fewer.
+                  </span>
+                </div>
+
+                {/* Published switch */}
+                <div className="flex items-center justify-between pt-2 border-t border-gray-100">
+                  <div className="flex items-center gap-3">
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={takePublished && isNonEmptyTipTapDoc(take)}
+                      disabled={!isNonEmptyTipTapDoc(take)}
+                      onClick={() => setTakePublished((prev) => !prev)}
+                      className={`relative inline-flex h-6 w-11 shrink-0 rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-hidden focus:ring-2 focus:ring-[#EF5B45] focus:ring-offset-2 ${
+                        !isNonEmptyTipTapDoc(take)
+                          ? 'bg-gray-200 opacity-50 cursor-not-allowed'
+                          : takePublished
+                            ? 'bg-[#EF5B45] cursor-pointer'
+                            : 'bg-gray-200 cursor-pointer'
+                      }`}
+                    >
+                      <span
+                        aria-hidden="true"
+                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow-sm ring-0 transition duration-200 ease-in-out ${
+                          takePublished && isNonEmptyTipTapDoc(take) ? 'translate-x-5' : 'translate-x-0'
+                        }`}
+                      />
+                    </button>
+                    <div>
+                      <span className="text-sm font-semibold text-gray-900">
+                        Published
+                      </span>
+                      <p className="text-xs text-gray-500">
+                        {!isNonEmptyTipTapDoc(take)
+                          ? 'Write your take first'
+                          : takePublished
+                            ? 'Your take is live on the public item page.'
+                            : 'Turn on to publish your take on the public item page.'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               {/* Links List Section */}
