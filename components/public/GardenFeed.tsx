@@ -54,6 +54,8 @@ export interface LibraryFeedItem {
   thumbnail_url?: string | null
   recommendation_note?: string | null
   created_at?: string
+  slug?: string | null
+  take_published?: boolean | null
 }
 
 interface GardenFeedProps {
@@ -72,20 +74,25 @@ interface GardenFeedProps {
 }
 
 function LibraryCard({ item }: { item: LibraryFeedItem }) {
-  return (
-    <a
-      href={item.url}
-      target="_blank"
-      rel="noopener noreferrer"
-      className="group flex flex-col justify-between bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 p-5 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
-    >
+  const cardClasses =
+    "group flex flex-col justify-between bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 p-5 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+
+  const content = (
+    <>
       <div>
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
-            {item.type}
-          </span>
+          <div className="flex items-center gap-2 flex-wrap">
+            <span className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
+              {item.type}
+            </span>
+            {item.take_published && (
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text border border-[#2AA198]/20">
+                My take inside
+              </span>
+            )}
+          </div>
           <span className="text-xs font-semibold text-[#5A5D70] group-hover:text-coral-text transition-colors">
-            Visit ↗
+            {item.slug ? 'View →' : 'Visit ↗'}
           </span>
         </div>
         <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] group-hover:text-coral-text transition-colors leading-snug mb-1 line-clamp-2">
@@ -111,6 +118,25 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
           />
         </span>
       </div>
+    </>
+  )
+
+  if (item.slug) {
+    return (
+      <Link href={`/library/${item.slug}`} className={cardClasses}>
+        {content}
+      </Link>
+    )
+  }
+
+  return (
+    <a
+      href={item.url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cardClasses}
+    >
+      {content}
     </a>
   )
 }
