@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Version 1.0 - Last updated: October 28th 2026
+Version 1.1 - Last updated: November 11th 2026
 
 ## 1. WHO I AM
 
@@ -29,6 +29,7 @@ The table below shows, for action you might take on the site, what I collect, wh
 | **When you...** | **I collect** | **Why** | **Basis** |
 |---|---|---|---|
 | **Just visit** | Page address, referrer, browser and device type, country, and an anonymous identifier that is discarded after 24 hours (Vercel Web Analytics). Your IP address is seen by the host to deliver the page. If you use the site's search, it is also held for about 60 seconds to limit abuse, then discarded. | To see which pages are read and keep the site working | My legitimate interest in understanding and securing the site |
+| **Accept analytics cookies** | Pages you view, approximate location, device and browser type, through Google Analytics cookies | To see which articles are read | Your consent |
 | **Use** [Let's Talk](https://ivankabandize.com/lets-talk) | Name, email, organisation (optional), what you need help with, timing, your message | To reply to you and to send you an automatic confirmation email | Your request, then my legitimate interest in answering |
 | **Create an account** | Email, name, password (stored only as a salted hash), or your name and email from Google if you use Google sign-in | To let you sign in, comment, bookmark and download | Your agreement to the account |
 | **Subscribe to a newsletter** | Email address, the newsletter, the date you confirmed | To send you the newsletter you chose | Your consent (confirmed by email first) |
@@ -63,6 +64,7 @@ I use these services to run the site. They process data on my behalf. You can as
 | **Resend** | Sends the site's emails (confirmations, newsletters) | Ireland (eu-west-1) |
 | **ImprovMX and Gmail** | Forward and receive email sent to my site address | Global |
 | **Google** | Optional sign-in with Google | Global |
+| **Google (Analytics)** | Counts visits, only if you accept analytics cookies | Global |
 | **Unsplash** | Some article photos load from Unsplash, which can see your IP address when your browser fetches them | Global |
 | **YouTube (Google)** | Only on pages with an embedded video | Global |
 
@@ -145,7 +147,7 @@ If you are a parent or guardian and think a child has given me their details, em
 
 ## 10. COOKIES, LINKS AND CHANGES
 
-Some features described in this policy roll out after the site launches; I will tell you when each one goes live. Cookies are covered in the [Cookie Policy](https://ivankabandize.com/cookie-policy). This site does not respond to "Do Not Track" signals. It uses no advertising trackers and its analytics use no cookies and do not follow you across sites. I am not responsible for the privacy practices of sites I link to. If I change this policy, the date and version at the top change. For material changes I will tell account holders by email or a notice on the site before they take effect.
+Some features described in this policy roll out after the site launches; I will tell you when each one goes live. Cookies are covered in the [Cookie Policy](https://ivankabandize.com/cookie-policy). This site does not respond to "Do Not Track" signals. It uses no advertising trackers. Its Vercel analytics use no cookies. Google Analytics runs only if you accept analytics cookies on the cookie bar, and you can change that choice at any time using "Cookie settings" in the footer. I am not responsible for the privacy practices of sites I link to. If I change this policy, the date and version at the top change. For material changes I will tell account holders by email or a notice on the site before they take effect.
 
 **Logs and maintenance.** To keep the site running and secure, the site and the services behind it keep technical logs of requests, which can include IP addresses. Hosting logs are kept for up to 24 hours.
 
