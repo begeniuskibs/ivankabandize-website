@@ -18,7 +18,6 @@ export interface CookieDocumentLike {
 export interface GtagWindowLike {
   dataLayer?: unknown[]
   gtag?: (...args: unknown[]) => void
-  [key: string]: unknown
 }
 
 export function ensureGtagStub(win?: GtagWindowLike | null): void {
