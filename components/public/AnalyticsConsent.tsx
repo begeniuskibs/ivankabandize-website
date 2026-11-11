@@ -6,6 +6,7 @@ import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
   clearGoogleAnalyticsCookies,
+  ensureGtagStub,
   isValidMeasurementId,
   readConsent,
   writeConsent,
@@ -25,15 +26,10 @@ let gtagConfigured = false
 
 function initGtag(gaId: string) {
   if (typeof window === 'undefined') return
-  window.dataLayer = window.dataLayer || []
-  if (!window.gtag) {
-    window.gtag = function gtag(...args: unknown[]) {
-      window.dataLayer!.push(args)
-    }
-  }
+  ensureGtagStub(window)
   if (!gtagConfigured) {
-    window.gtag('js', new Date())
-    window.gtag('config', gaId, {
+    window.gtag?.('js', new Date())
+    window.gtag?.('config', gaId, {
       send_page_view: false,
       allow_google_signals: false,
       allow_ad_personalization_signals: false,
@@ -44,16 +40,11 @@ function initGtag(gaId: string) {
 
 function sendPageView(pathname: string, searchParams: URLSearchParams | null) {
   if (typeof window === 'undefined') return
-  window.dataLayer = window.dataLayer || []
-  if (!window.gtag) {
-    window.gtag = function gtag(...args: unknown[]) {
-      window.dataLayer!.push(args)
-    }
-  }
+  ensureGtagStub(window)
   const searchStr = searchParams ? searchParams.toString() : ''
   const url = searchStr ? `${pathname}?${searchStr}` : pathname
 
-  window.gtag('event', 'page_view', {
+  window.gtag?.('event', 'page_view', {
     page_path: url,
     page_location: window.location.href,
     page_title: document.title,

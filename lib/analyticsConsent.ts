@@ -15,6 +15,31 @@ export interface CookieDocumentLike {
   }
 }
 
+export interface GtagWindowLike {
+  dataLayer?: unknown[]
+  gtag?: (...args: unknown[]) => void
+  [key: string]: unknown
+}
+
+export function ensureGtagStub(win?: GtagWindowLike | null): void {
+  const target =
+    win !== undefined
+      ? win
+      : typeof window !== 'undefined'
+        ? (window as unknown as GtagWindowLike)
+        : null
+
+  if (!target) return
+
+  target.dataLayer = target.dataLayer || []
+  if (!target.gtag) {
+    target.gtag = function () {
+      // eslint-disable-next-line prefer-rest-params
+      target.dataLayer!.push(arguments)
+    }
+  }
+}
+
 function resolveStorage(storage?: StorageLike | null): StorageLike | null {
   if (storage !== undefined) {
     return storage

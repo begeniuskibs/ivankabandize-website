@@ -5,6 +5,7 @@ import {
   writeConsent,
   isValidMeasurementId,
   clearGoogleAnalyticsCookies,
+  ensureGtagStub,
 } from '../lib/analyticsConsent.ts'
 
 console.log('=== ANALYTICS CONSENT UNIT TESTS ===\n')
@@ -160,6 +161,34 @@ for (const call of setCookieCalls) {
 }
 
 console.log('  PASS: _ga and _ga_ABC123 expired without touching other cookies')
+
+// ----------------------------------------------------------------------------
+// 5. ensureGtagStub
+// ----------------------------------------------------------------------------
+console.log('\n--- 5. Testing ensureGtagStub ---')
+const fakeWin = {}
+ensureGtagStub(fakeWin)
+
+assert.ok(Array.isArray(fakeWin.dataLayer), 'dataLayer must be initialized as an array')
+assert.equal(typeof fakeWin.gtag, 'function', 'gtag must be initialized as a function')
+
+const initialGtag = fakeWin.gtag
+fakeWin.gtag('config', 'G-TEST123456')
+
+assert.equal(fakeWin.dataLayer.length, 1, 'Calling gtag must push exactly one entry')
+const entry = fakeWin.dataLayer[0]
+assert.equal(
+  Object.prototype.toString.call(entry),
+  '[object Arguments]',
+  'Entry in dataLayer must be [object Arguments]'
+)
+assert.equal(entry[0], 'config', 'First argument must be "config"')
+assert.equal(entry[1], 'G-TEST123456', 'Second argument must be "G-TEST123456"')
+
+// Calling ensureGtagStub twice must not replace an existing gtag
+ensureGtagStub(fakeWin)
+assert.equal(fakeWin.gtag, initialGtag, 'Calling ensureGtagStub twice must not replace existing gtag')
+console.log('  PASS: ensureGtagStub correctly uses arguments object and preserves existing stub')
 
 console.log('\n========================================')
 console.log('ALL ANALYTICS CONSENT TESTS PASSED!')
