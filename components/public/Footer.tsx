@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { createClient } from '@/utils/supabase/server'
 import { signOut } from '@/app/auth/actions'
 import SocialLinks from '@/components/public/SocialLinks'
+import { CookieSettingsButton } from '@/components/public/AnalyticsConsent'
 
 export default async function Footer() {
   let displayName: string | null = null
@@ -58,6 +59,8 @@ export default async function Footer() {
               <Link href="/cookie-policy" className="hover:text-white transition">
                 Cookie Policy
               </Link>
+              <span aria-hidden="true" className="text-[#5A5D70]">-</span>
+              <CookieSettingsButton />
             </div>
           </div>
           <SocialLinks variant="dark" className="-ml-2.5 max-md:ml-0" />

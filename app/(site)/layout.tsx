@@ -3,6 +3,7 @@ import Navbar from '@/components/public/Navbar'
 import Footer from '@/components/public/Footer'
 import BackToTop from '@/components/public/BackToTop'
 import { Analytics } from '@vercel/analytics/next'
+import AnalyticsConsent from '@/components/public/AnalyticsConsent'
 
 export default function SiteLayout({
   children,
@@ -16,6 +17,7 @@ export default function SiteLayout({
       <Footer />
       <BackToTop />
       <Analytics />
+      <AnalyticsConsent />
     </>
   )
 }
