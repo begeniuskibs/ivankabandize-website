@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Version 1.1 - Last updated: November 11th 2026
+Version 1.2 - Last updated: November 12th 2026
 
 ## 1. WHO I AM
 
@@ -148,6 +148,8 @@ If you are a parent or guardian and think a child has given me their details, em
 ## 10. COOKIES, LINKS AND CHANGES
 
 Some features described in this policy roll out after the site launches; I will tell you when each one goes live. Cookies are covered in the [Cookie Policy](https://ivankabandize.com/cookie-policy). This site does not respond to "Do Not Track" signals. It uses no advertising trackers. Its Vercel analytics use no cookies. Google Analytics runs only if you accept analytics cookies on the cookie bar, and you can change that choice at any time using "Cookie settings" in the footer. I am not responsible for the privacy practices of sites I link to. If I change this policy, the date and version at the top change. For material changes I will tell account holders by email or a notice on the site before they take effect.
+
+We count how many times each article is read. When an article page opens, our server records the article, the time, and a one-way scrambled code made from your device details and the date. We cannot turn that code back into your IP address or identity, and it changes every day, so we cannot follow you from one day to the next. This counter uses no cookies and no browser storage, so it works whether or not you accept analytics cookies.
 
 **Logs and maintenance.** To keep the site running and secure, the site and the services behind it keep technical logs of requests, which can include IP addresses. Hosting logs are kept for up to 24 hours.
 

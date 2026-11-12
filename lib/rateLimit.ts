@@ -89,9 +89,10 @@ export async function checkRateLimitWithStore(
   store: RateLimiterStore,
   ip: string,
   limit = 60,
-  windowSeconds = 60
+  windowSeconds = 60,
+  prefix = 'search'
 ): Promise<RateLimitResult> {
-  const key = `ratelimit:search:${ip}`
+  const key = `ratelimit:${prefix}:${ip}`
   const { count, ttl } = await store.increment(key, windowSeconds)
 
   if (count > limit) {
@@ -115,7 +116,8 @@ export async function checkRateLimitWithStore(
 export async function checkRateLimit(
   ip: string,
   limit = 60,
-  windowSeconds = 60
+  windowSeconds = 60,
+  prefix = 'search'
 ): Promise<RateLimitResult> {
   const url = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN
@@ -132,7 +134,7 @@ export async function checkRateLimit(
 
   try {
     const store = new UpstashRateLimitStore(url, token)
-    return await checkRateLimitWithStore(store, ip, limit, windowSeconds)
+    return await checkRateLimitWithStore(store, ip, limit, windowSeconds, prefix)
   } catch (error) {
     // Fail OPEN: network or Redis errors must never bring down search
     console.warn('Rate limiter error - failing open:', error)
