@@ -3,6 +3,7 @@ import { createClient } from '@/utils/supabase/server'
 import { createAdminClient } from '@/utils/supabase/admin'
 import ArticleView, { RelatedPostData, ArticleSeriesContext } from '@/components/public/ArticleView'
 import TeaserArticleView from '@/components/public/TeaserArticleView'
+import ViewTracker from '@/components/public/ViewTracker'
 import { getPostTeaser } from '@/lib/postTeaser'
 import { notFound } from 'next/navigation'
 
@@ -199,6 +200,7 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
     return (
       <>
         <JsonLd data={teaserJsonLd} />
+        <ViewTracker slug={slug} />
         <TeaserArticleView teaser={teaser} isUpgrade={isUpgrade} />
       </>
     )
@@ -272,6 +274,7 @@ export default async function GardenPostPage({ params }: GardenPostPageProps) {
   return (
     <>
       <JsonLd data={postJsonLd} />
+      <ViewTracker slug={slug} />
       <ArticleView post={post} relatedPost={relatedPost} seriesContext={seriesContext} />
     </>
   )
