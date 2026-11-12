@@ -58,3 +58,4 @@ export function getUtcDay(date?: Date): string {
   const d = date || new Date()
   return d.toISOString().split('T')[0]
 }
+

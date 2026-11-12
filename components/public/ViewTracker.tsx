@@ -31,3 +31,4 @@ export default function ViewTracker({ slug }: ViewTrackerProps) {
 
   return null
 }
+
