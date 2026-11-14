@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useRef, useSyncExternalStore } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
@@ -34,36 +34,15 @@ interface SidebarItem {
   subItems?: { label: string; href: string }[]
 }
 
-const STORAGE_KEY = 'admin_sidebar_collapsed'
-
-function subscribeToSidebarStorage(callback: () => void) {
-  window.addEventListener('storage', callback)
-  window.addEventListener('admin-sidebar-toggle', callback)
-  return () => {
-    window.removeEventListener('storage', callback)
-    window.removeEventListener('admin-sidebar-toggle', callback)
-  }
+interface AdminSidebarProps {
+  initialCollapsed?: boolean
 }
 
-function getSidebarSnapshot(): boolean {
-  try {
-    return localStorage.getItem(STORAGE_KEY) === 'true'
-  } catch {
-    return false
-  }
-}
-
-function getSidebarServerSnapshot(): boolean {
-  return false
-}
-
-export default function AdminSidebar() {
+export default function AdminSidebar({
+  initialCollapsed = false,
+}: AdminSidebarProps) {
   const pathname = usePathname()
-  const isCollapsed = useSyncExternalStore(
-    subscribeToSidebarStorage,
-    getSidebarSnapshot,
-    getSidebarServerSnapshot
-  )
+  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed)
   const [isAccountMenuOpen, setIsAccountMenuOpen] = useState(false)
   const [newInquiriesCount, setNewInquiriesCount] = useState<number>(0)
   const [userData, setUserData] = useState<{
@@ -81,13 +60,15 @@ export default function AdminSidebar() {
   const accountMenuRef = useRef<HTMLDivElement>(null)
 
   const toggleCollapsed = () => {
-    try {
-      const next = !getSidebarSnapshot()
-      localStorage.setItem(STORAGE_KEY, String(next))
-      window.dispatchEvent(new Event('admin-sidebar-toggle'))
-    } catch {
-      // localStorage write failed
-    }
+    setIsCollapsed((prev) => {
+      const next = !prev
+      if (typeof document !== 'undefined') {
+        document.cookie = `admin_sidebar_collapsed=${
+          next ? '1' : '0'
+        }; Path=/admin; SameSite=Lax; Max-Age=31536000`
+      }
+      return next
+    })
   }
 
   useEffect(() => {

@@ -1,5 +1,7 @@
 export type AnalyticsRange = 7 | 30 | 90
 export type AnalyticsTab = 'overview' | 'articles' | 'sources' | 'audience'
+export type TimeChartStyle = 'bar' | 'line' | 'area' | 'step'
+export type ShareChartStyle = 'bars' | 'donut'
 
 export interface PostRecord {
   id: string
@@ -74,8 +76,50 @@ export interface CompactAnalyticsData {
   tierCounts: TierCounts
 }
 
+export interface YAxisBounds {
+  min: number
+  max: number
+  nice: number
+  floor: number
+}
+
+export interface DonutSegment {
+  label: string
+  value: number
+  percent: number
+  color: string
+  strokeDasharray: string
+  strokeDashoffset: number
+}
+
+export const BRAND_PALETTE = [
+  '#CF3F29',
+  '#232536',
+  '#3C6FD1',
+  '#2F9E7A',
+  '#B07A1E',
+  '#8A6BB5',
+  '#5C5F73',
+  '#C9A66B',
+]
+
 const KAMPALA_OFFSET_MS = 3 * 60 * 60 * 1000 // UTC+3 with no DST
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+const DAYS_FULL = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+const MONTHS_FULL = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+]
 
 export function parseRange(value: string | null | undefined): AnalyticsRange {
   if (value === '7') return 7
@@ -103,6 +147,24 @@ export function toKampalaDate(dateInput: string | Date | number): string {
   const m = String(kampalaDate.getUTCMonth() + 1).padStart(2, '0')
   const d = String(kampalaDate.getUTCDate()).padStart(2, '0')
   return `${y}-${m}-${d}`
+}
+
+export function formatKampalaLongDate(dateInput?: string | Date | number): string {
+  const ms =
+    dateInput !== undefined
+      ? typeof dateInput === 'string'
+        ? new Date(dateInput).getTime()
+        : typeof dateInput === 'number'
+          ? dateInput
+          : dateInput.getTime()
+      : Date.now()
+
+  const d = new Date(ms + KAMPALA_OFFSET_MS)
+  const dayOfWeek = DAYS_FULL[d.getUTCDay()]
+  const dayOfMonth = d.getUTCDate()
+  const month = MONTHS_FULL[d.getUTCMonth()]
+  const year = d.getUTCFullYear()
+  return `${dayOfWeek}, ${dayOfMonth} ${month} ${year}`
 }
 
 export function getKampalaDateRange(days: number, nowMs: number = Date.now()): string[] {
@@ -164,7 +226,7 @@ export function shareOfTotal(views: number, total: number): number {
 export function topArticles(
   viewCountsByPostId: Map<string, number>,
   posts: PostRecord[],
-  limit = 5
+  limit = 8
 ): TopArticleItem[] {
   const postMap = new Map<string, PostRecord>()
   for (const post of posts) {
@@ -281,6 +343,78 @@ export function formatKampalaDisplayDate(
   return `${day} ${monthName}`
 }
 
+export function buildStepPath(points: [number, number][]): string {
+  if (points.length === 0) return ''
+  let d = `M ${points[0][0].toFixed(1)} ${points[0][1].toFixed(1)}`
+  for (let i = 1; i < points.length; i++) {
+    d += ` H ${points[i][0].toFixed(1)} V ${points[i][1].toFixed(1)}`
+  }
+  return d
+}
+
+export function calculateYAxisBounds(
+  data: number[],
+  isFloor: boolean,
+  isBar: boolean
+): YAxisBounds {
+  if (!data || data.length === 0) {
+    return { min: 0, max: 0, nice: 4, floor: 0 }
+  }
+  const max = Math.max(...data, 0)
+  const min = Math.min(...data)
+
+  if (isBar || !isFloor) {
+    let nice = 4
+    if (max > 100) {
+      nice = Math.ceil(max / 50) * 50
+    } else if (max > 20) {
+      nice = Math.ceil(max / 20) * 20
+    } else if (max > 10) {
+      nice = 20
+    } else if (max > 4) {
+      nice = 10
+    } else {
+      nice = 4
+    }
+    return { min, max, nice, floor: 0 }
+  }
+
+  const lo = Math.floor((min * 0.9) / 5) * 5
+  let nice = Math.ceil((max * 1.05) / 5) * 5
+  if (nice <= lo) {
+    nice = lo + 5
+  }
+  return { min, max, nice, floor: lo }
+}
+
+export function calculateDonutSegments(
+  rows: [string, number][] | { label: string; value: number }[],
+  palette: string[] = BRAND_PALETTE
+): DonutSegment[] {
+  const normalized = rows.map((r) =>
+    Array.isArray(r) ? { label: r[0], value: r[1] } : r
+  )
+  const total = normalized.reduce((acc, curr) => acc + curr.value, 0) || 1
+  let offset = 25 // 12 o'clock
+
+  return normalized.map((item, idx) => {
+    const percent = Math.round((item.value / total) * 100)
+    const p = (item.value / total) * 100
+    const strokeDasharray = `${p.toFixed(2)} ${(100 - p).toFixed(2)}`
+    const strokeDashoffset = offset
+    offset -= p
+
+    return {
+      label: item.label,
+      value: item.value,
+      percent,
+      color: palette[idx % palette.length],
+      strokeDasharray,
+      strokeDashoffset,
+    }
+  })
+}
+
 export function deriveAnalyticsForRange(
   compact: CompactAnalyticsData,
   range: AnalyticsRange,
@@ -356,7 +490,7 @@ export function deriveAnalyticsForRange(
     item.share = shareOfTotal(item.views, totalViewsCurrent)
   }
 
-  const topArticlesList = allArticlesList.slice(0, 5)
+  const topArticlesList = allArticlesList.slice(0, 8)
 
   // Members calculation
   const currentMemberCounts = compact.cumulativeMembers180.slice(currentStartIdx)
