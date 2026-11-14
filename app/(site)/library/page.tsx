@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/utils/supabase/server'
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 import ScrollReveal from '@/components/public/ScrollReveal'
 import GardenHubHero from '@/components/public/GardenHubHero'
 import { safeHref } from '@/lib/safeUrl'
@@ -275,7 +275,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {podcasts.map((item, idx) => {
                     const cardClasses =
-                      "group flex flex-col h-full bg-white rounded-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
+                      "group flex flex-col h-full bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] overflow-hidden hover:-translate-y-1 transition-all duration-300"
                     const inner = (
                       <>
                         {/* Thumbnail */}
@@ -288,7 +288,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                            <div className="w-full h-full flex items-center justify-center text-[#5C5F73]/40">
                               <Image
                                 src="/icons/3d/microphone.svg"
                                 alt=""
@@ -300,37 +300,46 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               />
                             </div>
                           )}
-                          <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                            {item.take_published && (
-                              <span className="px-2.5 py-1 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20 shadow-xs">
-                                My take inside
-                              </span>
-                            )}
-                            <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
-                              Podcast
-                            </span>
-                          </div>
                         </div>
 
                         {/* Card Content */}
                         <div className="p-5 flex flex-col flex-grow justify-between gap-4">
-                          <div className="space-y-2">
-                            <p className="text-xs font-semibold text-coral-text tracking-wide uppercase">
-                              {item.creator}
-                            </p>
+                          <div className="space-y-1.5">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold uppercase tracking-wider border border-[#2AA198]/20">
+                                Podcast
+                              </span>
+                              {item.take_published && (
+                                <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20">
+                                  My take inside
+                                </span>
+                              )}
+                            </div>
                             <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug line-clamp-2">
                               {item.title}
                             </h3>
+                            <p className="text-xs font-medium text-[#5C5F73]">
+                              by <span className="font-semibold text-[#232536]">{item.creator}</span>
+                            </p>
                           </div>
 
-                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5C5F73] group-hover:text-[#232536] transition-colors">
                             <span>{item.slug ? 'View Take & Details' : 'Listen / Watch'}</span>
-                            <ArrowRight
-                              size={14}
-                              strokeWidth={2.5}
-                              aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                            />
+                            {item.slug ? (
+                              <ArrowRight
+                                size={14}
+                                strokeWidth={2}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                              />
+                            ) : (
+                              <ExternalLink
+                                size={14}
+                                strokeWidth={2}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+                              />
+                            )}
                           </div>
                         </div>
                       </>
@@ -387,7 +396,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {books.map((item, idx) => {
                     const cardClasses =
-                      "group flex flex-col h-full bg-white rounded-lg p-5 hover:-translate-y-1 transition-all duration-300"
+                      "group flex flex-col h-full bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] p-5 hover:-translate-y-1 transition-all duration-300"
                     const inner = (
                       <div className="flex flex-col sm:flex-row gap-5 items-start flex-grow">
                         {/* Book Cover */}
@@ -400,7 +409,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                            <div className="w-full h-full flex items-center justify-center text-[#5C5F73]/40">
                               <Image
                                 src="/icons/3d/books.svg"
                                 alt=""
@@ -418,7 +427,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                         <div className="flex flex-col justify-between h-full space-y-3 flex-grow">
                           <div className="space-y-1.5">
                             <div className="flex items-center gap-1.5 flex-wrap">
-                              <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold uppercase tracking-wider">
+                              <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold uppercase tracking-wider border border-[#2AA198]/20">
                                 Book
                               </span>
                               {item.take_published && (
@@ -427,22 +436,31 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                                 </span>
                               )}
                             </div>
-                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug">
+                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug line-clamp-2">
                               {item.title}
                             </h3>
-                            <p className="text-xs font-medium text-[#5A5D70]">
+                            <p className="text-xs font-medium text-[#5C5F73]">
                               by <span className="font-semibold text-[#232536]">{item.creator}</span>
                             </p>
                           </div>
 
-                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5C5F73] group-hover:text-[#232536] transition-colors">
                             <span>{item.slug ? 'View Take & Details' : 'View Details'}</span>
-                            <ArrowRight
-                              size={14}
-                              strokeWidth={2.5}
-                              aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                            />
+                            {item.slug ? (
+                              <ArrowRight
+                                size={14}
+                                strokeWidth={2}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                              />
+                            ) : (
+                              <ExternalLink
+                                size={14}
+                                strokeWidth={2}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -499,7 +517,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {newsletters.map((item, idx) => {
                     const cardClasses =
-                      "group flex flex-col h-full bg-white rounded-lg overflow-hidden hover:-translate-y-1 transition-all duration-300"
+                      "group flex flex-col h-full bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] overflow-hidden hover:-translate-y-1 transition-all duration-300"
                     const inner = (
                       <>
                         {/* Thumbnail / Header Graphic */}
@@ -512,7 +530,7 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
                           ) : (
-                            <div className="w-full h-full flex items-center justify-center text-[#5A5D70]/40">
+                            <div className="w-full h-full flex items-center justify-center text-[#5C5F73]/40">
                               <Image
                                 src="/icons/3d/newsletter.svg"
                                 alt=""
@@ -524,37 +542,46 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
                               />
                             </div>
                           )}
-                          <div className="absolute top-3 right-3 flex items-center gap-1.5">
-                            {item.take_published && (
-                              <span className="px-2.5 py-1 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20 shadow-xs">
-                                My take inside
-                              </span>
-                            )}
-                            <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md text-white text-[10px] font-bold uppercase tracking-wider">
-                              Newsletter
-                            </span>
-                          </div>
                         </div>
 
                         {/* Card Content */}
                         <div className="p-5 flex flex-col flex-grow justify-between gap-4">
                           <div className="space-y-1.5">
-                            <p className="text-xs font-semibold text-teal-text tracking-wide uppercase">
-                              {item.creator}
-                            </p>
-                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug">
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold uppercase tracking-wider border border-[#2AA198]/20">
+                                Newsletter
+                              </span>
+                              {item.take_published && (
+                                <span className="inline-block px-2 py-0.5 rounded-full bg-[#E8F4F1] text-teal-text text-[10px] font-bold border border-[#2AA198]/20">
+                                  My take inside
+                                </span>
+                              )}
+                            </div>
+                            <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-semibold text-[#232536] group-hover:text-coral-text transition-colors leading-snug line-clamp-2">
                               {item.title}
                             </h3>
+                            <p className="text-xs font-medium text-[#5C5F73]">
+                              by <span className="font-semibold text-[#232536]">{item.creator}</span>
+                            </p>
                           </div>
 
-                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5A5D70] group-hover:text-[#232536] transition-colors">
+                          <div className="pt-2 inline-flex items-center gap-1.5 text-xs font-bold text-[#5C5F73] group-hover:text-[#232536] transition-colors">
                             <span>{item.slug ? 'View Take & Details' : 'Read & Subscribe'}</span>
-                            <ArrowRight
-                              size={14}
-                              strokeWidth={2.5}
-                              aria-hidden="true"
-                              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-                            />
+                            {item.slug ? (
+                              <ArrowRight
+                                size={14}
+                                strokeWidth={2}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                              />
+                            ) : (
+                              <ExternalLink
+                                size={14}
+                                strokeWidth={2}
+                                aria-hidden="true"
+                                className="transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+                              />
+                            )}
                           </div>
                         </div>
                       </>

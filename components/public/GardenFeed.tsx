@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 import PostCard from './PostCard'
 
 export interface TagDetails {
@@ -75,7 +75,7 @@ interface GardenFeedProps {
 
 function LibraryCard({ item }: { item: LibraryFeedItem }) {
   const cardClasses =
-    "group flex flex-col justify-between bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 p-5 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
+    "group flex flex-col h-full justify-between bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] p-5 shadow-xs hover:shadow-md hover:-translate-y-1 transition-all duration-300"
 
   const content = (
     <>
@@ -91,31 +91,48 @@ function LibraryCard({ item }: { item: LibraryFeedItem }) {
               </span>
             )}
           </div>
-          <span className="text-xs font-semibold text-[#5A5D70] group-hover:text-coral-text transition-colors">
-            {item.slug ? 'View →' : 'Visit ↗'}
-          </span>
+          {item.slug ? (
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#5C5F73] group-hover:text-coral-text transition-colors">
+              <span>View</span>
+              <ArrowRight size={14} strokeWidth={2} aria-hidden="true" />
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-xs font-semibold text-[#5C5F73] group-hover:text-coral-text transition-colors">
+              <span>Visit</span>
+              <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
+            </span>
+          )}
         </div>
         <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] group-hover:text-coral-text transition-colors leading-snug mb-1 line-clamp-2">
           {item.title}
         </h3>
-        <p className="text-xs font-medium text-[#5A5D70] mb-3">
+        <p className="text-xs font-medium text-[#5C5F73] mb-3">
           by <span className="font-semibold text-[#232536]">{item.creator}</span>
         </p>
         {item.recommendation_note && (
-          <p className="text-xs text-[#5A5D70] line-clamp-2 italic border-l-2 border-[#F5ECDE] pl-2.5 my-2">
+          <p className="text-xs text-[#5C5F73] line-clamp-2 italic border-l-2 border-[#F5ECDE] pl-2.5 my-2">
             &ldquo;{item.recommendation_note}&rdquo;
           </p>
         )}
       </div>
-      <div className="pt-3 border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs text-[#5A5D70]">
+      <div className="pt-3 mt-auto border-t border-[#F5ECDE]/80 flex items-center justify-between text-xs text-[#5C5F73]">
         <span className="font-semibold text-teal-text">Curated resource</span>
         <span className="font-bold group-hover:text-coral-text transition-colors inline-flex items-center">
-          <ArrowRight
-            size={14}
-            strokeWidth={2.5}
-            aria-hidden="true"
-            className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
-          />
+          {item.slug ? (
+            <ArrowRight
+              size={14}
+              strokeWidth={2}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+            />
+          ) : (
+            <ExternalLink
+              size={14}
+              strokeWidth={2}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:translate-x-0.5 motion-reduce:group-hover:translate-x-0"
+            />
+          )}
         </span>
       </div>
     </>
@@ -356,7 +373,7 @@ export default function GardenFeed({
                       <Link
                         key={item.id}
                         href={`/garden/series/${item.slug}`}
-                        className="group relative flex flex-col justify-between p-6 bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
+                        className="group relative flex flex-col justify-between p-6 bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300"
                         style={
                           item.card_tint
                             ? {

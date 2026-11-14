@@ -257,7 +257,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
                         }`}
                       >
                         <span>{label}</span>
-                        <ExternalLink size={14} aria-hidden="true" />
+                        <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                       </a>
                     )
                   })
@@ -269,7 +269,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
                     className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold bg-[#CF3F29] hover:bg-[#b83420] text-white border-2 border-[#CF3F29] transition-colors cursor-pointer w-full sm:w-auto"
                   >
                     <span>{defaultFallbackLabel}</span>
-                    <ExternalLink size={14} aria-hidden="true" />
+                    <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                   </a>
                 )}
               </div>
@@ -390,7 +390,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
                           }`}
                         >
                           <span>{label}</span>
-                          <ExternalLink size={14} aria-hidden="true" />
+                          <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                         </a>
                       )
                     })
@@ -402,7 +402,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
                       className="inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-bold bg-[#CF3F29] hover:bg-[#b83420] text-white border-2 border-[#CF3F29] transition-colors cursor-pointer w-full sm:w-auto"
                     >
                       <span>{defaultFallbackLabel}</span>
-                      <ExternalLink size={14} aria-hidden="true" />
+                      <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                     </a>
                   )}
                 </div>
@@ -494,7 +494,7 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
                 <Link
                   key={relItem.id}
                   href={`/library/${relItem.slug}`}
-                  className="group flex flex-col bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 min-w-0"
+                  className="group flex flex-col bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] overflow-hidden shadow-2xs hover:shadow-md hover:-translate-y-1 transition-all duration-300 min-w-0"
                 >
                   {/* Top media header area */}
                   {relItem.type === 'book' ? (

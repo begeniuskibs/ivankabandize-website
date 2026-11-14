@@ -319,7 +319,7 @@ export default function ArticleView({
               </p>
               <Link
                 href={`/garden/${relatedPost.slug}`}
-                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-lg bg-white border border-[#F5ECDE] hover:border-[#EF5B45]/30 shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.08)] hover:-translate-y-1 transition-all duration-300"
+                className="group flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 p-6 rounded-lg bg-white border border-[#F0E4D2] hover:border-[#CF3F29] shadow-[0_10px_30px_rgba(35,37,54,0.04)] hover:shadow-[0_18px_44px_rgba(35,37,54,0.08)] hover:-translate-y-1 transition-all duration-300"
               >
                 <div className="space-y-2 flex-1">
                   <span className="text-xs font-bold uppercase tracking-wider text-teal-text">
@@ -329,7 +329,7 @@ export default function ArticleView({
                     {relatedPost.title}
                   </h3>
                   {relatedPost.excerpt && (
-                    <p className="text-sm text-[#5A5D70] line-clamp-2 leading-relaxed">
+                    <p className="text-xs text-[#5C5F73] line-clamp-2 leading-relaxed">
                       {relatedPost.excerpt}
                     </p>
                   )}
