@@ -12,6 +12,10 @@ import {
   cumulativeMembersByDay,
   countMembersByTier,
   formatKampalaDisplayDate,
+  formatKampalaLongDate,
+  buildStepPath,
+  calculateYAxisBounds,
+  calculateDonutSegments,
   deriveAnalyticsForRange,
 } from '../lib/adminAnalytics.ts'
 
@@ -152,6 +156,44 @@ console.log('  PASS: countMembersByTier')
 assert.equal(formatKampalaDisplayDate('2026-11-12'), '12 Nov')
 assert.equal(formatKampalaDisplayDate('2026-11-12', true), '12 Nov 2026')
 console.log('  PASS: formatKampalaDisplayDate')
+
+// 12b. formatKampalaLongDate
+const kampalaDateStr = formatKampalaLongDate('2026-11-12T12:00:00.000Z')
+assert.equal(kampalaDateStr, 'Thursday, 12 November 2026')
+console.log('  PASS: formatKampalaLongDate')
+
+// 12c. buildStepPath
+const stepPath = buildStepPath([
+  [10, 20],
+  [30, 40],
+  [50, 15],
+])
+assert.equal(stepPath, 'M 10.0 20.0 H 30.0 V 40.0 H 50.0 V 15.0')
+assert.equal(buildStepPath([]), '')
+console.log('  PASS: buildStepPath')
+
+// 12d. calculateYAxisBounds
+const barBounds = calculateYAxisBounds([10, 25, 45], false, true)
+assert.equal(barBounds.floor, 0)
+assert.ok(barBounds.nice >= 45)
+
+const floorBounds = calculateYAxisBounds([50, 52, 55], true, false)
+// When isFloor=true and isBar=false, floor is calculated from min
+assert.ok(floorBounds.floor > 0)
+assert.ok(floorBounds.nice > floorBounds.floor)
+console.log('  PASS: calculateYAxisBounds')
+
+// 12e. calculateDonutSegments
+const donutSegs = calculateDonutSegments([
+  ['Item A', 60],
+  ['Item B', 40],
+])
+assert.equal(donutSegs.length, 2)
+assert.equal(donutSegs[0].percent, 60)
+assert.equal(donutSegs[1].percent, 40)
+assert.equal(donutSegs[0].strokeDashoffset, 25)
+assert.equal(donutSegs[1].strokeDashoffset, -35)
+console.log('  PASS: calculateDonutSegments')
 
 // 13. deriveAnalyticsForRange consistency across 7, 30, and 90 days
 const dates180 = getKampalaDateRange(180, fixedNow)

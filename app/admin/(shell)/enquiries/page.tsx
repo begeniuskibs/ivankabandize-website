@@ -262,7 +262,7 @@ export default function AdminEnquiriesPage() {
                       onClick={() => handleSelect(inq)}
                       className={`group p-5 sm:px-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 transition cursor-pointer ${
                         isSelected
-                          ? 'bg-[#FDF8F1] border-l-4 border-l-[#EF5B45]'
+                          ? 'bg-[#FDF8F1]'
                           : 'hover:bg-gray-50/80'
                       }`}
                     >

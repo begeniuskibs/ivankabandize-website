@@ -112,7 +112,7 @@ export function SourcesTab({ v1Only }: SourcesTabProps) {
       </div>
 
       {/* Notice Callout */}
-      <div className="flex gap-3 items-start bg-white border border-[#F0E4D2] border-l-4 border-l-[#CF3F29] rounded-xl p-3.5 text-[#5C5F73] text-sm leading-relaxed">
+      <div className="flex gap-3 items-start bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-[#5C5F73] text-sm leading-relaxed">
         <span aria-hidden="true" className="text-base select-none mt-0.5">
           &#9432;
         </span>

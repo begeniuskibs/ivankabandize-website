@@ -1,12 +1,18 @@
 'use client'
 
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useSyncExternalStore } from 'react'
 import type {
   CompactAnalyticsData,
   AnalyticsRange,
   AnalyticsTab,
+  TimeChartStyle,
+  ShareChartStyle,
 } from '@/lib/adminAnalytics'
-import { deriveAnalyticsForRange } from '@/lib/adminAnalytics'
+import {
+  deriveAnalyticsForRange,
+  formatKampalaLongDate,
+} from '@/lib/adminAnalytics'
+import { AnalyticsChartMenu } from './AnalyticsChartMenu'
 import { OverviewTab } from './OverviewTab'
 import { ArticlesTab } from './ArticlesTab'
 import { SourcesTab } from './SourcesTab'
@@ -14,6 +20,54 @@ import { AudienceTab } from './AudienceTab'
 
 interface AnalyticsClientProps {
   initialCompact: CompactAnalyticsData
+}
+
+function subscribeChartStyles(callback: () => void) {
+  window.addEventListener('storage', callback)
+  window.addEventListener('analytics_chart_styles_change', callback)
+  return () => {
+    window.removeEventListener('storage', callback)
+    window.removeEventListener('analytics_chart_styles_change', callback)
+  }
+}
+
+function getTimeStyleSnapshot(): TimeChartStyle {
+  if (typeof window === 'undefined') return 'bar'
+  try {
+    const val = localStorage.getItem('admin_analytics_chart_time')
+    if (
+      val === 'bar' ||
+      val === 'line' ||
+      val === 'area' ||
+      val === 'step'
+    ) {
+      return val
+    }
+  } catch {
+    // ignore
+  }
+  return 'bar'
+}
+
+function getShareStyleSnapshot(): ShareChartStyle {
+  if (typeof window === 'undefined') return 'bars'
+  try {
+    const val = localStorage.getItem('admin_analytics_chart_share')
+    if (val === 'bars' || val === 'donut') {
+      return val
+    }
+  } catch {
+    // ignore
+  }
+  return 'bars'
+}
+
+function getServerTimeStyleSnapshot(): TimeChartStyle {
+  return 'bar'
+}
+
+function getServerShareStyleSnapshot(): ShareChartStyle {
+  return 'bars'
 }
 
 export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
@@ -24,11 +78,47 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
   const [v1Only, setV1Only] = useState(false)
   const [showExplanation, setShowExplanation] = useState(false)
 
+  // Chart styles persisted in localStorage with reactive external store
+  const timeStyle = useSyncExternalStore(
+    subscribeChartStyles,
+    getTimeStyleSnapshot,
+    getServerTimeStyleSnapshot
+  )
+  const shareStyle = useSyncExternalStore(
+    subscribeChartStyles,
+    getShareStyleSnapshot,
+    getServerShareStyleSnapshot
+  )
+
+  const handleTimeStyleChange = (s: TimeChartStyle) => {
+    try {
+      localStorage.setItem('admin_analytics_chart_time', s)
+      window.dispatchEvent(new Event('analytics_chart_styles_change'))
+    } catch {
+      // ignore
+    }
+  }
+
+  const handleShareStyleChange = (s: ShareChartStyle) => {
+    try {
+      localStorage.setItem('admin_analytics_chart_share', s)
+      window.dispatchEvent(new Event('analytics_chart_styles_change'))
+    } catch {
+      // ignore
+    }
+  }
+
   // Derive current and previous period metrics client-side with no network round trip
   const derivedData = useMemo(
     () => deriveAnalyticsForRange(initialCompact, selectedRange, activeTab),
     [initialCompact, selectedRange, activeTab]
   )
+
+  const kampalaLongDate = useMemo(() => {
+    const latestDate =
+      initialCompact.allDates180[initialCompact.allDates180.length - 1]
+    return formatKampalaLongDate(latestDate)
+  }, [initialCompact.allDates180])
 
   const handleRangeChange = (range: AnalyticsRange) => {
     setSelectedRange(range)
@@ -53,6 +143,10 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
       {/* Top Header */}
       <div className="flex items-start justify-between gap-4 flex-wrap pb-2">
         <div>
+          {/* Kampala Long Date above title */}
+          <div className="text-xs text-[#5C5F73] mb-1 font-medium">
+            {kampalaLongDate}
+          </div>
           <h1 className="text-2xl sm:text-[28px] font-semibold tracking-[-0.02em] leading-tight text-[#232536] m-0">
             Analytics
           </h1>
@@ -63,7 +157,9 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
           {/* Plain muted caption text line with explanation toggle */}
           <div className="mt-2 text-xs sm:text-sm text-[#5C5F73]">
             <div className="flex items-center gap-2 flex-wrap">
-              <span>Counting since 12 Nov 2026 with our own cookie-free counter.</span>
+              <span>
+                Counting since 12 Nov 2026 with our own cookie-free counter.
+              </span>
               <button
                 type="button"
                 onClick={() => setShowExplanation(!showExplanation)}
@@ -74,9 +170,10 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
             </div>
             {showExplanation && (
               <p className="text-xs text-[#5C5F73] mt-2 mb-0 max-w-2xl leading-relaxed">
-                It counts article reads without cookies, so it includes everyone. Google
-                Analytics only counts visitors who clicked Accept on the cookie bar, so its
-                numbers are lower. Each panel is labelled with its source.
+                It counts article reads without cookies, so it includes everyone.
+                Google Analytics only counts visitors who clicked Accept on the
+                cookie bar, so its numbers are lower. Each panel is labelled with
+                its source.
               </p>
             )}
             {initialCompact.capHit && (
@@ -112,6 +209,14 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
               )
             })}
           </div>
+
+          {/* Global chart style menu */}
+          <AnalyticsChartMenu
+            timeStyle={timeStyle}
+            shareStyle={shareStyle}
+            onTimeStyleChange={handleTimeStyleChange}
+            onShareStyleChange={handleShareStyleChange}
+          />
 
           {/* Export CSV button */}
           <button
@@ -187,14 +292,25 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
       {/* Active Tab Panel */}
       <div role="tabpanel">
         {activeTab === 'overview' && (
-          <OverviewTab data={derivedData} v1Only={v1Only} />
+          <OverviewTab
+            data={derivedData}
+            v1Only={v1Only}
+            timeStyle={timeStyle}
+            shareStyle={shareStyle}
+            onNavigateTab={handleTabChange}
+          />
         )}
         {activeTab === 'articles' && (
           <ArticlesTab data={derivedData} v1Only={v1Only} />
         )}
         {activeTab === 'sources' && <SourcesTab v1Only={v1Only} />}
         {activeTab === 'audience' && (
-          <AudienceTab data={derivedData} v1Only={v1Only} />
+          <AudienceTab
+            data={derivedData}
+            v1Only={v1Only}
+            timeStyle={timeStyle}
+            shareStyle={shareStyle}
+          />
         )}
       </div>
 
