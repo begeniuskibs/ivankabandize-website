@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, Suspense, useCallback } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import TipTapEditor from '@/components/editor/TipTapEditor'
 import UnsplashModal from '@/components/editor/UnsplashModal'
 import UnsavedChangesDialog from '@/components/admin/UnsavedChangesDialog'
@@ -534,7 +534,7 @@ function PostEditorContent() {
               className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-lg transition flex items-center gap-1.5 border border-gray-200"
             >
               <span>Preview</span>
-              <span className="text-gray-400">&#8599;</span>
+              <ExternalLink size={14} strokeWidth={2} className="text-gray-400" aria-hidden="true" />
             </Link>
           ) : (
             <button
@@ -544,7 +544,7 @@ function PostEditorContent() {
               className="px-3.5 py-2 text-xs font-semibold text-gray-400 bg-gray-50 border border-gray-200 rounded-lg cursor-not-allowed opacity-60 flex items-center gap-1.5"
             >
               <span>Preview</span>
-              <span className="text-gray-300">&#8599;</span>
+              <ExternalLink size={14} strokeWidth={2} className="text-gray-300" aria-hidden="true" />
             </button>
           )}
 

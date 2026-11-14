@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useState, useMemo } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 import { INQUIRY_STATUSES, type InquiryStatus } from '@/lib/inquiries'
 import { EnquiriesIcon, WarningIcon, DoneIcon } from '@/components/admin/icons'
 
@@ -444,9 +444,10 @@ export default function AdminEnquiriesPage() {
                 </span>
                 <a
                   href={`mailto:${selectedInquiry.email}`}
-                  className="text-blue-600 hover:underline font-semibold mt-0.5 inline-block"
+                  className="text-blue-600 hover:underline font-semibold mt-0.5 inline-flex items-center gap-1.5"
                 >
-                  {selectedInquiry.email} ↗
+                  <span>{selectedInquiry.email}</span>
+                  <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                 </a>
               </div>
 

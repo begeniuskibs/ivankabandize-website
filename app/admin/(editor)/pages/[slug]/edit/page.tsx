@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, use, useRef, useCallback } from 'react'
 import Link from 'next/link'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, ExternalLink } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import UnsavedChangesDialog from '@/components/admin/UnsavedChangesDialog'
 
@@ -302,9 +302,10 @@ export default function PageEditPage({
             href={livePath}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition border border-gray-200"
+            className="px-3.5 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition border border-gray-200 inline-flex items-center gap-1.5"
           >
-            View Live ↗
+            <span>View Live</span>
+            <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
           </a>
           <button
             type="button"
