@@ -7,17 +7,12 @@ import {
   parseTab,
   getKampalaDateRange,
   toKampalaDate,
-  bucketByDay,
-  sumViews,
-  percentChange,
-  topArticles,
   cumulativeMembersByDay,
   countMembersByTier,
-  formatKampalaDisplayDate,
-  type PostRecord,
+  type CompactAnalyticsData,
+  type PublishedArticleRecord,
 } from '@/lib/adminAnalytics'
 import { AnalyticsClient } from '@/components/admin/analytics/AnalyticsClient'
-import type { AnalyticsData } from '@/components/admin/analytics/types'
 
 export const dynamic = 'force-dynamic'
 
@@ -36,25 +31,11 @@ interface AnalyticsPageProps {
   }>
 }
 
-async function fetchAdminAnalytics(
-  range: ReturnType<typeof parseRange>,
-  tab: ReturnType<typeof parseTab>
-): Promise<AnalyticsData> {
-  const nowMs = Date.now()
-  const kampalaDates2X = getKampalaDateRange(2 * range, nowMs)
-  const prevPeriodDates = kampalaDates2X.slice(0, range)
-  const currentPeriodDates = kampalaDates2X.slice(range)
-
-  // Start date in UTC corresponding to 00:00:00 Kampala time on the earliest date
-  const earliestDateStr = kampalaDates2X[0]
-  const [ey, em, ed] = earliestDateStr.split('-').map(Number)
-  const startUtcMs = Date.UTC(ey, em - 1, ed) - 3 * 3600 * 1000
-  const startDateIso = new Date(startUtcMs).toISOString()
-
+async function fetchAllPostViews(startDateIso: string): Promise<{
+  allViews: { post_id: string; viewed_at: string }[]
+  capHit: boolean
+}> {
   const supabase = createAdminClient()
-
-  // 1. Fetch post_views in chunks of 1000, capped at 200,000 views
-  // SECURITY: Strictly select post_id and viewed_at ONLY. No personal or session fields are requested.
   const CHUNK_SIZE = 1000
   const MAX_ROWS = 200000
   const allViews: { post_id: string; viewed_at: string }[] = []
@@ -67,6 +48,8 @@ async function fetchAdminAnalytics(
       .from('post_views')
       .select('post_id, viewed_at')
       .gte('viewed_at', startDateIso)
+      .order('viewed_at', { ascending: true })
+      .order('id', { ascending: true })
       .range(from, to)
 
     if (viewError) {
@@ -90,130 +73,96 @@ async function fetchAdminAnalytics(
     }
   }
 
-  // 2. Fetch posts
-  const { data: postsData, error: postsError } = await supabase
-    .from('posts')
-    .select('id, title, slug, content_type, publish_status, published_at')
+  return { allViews, capHit }
+}
 
-  if (postsError) {
-    console.error('Error querying posts for admin analytics:', postsError)
+async function fetchCompactAnalytics(
+  range: ReturnType<typeof parseRange>,
+  tab: ReturnType<typeof parseTab>
+): Promise<CompactAnalyticsData> {
+  const nowMs = Date.now()
+  const allDates180 = getKampalaDateRange(180, nowMs)
+
+  // Start date in UTC corresponding to 00:00:00 Kampala time on the earliest date of the 180 days
+  const earliestDateStr = allDates180[0]
+  const [ey, em, ed] = earliestDateStr.split('-').map(Number)
+  const startUtcMs = Date.UTC(ey, em - 1, ed) - 3 * 3600 * 1000
+  const startDateIso = new Date(startUtcMs).toISOString()
+
+  const supabase = createAdminClient()
+
+  // Run post_views paging, posts, and members in parallel
+  const [viewsResult, postsResult, membersResult] = await Promise.all([
+    fetchAllPostViews(startDateIso),
+    supabase
+      .from('posts')
+      .select('id, title, slug, content_type, publish_status, published_at')
+      .eq('publish_status', 'published'),
+    supabase
+      .from('members')
+      .select('id, tier_status, created_at'),
+  ])
+
+  if (postsResult.error) {
+    console.error('Error querying posts for admin analytics:', postsResult.error)
   }
 
-  // 3. Fetch members
-  const { data: membersData, error: membersError } = await supabase
-    .from('members')
-    .select('id, tier_status, created_at')
-
-  if (membersError) {
-    console.error('Error querying members for admin analytics:', membersError)
+  if (membersResult.error) {
+    console.error('Error querying members for admin analytics:', membersResult.error)
   }
 
-  // Split views into current and previous periods by Kampala date
-  const currentDateSet = new Set(currentPeriodDates)
-  const prevDateSet = new Set(prevPeriodDates)
+  // Aggregate views per day and sparse date mapping per article
+  const dateToIndex = new Map<string, number>()
+  allDates180.forEach((date, i) => dateToIndex.set(date, i))
 
-  const currentViews: { post_id: string; viewed_at: string }[] = []
-  const prevViews: { post_id: string; viewed_at: string }[] = []
+  const dailyTotalViews180 = new Array(180).fill(0)
+  const articleViewsByDate: Record<string, Record<string, number>> = {}
 
-  for (const v of allViews) {
-    if (!v.viewed_at) continue
+  for (const v of viewsResult.allViews) {
+    if (!v.viewed_at || !v.post_id) continue
     const dateStr = toKampalaDate(v.viewed_at)
-    if (currentDateSet.has(dateStr)) {
-      currentViews.push(v)
-    } else if (prevDateSet.has(dateStr)) {
-      prevViews.push(v)
+    const idx = dateToIndex.get(dateStr)
+    if (idx !== undefined) {
+      dailyTotalViews180[idx]++
+      if (!articleViewsByDate[v.post_id]) {
+        articleViewsByDate[v.post_id] = {}
+      }
+      articleViewsByDate[v.post_id][dateStr] =
+        (articleViewsByDate[v.post_id][dateStr] || 0) + 1
     }
   }
 
-  const viewsCurrentBuckets = bucketByDay(currentViews, range, nowMs)
+  // Published articles list
+  const publishedArticles: PublishedArticleRecord[] = (postsResult.data || []).map(
+    (p) => ({
+      id: p.id,
+      title: p.title || 'Untitled',
+      slug: p.slug || '',
+      contentType: p.content_type || 'Article',
+      publishedAt: p.published_at || null,
+    })
+  )
 
-  // Previous period buckets
-  const prevCountMap = new Map<string, number>()
-  for (const date of prevPeriodDates) {
-    prevCountMap.set(date, 0)
-  }
-  for (const v of prevViews) {
-    const dateStr = toKampalaDate(v.viewed_at)
-    if (prevCountMap.has(dateStr)) {
-      prevCountMap.set(dateStr, (prevCountMap.get(dateStr) || 0) + 1)
-    }
-  }
-  const viewsPrevBuckets = prevPeriodDates.map((date) => ({
-    date,
-    count: prevCountMap.get(date) || 0,
-  }))
-
-  const totalViewsCurrent = sumViews(viewsCurrentBuckets)
-  const totalViewsPrev = sumViews(viewsPrevBuckets)
-  const viewsPercentDelta = percentChange(totalViewsCurrent, totalViewsPrev)
-
-  // Best day in current period
-  let bestDayCount = 0
-  let bestDayDate = ''
-  for (const bucket of viewsCurrentBuckets) {
-    if (bucket.count >= bestDayCount && bucket.count > 0) {
-      bestDayCount = bucket.count
-      bestDayDate = bucket.date
-    }
-  }
-  const bestDayDateDisplay =
-    bestDayCount > 0 ? formatKampalaDisplayDate(bestDayDate) : ''
-
-  // Top articles and all articles
-  const currentPostViewCounts = new Map<string, number>()
-  for (const v of currentViews) {
-    currentPostViewCounts.set(
-      v.post_id,
-      (currentPostViewCounts.get(v.post_id) || 0) + 1
-    )
-  }
-
-  const typedPosts = (postsData || []) as PostRecord[]
-  const topArticlesList = topArticles(currentPostViewCounts, typedPosts, 5)
-  const allArticlesList = topArticles(currentPostViewCounts, typedPosts, 1000)
-
-  // Members data
-  const typedMembers = (membersData || []) as {
+  // Cumulative members over the 180 days
+  const typedMembers = (membersResult.data || []) as {
     id: string
     tier_status: string | null
     created_at: string
   }[]
-  const member2XBuckets = cumulativeMembersByDay(typedMembers, 2 * range, nowMs)
-  const memberPrevBuckets = member2XBuckets.slice(0, range)
-  const memberCurrentBuckets = member2XBuckets.slice(range)
-
-  const totalMembersCurrent =
-    memberCurrentBuckets[memberCurrentBuckets.length - 1]?.count || 0
-  const totalMembersPrev =
-    memberPrevBuckets[memberPrevBuckets.length - 1]?.count || 0
-  const memberPercentDelta = percentChange(
-    totalMembersCurrent,
-    totalMembersPrev
-  )
-
+  const memberBuckets180 = cumulativeMembersByDay(typedMembers, 180, nowMs)
+  const cumulativeMembers180 = memberBuckets180.map((b) => b.count)
   const tierCounts = countMembersByTier(typedMembers)
 
   return {
     range,
     tab,
-    capHit,
-    currentPeriodDates,
-    previousPeriodDates: prevPeriodDates,
-    viewsCurrentBuckets,
-    viewsPrevBuckets,
-    totalViewsCurrent,
-    totalViewsPrev,
-    viewsPercentDelta,
-    bestDayCount,
-    bestDayDateDisplay,
-    memberCurrentBuckets,
-    memberPrevBuckets,
-    totalMembersCurrent,
-    totalMembersPrev,
-    memberPercentDelta,
+    capHit: viewsResult.capHit,
+    allDates180,
+    dailyTotalViews180,
+    publishedArticles,
+    articleViewsByDate,
+    cumulativeMembers180,
     tierCounts,
-    topArticles: topArticlesList,
-    allArticles: allArticlesList,
   }
 }
 
@@ -241,7 +190,7 @@ export default async function AnalyticsPage({
   const range = parseRange(rawRange)
   const tab = parseTab(rawTab)
 
-  const analyticsData = await fetchAdminAnalytics(range, tab)
+  const compactData = await fetchCompactAnalytics(range, tab)
 
-  return <AnalyticsClient initialData={analyticsData} />
+  return <AnalyticsClient initialCompact={compactData} />
 }

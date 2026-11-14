@@ -12,6 +12,7 @@ import {
   cumulativeMembersByDay,
   countMembersByTier,
   formatKampalaDisplayDate,
+  deriveAnalyticsForRange,
 } from '../lib/adminAnalytics.ts'
 
 console.log('Running Admin Analytics unit tests...')
@@ -152,5 +153,73 @@ assert.equal(formatKampalaDisplayDate('2026-11-12'), '12 Nov')
 assert.equal(formatKampalaDisplayDate('2026-11-12', true), '12 Nov 2026')
 console.log('  PASS: formatKampalaDisplayDate')
 
-console.log('ALL TESTS PASSED!')
+// 13. deriveAnalyticsForRange consistency across 7, 30, and 90 days
+const dates180 = getKampalaDateRange(180, fixedNow)
+// Synthesize 180 days of views and cumulative members
+const dailyViews180 = new Array(180).fill(0).map((_, i) => (i % 3 === 0 ? 5 : i % 2 === 0 ? 2 : 1))
+const cumulative180 = new Array(180).fill(10).map((base, i) => base + Math.floor(i / 10))
 
+const mockCompact = {
+  range: 30,
+  tab: 'overview',
+  capHit: false,
+  allDates180: dates180,
+  dailyTotalViews180: dailyViews180,
+  publishedArticles: [
+    { id: 'art-1', title: 'First Article', slug: 'first', contentType: 'Article', publishedAt: '2026-10-01' },
+    { id: 'art-2', title: 'Second Article', slug: 'second', contentType: 'Article', publishedAt: '2026-10-15' },
+  ],
+  articleViewsByDate: {
+    'art-1': {
+      [dates180[179]]: 3, // today
+      [dates180[175]]: 4, // 4 days ago
+      [dates180[160]]: 8, // 19 days ago
+      [dates180[100]]: 15, // 79 days ago
+    },
+    'art-2': {
+      [dates180[178]]: 2, // 1 day ago
+      [dates180[155]]: 5, // 24 days ago
+      [dates180[110]]: 10, // 69 days ago
+    },
+  },
+  cumulativeMembers180: cumulative180,
+  tierCounts: { free: 25, paid: 2, comped: 1 },
+}
+
+const derived7 = deriveAnalyticsForRange(mockCompact, 7)
+const derived30 = deriveAnalyticsForRange(mockCompact, 30)
+const derived90 = deriveAnalyticsForRange(mockCompact, 90)
+
+// Bucket lengths match selected range
+assert.equal(derived7.viewsCurrentBuckets.length, 7)
+assert.equal(derived7.viewsPrevBuckets.length, 7)
+assert.equal(derived30.viewsCurrentBuckets.length, 30)
+assert.equal(derived30.viewsPrevBuckets.length, 30)
+assert.equal(derived90.viewsCurrentBuckets.length, 90)
+assert.equal(derived90.viewsPrevBuckets.length, 90)
+
+// Consistency: 7 <= 30 <= 90 total views
+assert.ok(
+  derived7.totalViewsCurrent <= derived30.totalViewsCurrent,
+  `Expected ${derived7.totalViewsCurrent} <= ${derived30.totalViewsCurrent}`
+)
+assert.ok(
+  derived30.totalViewsCurrent <= derived90.totalViewsCurrent,
+  `Expected ${derived30.totalViewsCurrent} <= ${derived90.totalViewsCurrent}`
+)
+
+// Article views consistency across ranges: 7 <= 30 <= 90
+const art1_7 = derived7.allArticles.find((a) => a.id === 'art-1')?.views || 0
+const art1_30 = derived30.allArticles.find((a) => a.id === 'art-1')?.views || 0
+const art1_90 = derived90.allArticles.find((a) => a.id === 'art-1')?.views || 0
+assert.equal(art1_7, 7) // 3 + 4
+assert.equal(art1_30, 15) // 3 + 4 + 8
+assert.equal(art1_90, 30) // 3 + 4 + 8 + 15
+assert.ok(art1_7 <= art1_30 && art1_30 <= art1_90)
+
+// Member counts end at the same current total across all ranges
+assert.equal(derived7.totalMembersCurrent, derived30.totalMembersCurrent)
+assert.equal(derived30.totalMembersCurrent, derived90.totalMembersCurrent)
+console.log('  PASS: deriveAnalyticsForRange (7 <= 30 <= 90 consistency & bucket lengths)')
+
+console.log('ALL TESTS PASSED!')

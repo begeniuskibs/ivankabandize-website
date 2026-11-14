@@ -1,32 +1,51 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import type { AnalyticsData } from './types'
-import type { AnalyticsRange, AnalyticsTab } from '@/lib/adminAnalytics'
+import React, { useState, useMemo } from 'react'
+import type {
+  CompactAnalyticsData,
+  AnalyticsRange,
+  AnalyticsTab,
+} from '@/lib/adminAnalytics'
+import { deriveAnalyticsForRange } from '@/lib/adminAnalytics'
 import { OverviewTab } from './OverviewTab'
 import { ArticlesTab } from './ArticlesTab'
 import { SourcesTab } from './SourcesTab'
 import { AudienceTab } from './AudienceTab'
 
 interface AnalyticsClientProps {
-  initialData: AnalyticsData
+  initialCompact: CompactAnalyticsData
 }
 
-export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
-  const router = useRouter()
-  const [activeTab, setActiveTab] = useState<AnalyticsTab>(initialData.tab)
+export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
+  const [selectedRange, setSelectedRange] = useState<AnalyticsRange>(
+    initialCompact.range
+  )
+  const [activeTab, setActiveTab] = useState<AnalyticsTab>(initialCompact.tab)
   const [v1Only, setV1Only] = useState(false)
+  const [showExplanation, setShowExplanation] = useState(false)
+
+  // Derive current and previous period metrics client-side with no network round trip
+  const derivedData = useMemo(
+    () => deriveAnalyticsForRange(initialCompact, selectedRange, activeTab),
+    [initialCompact, selectedRange, activeTab]
+  )
 
   const handleRangeChange = (range: AnalyticsRange) => {
-    router.push(`/admin/analytics?range=${range}&tab=${activeTab}`)
+    setSelectedRange(range)
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href)
+      url.searchParams.set('range', String(range))
+      window.history.replaceState({}, '', url.toString())
+    }
   }
 
   const handleTabChange = (tab: AnalyticsTab) => {
     setActiveTab(tab)
-    const url = new URL(window.location.href)
-    url.searchParams.set('tab', tab)
-    window.history.replaceState({}, '', url.toString())
+    if (typeof window !== 'undefined') {
+      const url = new URL(window.location.href)
+      url.searchParams.set('tab', tab)
+      window.history.replaceState({}, '', url.toString())
+    }
   }
 
   return (
@@ -40,6 +59,32 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
           <p className="text-[#5C5F73] text-sm mt-1.5 max-w-xl">
             How your writing is being read, and where readers come from.
           </p>
+
+          {/* Plain muted caption text line with explanation toggle */}
+          <div className="mt-2 text-xs sm:text-sm text-[#5C5F73]">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span>Counting since 12 Nov 2026 with our own cookie-free counter.</span>
+              <button
+                type="button"
+                onClick={() => setShowExplanation(!showExplanation)}
+                className="text-xs text-[#5C5F73] underline hover:text-[#232536] cursor-pointer bg-transparent border-0 p-0"
+              >
+                How is this counted?
+              </button>
+            </div>
+            {showExplanation && (
+              <p className="text-xs text-[#5C5F73] mt-2 mb-0 max-w-2xl leading-relaxed">
+                It counts article reads without cookies, so it includes everyone. Google
+                Analytics only counts visitors who clicked Accept on the cookie bar, so its
+                numbers are lower. Each panel is labelled with its source.
+              </p>
+            )}
+            {initialCompact.capHit && (
+              <p className="text-xs font-semibold text-[#CF3F29] mt-1 mb-0">
+                Note: View count query capped at 200,000 records.
+              </p>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center gap-2.5 flex-wrap">
@@ -50,7 +95,7 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
             aria-label="Date range"
           >
             {([7, 30, 90] as AnalyticsRange[]).map((r) => {
-              const isOn = initialData.range === r
+              const isOn = selectedRange === r
               return (
                 <button
                   key={r}
@@ -80,26 +125,6 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
         </div>
       </div>
 
-      {/* Notice Callout */}
-      <div className="flex gap-3 items-start bg-white border border-[#F0E4D2] border-l-4 border-l-[#CF3F29] rounded-xl p-3.5 mt-4 text-[#5C5F73] text-sm leading-relaxed">
-        <span aria-hidden="true" className="text-base select-none mt-0.5">
-          &#9432;
-        </span>
-        <div>
-          <b className="text-[#232536] font-semibold">
-            Own counter started on 12 Nov 2026.{' '}
-          </b>
-          It counts article reads without cookies, so it includes everyone.
-          Google Analytics only counts visitors who clicked Accept on the cookie
-          bar, so its numbers are lower. Each panel is labelled with its source.
-          {initialData.capHit && (
-            <span className="block mt-1 font-semibold text-[#CF3F29]">
-              Note: View count query capped at 200,000 records.
-            </span>
-          )}
-        </div>
-      </div>
-
       {/* v1 Only Switch */}
       <label className="flex items-center gap-2.5 mt-3 text-xs sm:text-[13px] text-[#5C5F73] select-none cursor-pointer">
         <span className="relative inline-block w-[38px] h-[22px] flex-none">
@@ -126,9 +151,9 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
         </span>
       </label>
 
-      {/* Tabs Bar */}
+      {/* Tabs Bar without overflow slider */}
       <div
-        className="flex gap-1 border-b border-[#F0E4D2] mt-5 mb-5 overflow-x-auto"
+        className="flex gap-1 border-b border-[#F0E4D2] mt-5 mb-5"
         role="tablist"
       >
         {(
@@ -162,14 +187,14 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
       {/* Active Tab Panel */}
       <div role="tabpanel">
         {activeTab === 'overview' && (
-          <OverviewTab data={initialData} v1Only={v1Only} />
+          <OverviewTab data={derivedData} v1Only={v1Only} />
         )}
         {activeTab === 'articles' && (
-          <ArticlesTab data={initialData} v1Only={v1Only} />
+          <ArticlesTab data={derivedData} v1Only={v1Only} />
         )}
         {activeTab === 'sources' && <SourcesTab v1Only={v1Only} />}
         {activeTab === 'audience' && (
-          <AudienceTab data={initialData} v1Only={v1Only} />
+          <AudienceTab data={derivedData} v1Only={v1Only} />
         )}
       </div>
 
@@ -181,4 +206,3 @@ export function AnalyticsClient({ initialData }: AnalyticsClientProps) {
     </div>
   )
 }
-
