@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
+import { PanelLeftClose, PanelLeftOpen, ExternalLink } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { signOut } from '@/app/auth/actions'
 import {
@@ -613,8 +613,8 @@ function renderNavItem(
           </span>
           <span className="truncate">{item.label}</span>
         </div>
-        <span className="text-[11px] text-[#6E7287] group-hover:text-[#B2B5C6] shrink-0">
-          ↗
+        <span className="text-[#6E7287] group-hover:text-[#B2B5C6] shrink-0">
+          <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
         </span>
       </a>
     )

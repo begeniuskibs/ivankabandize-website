@@ -319,7 +319,7 @@ export default function GardenArticlesView({
                   <Link
                     key={item.id}
                     href={`/garden/series/${item.slug}`}
-                    className="group flex flex-row items-stretch bg-white border border-[#F5ECDE] hover:border-[#232536]/25 rounded-lg overflow-hidden transition-all duration-200 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
+                    className="group flex flex-row items-stretch bg-white border border-[#F0E4D2] hover:border-[#CF3F29] rounded-lg overflow-hidden transition-all duration-300 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2"
                   >
                     {/* Left 120px wide thumbnail */}
                     <div className="w-[120px] min-w-[120px] max-w-[120px] shrink-0 self-stretch relative overflow-hidden bg-[#FDE9E4] flex items-center justify-center">

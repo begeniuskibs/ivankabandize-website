@@ -350,7 +350,7 @@ export default function GardenLandingA2({
                 <Link
                   key={post.id}
                   href={`/garden/${post.slug}`}
-                  className="group flex flex-col h-full bg-white rounded-lg border border-[#F5ECDE] hover:border-[#232536]/25 hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                  className="group flex flex-col h-full bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
                 >
                   <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#FDF3DC] shrink-0">
                     {post.featured_image_url ? (
@@ -380,7 +380,7 @@ export default function GardenLandingA2({
                         {post.title}
                       </h3>
                       {previewText ? (
-                        <p className="text-xs text-[#5A5D70] leading-relaxed line-clamp-2 mt-2">
+                        <p className="text-xs text-[#5C5F73] leading-relaxed line-clamp-2 mt-2">
                           {previewText}
                         </p>
                       ) : null}
@@ -425,7 +425,7 @@ export default function GardenLandingA2({
                 href={item.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex flex-col h-full bg-white rounded-lg border border-[#F5ECDE] hover:border-[#C5E4E0] hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
+                className="group flex flex-col h-full bg-white rounded-lg border border-[#F0E4D2] hover:border-[#CF3F29] hover:shadow-md hover:-translate-y-1 transition-all duration-300 overflow-hidden"
               >
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#EAF6F4] shrink-0">
                   {item.thumbnail_url ? (
@@ -452,7 +452,7 @@ export default function GardenLandingA2({
                       {item.title}
                     </h3>
                   </div>
-                  <p className="text-xs text-[#5A5D70] mt-2">
+                  <p className="text-xs text-[#5C5F73] mt-2">
                     by <span className="font-semibold text-[#232536]">{item.creator}</span>
                   </p>
                 </div>
