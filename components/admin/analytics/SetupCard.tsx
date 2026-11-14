@@ -5,13 +5,13 @@ import React from 'react'
 export function SetupCard() {
   const steps = [
     {
-      title: 'Record reads on articles',
-      description: 'Cookie-free, counts every visitor',
+      title: 'Own view counter',
+      description: 'Counting reads since 12 Nov 2026',
       done: true,
     },
     {
-      title: 'Count member signups',
-      description: 'Live from the database',
+      title: 'Google Analytics tag',
+      description: 'Live for visitors who accept cookies',
       done: true,
     },
     {
