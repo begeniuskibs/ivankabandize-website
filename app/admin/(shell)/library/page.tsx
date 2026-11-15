@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { ExternalLink } from 'lucide-react'
 import { CloseIcon } from '@/components/admin/icons'
 import TipTapEditor from '@/components/editor/TipTapEditor'
 import { getTipTapWordCount, isNonEmptyTipTapDoc } from '@/lib/libraryTake'
@@ -349,9 +350,10 @@ export default function AdminLibraryPage() {
           <Link
             href="/library"
             target="_blank"
-            className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition border border-gray-200"
+            className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition border border-gray-200 inline-flex items-center gap-1.5"
           >
-            Live Library ↗
+            <span>Live Library</span>
+            <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
           </Link>
         </div>
       </header>
@@ -438,9 +440,10 @@ export default function AdminLibraryPage() {
                     href={item.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition border border-gray-200"
+                    className="px-3 py-1.5 text-xs font-semibold text-gray-600 hover:bg-gray-100 rounded-lg transition border border-gray-200 inline-flex items-center gap-1.5"
                   >
-                    Link ↗
+                    <span>Link</span>
+                    <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                   </a>
                   <button
                     onClick={() => handleOpenEdit(item)}

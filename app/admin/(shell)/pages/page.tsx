@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 
 interface PageRecord {
   id: string
@@ -77,9 +77,10 @@ export default function AdminPagesListPage() {
             href="/"
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition border border-gray-200"
+            className="px-3.5 py-1.5 text-xs font-semibold text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition border border-gray-200 inline-flex items-center gap-1.5"
           >
-            Live Site ↗
+            <span>Live Site</span>
+            <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
           </a>
         </div>
       </header>
@@ -165,9 +166,10 @@ export default function AdminPagesListPage() {
                       href={meta.path}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition border border-gray-200"
+                      className="px-4 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-100 rounded-xl transition border border-gray-200 inline-flex items-center gap-1.5"
                     >
-                      View Live ↗
+                      <span>View Live</span>
+                      <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
                     </a>
                     <Link
                       href={`/admin/pages/${page.slug}/edit`}
