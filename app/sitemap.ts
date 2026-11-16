@@ -1,6 +1,7 @@
 import type { MetadataRoute } from 'next'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { SITE_URL } from '@/lib/siteUrl'
+import { DIGESTS } from '@/lib/digests'
 
 export const dynamic = 'force-dynamic'
 
@@ -51,6 +52,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.7,
+    },
+    {
+      url: `${SITE_URL}/garden/report-digests`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
     },
     {
       url: `${SITE_URL}/privacy-policy`,
@@ -150,5 +157,20 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     }))
 
-  return [...staticRoutes, ...topicRoutes, ...seriesRoutes, ...postRoutes, ...libraryRoutes]
+  // 6. Report digest routes
+  const digestRoutes: MetadataRoute.Sitemap = DIGESTS.map((d) => ({
+    url: `${SITE_URL}/garden/report-digests/${d.slug}`,
+    lastModified: new Date(),
+    changeFrequency: 'monthly',
+    priority: 0.8,
+  }))
+
+  return [
+    ...staticRoutes,
+    ...topicRoutes,
+    ...seriesRoutes,
+    ...postRoutes,
+    ...libraryRoutes,
+    ...digestRoutes,
+  ]
 }
