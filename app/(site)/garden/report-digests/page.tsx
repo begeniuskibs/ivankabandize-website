@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import GardenHubHero from '@/components/public/GardenHubHero'
 import DigestIndexView from '@/components/public/digests/DigestIndexView'
-import { DIGESTS } from '@/lib/digests'
 import { SITE_URL } from '@/lib/siteUrl'
 
 export const dynamic = 'force-dynamic'
@@ -32,7 +31,7 @@ export default function ReportDigestsPage() {
 
       {/* Main Content: Digest Index View */}
       <main className="w-full">
-        <DigestIndexView digests={DIGESTS} />
+        <DigestIndexView />
       </main>
     </div>
   )

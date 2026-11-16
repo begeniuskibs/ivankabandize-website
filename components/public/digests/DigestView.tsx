@@ -3,7 +3,8 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import type { Digest, DigestChapter, DigestBlock } from '@/lib/digests/types'
+import { getDigestBySlug } from '@/lib/digests'
+import type { DigestChapter, DigestBlock } from '@/lib/digests/types'
 import DigestHero from './DigestHero'
 import DigestSideRail from './DigestSideRail'
 import DigestContentsMenu from './DigestContentsMenu'
@@ -11,10 +12,11 @@ import DigestProgressRing from './DigestProgressRing'
 import BlockRenderer from './blocks/BlockRenderer'
 
 interface DigestViewProps {
-  digest: Digest
+  slug: string
 }
 
-export default function DigestView({ digest }: DigestViewProps) {
+export default function DigestView({ slug }: DigestViewProps) {
+  const digest = getDigestBySlug(slug)
   const searchParams = useSearchParams()
   const initial2Min = searchParams.get('v') === '2min'
 
@@ -23,10 +25,16 @@ export default function DigestView({ digest }: DigestViewProps) {
   const [isContentsOpen, setIsContentsOpen] = useState(false)
   const [progressPercent, setProgressPercent] = useState(0)
 
+  // Only include approved chapters
+  const approvedChapters: DigestChapter[] = useMemo(() => {
+    if (!digest) return []
+    return digest.ch.filter((c: DigestChapter) => c.approved !== false)
+  }, [digest])
+
   // Visible chapters based on isFull
   const visibleChapters: DigestChapter[] = useMemo(() => {
-    return isFull ? digest.ch : digest.ch.slice(0, 1)
-  }, [isFull, digest.ch])
+    return isFull ? approvedChapters : approvedChapters.slice(0, 1)
+  }, [isFull, approvedChapters])
 
   // Scroll to a specific section by index
   const scrollToSection = useCallback(
@@ -82,6 +90,10 @@ export default function DigestView({ digest }: DigestViewProps) {
     handleScroll()
     return () => window.removeEventListener('scroll', handleScroll)
   }, [visibleChapters])
+
+  if (!digest) {
+    return null
+  }
 
   const activeTitle = visibleChapters[activeSection]?.t || digest.title
 
@@ -139,7 +151,7 @@ export default function DigestView({ digest }: DigestViewProps) {
         <div className="flex gap-12 items-start">
           {/* Sticky desktop side rail */}
           <DigestSideRail
-            chapters={digest.ch}
+            chapters={approvedChapters}
             currentSection={activeSection}
             onSelectSection={scrollToSection}
           />
@@ -193,7 +205,7 @@ export default function DigestView({ digest }: DigestViewProps) {
                   }}
                   className="inline-flex items-center justify-center px-5 py-3 rounded-xl font-semibold text-sm bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors shadow-sm"
                 >
-                  Keep going - show me the full digest ({digest.ch.length - 1} more sections)
+                  Keep going - show me the full digest ({approvedChapters.length - 1} more sections)
                 </button>
               </div>
             )}
@@ -237,7 +249,7 @@ export default function DigestView({ digest }: DigestViewProps) {
       <DigestContentsMenu
         isOpen={isContentsOpen}
         onClose={() => setIsContentsOpen(false)}
-        chapters={digest.ch}
+        chapters={approvedChapters}
         currentSection={activeSection}
         onSelectSection={scrollToSection}
       />

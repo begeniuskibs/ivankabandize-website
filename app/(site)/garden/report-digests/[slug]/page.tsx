@@ -54,5 +54,5 @@ export default async function DigestDetailPage({ params }: PageProps) {
     notFound()
   }
 
-  return <DigestView digest={digest} />
+  return <DigestView slug={digest.slug} />
 }

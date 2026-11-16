@@ -2,19 +2,15 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
-import type { Digest } from '@/lib/digests/types'
-
-interface DigestIndexViewProps {
-  digests: Digest[]
-}
+import { DIGESTS } from '@/lib/digests'
 
 const TOPICS = ['All', 'Faith', 'Technology', 'Work'] as const
 type Topic = (typeof TOPICS)[number]
 
-export default function DigestIndexView({ digests }: DigestIndexViewProps) {
+export default function DigestIndexView() {
   const [selectedTopic, setSelectedTopic] = useState<Topic>('All')
 
-  const filteredDigests = digests.filter(
+  const filteredDigests = DIGESTS.filter(
     (d) => selectedTopic === 'All' || d.topic === selectedTopic
   )
 
