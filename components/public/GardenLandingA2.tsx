@@ -172,7 +172,6 @@ export default function GardenLandingA2({
             {/* Report Digests Card (Gold) */}
             <Link
               href="/garden/report-digests"
-              aria-label="Report Digests, coming soon"
               className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A97B1A] focus-visible:ring-offset-2"
             >
               {/* Full-card Background Art */}
@@ -204,9 +203,18 @@ export default function GardenLandingA2({
                 <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Plain-language summaries of the research leaders should read.
                 </p>
-                <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs min-h-[28px]">
-                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-gold-text border border-[#A97B1A]/20">
-                    Coming soon
+                <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs font-semibold min-h-[28px]">
+                  <span className="text-gold-text font-bold">
+                    3 digests
+                  </span>
+                  <span className="inline-flex items-center gap-1 text-gold-text font-bold">
+                    <span>Open</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0 motion-reduce:transition-none"
+                    />
                   </span>
                 </div>
               </div>

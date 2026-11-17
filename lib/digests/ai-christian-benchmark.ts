@@ -27,7 +27,8 @@ export const aiChristianBenchmark: Digest = {
   ],
   credit:
     'Digest of the <b>AI Christian Benchmark - 2026 Report</b> by Michael S. Graham with Andrew D. Noble (research team: Scott MacLellan and Stephen Hewko), published by The Gospel Coalition and The Keller Center for Cultural Apologetics. The findings and numbers are theirs. The summary and the opinions are mine.',
-  sourceUrl: null,
+  sourceUrl: 'https://www.thegospelcoalition.org/ai-christian-benchmark/',
+  pdfUrl: null,
   ch: [
     {
       t: 'The 2-minute version',
@@ -243,6 +244,45 @@ export const aiChristianBenchmark: Digest = {
       ],
     },
     {
+      t: 'The jargon, in plain words',
+      l: 'Tap a card to flip it.',
+      b: [
+        {
+          k: 'jargon',
+          terms: [
+            {
+              t: 'Benchmark',
+              p: 'A standard test given to many AI models, so their scores can be lined up side by side.',
+            },
+            {
+              t: 'AI model',
+              p: 'The engine behind a chatbot, such as Claude, Gemini or ChatGPT. The report tested 46 of them.',
+            },
+            {
+              t: 'Prompt',
+              p: 'What you type to an AI: your question or instruction.',
+            },
+            {
+              t: 'Context',
+              p: 'Extra words placed before your question, such as who you are and what you believe, to steer the answer.',
+            },
+            {
+              t: 'Ethics score',
+              p: "A grade from 1 to 5 for an AI's answer to a moral question. The report publishes each model's average.",
+            },
+            {
+              t: 'Attachment boundaries',
+              p: 'Lines a healthy AI should hold, such as not calling itself your friend or promising to pray for you. The report tests seven.',
+            },
+            {
+              t: 'Pluralism',
+              p: 'Giving several viewpoints equal weight instead of one clear answer. The report asks when that helps and when it leaves you knowing less.',
+            },
+          ],
+        },
+      ],
+    },
+    {
       t: 'Check yourself',
       alt: true,
       l: 'Five quick questions. No sign-up, nothing saved.',
@@ -289,12 +329,12 @@ export const aiChristianBenchmark: Digest = {
       ],
     },
     {
-      t: 'My take',
-      approved: false,
+      t: 'My Summarized Take',
+      approved: true,
       b: [
         {
           k: 'take',
-          approved: false,
+          approved: true,
           paras: [
             'I use AI every day, and I teach leaders to use it. This report did not make me want to stop. It made me want to be more deliberate.',
             'Here is how I now think about it. AI is a tool with a default worldview, and that worldview is not mine. So I tell it where I stand before I ask. One sentence does most of the work.',

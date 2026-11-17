@@ -49,7 +49,8 @@ export const techTrends2026: Digest = {
   ],
   credit:
     'Digest of <b>Technology Trends Outlook 2026</b> (sixth edition, September 2026) by Michael Chui, Roger Roberts and Tanguy Catlin, McKinsey & Company. The findings and numbers are theirs. The summary and the opinions are mine.',
-  sourceUrl: null,
+  sourceUrl: 'https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/the-top-trends-in-tech',
+  pdfUrl: null,
   ch: [
     {
       t: 'The 2-minute version',
@@ -335,6 +336,49 @@ export const techTrends2026: Digest = {
       ],
     },
     {
+      t: 'The jargon, in plain words',
+      l: 'Tap a card to flip it.',
+      b: [
+        {
+          k: 'jargon',
+          terms: [
+            {
+              t: 'Agentic AI',
+              p: 'AI that does not just answer questions but plans steps, uses tools and finishes tasks on its own.',
+            },
+            {
+              t: 'AI infrastructure',
+              p: 'The chips, data centres and power supply that AI runs on.',
+            },
+            {
+              t: 'Zero-day',
+              p: 'A security flaw that attackers use before, or as, its maker finds out. There are zero days to fix it.',
+            },
+            {
+              t: 'Grid queue',
+              p: 'The waiting list of power projects that want to connect to the electricity grid. Over 2,500 GW are stuck in it.',
+            },
+            {
+              t: 'Gigawatt (GW)',
+              p: 'A billion watts of power. One large power station is around one gigawatt.',
+            },
+            {
+              t: 'Transformer',
+              p: 'Here it means electrical equipment that changes voltage so power can travel on the grid. It is not the AI kind. Waits can top two years.',
+            },
+            {
+              t: 'Investment multiple',
+              p: "How many times bigger a trend's investment grows. 2x means doubled. The five fastest trends are on pace for at least that.",
+            },
+            {
+              t: 'AI for science',
+              p: 'Using AI to speed up scientific research and discovery.',
+            },
+          ],
+        },
+      ],
+    },
+    {
       t: 'Check yourself',
       alt: true,
       l: 'Five quick questions.',
@@ -381,8 +425,8 @@ export const techTrends2026: Digest = {
       ],
     },
     {
-      t: 'My take',
-      approved: false,
+      t: 'My Summarized Take',
+      approved: true,
       b: [
         {
           k: 'copy',
@@ -392,7 +436,7 @@ export const techTrends2026: Digest = {
         },
         {
           k: 'take',
-          approved: false,
+          approved: true,
           paras: [
             'I read reports like this with one question: what should a leader with a small team and a real budget actually do on Monday?',
             'My answer from this one is simple. Do the boring things first. Secure your accounts. Make sure your power and internet hold. Then give one agent one job and watch it closely.',

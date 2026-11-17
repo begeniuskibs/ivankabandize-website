@@ -112,6 +112,16 @@ export interface PluralismBlock {
   k: 'plural'
 }
 
+export interface JargonTerm {
+  t: string
+  p: string
+}
+
+export interface JargonBlock {
+  k: 'jargon'
+  terms: JargonTerm[]
+}
+
 export type DigestBlock =
   | StatsBlock
   | NoteBlock
@@ -129,6 +139,7 @@ export type DigestBlock =
   | HeatmapBlock
   | AttachmentBlock
   | PluralismBlock
+  | JargonBlock
 
 export interface DigestChapter {
   id?: string
@@ -158,6 +169,7 @@ export interface Digest {
   key: string[]
   credit: string
   sourceUrl: string | null
+  pdfUrl: string | null
   ch: DigestChapter[]
   foot: string
   pages: string
