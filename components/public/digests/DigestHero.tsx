@@ -87,11 +87,178 @@ function AnimatedFact({ target, label }: { target: number | string; label: strin
   )
 }
 
-function HeroIllustration({ heroArt, className }: { heroArt: DigestHeroArt; className: string }) {
+function HeroIllustration({
+  heroArt,
+  variant,
+  className,
+}: {
+  heroArt: DigestHeroArt
+  variant: 'mobile' | 'desktop'
+  className: string
+}) {
   const dotTiming = (i: number): React.CSSProperties => ({
     animationDuration: `${(2.6 + (i % 7) * 0.42).toFixed(2)}s`,
     animationDelay: `-${((i * 0.37) % 3.8).toFixed(2)}s`,
   })
+
+  if (variant === 'mobile') {
+    // Wide mobile canvas (0 0 360 130) filling the full available width
+    if (heroArt === 'trends') {
+      const innerCoords: [number, number][] = [
+        [112, 65],
+        [180, 39],
+        [248, 65],
+        [180, 91],
+      ]
+      const outerCoords: [number, number][] = Array.from({ length: 10 }, (_, idx) => {
+        const angle = (idx * 2 * Math.PI) / 10 - Math.PI / 2
+        return [
+          Math.round(180 + Math.cos(angle) * 160),
+          Math.round(65 + Math.sin(angle) * 50),
+        ]
+      })
+
+      return (
+        <svg className={className} viewBox="0 0 360 130" aria-hidden="true">
+          <ellipse
+            cx="180"
+            cy="65"
+            rx="68"
+            ry="26"
+            fill="none"
+            stroke="#5C5F73"
+            strokeWidth="1"
+            strokeDasharray="3 4"
+            opacity="0.45"
+          />
+          <ellipse
+            cx="180"
+            cy="65"
+            rx="160"
+            ry="50"
+            fill="none"
+            stroke="#5C5F73"
+            strokeWidth="1"
+            strokeDasharray="3 5"
+            opacity="0.35"
+          />
+          {innerCoords.map(([x, y], i) => {
+            const [ox, oy] = outerCoords[(i * 2) % 10]
+            return (
+              <line
+                key={`m-line-${i}`}
+                x1={x}
+                y1={y}
+                x2={ox}
+                y2={oy}
+                stroke="#5C5F73"
+                strokeWidth="1"
+                opacity="0.35"
+              />
+            )
+          })}
+          {innerCoords.map(([cx, cy], i) => (
+            <circle
+              key={`m-ai-${i}`}
+              cx={cx}
+              cy={cy}
+              r={8}
+              fill="#EF5B45"
+              className="digest-hero-dot"
+              style={dotTiming(i)}
+            />
+          ))}
+          {outerCoords.map(([cx, cy], i) => (
+            <circle
+              key={`m-outer-${i}`}
+              cx={cx}
+              cy={cy}
+              r={i % 3 === 0 ? 6.5 : 5.5}
+              fill={i % 2 === 0 ? '#9FE3C5' : '#5C5F73'}
+              className="digest-hero-dot"
+              style={dotTiming(i + 4)}
+            />
+          ))}
+        </svg>
+      )
+    }
+
+    if (heroArt === 'coverage') {
+      return (
+        <svg className={className} viewBox="0 0 360 130" aria-hidden="true">
+          {Array.from({ length: 50 }, (_, i) => {
+            const cx = +(12 + (i % 10) * (336 / 9)).toFixed(1)
+            const cy = 15 + Math.floor(i / 10) * 25
+            const isObserved = i < 17
+            const isPossible = i >= 17 && i < 47
+
+            if (isObserved) {
+              return (
+                <circle
+                  key={i}
+                  cx={cx}
+                  cy={cy}
+                  r={6.5}
+                  fill="#EF5B45"
+                  className="digest-hero-dot"
+                  style={dotTiming(i)}
+                />
+              )
+            }
+
+            if (isPossible) {
+              return (
+                <circle
+                  key={i}
+                  cx={cx}
+                  cy={cy}
+                  r={6}
+                  fill="#9FE3C5"
+                  fillOpacity="0.28"
+                  stroke="#9FE3C5"
+                  strokeWidth="1.6"
+                  className="digest-hero-dot"
+                  style={dotTiming(i)}
+                />
+              )
+            }
+
+            return (
+              <circle
+                key={i}
+                cx={cx}
+                cy={cy}
+                r={5.5}
+                fill="none"
+                stroke="#5C5F73"
+                strokeWidth="1.5"
+                opacity="0.45"
+                className="digest-hero-dot"
+                style={dotTiming(i)}
+              />
+            )
+          })}
+        </svg>
+      )
+    }
+
+    // Default mobile: "models" (46 dots spread across 12 cols x 4 rows on 360x130)
+    return (
+      <svg className={className} viewBox="0 0 360 130" aria-hidden="true">
+        {Array.from({ length: 46 }, (_, i) => (
+          <circle
+            key={i}
+            cx={+(12 + (i % 12) * (336 / 11)).toFixed(1)}
+            cy={17 + Math.floor(i / 12) * 32}
+            r={i % 5 === 0 ? 7.5 : 5.5}
+            fill={i % 7 === 3 ? '#EF5B45' : i % 4 === 1 ? '#9FE3C5' : '#5C5F73'}
+            className="digest-hero-dot"
+            style={dotTiming(i)}
+          />
+        ))}
+      </svg>
+    )
+  }
 
   if (heroArt === 'trends') {
     // 14 trends in a constellation/orbit layout: 4 inner coral AI trends + 10 outer trends
@@ -295,10 +462,18 @@ export default function DigestHero({
       }`}
     >
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Hero illustration: own block above text on mobile, positioned right on desktop */}
+        {/* Mobile hero illustration: wide aspect ratio filling full available width */}
         <HeroIllustration
           heroArt={heroArt}
-          className="max-md:block max-md:w-36 max-md:h-auto max-md:mb-4 md:absolute md:right-6 lg:right-8 md:top-2 md:w-64 lg:w-88 md:h-auto opacity-85 pointer-events-none"
+          variant="mobile"
+          className="md:hidden block w-full h-auto mb-5 opacity-90 pointer-events-none"
+        />
+
+        {/* Desktop hero illustration: positioned right */}
+        <HeroIllustration
+          heroArt={heroArt}
+          variant="desktop"
+          className="hidden md:block md:absolute md:right-6 lg:right-8 md:top-2 md:w-64 lg:w-88 md:h-auto opacity-85 pointer-events-none"
         />
 
         <div className="min-w-0 md:pr-68 lg:pr-96">

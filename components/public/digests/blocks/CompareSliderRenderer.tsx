@@ -20,7 +20,7 @@ function splitMobileModelLabel(label: string): [string, string | null] {
 }
 
 export default function CompareSliderRenderer({ block }: { block: CompareSliderBlock }) {
-  const [sliderVal, setSliderVal] = useState<number>(25)
+  const [sliderVal, setSliderVal] = useState<number>(50)
   const containerRef = useRef<HTMLDivElement>(null)
   const [containerWidth, setContainerWidth] = useState<number>(720)
 
