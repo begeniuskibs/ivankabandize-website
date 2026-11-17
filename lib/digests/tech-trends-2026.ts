@@ -28,6 +28,7 @@ export const techTrends2026: Digest = {
   slug: 'tech-trends-2026',
   topic: 'Technology',
   color: '#1F4E5F',
+  heroArt: 'trends',
   title: 'Technology Trends Outlook 2026',
   pub: 'McKinsey & Company',
   mins: 10,

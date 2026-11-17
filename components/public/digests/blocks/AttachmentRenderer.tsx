@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import MobileTabPager from './MobileTabPager'
 
 const MODELS_ATTACH: [string, number][] = [
   ['Claude Opus 4.8', 6],
@@ -34,6 +35,7 @@ const COMPARISON_DATA: [string, number, number][] = [
 
 export default function AttachmentRenderer() {
   const [modelIdx, setModelIdx] = useState<number>(4) // gpt-5.4 default
+  const tabStripRef = useRef<HTMLDivElement>(null)
   const selectedModel = MODELS_ATTACH[modelIdx]
 
   return (
@@ -41,21 +43,33 @@ export default function AttachmentRenderer() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Model Boundary Pips Card */}
         <div className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-6 shadow-2xs flex flex-col justify-between">
-          <div className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto">
-            {MODELS_ATTACH.map((m, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => setModelIdx(idx)}
-                className={`flex-1 min-h-[36px] px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
-                  modelIdx === idx
-                    ? 'bg-[#232536] text-white shadow-xs'
-                    : 'text-[#5A5D70] hover:text-[#232536] hover:bg-[#F5ECDE]/40'
-                }`}
-              >
-                {m[0]}
-              </button>
-            ))}
+          <div>
+            <div
+              ref={tabStripRef}
+              className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto"
+            >
+              {MODELS_ATTACH.map((m, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => setModelIdx(idx)}
+                  className={`flex-1 min-h-[36px] px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer whitespace-nowrap ${
+                    modelIdx === idx
+                      ? 'bg-[#232536] text-white shadow-xs'
+                      : 'text-[#5A5D70] hover:text-[#232536] hover:bg-[#F5ECDE]/40'
+                  }`}
+                >
+                  {m[0]}
+                </button>
+              ))}
+            </div>
+
+            <MobileTabPager
+              currentIndex={modelIdx}
+              total={MODELS_ATTACH.length}
+              onSelect={setModelIdx}
+              tabStripRef={tabStripRef}
+            />
           </div>
 
           <div className="mt-6">

@@ -20,7 +20,7 @@ export default function ReportDigestsPage() {
       {/* Hub Hero */}
       <GardenHubHero
         title="Report Digests"
-        intro="Plain-language summaries of the research leaders should read, with a button to get the original."
+        intro="I read the reports leaders keep meaning to read, and turn each one into something you can take in over a cup of tea. Every digest has a 2-minute version."
         imageSrc="/garden-heroes/digests.jpg"
         breadcrumb={{
           parentLabel: 'The Garden',

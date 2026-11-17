@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import Link from 'next/link'
+import { ArrowRight } from 'lucide-react'
 import { DIGESTS } from '@/lib/digests'
 
 const TOPICS = ['All', 'Faith', 'Technology', 'Work'] as const
@@ -15,22 +16,7 @@ export default function DigestIndexView() {
   )
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 font-sans">
-      {/* Category Chip */}
-      <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#FBE0DA] text-[#CF3F29] mb-4">
-        Report Digests
-      </span>
-
-      {/* Main Title & Lead */}
-      <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-5xl lg:text-6xl font-bold text-[#232536] tracking-tight leading-[1.1] max-w-2xl text-balance">
-        Long reports, read for you.
-      </h1>
-      <p className="text-base sm:text-lg text-[#5C5F73] max-w-2xl leading-relaxed mt-4 mb-8">
-        I read the reports leaders keep meaning to read, and turn each one into
-        something you can take in over a cup of tea. Every digest has a 2-minute
-        version.
-      </p>
-
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
       {/* Topic Filter Tabs */}
       <div className="flex flex-wrap items-center gap-2 mb-10">
         {TOPICS.map((topic) => {
@@ -40,7 +26,7 @@ export default function DigestIndexView() {
               key={topic}
               type="button"
               onClick={() => setSelectedTopic(topic)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors min-h-[36px] ${
+              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors min-h-[36px] cursor-pointer ${
                 isSelected
                   ? 'bg-[#232536] text-[#FDF8F1]'
                   : 'bg-[#F7EDE0] text-[#5C5F73] hover:text-[#232536] hover:bg-[#E8DCC4]'
@@ -95,15 +81,27 @@ export default function DigestIndexView() {
             <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-[#F5ECDE]">
               <Link
                 href={`/garden/report-digests/${digest.slug}?v=2min`}
-                className="inline-flex items-center justify-center px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors"
+                className="group inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors"
               >
-                2-minute version
+                <span>2-minute version</span>
+                <ArrowRight
+                  size={14}
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                />
               </Link>
               <Link
                 href={`/garden/report-digests/${digest.slug}`}
-                className="inline-flex items-center justify-center px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-[#F0E4D2] text-[#232536] hover:border-[#CF3F29] hover:text-[#CF3F29] transition-colors"
+                className="group inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-[#F0E4D2] text-[#232536] hover:border-[#CF3F29] hover:text-[#CF3F29] transition-colors"
               >
-                Full digest
+                <span>Full digest</span>
+                <ArrowRight
+                  size={14}
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                />
               </Link>
             </div>
           </article>

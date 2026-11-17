@@ -6,6 +6,7 @@ export const aiLaborMarket: Digest = {
   slug: 'ai-labor-market',
   topic: 'Work',
   color: '#7A3B2E',
+  heroArt: 'coverage',
   title: 'Labor market impacts of AI: A new measure and early evidence',
   pub: 'Anthropic',
   mins: 8,

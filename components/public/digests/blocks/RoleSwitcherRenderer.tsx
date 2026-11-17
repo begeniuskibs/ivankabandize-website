@@ -10,15 +10,15 @@ export default function RoleSwitcherRenderer({ block }: { block: RoleSwitcherBlo
   const currentPoints = block.roles[selectedRole] || []
 
   return (
-    <div className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-7 shadow-2xs mt-4">
+    <div className="bg-white rounded-2xl border border-[#F5ECDE] max-md:p-3.5 p-5 md:p-7 shadow-2xs mt-4">
       {/* Role buttons */}
-      <div className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto">
+      <div className="flex max-md:gap-1 gap-1.5 max-md:p-0.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto">
         {roleNames.map((role) => (
           <button
             key={role}
             type="button"
             onClick={() => setSelectedRole(role)}
-            className={`flex-1 min-h-[38px] px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex-1 min-h-[38px] max-md:px-1.5 px-3.5 py-1.5 rounded-lg max-md:text-[11px] text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
               selectedRole === role
                 ? 'bg-[#232536] text-white shadow-xs'
                 : 'text-[#5A5D70] hover:text-[#232536] hover:bg-[#F5ECDE]/40'

@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { ArrowRight } from 'lucide-react'
 import type { QuizBlock } from '@/lib/digests/types'
 
 export default function QuizRenderer({ block }: { block: QuizBlock }) {
@@ -102,9 +103,15 @@ export default function QuizRenderer({ block }: { block: QuizBlock }) {
               <button
                 type="button"
                 onClick={handleNext}
-                className="shrink-0 inline-flex items-center justify-center min-h-[38px] px-5 py-2 rounded-xl text-xs font-semibold bg-[#232536] hover:bg-black text-white transition-colors cursor-pointer shadow-xs self-end sm:self-auto"
+                className="group shrink-0 inline-flex items-center justify-center gap-1.5 min-h-[38px] px-5 py-2 rounded-xl text-xs font-semibold bg-[#232536] hover:bg-black text-white transition-colors cursor-pointer shadow-xs self-end sm:self-auto"
               >
-                {currentIdx < questions.length - 1 ? 'Next' : 'See my score'}
+                <span>{currentIdx < questions.length - 1 ? 'Next' : 'See my score'}</span>
+                <ArrowRight
+                  size={14}
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                />
               </button>
             </div>
           )}

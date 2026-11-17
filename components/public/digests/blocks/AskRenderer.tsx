@@ -1,6 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import MobileTabPager from './MobileTabPager'
 
 const TABS = [
   {
@@ -42,12 +43,16 @@ const MODELS = ['Claude Sonnet 4.6', 'gpt-5.4', 'Gemini 3 Flash']
 
 export default function AskRenderer() {
   const [tabIdx, setTabIdx] = useState<number>(0)
+  const tabStripRef = useRef<HTMLDivElement>(null)
   const current = TABS[tabIdx]
 
   return (
     <div className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-7 shadow-2xs mt-5">
       {/* Segmented tabs */}
-      <div className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto">
+      <div
+        ref={tabStripRef}
+        className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto"
+      >
         {TABS.map((t, idx) => (
           <button
             key={idx}
@@ -63,6 +68,13 @@ export default function AskRenderer() {
           </button>
         ))}
       </div>
+
+      <MobileTabPager
+        currentIndex={tabIdx}
+        total={TABS.length}
+        onSelect={setTabIdx}
+        tabStripRef={tabStripRef}
+      />
 
       {/* Question prompt */}
       <div className="my-5 p-4 rounded-xl bg-[#FDF8F1] border border-[#F5ECDE] text-xs sm:text-sm text-[#232536] font-medium leading-relaxed">

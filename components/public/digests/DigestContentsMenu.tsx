@@ -51,7 +51,7 @@ export default function DigestContentsMenu({
         className="fixed z-50 
           max-md:inset-x-0 max-md:bottom-0 max-md:max-h-[76vh] max-md:rounded-t-3xl max-md:border-t max-md:shadow-2xl
           md:top-32 md:right-8 md:w-84 md:max-h-[70vh] md:rounded-2xl md:border md:shadow-xl
-          bg-white border-[#F0E4D2] p-4 overflow-y-auto flex flex-col font-sans animate-in fade-in zoom-in-95 duration-200"
+          bg-white border-[#F0E4D2] p-4 overflow-y-auto flex flex-col animate-in fade-in zoom-in-95 duration-200"
       >
         {/* Mobile handle indicator */}
         <div className="md:hidden w-11 h-1.5 rounded-full bg-[#E8DCC4] mx-auto mb-3 shrink-0" />
@@ -86,7 +86,7 @@ export default function DigestContentsMenu({
                     : 'text-[#5C5F73] hover:bg-[#FDF8F1] hover:text-[#232536]'
                 }`}
               >
-                <span className="font-mono text-xs text-[#CF3F29] mt-0.5 shrink-0">
+                <span className="tabular-nums text-xs text-[#CF3F29] mt-0.5 shrink-0">
                   {i + 1}.
                 </span>
                 <span className="leading-snug flex-1">{ch.t}</span>

@@ -6,6 +6,7 @@ export const aiChristianBenchmark: Digest = {
   slug: 'ai-christian-benchmark',
   topic: 'Faith',
   color: '#232536',
+  heroArt: 'models',
   title: 'AI Christian Benchmark - 2026 Report',
   pub: 'The Gospel Coalition and The Keller Center',
   mins: 12,

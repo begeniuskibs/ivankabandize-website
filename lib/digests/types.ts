@@ -140,11 +140,14 @@ export interface DigestChapter {
   b: DigestBlock[]
 }
 
+export type DigestHeroArt = 'models' | 'trends' | 'coverage'
+
 export interface Digest {
   id: string
   slug: string
   topic: string
   color: string
+  heroArt: DigestHeroArt
   title: string
   pub: string
   mins: number

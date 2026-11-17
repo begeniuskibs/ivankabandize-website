@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { getDigestBySlug } from '@/lib/digests'
 import type { DigestChapter, DigestBlock } from '@/lib/digests/types'
 import DigestHero from './DigestHero'
@@ -98,16 +99,24 @@ export default function DigestView({ slug }: DigestViewProps) {
   const activeTitle = visibleChapters[activeSection]?.t || digest.title
 
   return (
-    <div className="min-h-screen bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#E8DCC4]">
+    <div className="min-h-screen bg-[#FDF8F1] text-[#232536] selection:bg-[#E8DCC4]">
       {/* Sticky Sub-Header */}
-      <div className="sticky top-0 md:top-20 z-30 bg-[#FDF8F1]/95 backdrop-blur-md border-b border-[#F5ECDE]">
+      <div
+        data-digest-subbar="true"
+        className="sticky top-0 md:top-20 z-30 bg-[#FDF8F1]/95 backdrop-blur-md border-b border-[#F5ECDE]"
+      >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-3">
           {/* Back breadcrumb */}
           <Link
             href="/garden/report-digests"
-            className="font-['Outfit',_sans-serif] font-bold text-xs sm:text-sm text-[#232536] hover:text-[#CF3F29] transition-colors flex items-center gap-1.5 shrink-0"
+            className="group font-bold text-xs sm:text-sm text-[#232536] hover:text-[#CF3F29] transition-colors flex items-center gap-1.5 shrink-0"
           >
-            <span>&larr;</span>
+            <ArrowLeft
+              size={14}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+            />
             <span className="hidden sm:inline">Report Digests</span>
           </Link>
 
@@ -121,7 +130,7 @@ export default function DigestView({ slug }: DigestViewProps) {
             type="button"
             onClick={() => setIsContentsOpen(!isContentsOpen)}
             aria-expanded={isContentsOpen}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-[#E8DCC4] bg-[#FFFBF5] text-[#232536] hover:bg-[#F5ECDE] transition-colors shrink-0"
+            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold border border-[#E8DCC4] bg-[#FFFBF5] text-[#232536] hover:bg-[#F5ECDE] transition-colors shrink-0 cursor-pointer"
           >
             Contents
           </button>
@@ -141,6 +150,7 @@ export default function DigestView({ slug }: DigestViewProps) {
         lead={digest.lead}
         facts={digest.facts}
         credit={digest.credit}
+        heroArt={digest.heroArt}
         isFull={isFull}
         onToggleFull={setIsFull}
         onJumpToStart={() => scrollToSection(0)}
@@ -164,13 +174,13 @@ export default function DigestView({ slug }: DigestViewProps) {
                 <section
                   key={i}
                   id={`s${i}`}
-                  className={`scroll-mt-28 py-8 sm:py-12 border-b border-[#F5ECDE]/80 last:border-b-0 ${
+                  className={`scroll-mt-36 py-8 sm:py-12 border-b border-[#F5ECDE]/80 last:border-b-0 ${
                     chapter.alt
-                      ? 'bg-[#F7EDE0]/50 rounded-3xl p-6 sm:p-10 my-6 border border-[#F0E4D2]'
+                      ? 'bg-[#F7EDE0]/50 rounded-3xl max-md:p-4 p-6 sm:p-10 my-6 border border-[#F0E4D2]'
                       : ''
                   }`}
                 >
-                  <span className="font-mono text-xs font-bold text-[#CF3F29] tracking-wider block mb-2">
+                  <span className="tabular-nums text-xs font-bold text-[#CF3F29] tracking-wider block mb-2">
                     {numStr}
                   </span>
 
@@ -203,9 +213,17 @@ export default function DigestView({ slug }: DigestViewProps) {
                     setIsFull(true)
                     scrollToSection(1)
                   }}
-                  className="inline-flex items-center justify-center px-5 py-3 rounded-xl font-semibold text-sm bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors shadow-sm"
+                  className="group inline-flex items-center justify-center gap-2 px-5 py-3 rounded-xl font-semibold text-sm bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors shadow-sm cursor-pointer"
                 >
-                  Keep going - show me the full digest ({approvedChapters.length - 1} more sections)
+                  <span>
+                    Keep going - show me the full digest ({approvedChapters.length - 1} more sections)
+                  </span>
+                  <ArrowRight
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0"
+                  />
                 </button>
               </div>
             )}
@@ -227,9 +245,15 @@ export default function DigestView({ slug }: DigestViewProps) {
               <div className="pt-4">
                 <Link
                   href="/garden/report-digests"
-                  className="inline-flex items-center gap-1.5 font-semibold text-[#CF3F29] hover:underline"
+                  className="group inline-flex items-center gap-1.5 font-semibold text-[#CF3F29] hover:underline"
                 >
-                  &larr; All report digests
+                  <ArrowLeft
+                    size={14}
+                    strokeWidth={2.5}
+                    aria-hidden="true"
+                    className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+                  />
+                  <span>All report digests</span>
                 </Link>
               </div>
             </footer>
@@ -242,6 +266,7 @@ export default function DigestView({ slug }: DigestViewProps) {
         currentSection={activeSection}
         totalSections={visibleChapters.length}
         progressPercent={progressPercent}
+        isHidden={isContentsOpen}
         onClick={() => setIsContentsOpen(true)}
       />
 

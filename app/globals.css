@@ -279,3 +279,34 @@ input[type="search"]::-ms-clear {
     break-after: avoid;
   }
 }
+
+/* Report Digest hero dot animations */
+@keyframes digest-dot-pulse {
+  0%,
+  100% {
+    opacity: 0.42;
+    transform: scale(0.84);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.16);
+  }
+}
+
+.digest-hero-dot {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation-name: digest-dot-pulse;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.digest-hero-paused .digest-hero-dot {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .digest-hero-dot {
+    animation: none !important;
+  }
+}

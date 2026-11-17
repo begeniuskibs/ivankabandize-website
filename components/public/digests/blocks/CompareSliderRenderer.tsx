@@ -1,7 +1,23 @@
 'use client'
 
 import React, { useRef, useState, useEffect } from 'react'
+import { ArrowLeftRight } from 'lucide-react'
 import type { CompareSliderBlock } from '@/lib/digests/types'
+
+function splitMobileModelLabel(label: string): [string, string | null] {
+  if (label.length <= 10 || !label.includes(' ')) {
+    return [label, null]
+  }
+  const parts = label.split(' ')
+  if (parts.length === 2) {
+    return [parts[0], parts[1]]
+  }
+  // e.g. "Claude Sonnet 4.6" -> ["Claude", "Sonnet 4.6"], "Gemini 3 Flash" -> ["Gemini 3", "Flash"]
+  if (parts[0].length >= parts[parts.length - 1].length) {
+    return [parts[0], parts.slice(1).join(' ')]
+  }
+  return [parts.slice(0, -1).join(' '), parts[parts.length - 1]]
+}
 
 export default function CompareSliderRenderer({ block }: { block: CompareSliderBlock }) {
   const [sliderVal, setSliderVal] = useState<number>(25)
@@ -21,13 +37,21 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
     return () => ro.disconnect()
   }, [])
 
-  const W = 720
-  const H = 300
+  const isMobile = containerWidth > 0 && containerWidth < 520
+
+  const W = isMobile ? 288 : 720
+  const H = isMobile ? 276 : 300
+  const baseLineY = isMobile ? 202 : 250
+  const chartHeight = isMobile ? 164 : 210
+  const leftAxisX = isMobile ? 22 : 34
   const n = block.groups.length
   const per = Math.max(block.sub.length, 1)
-  const y = (v: number) => 250 - (v / block.max) * 210
-  const gw = (W - 60) / n
-  const bw = Math.min(78, (gw - 30) / per)
+  const y = (v: number) => baseLineY - (v / block.max) * chartHeight
+  const gw = (W - (isMobile ? 26 : 60)) / n
+  const barGap = isMobile ? 4 : 12
+  const bw = isMobile
+    ? Math.min(32, Math.floor((gw - 8 - (per - 1) * barGap) / per))
+    : Math.min(78, (gw - 30) / per)
 
   const renderSvg = (k: 1 | 2, color: string) => {
     const gridLines = []
@@ -36,20 +60,19 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
       gridLines.push(
         <g key={i}>
           <line
-            x1="34"
-            x2={W - 6}
+            x1={leftAxisX}
+            x2={W - 4}
             y1={y(v)}
             y2={y(v)}
             stroke="#F5ECDE"
             strokeWidth="1"
           />
           <text
-            x="26"
+            x={leftAxisX - 4}
             y={y(v) + 4}
             textAnchor="end"
-            fontSize="12"
+            fontSize={isMobile ? '12' : '12'}
             fill="#5A5D70"
-            fontFamily="var(--font-sans), system-ui, sans-serif"
           >
             {+v.toFixed(1)}
           </text>
@@ -58,26 +81,40 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
     }
 
     const groupElements = block.groups.map((m, i) => {
-      const x0 = 46 + i * gw + (gw - per * bw - (per - 1) * 12) / 2
-      const groupLabelX = x0 + (per * bw + (per - 1) * 12) / 2
+      const startOffset = isMobile ? 24 : 46
+      const x0 = startOffset + i * gw + (gw - per * bw - (per - 1) * barGap) / 2
+      const groupLabelX = x0 + (per * bw + (per - 1) * barGap) / 2
       const values = m[k] || []
+      const [line1, line2] = isMobile ? splitMobileModelLabel(m[0]) : [m[0], null]
 
       return (
         <g key={i}>
           <text
             x={groupLabelX}
-            y="290"
+            y={isMobile ? (line2 ? '252' : '258') : '290'}
             textAnchor="middle"
-            fontSize="13"
+            fontSize={isMobile ? '12' : '13'}
             fontWeight="600"
             fill="#232536"
-            fontFamily="var(--font-sans), system-ui, sans-serif"
           >
-            {m[0]}
+            {line2 ? (
+              <>
+                <tspan x={groupLabelX} dy="0">
+                  {line1}
+                </tspan>
+                <tspan x={groupLabelX} dy="14">
+                  {line2}
+                </tspan>
+              </>
+            ) : (
+              line1
+            )}
           </text>
           {values.map((v, j) => {
-            const x = x0 + j * (bw + 12)
-            const barH = 250 - y(v)
+            const x = x0 + j * (bw + barGap)
+            const barH = baseLineY - y(v)
+            const subY = isMobile ? (per >= 2 && j % 2 === 1 ? 231 : 217) : 268
+
             return (
               <g key={j}>
                 <rect
@@ -85,17 +122,16 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
                   y={y(v)}
                   width={bw}
                   height={Math.max(barH, 0)}
-                  rx="6"
+                  rx={isMobile ? '4' : '6'}
                   fill={color}
                 />
                 <text
                   x={x + bw / 2}
-                  y={y(v) - 7}
+                  y={y(v) - 6}
                   textAnchor="middle"
-                  fontSize="12"
+                  fontSize={isMobile ? '12' : '12'}
                   fontWeight="bold"
                   fill="#232536"
-                  fontFamily="var(--font-sans), system-ui, sans-serif"
                 >
                   {v.toFixed(block.dec)}
                   {block.suf || ''}
@@ -103,11 +139,10 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
                 {block.sub[j] && (
                   <text
                     x={x + bw / 2}
-                    y="268"
+                    y={subY}
                     textAnchor="middle"
-                    fontSize="11"
+                    fontSize={isMobile ? '11.5' : '11'}
                     fill="#5A5D70"
-                    fontFamily="var(--font-sans), system-ui, sans-serif"
                   >
                     {block.sub[j]}
                   </text>
@@ -132,16 +167,16 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-7 shadow-2xs mt-5">
+    <div className="bg-white rounded-2xl border border-[#F5ECDE] max-md:p-4 p-5 md:p-7 shadow-2xs mt-5">
       {/* Legend header */}
-      <div className="flex justify-between items-center gap-4 flex-wrap text-xs sm:text-sm font-bold pb-4 border-b border-[#F5ECDE]/60">
+      <div className="flex justify-between items-center gap-3 flex-wrap text-xs sm:text-sm font-bold pb-4 border-b border-[#F5ECDE]/60">
         <span className="text-[#CF3F29] flex items-center gap-1.5">
-          <span className="inline-block w-2.5 h-2.5 bg-[#EF5B45] rounded-xs" />
-          {block.la}
+          <span className="inline-block w-2.5 h-2.5 bg-[#EF5B45] rounded-xs shrink-0" />
+          <span>{block.la}</span>
         </span>
         <span className="text-[#1F8A5B] flex items-center gap-1.5">
-          {block.lb}
-          <span className="inline-block w-2.5 h-2.5 bg-[#1F8A5B] rounded-xs" />
+          <span>{block.lb}</span>
+          <span className="inline-block w-2.5 h-2.5 bg-[#1F8A5B] rounded-xs shrink-0" />
         </span>
       </div>
 
@@ -161,13 +196,13 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
           <div style={{ width: `${containerWidth}px` }}>{renderSvg(1, '#EF5B45')}</div>
         </div>
 
-        {/* Divider handle */}
+        {/* Divider handle (44px touch target on mobile, unchanged on desktop) */}
         <div
-          className="absolute top-0 bottom-0 pointer-events-none flex items-center justify-center -ml-3.5 z-10"
+          className="absolute top-0 bottom-0 pointer-events-none flex items-center justify-center max-md:-ml-5.5 -ml-3.5 z-10"
           style={{ left: `${sliderVal}%` }}
         >
-          <div className="w-7 h-7 rounded-full bg-[#232536] text-white flex items-center justify-center shadow-md text-xs font-bold">
-            ↔
+          <div className="max-md:w-11 max-md:h-11 w-7 h-7 rounded-full bg-[#232536] text-white flex items-center justify-center shadow-md">
+            <ArrowLeftRight size={15} strokeWidth={2.5} aria-hidden="true" />
           </div>
         </div>
 

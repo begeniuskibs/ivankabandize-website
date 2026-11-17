@@ -1,14 +1,19 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
+import MobileTabPager from './MobileTabPager'
 
 export default function PluralismRenderer() {
   const [tabIdx, setTabIdx] = useState<number>(0)
+  const tabStripRef = useRef<HTMLDivElement>(null)
 
   return (
     <div className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-7 shadow-2xs mt-5">
       {/* Segmented tabs */}
-      <div className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto">
+      <div
+        ref={tabStripRef}
+        className="flex gap-1.5 p-1 bg-[#FDF8F1] border border-[#F5ECDE] rounded-xl overflow-x-auto"
+      >
         <button
           type="button"
           onClick={() => setTabIdx(0)}
@@ -32,6 +37,13 @@ export default function PluralismRenderer() {
           Principled pluralist answer
         </button>
       </div>
+
+      <MobileTabPager
+        currentIndex={tabIdx}
+        total={2}
+        onSelect={setTabIdx}
+        tabStripRef={tabStripRef}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center mt-6">
         {tabIdx === 0 ? (
