@@ -127,9 +127,9 @@ export const aiChristianBenchmark: Digest = {
           dec: 2,
           sub: ['Ethics', 'Theology'],
           groups: [
-            ['Claude Sonnet', [1.94, 1.71], [5, 4]],
-            ['Gemini 3 Flash', [2.31, 2.43], [5, 3.29]],
-            ['gpt-5.4', [2.35, 2.14], [4.95, 3.29]],
+            ['Claude Sonnet', [1.94, 1.71], [5, 4], 'CS'],
+            ['Gemini 3 Flash', [2.31, 2.43], [5, 3.29], 'G3F'],
+            ['gpt-5.4', [2.35, 2.14], [4.95, 3.29], 'GPT'],
           ],
           src: "Mean score, 1 to 5. Claude Sonnet (4.5 baseline, 4.6 with prompt), Gemini 3 Flash Preview, gpt-5.4. Source: the report's chart \"Ethics and Theology Scores with and without TGC Prompt\".",
         },

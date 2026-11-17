@@ -56,10 +56,13 @@ export default function JargonRenderer({ block }: { block: JargonBlock }) {
               <span
                 data-jargon-back="true"
                 aria-hidden={!isFlipped}
-                className={`[grid-area:card] [backface-visibility:hidden] [transform:rotateY(180deg)] motion-reduce:[transform:none] bg-[#CF3F29] border border-[#CF3F29] text-white rounded-2xl p-4 sm:p-5 flex items-center justify-center w-full h-full ${
+                className={`[grid-area:card] [backface-visibility:hidden] [transform:rotateY(180deg)] motion-reduce:[transform:none] bg-[#232536] border border-[#232536] text-white rounded-2xl p-4 sm:p-5 flex flex-col justify-center w-full h-full ${
                   !isFlipped ? 'motion-reduce:invisible motion-reduce:opacity-0' : ''
                 }`}
               >
+                <span className="font-['MTN_Brighter_Sans',_sans-serif] text-sm sm:text-base font-bold text-[#9FE3C5] mb-1.5 block">
+                  {item.t}
+                </span>
                 <span className="text-xs sm:text-sm leading-relaxed text-white block">
                   {item.p}
                 </span>

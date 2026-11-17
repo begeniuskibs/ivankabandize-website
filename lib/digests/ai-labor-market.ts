@@ -213,8 +213,8 @@ export const aiLaborMarket: Digest = {
           suf: '%',
           sub: [''],
           groups: [
-            ['Most exposed quarter', [3], [6]],
-            ['US in 2007 to 2009', [5], [10]],
+            ['Most exposed quarter', [3], [6], 'MEQ'],
+            ['US in 2007 to 2009', [5], [10], '0709'],
           ],
           src: 'Unemployment rates. The left side is the level the report cites. The right side is a scenario the authors describe to show what their method could detect, not a forecast. They estimate a differential rise of about 1 percentage point would be visible.',
         },

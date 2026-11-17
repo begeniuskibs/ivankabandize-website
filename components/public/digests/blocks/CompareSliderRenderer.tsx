@@ -86,18 +86,23 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
       const groupLabelX = x0 + (per * bw + (per - 1) * barGap) / 2
       const values = m[k] || []
       const [line1, line2] = isMobile ? splitMobileModelLabel(m[0]) : [m[0], null]
+      const shortCode = m[3]
+      const showShort = isMobile && !!shortCode
 
       return (
         <g key={i}>
           <text
             x={groupLabelX}
-            y={isMobile ? (line2 ? '252' : '258') : '290'}
+            y={isMobile ? (showShort ? '258' : line2 ? '252' : '258') : '290'}
             textAnchor="middle"
             fontSize={isMobile ? '12' : '13'}
             fontWeight="600"
             fill="#232536"
+            data-cmp-label={showShort ? shortCode : m[0]}
           >
-            {line2 ? (
+            {showShort ? (
+              shortCode
+            ) : line2 ? (
               <>
                 <tspan x={groupLabelX} dy="0">
                   {line1}
@@ -216,6 +221,24 @@ export default function CompareSliderRenderer({ block }: { block: CompareSliderB
           aria-label="Compare slider"
           className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-20"
         />
+      </div>
+
+      {/* Mobile-only key for short codes */}
+      <div
+        data-cmp-key="true"
+        className="max-md:block md:hidden mt-3 text-xs text-[#5A5D70] leading-relaxed"
+      >
+        <div className="flex flex-wrap gap-x-3 gap-y-1">
+          {block.groups.map((m, i) => {
+            const code = m[3] || m[0]
+            return (
+              <span key={i} className="inline-flex items-baseline gap-1">
+                <span className="font-semibold text-[#232536]">{code}</span>
+                <span>{m[0]}</span>
+              </span>
+            )
+          })}
+        </div>
       </div>
 
       {/* Footnote */}

@@ -14,6 +14,8 @@ export interface CardsBlock {
   items: [string, string][]
 }
 
+export type CompareSliderGroup = [label: string, a: number[], b: number[], short?: string]
+
 export interface CompareSliderBlock {
   k: 'cmp'
   la: string
@@ -22,7 +24,7 @@ export interface CompareSliderBlock {
   dec: number
   suf?: string
   sub: string[]
-  groups: [string, number[], number[]][]
+  groups: CompareSliderGroup[]
   src: string
 }
 
