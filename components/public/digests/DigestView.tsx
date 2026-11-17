@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
@@ -25,6 +25,8 @@ export default function DigestView({ slug }: DigestViewProps) {
   const [activeSection, setActiveSection] = useState(0)
   const [isContentsOpen, setIsContentsOpen] = useState(false)
   const [progressPercent, setProgressPercent] = useState(0)
+  const [isDocked, setIsDocked] = useState(false)
+  const bottomSentinelRef = useRef<HTMLDivElement>(null)
 
   // Only include approved chapters
   const approvedChapters: DigestChapter[] = useMemo(() => {
@@ -92,6 +94,40 @@ export default function DigestView({ slug }: DigestViewProps) {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [visibleChapters])
 
+  // Observe bottom sentinel so progress ring parks above the site footer
+  useEffect(() => {
+    const sentinel = bottomSentinelRef.current
+    if (!sentinel) return
+
+    const checkDocked = () => {
+      const rect = sentinel.getBoundingClientRect()
+      setIsDocked(rect.top <= window.innerHeight)
+    }
+
+    checkDocked()
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const isAtOrPast =
+            entry.isIntersecting || entry.boundingClientRect.top <= window.innerHeight
+          setIsDocked(isAtOrPast)
+        }
+      },
+      {
+        threshold: [0, 1],
+      }
+    )
+
+    observer.observe(sentinel)
+    window.addEventListener('resize', checkDocked, { passive: true })
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', checkDocked)
+    }
+  }, [visibleChapters])
+
   if (!digest) {
     return null
   }
@@ -99,7 +135,7 @@ export default function DigestView({ slug }: DigestViewProps) {
   const activeTitle = visibleChapters[activeSection]?.t || digest.title
 
   return (
-    <div className="min-h-screen bg-[#FDF8F1] text-[#232536] selection:bg-[#E8DCC4]">
+    <div className="relative min-h-screen bg-[#FDF8F1] text-[#232536] selection:bg-[#E8DCC4]">
       {/* Sticky Sub-Header */}
       <div
         data-digest-subbar="true"
@@ -263,9 +299,10 @@ export default function DigestView({ slug }: DigestViewProps) {
                   {digest.pages}
                 </p>
               )}
-              <div className="pt-4">
+              <div className="pt-4 max-md:pb-28">
                 <Link
                   href="/garden/report-digests"
+                  data-digest-all-link="true"
                   className="group inline-flex items-center gap-1.5 font-semibold text-[#CF3F29] hover:underline"
                 >
                   <ArrowLeft
@@ -282,6 +319,14 @@ export default function DigestView({ slug }: DigestViewProps) {
         </div>
       </div>
 
+      {/* Sentinel for parking progress ring at digest boundary */}
+      <div
+        ref={bottomSentinelRef}
+        data-digest-sentinel="true"
+        className="h-px w-full pointer-events-none"
+        aria-hidden="true"
+      />
+
       {/* Floating progress ring */}
       <DigestProgressRing
         currentSection={activeSection}
@@ -289,6 +334,7 @@ export default function DigestView({ slug }: DigestViewProps) {
         progressPercent={progressPercent}
         isHidden={isContentsOpen}
         onClick={() => setIsContentsOpen(true)}
+        isDocked={isDocked}
       />
 
       {/* Table of Contents dropdown / mobile sheet */}
