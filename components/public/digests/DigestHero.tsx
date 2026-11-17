@@ -3,8 +3,10 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import type { DigestHeroArt } from '@/lib/digests/types'
+import { getDigestBySlug } from '@/lib/digests'
 
 interface DigestHeroProps {
+  slug: string
   kick: string
   h1: string
   lead: string
@@ -422,6 +424,7 @@ function HeroIllustration({
 }
 
 export default function DigestHero({
+  slug,
   kick,
   h1,
   lead,
@@ -433,6 +436,8 @@ export default function DigestHero({
   onToggleFull,
   onJumpToStart,
 }: DigestHeroProps) {
+  const digest = getDigestBySlug(slug)
+  const about = digest?.about
   const headerRef = useRef<HTMLElement>(null)
   const [isHeroVisible, setIsHeroVisible] = useState(true)
 
@@ -459,7 +464,7 @@ export default function DigestHero({
   return (
     <header
       ref={headerRef}
-      className={`relative bg-[#232536] text-[#FDF8F1] overflow-hidden pt-8 pb-12 sm:py-16 ${
+      className={`relative bg-[#232536] text-[#FDF8F1] overflow-hidden pt-5 pb-8 sm:pt-6 sm:pb-9 ${
         !isHeroVisible ? 'digest-hero-paused' : ''
       }`}
     >
@@ -468,7 +473,7 @@ export default function DigestHero({
         <HeroIllustration
           heroArt={heroArt}
           variant="mobile"
-          className="md:hidden block w-full h-auto mb-5 opacity-90 pointer-events-none"
+          className="md:hidden block w-full h-auto mb-4 opacity-90 pointer-events-none"
         />
 
         {/* Desktop hero illustration: positioned right */}
@@ -479,12 +484,12 @@ export default function DigestHero({
         />
 
         <div className="min-w-0 md:pr-68 lg:pr-96">
-          <p className="text-xs font-bold uppercase tracking-widest text-[#EF5B45] mb-3">
+          <p className="text-xs font-bold uppercase tracking-widest text-[#EF5B45] mb-2">
             {kick}
           </p>
 
           <h1
-            className="font-['MTN_Brighter_Sans',_sans-serif] text-[clamp(1.75rem,6.5vw,3.5rem)] sm:text-5xl lg:text-6xl font-bold leading-[1.1] tracking-tight max-w-full min-w-0 wrap-anywhere text-balance"
+            className="font-['MTN_Brighter_Sans',_sans-serif] text-[clamp(1.75rem,5vw,3rem)] sm:text-4xl lg:text-5xl font-bold leading-[1.12] tracking-tight max-w-full min-w-0 wrap-anywhere text-balance"
             style={{ overflowWrap: 'anywhere' }}
           >
             {h1Parts.map((part, idx) => {
@@ -503,16 +508,16 @@ export default function DigestHero({
             })}
           </h1>
 
-          <p className="text-base sm:text-lg text-[#C9CADA] max-w-2xl leading-relaxed mt-4 mb-6">
+          <p className="text-sm sm:text-base text-[#C9CADA] max-w-2xl leading-normal mt-2.5 mb-3.5">
             {lead}
           </p>
 
           {/* Action buttons */}
-          <div className="flex flex-wrap items-center gap-3 mb-8">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <button
               type="button"
               onClick={onJumpToStart}
-              className="group inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors shadow-sm min-h-[44px] cursor-pointer"
+              className="group inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors shadow-sm min-h-[40px] cursor-pointer"
             >
               <span>Give me the 2-minute version</span>
               <ArrowRight
@@ -526,7 +531,7 @@ export default function DigestHero({
               <button
                 type="button"
                 onClick={() => onToggleFull(true)}
-                className="group inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl font-semibold text-sm bg-transparent text-[#FDF8F1] border border-white/30 hover:border-white/60 transition-colors min-h-[44px] cursor-pointer"
+                className="group inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl font-semibold text-sm bg-transparent text-[#FDF8F1] border border-white/30 hover:border-white/60 transition-colors min-h-[40px] cursor-pointer"
               >
                 <span>Show the full digest</span>
                 <ArrowRight
@@ -538,13 +543,54 @@ export default function DigestHero({
               </button>
             )}
           </div>
+
+          {/* About this report box */}
+          {about && (
+            <div
+              data-hero-about="true"
+              className="mb-5 rounded-2xl bg-white/[0.04] border border-white/10 p-3.5 sm:p-4 max-w-2xl text-xs sm:text-[13px]"
+            >
+              <dl className="grid max-md:flex max-md:flex-col md:grid-cols-[115px_1fr] gap-x-4 gap-y-1.5 text-left">
+                <div className="contents max-md:flex max-md:flex-col max-md:gap-0.5">
+                  <dt className="text-[#8A8D9F] font-medium shrink-0">Full title</dt>
+                  <dd className="text-[#FDF8F1] font-semibold leading-snug">{about.title}</dd>
+                </div>
+                <div className="contents max-md:flex max-md:flex-col max-md:gap-0.5">
+                  <dt className="text-[#8A8D9F] font-medium shrink-0">Publisher</dt>
+                  <dd className="text-[#C9CADA] leading-snug">{about.publisher}</dd>
+                </div>
+                <div className="contents max-md:flex max-md:flex-col max-md:gap-0.5">
+                  <dt className="text-[#8A8D9F] font-medium shrink-0">Year published</dt>
+                  <dd className="text-[#C9CADA] leading-snug">{about.year}</dd>
+                </div>
+                <div className="contents max-md:flex max-md:flex-col max-md:gap-0.5">
+                  <dt className="text-[#8A8D9F] font-medium shrink-0">Main purpose</dt>
+                  <dd className="text-[#C9CADA] leading-snug">{about.purpose}</dd>
+                </div>
+                <div className="contents max-md:flex max-md:flex-col max-md:gap-0.5">
+                  <dt className="text-[#8A8D9F] font-medium shrink-0">Likely helps</dt>
+                  <dd className="text-[#C9CADA] leading-snug">{about.likelyHelps}</dd>
+                </div>
+              </dl>
+
+              {/* Set apart: Why I picked it */}
+              <div className="mt-3 pt-2.5 border-t border-white/10 grid max-md:flex max-md:flex-col md:grid-cols-[115px_1fr] gap-x-4 gap-y-1 text-left items-baseline">
+                <span className="text-[#8A8D9F] font-medium shrink-0 text-xs">
+                  Why I picked it
+                </span>
+                <p className="text-[#FDF8F1] text-xs sm:text-[13px] leading-relaxed">
+                  {about.whyPicked}
+                </p>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Fact counters */}
         {facts && facts.length > 0 && (
           <div
             data-hero-facts="true"
-            className="border-t border-white/15 pt-6 max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-5 md:flex md:flex-wrap md:items-start md:justify-start md:gap-x-11 md:gap-y-6"
+            className="border-t border-white/15 pt-4 max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-4 md:flex md:flex-wrap md:items-start md:justify-start md:gap-x-10 md:gap-y-4"
           >
             {facts.map(([num, lbl], i) => (
               <AnimatedFact key={i} target={num} label={lbl} />

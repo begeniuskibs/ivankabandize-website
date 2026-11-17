@@ -14,6 +14,16 @@ export const aiChristianBenchmark: Digest = {
   h1: 'Can you trust AI with your <em>faith</em> questions?',
   lead:
     "A team of theologians tested 46 of the world's top AI models on theology, ethics, attachment and Bible knowledge. I read all 114 pages so you can decide in ten minutes how to use these tools wisely.",
+  about: {
+    title: 'AI Christian Benchmark - 2026 Report',
+    publisher: 'The Gospel Coalition and The Keller Center for Cultural Apologetics',
+    year: '2026',
+    purpose: 'Tests how well leading AI models answer questions of Christian faith and ethics.',
+    likelyHelps:
+      'People who guide or serve in faith communities, teach or raise the next generation, or are curious how AI treats belief.',
+    whyPicked:
+      'I care about how faith and technology meet. If the people guiding churches and families understand how these tools handle belief, they can choose wisely instead of reacting.',
+  },
   facts: [
     [46, 'AI models tested'],
     [4, 'areas scored'],

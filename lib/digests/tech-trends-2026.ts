@@ -36,6 +36,16 @@ export const techTrends2026: Digest = {
   h1: 'Technology has left the <em>screen</em>.',
   lead:
     "McKinsey's sixth yearly outlook covers 14 technology trends across 143 pages. The big idea this year: the action has moved into chips, power grids, robots and rockets. Here is what a busy leader needs from it.",
+  about: {
+    title: 'Technology Trends Outlook 2026',
+    publisher: 'McKinsey & Company',
+    year: '2026',
+    purpose: 'Maps the 14 technology trends shaping business and how fast each is being adopted.',
+    likelyHelps:
+      'People who set direction for organisations, plan budgets and investments, or want to know where technology is heading.',
+    whyPicked:
+      'I love seeing the whole system at once. When decision makers can tell real momentum from hype, they spend their attention and resources where it counts.',
+  },
   facts: [
     [14, 'trends tracked'],
     [4, 'are AI-specific'],

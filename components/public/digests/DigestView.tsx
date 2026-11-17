@@ -181,6 +181,7 @@ export default function DigestView({ slug }: DigestViewProps) {
 
       {/* Hero section */}
       <DigestHero
+        slug={digest.slug}
         kick={digest.kick}
         h1={digest.h1}
         lead={digest.lead}
