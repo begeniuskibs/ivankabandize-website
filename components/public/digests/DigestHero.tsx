@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useEffect, useRef, useState } from 'react'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, ExternalLink } from 'lucide-react'
 import type { DigestHeroArt } from '@/lib/digests/types'
 
 interface DigestHeroProps {
@@ -10,6 +10,7 @@ interface DigestHeroProps {
   lead: string
   facts: [number, string][]
   credit: string
+  sourceUrl: string | null
   heroArt: DigestHeroArt
   isFull: boolean
   onToggleFull: (full: boolean) => void
@@ -76,7 +77,7 @@ function AnimatedFact({ target, label }: { target: number | string; label: strin
   }, [target])
 
   return (
-    <div ref={ref} className="flex flex-col min-w-0">
+    <div ref={ref} data-hero-fact-item="true" className="flex flex-col min-w-0 w-auto shrink-0">
       <span className="font-['MTN_Brighter_Sans',_sans-serif] tabular-nums text-2xl sm:text-3xl lg:text-4xl font-bold text-white tracking-tight">
         {displayValue}
       </span>
@@ -426,6 +427,7 @@ export default function DigestHero({
   lead,
   facts,
   credit,
+  sourceUrl,
   heroArt,
   isFull,
   onToggleFull,
@@ -540,7 +542,10 @@ export default function DigestHero({
 
         {/* Fact counters */}
         {facts && facts.length > 0 && (
-          <div className="border-t border-white/15 pt-6 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-6">
+          <div
+            data-hero-facts="true"
+            className="border-t border-white/15 pt-6 max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-5 md:flex md:flex-wrap md:items-start md:justify-start md:gap-x-11 md:gap-y-6"
+          >
             {facts.map(([num, lbl], i) => (
               <AnimatedFact key={i} target={num} label={lbl} />
             ))}
@@ -548,7 +553,10 @@ export default function DigestHero({
         )}
 
         {/* Credit */}
-        <p className="text-xs text-[#A9ABC0] mt-6 max-w-2xl leading-relaxed">
+        <p
+          data-hero-credit="true"
+          className="text-xs sm:text-[13px] text-[#A9ABC0] mt-6 max-w-2xl leading-relaxed"
+        >
           {creditParts.map((part, idx) => {
             if (part.startsWith('<b>') && part.endsWith('</b>')) {
               return (
@@ -559,6 +567,21 @@ export default function DigestHero({
             }
             return <React.Fragment key={idx}>{part}</React.Fragment>
           })}
+          {sourceUrl && (
+            <>
+              {' '}
+              <a
+                href={sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#9FE3C5] hover:underline inline-flex items-center gap-1 font-medium"
+              >
+                <span>Read the original report</span>
+                <ExternalLink size={13} strokeWidth={2} aria-hidden="true" />
+              </a>
+              .
+            </>
+          )}
         </p>
       </div>
     </header>

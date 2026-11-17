@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
-import { ArrowLeft, ArrowRight } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ExternalLink } from 'lucide-react'
 import { getDigestBySlug } from '@/lib/digests'
 import type { DigestChapter, DigestBlock } from '@/lib/digests/types'
 import DigestHero from './DigestHero'
@@ -150,6 +150,7 @@ export default function DigestView({ slug }: DigestViewProps) {
         lead={digest.lead}
         facts={digest.facts}
         credit={digest.credit}
+        sourceUrl={digest.sourceUrl}
         heroArt={digest.heroArt}
         isFull={isFull}
         onToggleFull={setIsFull}
@@ -197,7 +198,12 @@ export default function DigestView({ slug }: DigestViewProps) {
                   {/* Chapter blocks */}
                   <div className="space-y-6">
                     {chapter.b.map((b: DigestBlock, bIdx: number) => (
-                      <BlockRenderer key={bIdx} block={b} />
+                      <BlockRenderer
+                        key={bIdx}
+                        block={b}
+                        pdfUrl={digest.pdfUrl}
+                        digestSlug={digest.slug}
+                      />
                     ))}
                   </div>
                 </section>
@@ -233,6 +239,21 @@ export default function DigestView({ slug }: DigestViewProps) {
               <p>
                 <strong className="text-[#232536]">Source and credit.</strong>{' '}
                 {digest.foot}
+                {digest.sourceUrl && (
+                  <>
+                    {' '}
+                    <a
+                      href={digest.sourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#CF3F29] hover:underline inline-flex items-center gap-1 font-semibold"
+                    >
+                      <span>Read the original report</span>
+                      <ExternalLink size={14} strokeWidth={2} aria-hidden="true" />
+                    </a>
+                    .
+                  </>
+                )}
               </p>
               {digest.pages && (
                 <p>

@@ -105,9 +105,13 @@ function StatCard({ item }: { item: [string, string] }) {
   return (
     <div
       ref={cardRef}
-      className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-6 shadow-2xs flex flex-col justify-between"
+      className="bg-white rounded-2xl border border-[#F5ECDE] p-5 md:p-6 shadow-2xs flex flex-col justify-start h-full"
     >
-      <div className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl font-bold text-[#232536] tracking-tight flex items-baseline gap-1 flex-wrap">
+      <div
+        className={`font-['MTN_Brighter_Sans',_sans-serif] ${
+          parsed.num2 ? 'text-2xl sm:text-3xl lg:text-[32px]' : 'text-3xl sm:text-4xl'
+        } font-bold text-[#232536] tracking-tight leading-[1.08] flex items-baseline gap-1 whitespace-nowrap h-10`}
+      >
         {parsed.num ? (
           <>
             <span>
@@ -133,7 +137,7 @@ function StatCard({ item }: { item: [string, string] }) {
           />
         )}
       </div>
-      <p className="text-xs sm:text-sm text-[#5A5D70] mt-3 leading-relaxed">{label}</p>
+      <p className="text-xs sm:text-sm text-[#5A5D70] mt-2.5 leading-relaxed">{label}</p>
     </div>
   )
 }

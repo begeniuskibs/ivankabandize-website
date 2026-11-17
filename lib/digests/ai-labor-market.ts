@@ -27,7 +27,8 @@ export const aiLaborMarket: Digest = {
   ],
   credit:
     'Digest of <b>Labor market impacts of AI: A new measure and early evidence</b> by Maxim Massenkoff and Peter McCrory, published by Anthropic on 5 March 2026. The findings and numbers are theirs. The summary and the opinions are mine.',
-  sourceUrl: null,
+  sourceUrl: 'https://www.anthropic.com/research/labor-market-impacts',
+  pdfUrl: null,
   ch: [
     {
       t: 'The 2-minute version',
@@ -300,6 +301,49 @@ export const aiLaborMarket: Digest = {
       ],
     },
     {
+      t: 'The jargon, in plain words',
+      l: 'Tap a card to flip it.',
+      b: [
+        {
+          k: 'jargon',
+          terms: [
+            {
+              t: 'Theoretical coverage',
+              p: "The share of a job's tasks that AI could do in principle. For computer and maths jobs it is 94%.",
+            },
+            {
+              t: 'Observed coverage',
+              p: 'The share of those tasks AI is actually doing in real use. For computer and maths jobs it is 33%.',
+            },
+            {
+              t: 'Exposed occupation',
+              p: 'A job where AI could do a large share of the tasks.',
+            },
+            {
+              t: 'Zero coverage',
+              p: 'Jobs where AI covers none of the tasks in real use. About 30% of workers are in them, for example cooks and lifeguards.',
+            },
+            {
+              t: 'Unemployment rate',
+              p: 'The share of people looking for work who cannot find it. The authors found no systematic rise among exposed workers since late 2022.',
+            },
+            {
+              t: 'Job-finding rate',
+              p: 'How often people looking for work land a job. The report sees an estimated 14% drop for ages 22 to 25 in exposed jobs.',
+            },
+            {
+              t: 'Statistically significant',
+              p: 'A result that is unlikely to be pure chance. The authors call the 22 to 25 result barely so.',
+            },
+            {
+              t: 'BLS',
+              p: 'The US Bureau of Labor Statistics, the government agency that publishes jobs data and growth projections.',
+            },
+          ],
+        },
+      ],
+    },
+    {
       t: 'Check yourself',
       alt: true,
       l: 'Five quick questions.',
@@ -358,8 +402,8 @@ export const aiLaborMarket: Digest = {
       ],
     },
     {
-      t: 'My take',
-      approved: false,
+      t: 'My Summarized Take',
+      approved: true,
       b: [
         {
           k: 'copy',
@@ -369,7 +413,7 @@ export const aiLaborMarket: Digest = {
         },
         {
           k: 'take',
-          approved: false,
+          approved: true,
           paras: [
             'I appreciate a report that says "we looked, and we did not find much yet". That takes discipline, especially from a company that builds the tool.',
             'I also read it knowing who wrote it. Anthropic makes Claude. That does not make the work wrong, and the authors are open about their limits. It does mean I want to see others repeat it with other data.',
