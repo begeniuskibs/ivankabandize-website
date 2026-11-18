@@ -42,6 +42,7 @@ export interface DeviceCategoryRow {
 export interface GoogleAnalyticsData {
   status: GoogleStatus
   errorMessage?: string
+  totalUsers?: number
   channels: ChannelGroupRow[]
   sources: SourceMediumRow[]
   countries: CountryRow[]

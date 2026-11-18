@@ -101,7 +101,7 @@ async function fetchCompactAnalytics(
       .eq('publish_status', 'published'),
     supabase
       .from('members')
-      .select('id, tier_status, created_at'),
+      .select('id, tier_status, created_at, signup_source'),
   ])
 
   if (postsResult.error) {
@@ -149,10 +149,23 @@ async function fetchCompactAnalytics(
     id: string
     tier_status: string | null
     created_at: string
+    signup_source: string | null
   }[]
   const memberBuckets180 = cumulativeMembersByDay(typedMembers, 180, nowMs)
   const cumulativeMembers180 = memberBuckets180.map((b) => b.count)
   const tierCounts = countMembersByTier(typedMembers)
+
+  const sourceCountsMap = new Map<string, number>()
+  for (const m of typedMembers) {
+    let src = m.signup_source?.trim() || ''
+    if (src.toLowerCase() === 'web') src = 'Web'
+    else if (!src) src = 'Direct'
+    else src = src.charAt(0).toUpperCase() + src.slice(1)
+    sourceCountsMap.set(src, (sourceCountsMap.get(src) || 0) + 1)
+  }
+  const signupSources = Array.from(sourceCountsMap.entries())
+    .map(([source, count]) => ({ source, count }))
+    .sort((a, b) => b.count - a.count)
 
   return {
     range,
@@ -164,6 +177,7 @@ async function fetchCompactAnalytics(
     articleViewsByDate,
     cumulativeMembers180,
     tierCounts,
+    signupSources,
   }
 }
 

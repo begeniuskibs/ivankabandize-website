@@ -18,19 +18,3 @@ export function ChipGA({ label = 'Google Analytics' }: { label?: string }) {
   )
 }
 
-export function ChipV1({ label = 'v1' }: { label?: string }) {
-  return (
-    <span className="inline-flex items-center text-[11px] font-semibold rounded-full px-2.5 py-0.5 whitespace-nowrap bg-[#232536] text-white">
-      {label}
-    </span>
-  )
-}
-
-export function ChipLater({ label = 'Later' }: { label?: string }) {
-  return (
-    <span className="inline-flex items-center text-[11px] font-semibold rounded-full px-2.5 py-0.5 whitespace-nowrap bg-[#EFE7D9] text-[#5C5F73]">
-      {label}
-    </span>
-  )
-}
-

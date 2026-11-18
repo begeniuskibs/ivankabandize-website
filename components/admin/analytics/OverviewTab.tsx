@@ -1,18 +1,18 @@
 'use client'
 
 import React from 'react'
-import type { AnalyticsData } from './types'
+import type { AnalyticsData, GoogleAnalyticsData } from './types'
 import type { TimeChartStyle, ShareChartStyle } from '@/lib/adminAnalytics'
-import { ChipGA, ChipV1, ChipLater } from './AnalyticsChips'
+import { ChipGA } from './AnalyticsChips'
 import { MetricTabsCard } from './MetricTabsCard'
 import { TopArticlesCard } from './TopArticlesCard'
 import { SummaryCard } from './SummaryCard'
 import { SetupCard } from './SetupCard'
 import { AnalyticsSharesList } from './AnalyticsSharesList'
+import { GoogleBlockState } from './GoogleBlockState'
 
 interface OverviewTabProps {
   data: AnalyticsData
-  v1Only: boolean
   timeStyle: TimeChartStyle
   shareStyle: ShareChartStyle
   onNavigateTab: (tab: 'articles' | 'audience') => void
@@ -20,16 +20,26 @@ interface OverviewTabProps {
     searchConsoleConnected: boolean
     googleAnalyticsConnected: boolean
   }
+  gaData?: GoogleAnalyticsData
 }
 
 export function OverviewTab({
   data,
-  v1Only,
   timeStyle,
   shareStyle,
   onNavigateTab,
   setupStatus,
+  gaData,
 }: OverviewTabProps) {
+  const ga = gaData || {
+    status: 'not_configured',
+    totalUsers: 0,
+    channels: [],
+    sources: [],
+    countries: [],
+    devices: [],
+  }
+
   return (
     <div className="space-y-4">
       {/* Notice Card */}
@@ -89,14 +99,10 @@ export function OverviewTab({
         <SetupCard setupStatus={setupStatus} />
       </div>
 
-      {/* Later Cards: Where readers come from, Countries, Phone or computer */}
+      {/* Google Analytics 3-column Grid: Where readers come from, Countries, Phone or computer */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Where readers come from */}
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity flex flex-col ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -108,33 +114,29 @@ export function OverviewTab({
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <ChipGA />
-              <ChipLater />
             </div>
           </div>
-          <div className="opacity-70 select-none flex-1">
-            <AnalyticsSharesList
-              rows={[
-                ['Direct', 38],
-                ['Google search', 27],
-                ['LinkedIn', 14],
-                ['Email newsletter', 11],
-              ]}
-              shareStyle={shareStyle}
-              suffix="%"
-              barColor="#3C6FD1"
-            />
-          </div>
-          <p className="text-xs text-[#5C5F73] mt-3 mb-0">
-            Coming with Google Analytics integration.
-          </p>
+
+          <GoogleBlockState
+            status={ga.status}
+            loadingText="Loading channels..."
+            notConfiguredText="The Google connection is not set up yet."
+            errorText={ga.errorMessage}
+            emptyText="No reader sources recorded for this period yet."
+          >
+            <div className="flex-1">
+              <AnalyticsSharesList
+                rows={ga.channels.map((c) => [c.channelGroup, c.share])}
+                shareStyle={shareStyle}
+                suffix="%"
+                barColor="#3C6FD1"
+              />
+            </div>
+          </GoogleBlockState>
         </div>
 
         {/* Countries */}
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity flex flex-col ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -146,33 +148,29 @@ export function OverviewTab({
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <ChipGA />
-              <ChipLater />
             </div>
           </div>
-          <div className="opacity-70 select-none flex-1">
-            <AnalyticsSharesList
-              rows={[
-                ['Uganda', 54],
-                ['United States', 13],
-                ['Kenya', 9],
-                ['United Kingdom', 7],
-              ]}
-              shareStyle={shareStyle}
-              suffix="%"
-              barColor="#3C6FD1"
-            />
-          </div>
-          <p className="text-xs text-[#5C5F73] mt-3 mb-0">
-            Coming with Google Analytics integration.
-          </p>
+
+          <GoogleBlockState
+            status={ga.status}
+            loadingText="Loading countries..."
+            notConfiguredText="The Google connection is not set up yet."
+            errorText={ga.errorMessage}
+            emptyText="No country data recorded for this period yet."
+          >
+            <div className="flex-1">
+              <AnalyticsSharesList
+                rows={ga.countries.map((c) => [c.country, c.share])}
+                shareStyle={shareStyle}
+                suffix="%"
+                barColor="#3C6FD1"
+              />
+            </div>
+          </GoogleBlockState>
         </div>
 
         {/* Phone or computer */}
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity flex flex-col ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -184,24 +182,25 @@ export function OverviewTab({
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <ChipGA />
-              <ChipLater />
             </div>
           </div>
-          <div className="opacity-70 select-none flex-1">
-            <AnalyticsSharesList
-              rows={[
-                ['Phone', 68],
-                ['Computer', 29],
-                ['Tablet', 3],
-              ]}
-              shareStyle={shareStyle}
-              suffix="%"
-              barColor="#232536"
-            />
-          </div>
-          <p className="text-xs text-[#5C5F73] mt-3 mb-0">
-            Coming with Google Analytics integration.
-          </p>
+
+          <GoogleBlockState
+            status={ga.status}
+            loadingText="Loading devices..."
+            notConfiguredText="The Google connection is not set up yet."
+            errorText={ga.errorMessage}
+            emptyText="No device data recorded for this period yet."
+          >
+            <div className="flex-1">
+              <AnalyticsSharesList
+                rows={ga.devices.map((d) => [d.deviceCategory, d.share])}
+                shareStyle={shareStyle}
+                suffix="%"
+                barColor="#232536"
+              />
+            </div>
+          </GoogleBlockState>
         </div>
       </div>
 
@@ -224,9 +223,6 @@ export function OverviewTab({
             <p className="text-[13px] text-[#5C5F73] m-0 flex-1">
               Full detail: realtime, pages, devices, events.
             </p>
-            <div className="mt-1">
-              <ChipV1 label="v1 link" />
-            </div>
           </a>
 
           <a
@@ -242,9 +238,6 @@ export function OverviewTab({
             <p className="text-[13px] text-[#5C5F73] m-0 flex-1">
               What people typed into Google before finding you.
             </p>
-            <div className="mt-1">
-              <ChipV1 label="v1 link" />
-            </div>
           </a>
 
           <a
@@ -260,9 +253,6 @@ export function OverviewTab({
             <p className="text-[13px] text-[#5C5F73] m-0 flex-1">
               Page speed and visitor counts from your host.
             </p>
-            <div className="mt-1">
-              <ChipV1 label="v1 link" />
-            </div>
           </a>
         </div>
       </div>

@@ -3,14 +3,13 @@
 import React from 'react'
 import type { AnalyticsData, GoogleAnalyticsData } from './types'
 import type { TimeChartStyle, ShareChartStyle } from '@/lib/adminAnalytics'
-import { ChipOwn, ChipV1, ChipGA, ChipLater } from './AnalyticsChips'
+import { ChipOwn, ChipGA } from './AnalyticsChips'
 import { AnalyticsTimeSeriesChart } from './AnalyticsTimeSeriesChart'
 import { AnalyticsSharesList } from './AnalyticsSharesList'
 import { GoogleBlockState } from './GoogleBlockState'
 
 interface AudienceTabProps {
   data: AnalyticsData
-  v1Only: boolean
   timeStyle: TimeChartStyle
   shareStyle: ShareChartStyle
   gaData?: GoogleAnalyticsData
@@ -18,7 +17,6 @@ interface AudienceTabProps {
 
 export function AudienceTab({
   data,
-  v1Only,
   timeStyle,
   shareStyle,
   gaData,
@@ -33,41 +31,37 @@ export function AudienceTab({
     devices: [],
   }
 
-  const isConfigured = ga.status === 'ready'
-  const isMuted = v1Only && !isConfigured
-
   return (
     <div className="space-y-4">
-      {/* Grid g-main: Member growth & Members by tier */}
-      <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] gap-4">
-        {/* Member growth */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
-          <div className="flex justify-between items-start gap-2.5 mb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-[#232536] m-0">
-                Member growth
-              </h2>
-              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Total members over time
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <ChipOwn label="Database" />
-              <ChipV1 />
-            </div>
+      {/* Grid 1: Member growth */}
+      <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+        <div className="flex justify-between items-start gap-2.5 mb-3">
+          <div>
+            <h2 className="text-sm font-semibold text-[#232536] m-0">
+              Member growth
+            </h2>
+            <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
+              Total members over time
+            </p>
           </div>
-          <AnalyticsTimeSeriesChart
-            data={data.memberCurrentBuckets}
-            unit="members"
-            color="#232536"
-            chartStyle={timeStyle}
-            width={720}
-            height={220}
-            floorBase={true}
-            ariaLabel="Member growth"
-          />
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <ChipOwn label="Database" />
+          </div>
         </div>
+        <AnalyticsTimeSeriesChart
+          data={data.memberCurrentBuckets}
+          unit="members"
+          color="#232536"
+          chartStyle={timeStyle}
+          width={720}
+          height={220}
+          floorBase={true}
+          ariaLabel="Member growth"
+        />
+      </div>
 
+      {/* Grid 2: Members by tier & Sign-up sources */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Members by tier */}
         <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
           <div className="flex justify-between items-start gap-2.5 mb-3">
@@ -81,7 +75,6 @@ export function AudienceTab({
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <ChipOwn label="Database" />
-              <ChipV1 />
             </div>
           </div>
 
@@ -97,10 +90,43 @@ export function AudienceTab({
             />
           </div>
         </div>
+
+        {/* Sign-up sources */}
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
+          <div className="flex justify-between items-start gap-2.5 mb-3">
+            <div>
+              <h2 className="text-sm font-semibold text-[#232536] m-0">
+                Sign-up sources
+              </h2>
+              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
+                Which article or page brought each member
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <ChipOwn label="Database" />
+            </div>
+          </div>
+
+          <div className="pt-2 flex-1">
+            {data.signupSources && data.signupSources.length > 0 ? (
+              <AnalyticsSharesList
+                rows={data.signupSources.map((s) => [s.source, s.count])}
+                shareStyle={shareStyle}
+                barColor="#232536"
+              />
+            ) : (
+              <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center">
+                <p className="text-[13px] text-[#5C5F73] m-0">
+                  No member sign-up sources recorded yet.
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
-      {/* Google Analytics: Top countries and Device categories */}
-      <div className={`space-y-4 transition-opacity ${isMuted ? 'opacity-35' : ''}`}>
+      {/* Grid 3: Top countries and Device categories */}
+      <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Top countries */}
           <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
@@ -207,57 +233,6 @@ export function AudienceTab({
         <p className="text-xs text-[#5C5F73] mt-2 mb-0">
           Google Analytics data can lag 24 to 48 hours and Search Console 2 to 3 days.
         </p>
-      </div>
-
-      {/* Grid 2 Later cards: Newsletter opens and clicks & Sign-up sources */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
-          <div className="flex justify-between items-start gap-2.5 mb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-[#232536] m-0">
-                Newsletter opens and clicks
-              </h2>
-              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Per email sent
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <ChipOwn label="Resend" />
-              <ChipLater />
-            </div>
-          </div>
-          <p className="text-xs text-[#5C5F73] m-0">
-            Appears once the newsletter chain is built.
-          </p>
-        </div>
-
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
-          <div className="flex justify-between items-start gap-2.5 mb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-[#232536] m-0">
-                Sign-up sources
-              </h2>
-              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Which article or page brought each member
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <ChipOwn label="Database" />
-              <ChipLater />
-            </div>
-          </div>
-          <p className="text-xs text-[#5C5F73] m-0">
-            Uses the existing sign-up source field once more members arrive.
-          </p>
-        </div>
       </div>
     </div>
   )

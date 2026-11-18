@@ -2,7 +2,6 @@
 
 import React, { Suspense, useEffect, useState, useSyncExternalStore } from 'react'
 import Link from 'next/link'
-import Script from 'next/script'
 import { usePathname, useSearchParams } from 'next/navigation'
 import {
   clearGoogleAnalyticsCookies,
@@ -20,7 +19,8 @@ declare global {
   }
 }
 
-const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID
+const GA_MEASUREMENT_ID =
+  process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID || 'G-FTJJWQ4JD9'
 
 let gtagConfigured = false
 
@@ -93,6 +93,9 @@ function PageViewTracker({
 
   useEffect(() => {
     if (consent !== 'granted') return
+    if (!pathname || pathname.startsWith('/admin') || pathname.startsWith('/api')) {
+      return
+    }
     initGtag(gaId)
     sendPageView(pathname, searchParams)
   }, [pathname, searchParams, consent, gaId])
@@ -117,6 +120,7 @@ export function CookieSettingsButton() {
 }
 
 function AnalyticsConsentInner({ gaId }: { gaId: string }) {
+  const pathname = usePathname()
   const consent = useSyncExternalStore(
     subscribeConsent,
     getConsentSnapshot,
@@ -129,6 +133,9 @@ function AnalyticsConsentInner({ gaId }: { gaId: string }) {
   )
   const [isSettingsOpen, setIsSettingsOpen] = useState(false)
 
+  const isAdminOrApi =
+    Boolean(pathname && (pathname.startsWith('/admin') || pathname.startsWith('/api')))
+
   useEffect(() => {
     const handleOpen = () => {
       setIsSettingsOpen(true)
@@ -140,19 +147,27 @@ function AnalyticsConsentInner({ gaId }: { gaId: string }) {
   }, [])
 
   useEffect(() => {
-    if (consent === 'denied') {
+    if (isAdminOrApi) return
+
+    if (consent === 'denied' || consent === null) {
       gtagConfigured = false
       if (typeof window !== 'undefined') {
         ;(window as unknown as Record<string, unknown>)[`ga-disable-${gaId}`] = true
       }
-      clearGoogleAnalyticsCookies()
+      if (consent === 'denied') {
+        clearGoogleAnalyticsCookies()
+      }
     } else if (consent === 'granted') {
       if (typeof window !== 'undefined') {
         ;(window as unknown as Record<string, unknown>)[`ga-disable-${gaId}`] = false
       }
       initGtag(gaId)
     }
-  }, [consent, gaId])
+  }, [consent, gaId, isAdminOrApi])
+
+  if (isAdminOrApi) {
+    return null
+  }
 
   const handleAccept = () => {
     if (typeof window !== 'undefined') {
@@ -178,12 +193,16 @@ function AnalyticsConsentInner({ gaId }: { gaId: string }) {
 
   return (
     <>
-      {consent === 'granted' && (
-        <Script
-          src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
-          strategy="afterInteractive"
-        />
-      )}
+      <script
+        id="ga-disable-init"
+        dangerouslySetInnerHTML={{
+          __html: `if(!window.localStorage||window.localStorage.getItem('ik_analytics_consent')!=='granted'){window['ga-disable-${gaId}']=true;}`,
+        }}
+      />
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
+      />
 
       <Suspense fallback={null}>
         <PageViewTracker gaId={gaId} consent={consent} />
@@ -233,6 +252,10 @@ function AnalyticsConsentInner({ gaId }: { gaId: string }) {
 }
 
 export default function AnalyticsConsent() {
+  const pathname = usePathname()
+  if (pathname && (pathname.startsWith('/admin') || pathname.startsWith('/api'))) {
+    return null
+  }
   if (!isValidMeasurementId(GA_MEASUREMENT_ID)) {
     return null
   }

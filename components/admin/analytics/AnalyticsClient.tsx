@@ -80,7 +80,6 @@ export function AnalyticsClient({
     initialCompact.range
   )
   const [activeTab, setActiveTab] = useState<AnalyticsTab>(initialCompact.tab)
-  const [v1Only, setV1Only] = useState(false)
   const [showExplanation, setShowExplanation] = useState(false)
 
   // Cache google data by range in state
@@ -322,44 +321,8 @@ export function AnalyticsClient({
             onTimeStyleChange={handleTimeStyleChange}
             onShareStyleChange={handleShareStyleChange}
           />
-
-          {/* Export CSV button */}
-          <button
-            type="button"
-            disabled
-            title="Planned for later"
-            className="border border-[#F0E4D2] bg-white text-[#232536] py-2 px-3.5 rounded-xl text-xs font-medium opacity-50 cursor-not-allowed"
-          >
-            Export CSV
-          </button>
         </div>
       </div>
-
-      {/* v1 Only Switch */}
-      <label className="flex items-center gap-2.5 mt-3 text-xs sm:text-[13px] text-[#5C5F73] select-none cursor-pointer">
-        <span className="relative inline-block w-[38px] h-[22px] flex-none">
-          <input
-            type="checkbox"
-            checked={v1Only}
-            onChange={(e) => setV1Only(e.target.checked)}
-            className="opacity-0 absolute inset-0 m-0 w-full h-full cursor-pointer z-10"
-          />
-          <i
-            className={`absolute inset-0 rounded-full transition-colors ${
-              v1Only ? 'bg-[#232536]' : 'bg-[#D9CDBB]'
-            }`}
-          >
-            <span
-              className={`absolute top-[3px] left-[3px] w-4 h-4 rounded-full bg-white transition-transform ${
-                v1Only ? 'translate-x-4' : ''
-              }`}
-            />
-          </i>
-        </span>
-        <span>
-          Show only what is in the first build (v1). Greyed panels come later.
-        </span>
-      </label>
 
       {/* Tabs Bar without overflow slider */}
       <div
@@ -399,19 +362,16 @@ export function AnalyticsClient({
         {activeTab === 'overview' && (
           <OverviewTab
             data={derivedData}
-            v1Only={v1Only}
             timeStyle={timeStyle}
             shareStyle={shareStyle}
             onNavigateTab={handleTabChange}
             setupStatus={currentGoogleData?.setupStatus}
+            gaData={currentGoogleData?.ga}
           />
         )}
-        {activeTab === 'articles' && (
-          <ArticlesTab data={derivedData} v1Only={v1Only} />
-        )}
+        {activeTab === 'articles' && <ArticlesTab data={derivedData} />}
         {activeTab === 'sources' && (
           <SourcesTab
-            v1Only={v1Only}
             gaData={currentGoogleData?.ga}
             gscData={currentGoogleData?.gsc}
           />
@@ -419,7 +379,6 @@ export function AnalyticsClient({
         {activeTab === 'audience' && (
           <AudienceTab
             data={derivedData}
-            v1Only={v1Only}
             timeStyle={timeStyle}
             shareStyle={shareStyle}
             gaData={currentGoogleData?.ga}

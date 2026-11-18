@@ -34,6 +34,7 @@ export interface DeviceCategoryRow {
 export interface GoogleAnalyticsData {
   status: GoogleStatus
   errorMessage?: string
+  totalUsers: number
   channels: ChannelGroupRow[]
   sources: SourceMediumRow[]
   countries: CountryRow[]
@@ -167,28 +168,32 @@ async function getAccessToken(sa: ServiceAccountCredentials): Promise<string> {
 async function runGAReport(
   accessToken: string,
   rangeDays: number,
-  dimensionName: string,
-  metricNames: string[]
+  dimensionName: string | null,
+  metricNames: string[],
+  limit: number = 100
 ): Promise<{ rows: { dimension: string; metrics: number[] }[] }> {
   const url =
     'https://analyticsdata.googleapis.com/v1beta/properties/297881212:runReport'
 
-  const body = {
+  const body: Record<string, unknown> = {
     dateRanges: [
       {
         startDate: `${rangeDays}daysAgo`,
         endDate: 'yesterday',
       },
     ],
-    dimensions: [{ name: dimensionName }],
     metrics: metricNames.map((name) => ({ name })),
-    orderBys: [
+  }
+
+  if (dimensionName) {
+    body.dimensions = [{ name: dimensionName }]
+    body.orderBys = [
       {
         metric: { metricName: metricNames[0] },
         desc: true,
       },
-    ],
-    limit: 10,
+    ]
+    body.limit = limit
   }
 
   const response = await fetch(url, {
@@ -226,35 +231,73 @@ async function fetchGAData(
   rangeDays: number
 ): Promise<GoogleAnalyticsData> {
   try {
-    const [channelsRes, sourcesRes, countriesRes, devicesRes] =
+    const [channelsRes, sourcesRes, countriesRes, devicesRes, totalUsersRes] =
       await Promise.all([
-        runGAReport(accessToken, rangeDays, 'sessionDefaultChannelGroup', [
-          'sessions',
-          'totalUsers',
-        ]),
-        runGAReport(accessToken, rangeDays, 'sessionSourceMedium', [
-          'sessions',
-          'totalUsers',
-        ]),
-        runGAReport(accessToken, rangeDays, 'country', [
-          'totalUsers',
-          'sessions',
-        ]),
-        runGAReport(accessToken, rangeDays, 'deviceCategory', [
-          'totalUsers',
-          'sessions',
-        ]),
+        runGAReport(
+          accessToken,
+          rangeDays,
+          'sessionDefaultChannelGroup',
+          ['sessions', 'totalUsers'],
+          100
+        ),
+        runGAReport(
+          accessToken,
+          rangeDays,
+          'sessionSourceMedium',
+          ['sessions', 'totalUsers'],
+          100
+        ),
+        runGAReport(
+          accessToken,
+          rangeDays,
+          'country',
+          ['totalUsers', 'sessions'],
+          100
+        ),
+        runGAReport(
+          accessToken,
+          rangeDays,
+          'deviceCategory',
+          ['totalUsers', 'sessions'],
+          10
+        ),
+        runGAReport(accessToken, rangeDays, null, ['totalUsers']),
       ])
 
+    const totalUsers = totalUsersRes.rows[0]?.metrics[0] || 0
+
+    // Top 6 channels plus an "Other" rollup
     const totalChannelSessions =
       channelsRes.rows.reduce((sum, r) => sum + r.metrics[0], 0) || 1
-    const channels: ChannelGroupRow[] = channelsRes.rows.map((r) => ({
+    const rawChannels: ChannelGroupRow[] = channelsRes.rows.map((r) => ({
       channelGroup: r.dimension,
       sessions: r.metrics[0],
       users: r.metrics[1] || 0,
       share: Math.round((r.metrics[0] / totalChannelSessions) * 100),
     }))
+    rawChannels.sort((a, b) => b.sessions - a.sessions)
 
+    let channels: ChannelGroupRow[]
+    if (rawChannels.length <= 6) {
+      channels = rawChannels
+    } else {
+      const top6 = rawChannels.slice(0, 6)
+      const remainder = rawChannels.slice(6)
+      const otherSessions = remainder.reduce((sum, r) => sum + r.sessions, 0)
+      const otherUsers = remainder.reduce((sum, r) => sum + r.users, 0)
+      const otherShare = Math.round((otherSessions / totalChannelSessions) * 100)
+      channels = [
+        ...top6,
+        {
+          channelGroup: 'Other',
+          sessions: otherSessions,
+          users: otherUsers,
+          share: otherShare,
+        },
+      ]
+    }
+
+    // Sources list
     const totalSourceSessions =
       sourcesRes.rows.reduce((sum, r) => sum + r.metrics[0], 0) || 1
     const sources: SourceMediumRow[] = sourcesRes.rows.map((r) => ({
@@ -264,25 +307,70 @@ async function fetchGAData(
       share: Math.round((r.metrics[0] / totalSourceSessions) * 100),
     }))
 
+    // Top 6 countries plus an "Other" rollup
     const totalCountryUsers =
       countriesRes.rows.reduce((sum, r) => sum + r.metrics[0], 0) || 1
-    const countries: CountryRow[] = countriesRes.rows.map((r) => ({
+    const rawCountries: CountryRow[] = countriesRes.rows.map((r) => ({
       country: r.dimension,
       users: r.metrics[0],
       sessions: r.metrics[1] || 0,
       share: Math.round((r.metrics[0] / totalCountryUsers) * 100),
     }))
+    rawCountries.sort((a, b) => b.users - a.users)
 
-    const totalDeviceUsers =
-      devicesRes.rows.reduce((sum, r) => sum + r.metrics[0], 0) || 1
-    const devices: DeviceCategoryRow[] = devicesRes.rows.map((r) => ({
-      deviceCategory: r.dimension,
-      users: r.metrics[0],
-      sessions: r.metrics[1] || 0,
-      share: Math.round((r.metrics[0] / totalDeviceUsers) * 100),
-    }))
+    let countries: CountryRow[]
+    if (rawCountries.length <= 6) {
+      countries = rawCountries
+    } else {
+      const top6 = rawCountries.slice(0, 6)
+      const remainder = rawCountries.slice(6)
+      const otherUsers = remainder.reduce((sum, r) => sum + r.users, 0)
+      const otherSessions = remainder.reduce((sum, r) => sum + r.sessions, 0)
+      const otherShare = Math.round((otherUsers / totalCountryUsers) * 100)
+      countries = [
+        ...top6,
+        {
+          country: 'Other',
+          users: otherUsers,
+          sessions: otherSessions,
+          share: otherShare,
+        },
+      ]
+    }
+
+    // Device categories shares summing to 100% of total users
+    const devicesDenominator =
+      totalUsers > 0
+        ? totalUsers
+        : devicesRes.rows.reduce((sum, r) => sum + r.metrics[0], 0) || 1
+
+    const rawDevices: DeviceCategoryRow[] = devicesRes.rows.map((r) => {
+      let categoryName = r.dimension
+      const lower = categoryName.toLowerCase()
+      if (lower === 'mobile') categoryName = 'Phone'
+      else if (lower === 'desktop') categoryName = 'Computer'
+      else if (lower === 'tablet') categoryName = 'Tablet'
+      else categoryName = categoryName.charAt(0).toUpperCase() + categoryName.slice(1)
+
+      return {
+        deviceCategory: categoryName,
+        users: r.metrics[0],
+        sessions: r.metrics[1] || 0,
+        share: Math.round((r.metrics[0] / devicesDenominator) * 100),
+      }
+    })
+    rawDevices.sort((a, b) => b.users - a.users)
+
+    if (rawDevices.length > 0 && devicesDenominator > 0) {
+      const shareSum = rawDevices.reduce((sum, d) => sum + d.share, 0)
+      if (shareSum !== 100 && shareSum > 0) {
+        rawDevices[0].share += 100 - shareSum
+      }
+    }
+    const devices = rawDevices
 
     const isEmpty =
+      totalUsers === 0 &&
       channels.length === 0 &&
       sources.length === 0 &&
       countries.length === 0 &&
@@ -290,6 +378,7 @@ async function fetchGAData(
 
     return {
       status: isEmpty ? 'empty' : 'ready',
+      totalUsers,
       channels,
       sources,
       countries,
@@ -299,6 +388,7 @@ async function fetchGAData(
     return {
       status: 'error',
       errorMessage: 'Could not load Google Analytics data right now.',
+      totalUsers: 0,
       channels: [],
       sources: [],
       countries: [],
@@ -330,7 +420,7 @@ async function querySearchConsole(
   }
   if (dimensions && dimensions.length > 0) {
     body.dimensions = dimensions
-    body.rowLimit = 10
+    body.rowLimit = 100
   }
 
   const response = await fetch(url, {
@@ -373,15 +463,21 @@ async function fetchGSCData(
       position: totalsRow.position || 0,
     }
 
-    const queries: SearchConsoleItem[] = (queriesRes.rows || []).map((r) => ({
+    const rawQueries = (queriesRes.rows || []).map((r) => ({
       key: r.keys?.[0] || '(unknown)',
       clicks: r.clicks || 0,
       impressions: r.impressions || 0,
       ctr: r.ctr || 0,
       position: Math.round((r.position || 0) * 10) / 10,
     }))
+    rawQueries.sort((a, b) => {
+      if (b.clicks !== a.clicks) return b.clicks - a.clicks
+      if (b.impressions !== a.impressions) return b.impressions - a.impressions
+      return a.key.localeCompare(b.key)
+    })
+    const queries: SearchConsoleItem[] = rawQueries.slice(0, 10)
 
-    const pages: SearchConsoleItem[] = (pagesRes.rows || []).map((r) => {
+    const rawPages = (pagesRes.rows || []).map((r) => {
       let pageKey = r.keys?.[0] || '/'
       try {
         const u = new URL(pageKey)
@@ -397,6 +493,12 @@ async function fetchGSCData(
         position: Math.round((r.position || 0) * 10) / 10,
       }
     })
+    rawPages.sort((a, b) => {
+      if (b.clicks !== a.clicks) return b.clicks - a.clicks
+      if (b.impressions !== a.impressions) return b.impressions - a.impressions
+      return a.key.localeCompare(b.key)
+    })
+    const pages: SearchConsoleItem[] = rawPages.slice(0, 10)
 
     const isEmpty =
       totals.clicks === 0 &&
@@ -440,6 +542,7 @@ export async function getGoogleDataBundle(
       },
       ga: {
         status: 'not_configured',
+        totalUsers: 0,
         channels: [],
         sources: [],
         countries: [],
@@ -472,6 +575,7 @@ export async function getGoogleDataBundle(
       ga: {
         status: 'error',
         errorMessage: 'Authentication with Google failed.',
+        totalUsers: 0,
         channels: [],
         sources: [],
         countries: [],

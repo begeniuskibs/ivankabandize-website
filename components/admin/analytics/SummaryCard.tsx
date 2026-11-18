@@ -87,24 +87,6 @@ export function SummaryCard({
           )}
         </div>
       </div>
-
-      {/* Row 3: Visitors who accepted cookies */}
-      <div className="flex justify-between items-center gap-3 py-3.5 border-t border-[#F0E4D2] opacity-70">
-        <div>
-          <b className="block text-2xl font-semibold tracking-tight tabular-nums text-[#232536]">
-            -
-          </b>
-          <span className="block text-[13.5px] font-medium text-[#232536] mt-0.5">
-            Visitors who accepted cookies
-          </span>
-          <small className="block text-xs text-[#5C5F73]">
-            From Google Analytics
-          </small>
-        </div>
-        <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73]">
-          Later
-        </span>
-      </div>
     </div>
   )
 }

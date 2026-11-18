@@ -6,12 +6,11 @@ import { GoogleBlockState } from './GoogleBlockState'
 import type { GoogleAnalyticsData, SearchConsoleData } from './types'
 
 interface SourcesTabProps {
-  v1Only: boolean
   gaData?: GoogleAnalyticsData
   gscData?: SearchConsoleData
 }
 
-export function SourcesTab({ v1Only, gaData, gscData }: SourcesTabProps) {
+export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
   const ga = gaData || {
     status: 'not_configured',
     channels: [],
@@ -28,10 +27,9 @@ export function SourcesTab({ v1Only, gaData, gscData }: SourcesTabProps) {
   }
 
   const isConfigured = ga.status === 'ready' || gsc.status === 'ready'
-  const isMuted = v1Only && !isConfigured
 
   return (
-    <div className={`space-y-4 transition-opacity ${isMuted ? 'opacity-35' : ''}`}>
+    <div className="space-y-4">
       {/* Google Analytics: Channels and Top referring sites */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Channels */}
