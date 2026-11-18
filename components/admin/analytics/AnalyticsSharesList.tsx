@@ -95,7 +95,7 @@ export function AnalyticsSharesList({
               {row.value.toLocaleString('en-US')}
               {suffix}
             </b>
-            <div className="col-span-2 h-[5px] bg-[#F3EBDD] rounded-full overflow-hidden">
+            <div className="col-span-2 h-[5px] bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
               <div
                 className="h-full rounded-full"
                 style={{

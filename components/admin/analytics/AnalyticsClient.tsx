@@ -18,6 +18,11 @@ import { OverviewTab } from './OverviewTab'
 import { ArticlesTab } from './ArticlesTab'
 import { SourcesTab } from './SourcesTab'
 import { AudienceTab } from './AudienceTab'
+import {
+  GLASS_SEG_TRACK,
+  GLASS_SEG_ACTIVE,
+  GLASS_TAB_ACTIVE,
+} from '../glass'
 
 interface AnalyticsClientProps {
   initialCompact: CompactAnalyticsData
@@ -291,7 +296,7 @@ export function AnalyticsClient({
         <div className="flex items-center gap-2.5 flex-wrap">
           {/* Range segmented buttons */}
           <div
-            className="inline-flex bg-white border border-[#F0E4D2] rounded-xl p-1 shadow-xs"
+            className={`inline-flex bg-white border border-[#F0E4D2] rounded-xl p-1 shadow-xs ${GLASS_SEG_TRACK}`}
             role="group"
             aria-label="Date range"
           >
@@ -304,7 +309,7 @@ export function AnalyticsClient({
                   onClick={() => handleRangeChange(r)}
                   className={`border-0 py-1.5 px-3.5 rounded-lg text-xs font-medium transition cursor-pointer ${
                     isOn
-                      ? 'bg-[#232536] text-white shadow-xs'
+                      ? `bg-[#232536] text-white shadow-xs ${GLASS_SEG_ACTIVE}`
                       : 'bg-transparent text-[#5C5F73] hover:text-[#232536]'
                   }`}
                 >
@@ -347,7 +352,7 @@ export function AnalyticsClient({
               onClick={() => handleTabChange(tab.id)}
               className={`border-0 bg-transparent py-2.5 px-3.5 text-sm font-medium transition cursor-pointer -mb-px whitespace-nowrap border-b-2 ${
                 isOn
-                  ? 'text-[#232536] border-[#CF3F29] font-semibold'
+                  ? `text-[#232536] border-[#CF3F29] font-semibold ${GLASS_TAB_ACTIVE}`
                   : 'text-[#5C5F73] border-transparent hover:text-[#232536]'
               }`}
             >

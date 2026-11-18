@@ -4,6 +4,20 @@ import React from 'react'
 import type { AnalyticsData } from './types'
 import { ChipOwn } from './AnalyticsChips'
 import { formatKampalaDisplayDate } from '@/lib/adminAnalytics'
+import { GLASS_CARD } from '../glass'
+
+function formatContentType(contentType: string | null | undefined): string {
+  switch (contentType) {
+    case 'random_thoughts':
+      return 'Random Thoughts'
+    case 'structured_thoughts':
+      return 'Structured Thoughts'
+    case 'tools_for_thought':
+      return 'Tools for Thought'
+    default:
+      return contentType || ''
+  }
+}
 
 interface ArticlesTabProps {
   data: AnalyticsData
@@ -16,7 +30,7 @@ export function ArticlesTab({ data }: ArticlesTabProps) {
   return (
     <div className="space-y-3.5">
       {/* All articles card */}
-      <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+      <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
         <div className="flex justify-between items-start gap-2.5 mb-3">
           <div>
             <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -79,7 +93,7 @@ export function ArticlesTab({ data }: ArticlesTabProps) {
                         )}
                       </td>
                       <td className="py-3 px-3 align-middle text-xs text-[#5C5F73] whitespace-nowrap">
-                        {article.contentType}
+                        {formatContentType(article.contentType)}
                       </td>
                       <td className="py-3 px-3 align-middle text-xs text-[#5C5F73] text-right tabular-nums whitespace-nowrap">
                         {article.publishedAt
@@ -91,9 +105,9 @@ export function ArticlesTab({ data }: ArticlesTabProps) {
                       </td>
                       <td className="py-3 px-3 align-middle">
                         <div className="flex items-center gap-2">
-                          <div className="h-1.5 flex-1 bg-[#F3EBDD] rounded-full overflow-hidden">
+                          <div className="h-1.5 flex-1 bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
                             <i
-                              className="block h-full bg-[#CF3F29] rounded-full transition-all"
+                              className="block h-full bg-[#CF3F29] rounded-full transition-all md:bg-[#232536]"
                               style={{ width: `${Math.max(barWidth > 0 ? 2 : 0, barWidth)}%` }}
                             />
                           </div>

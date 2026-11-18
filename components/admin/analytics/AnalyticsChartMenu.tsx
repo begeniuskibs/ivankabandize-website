@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from 'react'
 import type { TimeChartStyle, ShareChartStyle } from '@/lib/adminAnalytics'
+import { GLASS_BTN, GLASS_CARD } from '../glass'
 
 interface AnalyticsChartMenuProps {
   timeStyle: TimeChartStyle
@@ -55,7 +56,7 @@ export function AnalyticsChartMenu({
     <div className="relative inline-block" ref={menuRef}>
       <button
         type="button"
-        className="border border-[#F0E4D2] bg-white text-[#232536] px-3.5 py-2 rounded-[10px] text-[13px] font-medium inline-flex items-center gap-2 hover:bg-[#FAF7F2] transition-colors focus-visible:outline-2 focus-visible:outline-[#232536] focus-visible:outline-offset-2"
+        className={`border border-[#F0E4D2] bg-white text-[#232536] px-3.5 py-2 rounded-[10px] text-[13px] font-medium inline-flex items-center gap-2 hover:bg-[#FAF7F2] transition-colors focus-visible:outline-2 focus-visible:outline-[#232536] focus-visible:outline-offset-2 ${GLASS_BTN}`}
         aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
@@ -89,7 +90,7 @@ export function AnalyticsChartMenu({
 
       {open && (
         <div
-          className="absolute right-0 top-[calc(100%+6px)] bg-white border border-[#F0E4D2] rounded-xl p-2 min-w-[210px] shadow-[0_10px_30px_rgba(35,37,54,0.12)] z-30"
+          className={`absolute right-0 top-[calc(100%+6px)] bg-white border border-[#F0E4D2] rounded-xl p-2 min-w-[210px] shadow-[0_10px_30px_rgba(35,37,54,0.12)] z-30 ${GLASS_CARD}`}
           role="menu"
           aria-label="Chart styles"
         >
@@ -104,8 +105,8 @@ export function AnalyticsChartMenu({
                 type="button"
                 className={`block w-full text-left border-0 px-2.5 py-1.5 rounded-lg text-[13.5px] transition-colors ${
                   isSelected
-                    ? 'bg-[#232536] text-white font-medium'
-                    : 'text-[#232536] hover:bg-[#F6EFE3]'
+                    ? 'bg-[#232536] text-white font-medium md:text-[#FDF8F1]'
+                    : 'text-[#232536] hover:bg-[#F6EFE3] md:hover:bg-[#232536]/[0.05]'
                 }`}
                 role="menuitem"
                 onClick={() => onTimeStyleChange(val)}
@@ -127,8 +128,8 @@ export function AnalyticsChartMenu({
                 type="button"
                 className={`block w-full text-left border-0 px-2.5 py-1.5 rounded-lg text-[13.5px] transition-colors ${
                   isSelected
-                    ? 'bg-[#232536] text-white font-medium'
-                    : 'text-[#232536] hover:bg-[#F6EFE3]'
+                    ? 'bg-[#232536] text-white font-medium md:text-[#FDF8F1]'
+                    : 'text-[#232536] hover:bg-[#F6EFE3] md:hover:bg-[#232536]/[0.05]'
                 }`}
                 role="menuitem"
                 onClick={() => onShareStyleChange(val)}

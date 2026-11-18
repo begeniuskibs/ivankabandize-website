@@ -1,4 +1,5 @@
 import React from 'react'
+import { GLASS_CARD } from '@/components/admin/glass'
 
 export default function AnalyticsLoading() {
   return (
@@ -34,7 +35,7 @@ export default function AnalyticsLoading() {
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="bg-white border border-[#F0E4D2] rounded-2xl p-5 space-y-3"
+            className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 space-y-3 ${GLASS_CARD}`}
           >
             <div className="flex justify-between items-center">
               <div className="h-4 w-24 bg-[#F0EBE1] rounded" />
@@ -49,11 +50,11 @@ export default function AnalyticsLoading() {
 
       {/* Main Charts Grid Skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)] gap-3.5">
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 space-y-4">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 space-y-4 ${GLASS_CARD}`}>
           <div className="h-5 w-48 bg-[#EAE6DF] rounded" />
           <div className="h-56 w-full bg-[#FAF7F2] rounded-xl" />
         </div>
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 space-y-4">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 space-y-4 ${GLASS_CARD}`}>
           <div className="h-5 w-32 bg-[#EAE6DF] rounded" />
           <div className="space-y-3 pt-2">
             {[1, 2, 3, 4, 5].map((j) => (
@@ -62,7 +63,7 @@ export default function AnalyticsLoading() {
                   <div className="h-4 w-36 bg-[#F0EBE1] rounded" />
                   <div className="h-4 w-8 bg-[#F0EBE1] rounded" />
                 </div>
-                <div className="h-2 w-full bg-[#F3EBDD] rounded-full" />
+                <div className="h-2 w-full bg-[#F3EBDD] rounded-full md:bg-[#232536]/[0.05]" />
               </div>
             ))}
           </div>

@@ -31,7 +31,7 @@ export function GoogleBlockState({
 
   if (status === 'not_configured') {
     return (
-      <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center">
+      <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center md:bg-white/[0.4] md:border-[#F0E4D2]">
         <p className="text-[13px] font-medium text-[#232536] m-0 mb-1">
           {notConfiguredText}
         </p>
@@ -44,7 +44,7 @@ export function GoogleBlockState({
 
   if (status === 'error') {
     return (
-      <div className="py-7 px-4 rounded-xl bg-[#FDF4F3] border border-[#F7D3CF] text-center">
+      <div className="py-7 px-4 rounded-xl bg-[#FDF4F3] border border-[#F7D3CF] text-center md:bg-[#CF3F29]/[0.06] md:border-[#CF3F29]/20">
         <p className="text-[13px] font-medium text-[#CF3F29] m-0 mb-1">
           Temporary connection issue
         </p>
@@ -55,7 +55,7 @@ export function GoogleBlockState({
 
   if (status === 'empty') {
     return (
-      <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center">
+      <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center md:bg-white/[0.4] md:border-[#F0E4D2]">
         <p className="text-[13px] text-[#5C5F73] m-0">{emptyText}</p>
       </div>
     )
