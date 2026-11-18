@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useMemo, useSyncExternalStore } from 'react'
+import React, { useState, useMemo, useEffect, useSyncExternalStore } from 'react'
 import type {
   CompactAnalyticsData,
   AnalyticsRange,
@@ -8,6 +8,7 @@ import type {
   TimeChartStyle,
   ShareChartStyle,
 } from '@/lib/adminAnalytics'
+import type { GoogleDataBundle } from './types'
 import {
   deriveAnalyticsForRange,
   formatKampalaLongDate,
@@ -20,6 +21,7 @@ import { AudienceTab } from './AudienceTab'
 
 interface AnalyticsClientProps {
   initialCompact: CompactAnalyticsData
+  initialGoogleData?: GoogleDataBundle
 }
 
 function subscribeChartStyles(callback: () => void) {
@@ -70,13 +72,116 @@ function getServerShareStyleSnapshot(): ShareChartStyle {
   return 'bars'
 }
 
-export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
+export function AnalyticsClient({
+  initialCompact,
+  initialGoogleData,
+}: AnalyticsClientProps) {
   const [selectedRange, setSelectedRange] = useState<AnalyticsRange>(
     initialCompact.range
   )
   const [activeTab, setActiveTab] = useState<AnalyticsTab>(initialCompact.tab)
   const [v1Only, setV1Only] = useState(false)
   const [showExplanation, setShowExplanation] = useState(false)
+
+  // Cache google data by range in state
+  const [googleDataByRange, setGoogleDataByRange] = useState<
+    Partial<Record<AnalyticsRange, GoogleDataBundle>>
+  >(() => {
+    if (initialGoogleData) {
+      return { [initialCompact.range]: initialGoogleData }
+    }
+    return {}
+  })
+
+  const isNotConfigured = initialGoogleData?.configured === false
+
+  // Current google data for the selected range
+  const currentGoogleData = useMemo(() => {
+    if (isNotConfigured) {
+      return initialGoogleData
+    }
+    const data = googleDataByRange[selectedRange]
+    if (data) return data
+
+    // Still loading for this range
+    return {
+      configured: true,
+      setupStatus: initialGoogleData?.setupStatus || {
+        searchConsoleConnected: false,
+        googleAnalyticsConnected: false,
+      },
+      ga: {
+        status: 'loading' as const,
+        channels: [],
+        sources: [],
+        countries: [],
+        devices: [],
+      },
+      gsc: {
+        status: 'loading' as const,
+        totals: { clicks: 0, impressions: 0, ctr: 0, position: 0 },
+        queries: [],
+        pages: [],
+      },
+    }
+  }, [googleDataByRange, selectedRange, isNotConfigured, initialGoogleData])
+
+  // Fetch when range changes and not in cache
+  useEffect(() => {
+    if (isNotConfigured) {
+      return
+    }
+
+    if (!googleDataByRange[selectedRange]) {
+      let isMounted = true
+      fetch(`/api/admin/analytics/google?range=${selectedRange}`)
+        .then((res) => {
+          if (!res.ok) throw new Error('Failed to fetch')
+          return res.json()
+        })
+        .then((bundle: GoogleDataBundle) => {
+          if (isMounted) {
+            setGoogleDataByRange((prev) => ({
+              ...prev,
+              [selectedRange]: bundle,
+            }))
+          }
+        })
+        .catch(() => {
+          if (isMounted) {
+            setGoogleDataByRange((prev) => ({
+              ...prev,
+              [selectedRange]: {
+                configured: true,
+                setupStatus: {
+                  searchConsoleConnected: false,
+                  googleAnalyticsConnected: false,
+                },
+                ga: {
+                  status: 'error',
+                  errorMessage: 'Could not load Google Analytics numbers.',
+                  channels: [],
+                  sources: [],
+                  countries: [],
+                  devices: [],
+                },
+                gsc: {
+                  status: 'error',
+                  errorMessage: 'Could not load Search Console numbers.',
+                  totals: { clicks: 0, impressions: 0, ctr: 0, position: 0 },
+                  queries: [],
+                  pages: [],
+                },
+              },
+            }))
+          }
+        })
+
+      return () => {
+        isMounted = false
+      }
+    }
+  }, [selectedRange, googleDataByRange, isNotConfigured])
 
   // Chart styles persisted in localStorage with reactive external store
   const timeStyle = useSyncExternalStore(
@@ -298,26 +403,34 @@ export function AnalyticsClient({ initialCompact }: AnalyticsClientProps) {
             timeStyle={timeStyle}
             shareStyle={shareStyle}
             onNavigateTab={handleTabChange}
+            setupStatus={currentGoogleData?.setupStatus}
           />
         )}
         {activeTab === 'articles' && (
           <ArticlesTab data={derivedData} v1Only={v1Only} />
         )}
-        {activeTab === 'sources' && <SourcesTab v1Only={v1Only} />}
+        {activeTab === 'sources' && (
+          <SourcesTab
+            v1Only={v1Only}
+            gaData={currentGoogleData?.ga}
+            gscData={currentGoogleData?.gsc}
+          />
+        )}
         {activeTab === 'audience' && (
           <AudienceTab
             data={derivedData}
             v1Only={v1Only}
             timeStyle={timeStyle}
             shareStyle={shareStyle}
+            gaData={currentGoogleData?.ga}
           />
         )}
       </div>
 
       {/* Footer */}
       <p className="mt-8 text-xs text-[#5C5F73]">
-        Real numbers come from the post_views table and the members table. Google
-        Analytics and Search Console integration planned for a later sprint.
+        Real numbers come from the post_views table, the members table, Google
+        Analytics and Google Search Console.
       </p>
     </div>
   )

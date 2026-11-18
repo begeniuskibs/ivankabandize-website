@@ -2,7 +2,17 @@
 
 import React from 'react'
 
-export function SetupCard() {
+interface SetupCardProps {
+  setupStatus?: {
+    searchConsoleConnected: boolean
+    googleAnalyticsConnected: boolean
+  }
+}
+
+export function SetupCard({ setupStatus }: SetupCardProps) {
+  const scDone = !!setupStatus?.searchConsoleConnected
+  const gaDone = !!setupStatus?.googleAnalyticsConnected
+
   const steps = [
     {
       title: 'Own view counter',
@@ -16,15 +26,22 @@ export function SetupCard() {
     },
     {
       title: 'Connect Search Console',
-      description: 'Shows what people typed into Google',
-      done: false,
+      description: scDone
+        ? 'Connected to sc-domain:ivankabandize.com'
+        : 'Shows what people typed into Google',
+      done: scDone,
     },
     {
       title: 'Bring Google numbers onto this page',
-      description: 'Needs a Google service account',
-      done: false,
+      description: gaDone
+        ? 'Connected via service account'
+        : 'Needs a Google service account',
+      done: gaDone,
     },
   ]
+
+  const doneCount = steps.filter((st) => st.done).length
+  const progressPercent = Math.round((doneCount / steps.length) * 100)
 
   return (
     <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col min-w-0">
@@ -33,9 +50,14 @@ export function SetupCard() {
           Finish setting up analytics
         </h2>
         <div className="h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden my-2.5">
-          <div className="h-full w-1/2 bg-[#232536] rounded-full" />
+          <div
+            className="h-full bg-[#232536] rounded-full transition-all duration-300"
+            style={{ width: `${progressPercent}%` }}
+          />
         </div>
-        <p className="text-xs text-[#5C5F73] mt-1 mb-0">2 of 4 complete</p>
+        <p className="text-xs text-[#5C5F73] mt-1 mb-0">
+          {doneCount} of {steps.length} complete
+        </p>
       </div>
 
       <div className="flex flex-col mt-2">
@@ -74,4 +96,3 @@ export function SetupCard() {
     </div>
   )
 }
-

@@ -13,6 +13,7 @@ import {
   type PublishedArticleRecord,
 } from '@/lib/adminAnalytics'
 import { AnalyticsClient } from '@/components/admin/analytics/AnalyticsClient'
+import { getGoogleDataBundle } from '@/lib/googleAnalytics'
 
 export const dynamic = 'force-dynamic'
 
@@ -190,7 +191,15 @@ export default async function AnalyticsPage({
   const range = parseRange(rawRange)
   const tab = parseTab(rawTab)
 
-  const compactData = await fetchCompactAnalytics(range, tab)
+  const [compactData, initialGoogleData] = await Promise.all([
+    fetchCompactAnalytics(range, tab),
+    getGoogleDataBundle(range),
+  ])
 
-  return <AnalyticsClient initialCompact={compactData} />
+  return (
+    <AnalyticsClient
+      initialCompact={compactData}
+      initialGoogleData={initialGoogleData}
+    />
+  )
 }

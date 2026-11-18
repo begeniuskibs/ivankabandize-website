@@ -16,6 +16,10 @@ interface OverviewTabProps {
   timeStyle: TimeChartStyle
   shareStyle: ShareChartStyle
   onNavigateTab: (tab: 'articles' | 'audience') => void
+  setupStatus?: {
+    searchConsoleConnected: boolean
+    googleAnalyticsConnected: boolean
+  }
 }
 
 export function OverviewTab({
@@ -24,6 +28,7 @@ export function OverviewTab({
   timeStyle,
   shareStyle,
   onNavigateTab,
+  setupStatus,
 }: OverviewTabProps) {
   return (
     <div className="space-y-4">
@@ -81,7 +86,7 @@ export function OverviewTab({
           totalMembersCurrent={data.totalMembersCurrent}
           totalMembersPrev={data.totalMembersPrev}
         />
-        <SetupCard />
+        <SetupCard setupStatus={setupStatus} />
       </div>
 
       {/* Later Cards: Where readers come from, Countries, Phone or computer */}
