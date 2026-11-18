@@ -60,6 +60,7 @@ export interface AnalyticsData {
   totalMembersPrev: number
   memberPercentDelta: number | null
   tierCounts: TierCounts
+  signupSources?: { source: string; count: number }[]
   topArticles: TopArticleItem[]
   allArticles: TopArticleItem[]
 }
@@ -74,6 +75,7 @@ export interface CompactAnalyticsData {
   articleViewsByDate: Record<string, Record<string, number>>
   cumulativeMembers180: number[]
   tierCounts: TierCounts
+  signupSources?: { source: string; count: number }[]
 }
 
 export interface YAxisBounds {
@@ -530,6 +532,7 @@ export function deriveAnalyticsForRange(
     totalMembersPrev,
     memberPercentDelta,
     tierCounts: compact.tierCounts,
+    signupSources: compact.signupSources || [],
     topArticles: topArticlesList,
     allArticles: allArticlesList,
   }

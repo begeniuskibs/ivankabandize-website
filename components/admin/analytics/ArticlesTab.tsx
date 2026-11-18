@@ -2,20 +2,14 @@
 
 import React from 'react'
 import type { AnalyticsData } from './types'
-import {
-  ChipOwn,
-  ChipGA,
-  ChipV1,
-  ChipLater,
-} from './AnalyticsChips'
+import { ChipOwn } from './AnalyticsChips'
 import { formatKampalaDisplayDate } from '@/lib/adminAnalytics'
 
 interface ArticlesTabProps {
   data: AnalyticsData
-  v1Only: boolean
 }
 
-export function ArticlesTab({ data, v1Only }: ArticlesTabProps) {
+export function ArticlesTab({ data }: ArticlesTabProps) {
   const topViews =
     data.allArticles.length > 0 ? data.allArticles[0].views : 0
 
@@ -34,7 +28,6 @@ export function ArticlesTab({ data, v1Only }: ArticlesTabProps) {
           </div>
           <div className="flex items-center gap-1.5 flex-wrap">
             <ChipOwn />
-            <ChipV1 />
           </div>
         </div>
 
@@ -116,57 +109,6 @@ export function ArticlesTab({ data, v1Only }: ArticlesTabProps) {
             </table>
           </div>
         )}
-      </div>
-
-      {/* Grid 2: Later cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
-          <div className="flex justify-between items-start gap-2.5 mb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-[#232536] m-0">
-                Reading depth
-              </h2>
-              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                How far people scroll before leaving
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <ChipGA />
-              <ChipLater />
-            </div>
-          </div>
-          <p className="text-xs text-[#5C5F73] m-0">
-            Needs a scroll event added to the site. Not part of v1.
-          </p>
-        </div>
-
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
-          <div className="flex justify-between items-start gap-2.5 mb-3">
-            <div>
-              <h2 className="text-sm font-semibold text-[#232536] m-0">
-                Search terms that found you
-              </h2>
-              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Queries, clicks and position in Google
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
-              <ChipGA label="Search Console" />
-              <ChipLater />
-            </div>
-          </div>
-          <p className="text-xs text-[#5C5F73] m-0">
-            Needs a Google service account that Ivan creates. Not part of v1.
-          </p>
-        </div>
       </div>
     </div>
   )

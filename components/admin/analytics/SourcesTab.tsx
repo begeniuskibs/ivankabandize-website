@@ -1,23 +1,39 @@
 'use client'
 
 import React from 'react'
-import { ChipGA, ChipLater } from './AnalyticsChips'
+import { ChipGA } from './AnalyticsChips'
+import { GoogleBlockState } from './GoogleBlockState'
+import type { GoogleAnalyticsData, SearchConsoleData } from './types'
 
 interface SourcesTabProps {
-  v1Only: boolean
+  gaData?: GoogleAnalyticsData
+  gscData?: SearchConsoleData
 }
 
-export function SourcesTab({ v1Only }: SourcesTabProps) {
+export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
+  const ga = gaData || {
+    status: 'not_configured',
+    channels: [],
+    sources: [],
+    countries: [],
+    devices: [],
+  }
+
+  const gsc = gscData || {
+    status: 'not_configured',
+    totals: { clicks: 0, impressions: 0, ctr: 0, position: 0 },
+    queries: [],
+    pages: [],
+  }
+
+  const isConfigured = ga.status === 'ready' || gsc.status === 'ready'
+
   return (
-    <div className="space-y-3.5">
-      {/* Grid 2 Later cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+    <div className="space-y-4">
+      {/* Google Analytics: Channels and Top referring sites */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Channels */}
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -29,104 +45,298 @@ export function SourcesTab({ v1Only }: SourcesTabProps) {
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <ChipGA />
-              <ChipLater />
             </div>
           </div>
-          <div className="flex flex-col gap-2 opacity-50 select-none">
-            {[
-              { name: 'Direct', val: 38 },
-              { name: 'Google search', val: 27 },
-              { name: 'LinkedIn', val: 14 },
-              { name: 'Email newsletter', val: 11 },
-              { name: 'WhatsApp', val: 6 },
-              { name: 'Other sites', val: 4 },
-            ].map((item) => (
-              <div
-                key={item.name}
-                className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 items-center text-[13px]"
-              >
-                <span className="truncate text-[#5C5F73]">{item.name}</span>
-                <span className="tabular-nums text-[#5C5F73]">{item.val}%</span>
-                <div className="col-span-2 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
-                  <i
-                    className="block h-full bg-[#3C6FD1] rounded-full"
-                    style={{ width: `${item.val}%` }}
-                  />
+
+          <GoogleBlockState
+            status={ga.status}
+            loadingText="Loading channels..."
+            notConfiguredText="The Google connection is not set up yet."
+            errorText={ga.errorMessage}
+            emptyText="No channel data recorded for this period yet."
+          >
+            <div className="flex flex-col gap-2.5">
+              {ga.channels.map((item) => (
+                <div
+                  key={item.channelGroup}
+                  className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-3 gap-y-1 items-center text-[13px]"
+                >
+                  <span className="truncate text-[#232536] font-medium">
+                    {item.channelGroup}
+                  </span>
+                  <span className="tabular-nums text-[#5C5F73] text-xs">
+                    {item.sessions.toLocaleString()} sessions ({item.users.toLocaleString()} users)
+                  </span>
+                  <span className="tabular-nums text-[#232536] font-semibold text-xs min-w-[32px] text-right">
+                    {item.share}%
+                  </span>
+                  <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
+                    <i
+                      className="block h-full bg-[#3C6FD1] rounded-full"
+                      style={{ width: `${Math.min(item.share, 100)}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-[#5C5F73] mt-3 mb-0">
-            Coming with Google Analytics integration.
-          </p>
+              ))}
+            </div>
+          </GoogleBlockState>
         </div>
 
         {/* Top referring sites */}
-        <div
-          className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 transition-opacity ${
-            v1Only ? 'opacity-35' : ''
-          }`}
-        >
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
                 Top referring sites
               </h2>
               <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Links that sent readers to you
+                Links and sources that sent readers to you
               </p>
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
               <ChipGA />
-              <ChipLater />
             </div>
           </div>
-          <div className="flex flex-col gap-2 opacity-50 select-none">
-            {[
-              { name: 'linkedin.com', val: 112 },
-              { name: 't.co (X)', val: 41 },
-              { name: 'watoto.com', val: 33 },
-              { name: 'google.com', val: 30 },
-              { name: 'facebook.com', val: 22 },
-              { name: 'bing.com', val: 9 },
-            ].map((item) => (
-              <div
-                key={item.name}
-                className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 items-center text-[13px]"
-              >
-                <span className="truncate text-[#5C5F73]">{item.name}</span>
-                <span className="tabular-nums text-[#5C5F73]">{item.val}</span>
-                <div className="col-span-2 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
-                  <i
-                    className="block h-full bg-[#3C6FD1] rounded-full"
-                    style={{ width: `${(item.val / 112) * 100}%` }}
-                  />
+
+          <GoogleBlockState
+            status={ga.status}
+            loadingText="Loading referring sites..."
+            notConfiguredText="The Google connection is not set up yet."
+            errorText={ga.errorMessage}
+            emptyText="No referrer data recorded for this period yet."
+          >
+            <div className="flex flex-col gap-2.5">
+              {ga.sources.map((item) => (
+                <div
+                  key={item.sourceMedium}
+                  className="grid grid-cols-[minmax(0,1fr)_auto_auto] gap-x-3 gap-y-1 items-center text-[13px]"
+                >
+                  <span className="truncate text-[#232536] font-medium">
+                    {item.sourceMedium}
+                  </span>
+                  <span className="tabular-nums text-[#5C5F73] text-xs">
+                    {item.sessions.toLocaleString()} sessions
+                  </span>
+                  <span className="tabular-nums text-[#232536] font-semibold text-xs min-w-[32px] text-right">
+                    {item.share}%
+                  </span>
+                  <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
+                    <i
+                      className="block h-full bg-[#3C6FD1] rounded-full"
+                      style={{ width: `${Math.min(item.share, 100)}%` }}
+                    />
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          <p className="text-xs text-[#5C5F73] mt-3 mb-0">
-            Coming with Google Analytics integration.
-          </p>
+              ))}
+            </div>
+          </GoogleBlockState>
         </div>
       </div>
 
-      {/* Notice Callout */}
-      <div className="flex gap-3 items-start bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-[#5C5F73] text-sm leading-relaxed">
-        <span aria-hidden="true" className="text-base select-none mt-0.5">
-          &#9432;
-        </span>
-        <div>
-          <b className="text-[#232536] font-semibold">
-            Why Sources is a later step.{' '}
-          </b>
-          Where a reader came from is only known to Google Analytics, and only for
-          visitors who accepted cookies. To show it here, Google needs to hand the
-          numbers to this page through a service account. Until then, the Google
-          Analytics link on Overview shows the same thing.
+      {/* Search Console: Performance totals */}
+      <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+        <div className="flex justify-between items-start gap-2.5 mb-3">
+          <div>
+            <h2 className="text-sm font-semibold text-[#232536] m-0">
+              Search Console performance
+            </h2>
+            <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
+              Total organic search traffic from Google (sc-domain:ivankabandize.com)
+            </p>
+          </div>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <ChipGA label="Search Console" />
+          </div>
+        </div>
+
+        <GoogleBlockState
+          status={gsc.status}
+          loadingText="Loading Search Console totals..."
+          notConfiguredText="The Search Console connection is not set up yet."
+          errorText={gsc.errorMessage}
+          emptyText="No Search Console totals recorded for this period yet."
+        >
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+              <span className="block text-xs font-medium text-[#5C5F73]">
+                Total clicks
+              </span>
+              <span className="block text-2xl font-bold tracking-tight text-[#232536] mt-1 tabular-nums">
+                {gsc.totals.clicks.toLocaleString()}
+              </span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+              <span className="block text-xs font-medium text-[#5C5F73]">
+                Total impressions
+              </span>
+              <span className="block text-2xl font-bold tracking-tight text-[#232536] mt-1 tabular-nums">
+                {gsc.totals.impressions.toLocaleString()}
+              </span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+              <span className="block text-xs font-medium text-[#5C5F73]">
+                Average CTR
+              </span>
+              <span className="block text-2xl font-bold tracking-tight text-[#232536] mt-1 tabular-nums">
+                {(gsc.totals.ctr * 100).toFixed(1)}%
+              </span>
+            </div>
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+              <span className="block text-xs font-medium text-[#5C5F73]">
+                Average position
+              </span>
+              <span className="block text-2xl font-bold tracking-tight text-[#232536] mt-1 tabular-nums">
+                {gsc.totals.position.toFixed(1)}
+              </span>
+            </div>
+          </div>
+        </GoogleBlockState>
+      </div>
+
+      {/* Search Console: Top 10 queries and Top 10 pages */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Top 10 queries */}
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+          <div className="flex justify-between items-start gap-2.5 mb-3">
+            <div>
+              <h2 className="text-sm font-semibold text-[#232536] m-0">
+                Top search queries
+              </h2>
+              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
+                Top 10 searches that brought readers to your site
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <ChipGA label="Search Console" />
+            </div>
+          </div>
+
+          <GoogleBlockState
+            status={gsc.status}
+            loadingText="Loading search queries..."
+            notConfiguredText="The Search Console connection is not set up yet."
+            errorText={gsc.errorMessage}
+            emptyText="No search queries recorded for this period yet."
+          >
+            <div className="overflow-x-auto max-w-full">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[#F0E4D2] text-[#5C5F73]">
+                    <th className="py-2 px-2 font-medium">Query</th>
+                    <th className="py-2 px-2 font-medium text-right">Clicks</th>
+                    <th className="py-2 px-2 font-medium text-right">Impressions</th>
+                    <th className="py-2 px-2 font-medium text-right">CTR</th>
+                    <th className="py-2 px-2 font-medium text-right">Pos</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0E4D2]/60">
+                  {gsc.queries.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-[#FAF6F0]/50 transition-colors">
+                      <td className="py-2 px-2 font-medium text-[#232536] max-w-[160px] truncate">
+                        {item.key}
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#232536]">
+                        {item.clicks.toLocaleString()}
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#5C5F73]">
+                        {item.impressions.toLocaleString()}
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#5C5F73]">
+                        {(item.ctr * 100).toFixed(1)}%
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#5C5F73]">
+                        {item.position.toFixed(1)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GoogleBlockState>
+        </div>
+
+        {/* Top 10 pages */}
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+          <div className="flex justify-between items-start gap-2.5 mb-3">
+            <div>
+              <h2 className="text-sm font-semibold text-[#232536] m-0">
+                Top search pages
+              </h2>
+              <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
+                Top 10 landing pages in Google search results
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              <ChipGA label="Search Console" />
+            </div>
+          </div>
+
+          <GoogleBlockState
+            status={gsc.status}
+            loadingText="Loading search pages..."
+            notConfiguredText="The Search Console connection is not set up yet."
+            errorText={gsc.errorMessage}
+            emptyText="No search pages recorded for this period yet."
+          >
+            <div className="overflow-x-auto max-w-full">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead>
+                  <tr className="border-b border-[#F0E4D2] text-[#5C5F73]">
+                    <th className="py-2 px-2 font-medium">Page</th>
+                    <th className="py-2 px-2 font-medium text-right">Clicks</th>
+                    <th className="py-2 px-2 font-medium text-right">Impressions</th>
+                    <th className="py-2 px-2 font-medium text-right">CTR</th>
+                    <th className="py-2 px-2 font-medium text-right">Pos</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#F0E4D2]/60">
+                  {gsc.pages.map((item, idx) => (
+                    <tr key={idx} className="hover:bg-[#FAF6F0]/50 transition-colors">
+                      <td className="py-2 px-2 font-medium text-[#232536] max-w-[160px] truncate" title={item.key}>
+                        {item.key}
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#232536]">
+                        {item.clicks.toLocaleString()}
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#5C5F73]">
+                        {item.impressions.toLocaleString()}
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#5C5F73]">
+                        {(item.ctr * 100).toFixed(1)}%
+                      </td>
+                      <td className="py-2 px-2 tabular-nums text-right text-[#5C5F73]">
+                        {item.position.toFixed(1)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </GoogleBlockState>
         </div>
       </div>
+
+      {/* Lag Notice */}
+      <p className="text-xs text-[#5C5F73] mt-2 mb-0">
+        Google Analytics data can lag 24 to 48 hours and Search Console 2 to 3 days.
+      </p>
+
+      {/* Notice Callout */}
+      {!isConfigured && (
+        <div className="flex gap-3 items-start bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-[#5C5F73] text-sm leading-relaxed mt-3">
+          <span aria-hidden="true" className="text-base select-none mt-0.5">
+            &#9432;
+          </span>
+          <div>
+            <b className="text-[#232536] font-semibold">
+              Connecting Google Analytics and Search Console.{' '}
+            </b>
+            Where a reader came from is reported by Google Analytics for visitors who accepted cookies.
+            Search queries and impressions come directly from Google Search Console.
+            To display live numbers on this page, configure the GOOGLE_SERVICE_ACCOUNT_JSON variable in environment settings.
+          </div>
+        </div>
+      )}
     </div>
   )
 }
-

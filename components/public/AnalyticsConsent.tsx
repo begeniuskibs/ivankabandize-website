@@ -93,6 +93,9 @@ function PageViewTracker({
 
   useEffect(() => {
     if (consent !== 'granted') return
+    if (!pathname || pathname.startsWith('/admin') || pathname.startsWith('/api')) {
+      return
+    }
     initGtag(gaId)
     sendPageView(pathname, searchParams)
   }, [pathname, searchParams, consent, gaId])
@@ -117,6 +120,8 @@ export function CookieSettingsButton() {
 }
 
 function AnalyticsConsentInner({ gaId }: { gaId: string }) {
+  const pathname = usePathname()
+  const isAdminOrApi = Boolean(pathname && (pathname.startsWith('/admin') || pathname.startsWith('/api')))
   const consent = useSyncExternalStore(
     subscribeConsent,
     getConsentSnapshot,
@@ -178,7 +183,7 @@ function AnalyticsConsentInner({ gaId }: { gaId: string }) {
 
   return (
     <>
-      {consent === 'granted' && (
+      {!isAdminOrApi && consent === 'granted' && (
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`}
           strategy="afterInteractive"
@@ -238,4 +243,3 @@ export default function AnalyticsConsent() {
   }
   return <AnalyticsConsentInner gaId={GA_MEASUREMENT_ID} />
 }
-
