@@ -338,13 +338,10 @@ async function fetchGAData(
       ]
     }
 
-    // Device categories shares summing to 100% of total users
-    const devicesDenominator =
-      totalUsers > 0
-        ? totalUsers
-        : devicesRes.rows.reduce((sum, r) => sum + r.metrics[0], 0) || 1
+    // Device categories shares summing to 100% computed against the sum of device rows' users
+    const deviceSum = devicesRes.rows.reduce((sum, r) => sum + r.metrics[0], 0)
 
-    const rawDevices: DeviceCategoryRow[] = devicesRes.rows.map((r) => {
+    const mappedDevices = devicesRes.rows.map((r) => {
       let categoryName = r.dimension
       const lower = categoryName.toLowerCase()
       if (lower === 'mobile') categoryName = 'Phone'
@@ -356,18 +353,53 @@ async function fetchGAData(
         deviceCategory: categoryName,
         users: r.metrics[0],
         sessions: r.metrics[1] || 0,
-        share: Math.round((r.metrics[0] / devicesDenominator) * 100),
       }
     })
-    rawDevices.sort((a, b) => b.users - a.users)
+    mappedDevices.sort((a, b) => b.users - a.users)
 
-    if (rawDevices.length > 0 && devicesDenominator > 0) {
-      const shareSum = rawDevices.reduce((sum, d) => sum + d.share, 0)
-      if (shareSum !== 100 && shareSum > 0) {
-        rawDevices[0].share += 100 - shareSum
+    let devices: DeviceCategoryRow[] = []
+    if (deviceSum > 0) {
+      const items = mappedDevices.map((d, index) => {
+        const quota = (d.users / deviceSum) * 100
+        const floor = Math.floor(quota)
+        const remainder = quota - floor
+        return {
+          ...d,
+          floor,
+          remainder,
+          originalIndex: index,
+        }
+      })
+
+      const totalFloors = items.reduce((sum, it) => sum + it.floor, 0)
+      const pointsToDistribute = 100 - totalFloors
+
+      const sortedByRemainder = [...items].sort((a, b) => {
+        if (b.remainder !== a.remainder) {
+          return b.remainder - a.remainder
+        }
+        return a.originalIndex - b.originalIndex
+      })
+
+      const bonusIndices = new Set<number>()
+      for (let i = 0; i < pointsToDistribute && i < sortedByRemainder.length; i++) {
+        bonusIndices.add(sortedByRemainder[i].originalIndex)
       }
+
+      devices = items.map((it) => ({
+        deviceCategory: it.deviceCategory,
+        users: it.users,
+        sessions: it.sessions,
+        share: it.floor + (bonusIndices.has(it.originalIndex) ? 1 : 0),
+      }))
+    } else {
+      devices = mappedDevices.map((d) => ({
+        deviceCategory: d.deviceCategory,
+        users: d.users,
+        sessions: d.sessions,
+        share: 0,
+      }))
     }
-    const devices = rawDevices
 
     const isEmpty =
       totalUsers === 0 &&

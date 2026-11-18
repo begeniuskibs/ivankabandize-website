@@ -225,6 +225,9 @@ export function AudienceTab({
                   </div>
                 ))}
               </div>
+              <p className="text-[12px] text-[#5C5F73] mt-3 mb-0 leading-relaxed">
+                Some people use more than one device, so they are counted once per device type.
+              </p>
             </GoogleBlockState>
           </div>
         </div>
