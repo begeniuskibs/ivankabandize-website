@@ -14,6 +14,16 @@ export const aiLaborMarket: Digest = {
   h1: 'Is AI taking jobs <em>yet</em>?',
   lead:
     'Anthropic\'s economists built a new way to measure which jobs AI is actually touching, then checked it against US employment data. The honest answer so far is "not that we can see, with one early warning". Here is the short version.',
+  about: {
+    title: 'Labor market impacts of AI: A new measure and early evidence',
+    publisher: 'Anthropic',
+    year: '2026',
+    purpose: 'Compares what AI could do in each job with what it is actually doing.',
+    likelyHelps:
+      'People who hire, plan careers, make policy, or are working out how AI touches their own work.',
+    whyPicked:
+      'Work is how most of us serve. If workers, employers and leaders see what AI actually does to jobs today, they can prepare with facts instead of fear.',
+  },
   facts: [
     [800, 'occupations mapped'],
     [17, 'pages'],

@@ -155,6 +155,15 @@ export interface DigestChapter {
 
 export type DigestHeroArt = 'models' | 'trends' | 'coverage'
 
+export interface DigestAbout {
+  title: string
+  publisher: string
+  year: string
+  purpose: string
+  likelyHelps: string
+  whyPicked: string
+}
+
 export interface Digest {
   id: string
   slug: string
@@ -167,6 +176,7 @@ export interface Digest {
   kick: string
   h1: string
   lead: string
+  about: DigestAbout
   facts: [number, string][]
   key: string[]
   credit: string
