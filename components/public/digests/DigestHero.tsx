@@ -2,7 +2,15 @@
 
 import React, { useEffect, useRef, useState } from 'react'
 import { ArrowRight, ExternalLink } from 'lucide-react'
+import { ChevronDown } from 'lucide-react'
 import type { DigestHeroArt } from '@/lib/digests/types'
+import type { DigestAbout } from '@/lib/digests/types'
+
+function getShortPublisher(pub: string): string {
+  if (pub.includes('The Gospel Coalition')) return 'The Gospel Coalition'
+  if (pub.includes('McKinsey')) return 'McKinsey'
+  return pub
+}
 
 interface DigestHeroProps {
   kick: string
@@ -15,6 +23,7 @@ interface DigestHeroProps {
   isFull: boolean
   onToggleFull: (full: boolean) => void
   onJumpToStart: () => void
+  about?: DigestAbout
 }
 
 function AnimatedFact({ target, label }: { target: number | string; label: string }) {
@@ -432,9 +441,11 @@ export default function DigestHero({
   isFull,
   onToggleFull,
   onJumpToStart,
+  about,
 }: DigestHeroProps) {
   const headerRef = useRef<HTMLElement>(null)
   const [isHeroVisible, setIsHeroVisible] = useState(true)
+  const [isAboutExpanded, setIsAboutExpanded] = useState(false)
 
   useEffect(() => {
     const el = headerRef.current
@@ -549,6 +560,106 @@ export default function DigestHero({
             {facts.map(([num, lbl], i) => (
               <AnimatedFact key={i} target={num} label={lbl} />
             ))}
+          </div>
+        )}
+
+        {/* About this report strip */}
+        {about && (
+          <div className="mt-[26px] rounded-[16px] bg-white/[0.05] border border-white/10 p-4 sm:p-5 md:p-[20px_24px]">
+            {/* Desktop layout: md and up */}
+            <div className="hidden md:block">
+              <p className="text-[#EF5B45] text-[11px] font-bold uppercase tracking-[0.14em] mb-4">
+                About this report
+              </p>
+              {/* Row 1: 4 columns */}
+              <div className="grid grid-cols-[1.5fr_1.5fr_0.5fr_1.4fr] gap-[28px]">
+                <div>
+                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Full title</p>
+                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.title}</p>
+                </div>
+                <div>
+                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Publisher</p>
+                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.publisher}</p>
+                </div>
+                <div>
+                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Year</p>
+                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.year}</p>
+                </div>
+                <div>
+                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Main purpose</p>
+                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.purpose}</p>
+                </div>
+              </div>
+              {/* 1px divider */}
+              <div className="border-t border-white/10 my-4" />
+              {/* Row 2: 2 columns */}
+              <div className="grid grid-cols-2 gap-[28px]">
+                <div>
+                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Likely helps</p>
+                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.likelyHelps}</p>
+                </div>
+                <div>
+                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Why I picked it</p>
+                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.whyPicked}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile layout: max-md */}
+            <div className="md:hidden">
+              <button
+                type="button"
+                onClick={() => setIsAboutExpanded((prev) => !prev)}
+                aria-expanded={isAboutExpanded}
+                aria-controls="about-report-details"
+                className="w-full flex items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 focus-visible:ring-offset-[#11121C] rounded-lg"
+              >
+                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pr-2">
+                  <span className="text-[#EF5B45] text-[11px] font-bold uppercase tracking-[0.14em]">
+                    About this report
+                  </span>
+                  <span className="text-white/80 text-xs font-normal">
+                    {getShortPublisher(about.publisher)} - {about.year}
+                  </span>
+                </div>
+                <ChevronDown
+                  size={16}
+                  aria-hidden="true"
+                  className={`text-[#9FE3C5] shrink-0 transition-transform duration-200 motion-reduce:transition-none ${
+                    isAboutExpanded ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {isAboutExpanded && (
+                <div id="about-report-details" className="mt-4 pt-3 border-t border-white/10 space-y-3.5">
+                  <div>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Full title</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.title}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Publisher</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.publisher}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Year</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.year}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Main purpose</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.purpose}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Likely helps</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.likelyHelps}</p>
+                  </div>
+                  <div>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Why I picked it</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.whyPicked}</p>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         )}
 

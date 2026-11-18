@@ -191,6 +191,7 @@ export default function DigestView({ slug }: DigestViewProps) {
         isFull={isFull}
         onToggleFull={setIsFull}
         onJumpToStart={() => scrollToSection(0)}
+        about={digest.about}
       />
 
       {/* Main content grid with sticky side rail */}

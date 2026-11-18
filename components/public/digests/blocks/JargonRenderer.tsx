@@ -40,14 +40,14 @@ export default function JargonRenderer({ block }: { block: JargonBlock }) {
               <span
                 data-jargon-front="true"
                 aria-hidden={isFlipped}
-                className={`[grid-area:card] [backface-visibility:hidden] [transform:rotateY(0deg)] bg-white border border-[#F0E4D2] group-hover:border-[#CF3F29]/60 rounded-2xl p-4 sm:p-5 flex flex-col justify-between w-full h-full transition-colors ${
+                className={`[grid-area:card] [backface-visibility:hidden] [transform:rotateY(0deg)] bg-white border border-[#F0E4D2] group-hover:border-[#CF3F29]/60 rounded-2xl p-4 sm:p-5 flex flex-col justify-start w-full h-full transition-colors ${
                   isFlipped ? 'motion-reduce:invisible motion-reduce:opacity-0' : ''
                 }`}
               >
                 <span className="font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-bold text-[#232536] leading-snug block">
                   {item.t}
                 </span>
-                <span className="text-xs text-[#5C5F73] mt-3 block">
+                <span className="text-xs text-[#5C5F73] mt-auto pt-3 block">
                   Tap to translate
                 </span>
               </span>
@@ -56,7 +56,7 @@ export default function JargonRenderer({ block }: { block: JargonBlock }) {
               <span
                 data-jargon-back="true"
                 aria-hidden={!isFlipped}
-                className={`[grid-area:card] [backface-visibility:hidden] [transform:rotateY(180deg)] motion-reduce:[transform:none] bg-[#232536] border border-[#232536] text-white rounded-2xl p-4 sm:p-5 flex flex-col justify-center w-full h-full ${
+                className={`[grid-area:card] [backface-visibility:hidden] [transform:rotateY(180deg)] motion-reduce:[transform:none] bg-[#232536] border border-[#232536] text-white rounded-2xl p-4 sm:p-5 flex flex-col justify-start w-full h-full ${
                   !isFlipped ? 'motion-reduce:invisible motion-reduce:opacity-0' : ''
                 }`}
               >
