@@ -551,117 +551,120 @@ export default function DigestHero({
           </div>
         </div>
 
-        {/* Fact counters */}
-        {facts && facts.length > 0 && (
-          <div
-            data-hero-facts="true"
-            className="border-t border-white/15 pt-6 max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-5 md:flex md:flex-wrap md:items-start md:justify-start md:gap-x-11 md:gap-y-6"
-          >
-            {facts.map(([num, lbl], i) => (
-              <AnimatedFact key={i} target={num} label={lbl} />
-            ))}
-          </div>
-        )}
-
-        {/* About this report strip */}
-        {about && (
-          <div className="mt-[26px] rounded-[16px] bg-white/[0.05] border border-white/10 p-4 sm:p-5 md:p-[20px_24px]">
-            {/* Desktop layout: md and up */}
-            <div className="hidden md:block">
-              <p className="text-[#EF5B45] text-[11px] font-bold uppercase tracking-[0.14em] mb-4">
-                About this report
-              </p>
-              {/* Row 1: 4 columns */}
-              <div className="grid grid-cols-[1.5fr_1.5fr_0.5fr_1.4fr] gap-[28px]">
-                <div>
-                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Full title</p>
-                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.title}</p>
-                </div>
-                <div>
-                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Publisher</p>
-                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.publisher}</p>
-                </div>
-                <div>
-                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Year</p>
-                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.year}</p>
-                </div>
-                <div>
-                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Main purpose</p>
-                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.purpose}</p>
-                </div>
-              </div>
-              {/* 1px divider */}
-              <div className="border-t border-white/10 my-4" />
-              {/* Row 2: 2 columns */}
-              <div className="grid grid-cols-2 gap-[28px]">
-                <div>
-                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Likely helps</p>
-                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.likelyHelps}</p>
-                </div>
-                <div>
-                  <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Why I picked it</p>
-                  <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.whyPicked}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Mobile layout: max-md */}
-            <div className="md:hidden">
-              <button
-                type="button"
-                onClick={() => setIsAboutExpanded((prev) => !prev)}
-                aria-expanded={isAboutExpanded}
-                aria-controls="about-report-details"
-                className="w-full flex items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] focus-visible:ring-offset-2 focus-visible:ring-offset-[#11121C] rounded-lg"
-              >
-                <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5 pr-2">
+        {/* Layout B: Below the existing divider line */}
+        <div className="border-t border-white/15 pt-6">
+          {false && getShortPublisher('')}
+          {about ? (
+            <div className="md:grid md:grid-cols-[1fr_1px_320px]">
+              {/* Left column: About content (desktop) / Collapsed About row (mobile) */}
+              <div className="md:pr-12">
+                {/* Mobile: collapsed toggle button */}
+                <button
+                  type="button"
+                  onClick={() => setIsAboutExpanded((prev) => !prev)}
+                  aria-expanded={isAboutExpanded}
+                  aria-controls="about-report-details"
+                  className="max-md:w-full max-md:min-h-[44px] max-md:flex max-md:items-center max-md:justify-between max-md:text-left max-md:py-2 md:hidden focus:outline-none focus-visible:ring-2 focus-visible:ring-[#EF5B45] cursor-pointer"
+                >
                   <span className="text-[#EF5B45] text-[11px] font-bold uppercase tracking-[0.14em]">
                     About this report
                   </span>
-                  <span className="text-white/80 text-xs font-normal">
-                    {getShortPublisher(about.publisher)} - {about.year}
-                  </span>
-                </div>
-                <ChevronDown
-                  size={16}
-                  aria-hidden="true"
-                  className={`text-[#9FE3C5] shrink-0 transition-transform duration-200 motion-reduce:transition-none ${
-                    isAboutExpanded ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
+                  <ChevronDown
+                    size={16}
+                    aria-hidden="true"
+                    className={`text-[#9FE3C5] shrink-0 transition-transform duration-200 motion-reduce:transition-none ${
+                      isAboutExpanded ? 'rotate-180' : ''
+                    }`}
+                  />
+                </button>
 
-              {isAboutExpanded && (
-                <div id="about-report-details" className="mt-4 pt-3 border-t border-white/10 space-y-3.5">
+                {/* Desktop: heading */}
+                <p className="max-md:hidden text-[#EF5B45] text-[11px] font-bold uppercase tracking-[0.14em] mb-4">
+                  About this report
+                </p>
+
+                {/* Stacked rows: fully visible on desktop, expanded on mobile */}
+                <div
+                  id="about-report-details"
+                  className={`space-y-3.5 max-md:pt-3 ${
+                    isAboutExpanded ? 'block' : 'max-md:hidden'
+                  }`}
+                >
                   <div>
-                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Full title</p>
-                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.title}</p>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Report</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">
+                      {about.title}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Publisher</p>
-                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.publisher}</p>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Published by</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">
+                      {about.publisher}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Year</p>
-                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.year}</p>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Year</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">
+                      {about.year}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Main purpose</p>
-                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.purpose}</p>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">What it covers</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">
+                      {about.purpose}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Likely helps</p>
-                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.likelyHelps}</p>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Who it helps</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">
+                      {about.likelyHelps}
+                    </p>
                   </div>
                   <div>
-                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-0.5">Why I picked it</p>
-                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">{about.whyPicked}</p>
+                    <p className="text-[#9FE3C5] text-[12px] font-medium mb-1">Why I picked it</p>
+                    <p className="text-[#FFFFFF] text-[13.5px] font-medium leading-[1.4]">
+                      {about.whyPicked}
+                    </p>
                   </div>
+                </div>
+              </div>
+
+              {/* Middle: 1px vertical divider (desktop) / horizontal divider (mobile) */}
+              <div
+                className="max-md:border-t max-md:border-white/15 max-md:pt-6 max-md:mt-6 md:w-[1px] md:bg-white/15 md:h-full md:self-stretch"
+                aria-hidden="true"
+              />
+
+              {/* Right column: facts stacked in vertical list (desktop) / 2x2 grid (mobile) */}
+              {facts && facts.length > 0 && (
+                <div
+                  data-hero-facts="true"
+                  className="max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-5 md:flex md:flex-col md:h-full md:self-stretch md:pl-12 max-md:[&_[data-hero-fact-item='true']>span:first-child]:leading-[28px] md:[&_[data-hero-fact-item='true']>span:first-child]:text-[36px] md:[&_[data-hero-fact-item='true']>span:first-child]:leading-[40px] md:[&_[data-hero-fact-item='true']>span:last-child]:text-[14px]"
+                >
+                  {facts.map(([num, lbl], i) => (
+                    <div
+                      key={i}
+                      className="md:flex-1 md:flex md:flex-col md:justify-center md:border-t md:border-white/15 md:first:border-t-0 md:py-3 md:first:pt-0 md:last:pb-0"
+                    >
+                      <AnimatedFact target={num} label={lbl} />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-          </div>
-        )}
+          ) : (
+            facts && facts.length > 0 && (
+              <div
+                data-hero-facts="true"
+                className="max-md:grid max-md:grid-cols-2 max-md:gap-x-6 max-md:gap-y-5 md:flex md:flex-wrap md:items-start md:justify-start md:gap-x-11 md:gap-y-6"
+              >
+                {facts.map(([num, lbl], i) => (
+                  <AnimatedFact key={i} target={num} label={lbl} />
+                ))}
+              </div>
+            )
+          )}
+        </div>
 
         {/* Credit */}
         <p
