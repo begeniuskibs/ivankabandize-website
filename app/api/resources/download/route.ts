@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server'
 import {
   RESOURCE_DOWNLOAD_LIMITS,
-  computeRequestFingerprint,
   escapeHtml,
   isSameOrigin,
   sanitizeDownloadSubject,
   validateResourceDownloadPayload,
 } from '@/lib/resourceDownload'
+import { computeRequestFingerprint } from '@/lib/resourceFingerprint'
 import {
   RESOURCE_CONSENT_TEXT,
   RESOURCE_CONSENT_VERSION,

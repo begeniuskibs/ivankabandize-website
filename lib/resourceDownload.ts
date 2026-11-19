@@ -1,7 +1,5 @@
-// Pure validation, normalization, fingerprint, and limit helpers for Resources downloads
+// Pure validation, normalization, and limit helpers for Resources downloads
 // House style: spaced hyphen " - " only
-
-import { createHmac } from 'node:crypto'
 
 export const RESOURCE_DOWNLOAD_LIMITS = {
   MAX_REQUEST_BODY_CHARS: 4000,
@@ -44,17 +42,6 @@ export interface ResourceDownloadValidationResult {
   isValid: boolean
   error?: string
   data?: ValidatedResourceDownload
-}
-
-/**
- * Computes an HMAC-SHA256 request fingerprint keyed by the server secret over the client IP.
- * Fails closed if the secret is missing or shorter than 32 characters.
- */
-export function computeRequestFingerprint(ip: string, secret: string): string {
-  if (!secret || secret.length < RESOURCE_DOWNLOAD_LIMITS.MIN_SECRET_LENGTH) {
-    throw new Error('RESOURCE_FINGERPRINT_SECRET must be at least 32 characters')
-  }
-  return createHmac('sha256', secret).update(ip).digest('hex')
 }
 
 /**

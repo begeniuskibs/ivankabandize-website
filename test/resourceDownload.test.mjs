@@ -6,12 +6,12 @@ import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
 import {
   RESOURCE_DOWNLOAD_LIMITS,
-  computeRequestFingerprint,
   escapeHtml,
   isSameOrigin,
   sanitizeDownloadSubject,
   validateResourceDownloadPayload,
 } from '../lib/resourceDownload.ts'
+import { computeRequestFingerprint } from '../lib/resourceFingerprint.ts'
 import {
   RESOURCE_CONSENT_TEXT,
   RESOURCE_CONSENT_VERSION,
