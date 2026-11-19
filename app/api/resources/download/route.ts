@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server'
 import {
   RESOURCE_DOWNLOAD_LIMITS,
-  escapeHtml,
   isSameOrigin,
-  sanitizeDownloadSubject,
   validateResourceDownloadPayload,
 } from '@/lib/resourceDownload'
 import { computeRequestFingerprint } from '@/lib/resourceFingerprint'
@@ -11,9 +9,9 @@ import {
   RESOURCE_CONSENT_TEXT,
   RESOURCE_CONSENT_VERSION,
 } from '@/lib/resourceConsent'
+import { buildResourceEmail } from '@/lib/resourceEmail'
 import { createAdminClient } from '@/utils/supabase/admin'
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
-import { cleanFirstName } from '@/lib/confirmation-email'
 import { SITE_URL } from '@/lib/siteUrl'
 
 export const maxDuration = 30
@@ -120,7 +118,7 @@ export async function POST(request: Request) {
 
     const { data: resource, error: resourceError } = await adminClient
       .from('resources')
-      .select('id, title, file_path, file_name, visibility')
+      .select('id, title, kind, delivery_type, file_path, file_name, external_url, visibility')
       .eq('slug', validation.data.slug)
       .eq('status', 'published')
       .maybeSingle()
@@ -219,39 +217,73 @@ export async function POST(request: Request) {
       )
     }
 
-    // 8. On-screen link: createSignedUrl (60 seconds)
-    const { data: signedData, error: signedError } = await adminClient.storage
-      .from('resource-files')
-      .createSignedUrl(
-        resource.file_path,
-        RESOURCE_DOWNLOAD_LIMITS.SIGNED_URL_EXPIRY_SECONDS,
-        {
-          download: resource.file_name,
-        }
-      )
+    // 8. On-screen link delivery
+    const isLinkDelivery = resource.delivery_type === 'link'
+    let onScreenUrl = ''
 
-    if (signedError || !signedData?.signedUrl) {
-      console.error('[resources/download] on-screen signed url generation error')
+    if (isLinkDelivery) {
+      const rawUrl = resource.external_url
+      const isValidExternalUrl =
+        typeof rawUrl === 'string' &&
+        rawUrl.startsWith('https://') &&
+        rawUrl.length <= 2000
+
+      if (!isValidExternalUrl) {
+        console.error('[resources/download] link resource has no valid external_url')
+        await adminClient
+          .from('resource_downloads')
+          .update({ email_error: 'Link resource misconfigured' })
+          .eq('id', insertedRow.id)
+
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Something went wrong. Please try again in a moment.',
+          },
+          { status: 500 }
+        )
+      }
+
+      onScreenUrl = rawUrl
       await adminClient
         .from('resource_downloads')
-        .update({ email_error: 'Failed to generate download link' })
+        .update({ signed_link_issued_at: new Date().toISOString() })
+        .eq('id', insertedRow.id)
+    } else {
+      // file delivery
+      const { data: signedData, error: signedError } = await adminClient.storage
+        .from('resource-files')
+        .createSignedUrl(
+          resource.file_path,
+          RESOURCE_DOWNLOAD_LIMITS.SIGNED_URL_EXPIRY_SECONDS,
+          {
+            download: resource.file_name,
+          }
+        )
+
+      if (signedError || !signedData?.signedUrl) {
+        console.error('[resources/download] on-screen signed url generation error')
+        await adminClient
+          .from('resource_downloads')
+          .update({ email_error: 'Failed to generate download link' })
+          .eq('id', insertedRow.id)
+
+        return NextResponse.json(
+          {
+            ok: false,
+            error: 'Something went wrong. Please try again in a moment.',
+          },
+          { status: 500 }
+        )
+      }
+
+      await adminClient
+        .from('resource_downloads')
+        .update({ signed_link_issued_at: new Date().toISOString() })
         .eq('id', insertedRow.id)
 
-      return NextResponse.json(
-        {
-          ok: false,
-          error: 'Something went wrong. Please try again in a moment.',
-        },
-        { status: 500 }
-      )
+      onScreenUrl = signedData.signedUrl
     }
-
-    await adminClient
-      .from('resource_downloads')
-      .update({ signed_link_issued_at: new Date().toISOString() })
-      .eq('id', insertedRow.id)
-
-    const onScreenUrl = signedData.signedUrl
 
     // 9. Emailed link: duplicate suppression & asynchronous delivery
     const duplicateWindowStart = new Date(
@@ -272,24 +304,36 @@ export async function POST(request: Request) {
 
     if (shouldSendEmail) {
       try {
-        const { data: emailSignedData, error: emailSignedError } =
-          await adminClient.storage
-            .from('resource-files')
-            .createSignedUrl(
-              resource.file_path,
-              RESOURCE_DOWNLOAD_LIMITS.EMAIL_SIGNED_URL_EXPIRY_SECONDS,
-              {
-                download: resource.file_name,
-              }
-            )
+        let emailTargetUrl: string | null = null
 
-        if (emailSignedError || !emailSignedData?.signedUrl) {
-          console.error('[resources/download] email signed url generation error')
-          await adminClient
-            .from('resource_downloads')
-            .update({ email_error: 'Failed to generate emailed download link' })
-            .eq('id', insertedRow.id)
+        if (isLinkDelivery) {
+          // Link resources carry external_url directly (no signing)
+          emailTargetUrl = resource.external_url
         } else {
+          // File resources create 24h signed URL
+          const { data: emailSignedData, error: emailSignedError } =
+            await adminClient.storage
+              .from('resource-files')
+              .createSignedUrl(
+                resource.file_path,
+                RESOURCE_DOWNLOAD_LIMITS.EMAIL_SIGNED_URL_EXPIRY_SECONDS,
+                {
+                  download: resource.file_name,
+                }
+              )
+
+          if (emailSignedError || !emailSignedData?.signedUrl) {
+            console.error('[resources/download] email signed url generation error')
+            await adminClient
+              .from('resource_downloads')
+              .update({ email_error: 'Failed to generate emailed download link' })
+              .eq('id', insertedRow.id)
+          } else {
+            emailTargetUrl = emailSignedData.signedUrl
+          }
+        }
+
+        if (emailTargetUrl) {
           const apiKey = process.env.RESEND_API_KEY
           const fromEmail = process.env.RESEND_FROM_EMAIL
 
@@ -299,28 +343,13 @@ export async function POST(request: Request) {
               .update({ email_error: 'Resend not configured on server' })
               .eq('id', insertedRow.id)
           } else {
-            const emailSignedUrl = emailSignedData.signedUrl
-            const cleanedFirst = cleanFirstName(validation.data.name)
-            const greeting = cleanedFirst
-              ? `Hi ${escapeHtml(cleanedFirst)},`
-              : 'Hello,'
-            const escapedTitle = escapeHtml(resource.title)
-            const escapedUrl = escapeHtml(emailSignedUrl)
-
-            const emailHtml = `
-              <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; color: #1a1a1a; line-height: 1.6;">
-                <p style="margin-top: 0; font-size: 16px;">${greeting}</p>
-                <p style="font-size: 16px;">Here is your copy of <strong>${escapedTitle}</strong>:</p>
-                <p style="margin: 24px 0;">
-                  <a href="${escapedUrl}" style="display: inline-block; padding: 12px 24px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 6px; font-weight: 600;">Download ${escapedTitle}</a>
-                </p>
-                <p style="font-size: 14px; color: #4b5563;">This link works for 24 hours.</p>
-                <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 32px 0 16px;" />
-                <p style="font-size: 13px; color: #6b7280; margin: 0;">You asked for this file at ivankabandize.com. Questions: <a href="mailto:privacy@ivankabandize.com" style="color: #6b7280;">privacy@ivankabandize.com</a>.</p>
-              </div>
-            `
-
-            const emailText = `${cleanedFirst ? `Hi ${cleanedFirst},` : 'Hello,'}\n\nHere is your copy of ${resource.title}:\n\n${emailSignedUrl}\n\nThis link works for 24 hours.\n\nYou asked for this file at ivankabandize.com. Questions: privacy@ivankabandize.com.`
+            const emailContent = buildResourceEmail({
+              title: resource.title,
+              name: validation.data.name,
+              url: emailTargetUrl,
+              delivery: isLinkDelivery ? 'link' : 'file',
+              kind: resource.kind,
+            })
 
             const resendRes = await fetch('https://api.resend.com/emails', {
               method: 'POST',
@@ -331,9 +360,9 @@ export async function POST(request: Request) {
               body: JSON.stringify({
                 from: fromEmail,
                 to: [validation.data.email],
-                subject: sanitizeDownloadSubject(resource.title),
-                html: emailHtml,
-                text: emailText,
+                subject: emailContent.subject,
+                html: emailContent.html,
+                text: emailContent.text,
               }),
               signal: AbortSignal.timeout(
                 RESOURCE_DOWNLOAD_LIMITS.RESEND_TIMEOUT_MS
@@ -371,10 +400,22 @@ export async function POST(request: Request) {
       }
     }
 
-    // 10. Respond 200 { ok: true, url, expiresInSeconds: 60 } and nothing else
+    // 10. Respond with success JSON
+    if (isLinkDelivery) {
+      return NextResponse.json(
+        {
+          ok: true,
+          delivery: 'link',
+          url: onScreenUrl,
+        },
+        { status: 200 }
+      )
+    }
+
     return NextResponse.json(
       {
         ok: true,
+        delivery: 'file',
         url: onScreenUrl,
         expiresInSeconds: 60,
       },

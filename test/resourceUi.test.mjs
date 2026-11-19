@@ -8,6 +8,7 @@ import {
   splitParagraphs,
   kindLabel,
   getDownloadErrorMessage,
+  ctaLabels,
 } from '../lib/resourceUi.ts'
 
 describe('formatFileSize', () => {
@@ -132,3 +133,44 @@ describe('getDownloadErrorMessage', () => {
     assert.equal(getDownloadErrorMessage(undefined), genericMsg)
   })
 })
+
+describe('ctaLabels', () => {
+  it('returns template-tailored labels for kind === "template"', () => {
+    const templateLink = ctaLabels('template', 'link')
+    assert.deepEqual(templateLink, {
+      open: 'Get the template',
+      submit: 'Send me the template',
+      success: 'Open the template',
+    })
+
+    const templateFile = ctaLabels('template', 'file')
+    assert.deepEqual(templateFile, {
+      open: 'Get the template',
+      submit: 'Send me the template',
+      success: 'Open the template',
+    })
+
+    const templateDefault = ctaLabels('template')
+    assert.deepEqual(templateDefault, {
+      open: 'Get the template',
+      submit: 'Send me the template',
+      success: 'Open the template',
+    })
+  })
+
+  it('returns default file-oriented labels for other kinds or missing kind', () => {
+    const expectedDefault = {
+      open: 'Get the file',
+      submit: 'Get the file',
+      success: 'Download now',
+    }
+
+    assert.deepEqual(ctaLabels('guide', 'link'), expectedDefault)
+    assert.deepEqual(ctaLabels('guide', 'file'), expectedDefault)
+    assert.deepEqual(ctaLabels('framework', 'file'), expectedDefault)
+    assert.deepEqual(ctaLabels(null, 'file'), expectedDefault)
+    assert.deepEqual(ctaLabels(undefined, 'file'), expectedDefault)
+    assert.deepEqual(ctaLabels('', 'link'), expectedDefault)
+  })
+})
+

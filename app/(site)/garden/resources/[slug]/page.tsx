@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResourceBySlug } from '@/lib/resources'
-import { formatFileSize, kindLabel, splitParagraphs } from '@/lib/resourceUi'
+import { ctaLabels, formatFileSize, kindLabel, splitParagraphs } from '@/lib/resourceUi'
 import ResourceDownloadForm, {
   ResourceStickyBar,
 } from '@/components/public/ResourceDownloadForm'
@@ -99,7 +99,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
               href="#get"
               className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-md shadow-sm transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
             >
-              Get the file
+              {ctaLabels(resource.kind, resource.delivery_type).open}
             </a>
           </div>
         </header>
@@ -166,12 +166,22 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
           id="get"
           className="pt-10 border-t border-[#F0E4D2] mt-12 scroll-mt-6"
         >
-          <ResourceDownloadForm slug={resource.slug} title={resource.title} />
+          <ResourceDownloadForm
+            slug={resource.slug}
+            title={resource.title}
+            kind={resource.kind}
+            delivery={resource.delivery_type}
+          />
         </section>
       </main>
 
       {/* Mobile-only sticky bottom bar */}
-      <ResourceStickyBar title={resource.title} formTargetId="get" />
+      <ResourceStickyBar
+        title={resource.title}
+        kind={resource.kind}
+        delivery={resource.delivery_type}
+        formTargetId="get"
+      />
     </div>
   )
 }
