@@ -186,6 +186,7 @@ export default function ResourceDownloadForm({
   // ================= SUCCESS PANEL =================
   if (downloadUrl) {
     if (deliveryType === 'link') {
+      const labels = ctaLabels(kind, 'link')
       return (
         <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 sm:p-10 shadow-xs max-w-xl mx-auto text-center motion-safe:transition-opacity duration-300 motion-reduce:transition-none">
           {/* Success Checkmark */}
@@ -218,7 +219,7 @@ export default function ResourceDownloadForm({
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl transition shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
             >
-              <span>Open the template</span>
+              <span>{labels.success}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
             </a>
           </div>
