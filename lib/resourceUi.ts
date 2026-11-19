@@ -92,3 +92,33 @@ export function getDownloadErrorMessage(
   }
   return 'That did not go through. Nothing was saved. Please try again in a moment.'
 }
+
+export interface ResourceCtaLabels {
+  open: string
+  submit: string
+  success: string
+}
+
+/**
+ * Returns calm CTA button and link labels tailored to resource kind and delivery mode.
+ */
+export function ctaLabels(
+  kind?: string | null,
+  delivery?: string | null
+): ResourceCtaLabels {
+  void delivery
+  const normalizedKind = (kind || '').trim().toLowerCase()
+  if (normalizedKind === 'template') {
+    return {
+      open: 'Get the template',
+      submit: 'Send me the template',
+      success: 'Open the template',
+    }
+  }
+  return {
+    open: 'Get the file',
+    submit: 'Get the file',
+    success: 'Download now',
+  }
+}
+

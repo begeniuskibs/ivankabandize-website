@@ -4,6 +4,7 @@
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
 import {
   RESOURCE_DOWNLOAD_LIMITS,
   escapeHtml,
@@ -348,3 +349,22 @@ describe('isSameOrigin', () => {
     )
   })
 })
+
+describe('Resource projection safety', () => {
+  it('PUBLIC_RESOURCE_COLUMNS does not leak sensitive columns', () => {
+    const source = readFileSync(
+      new URL('../lib/resources.ts', import.meta.url),
+      'utf8'
+    )
+    const match = source.match(/export const PUBLIC_RESOURCE_COLUMNS\s*=\s*['"`]([^'"`]+)['"`]/)
+    assert.ok(match, 'PUBLIC_RESOURCE_COLUMNS must be defined and exported')
+    const columns = match[1].split(',').map((c) => c.trim())
+    assert.equal(columns.includes('external_url'), false)
+    assert.equal(columns.includes('file_path'), false)
+    assert.equal(columns.includes('file_name'), false)
+    assert.ok(columns.includes('delivery_type'))
+    assert.ok(columns.includes('category'))
+    assert.ok(columns.includes('page_details'))
+  })
+})
+

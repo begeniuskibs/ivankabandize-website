@@ -8,7 +8,7 @@ import {
   RESOURCE_DOWNLOAD_LIMITS,
 } from '@/lib/resourceDownload'
 import { RESOURCE_CONSENT_TEXT } from '@/lib/resourceConsent'
-import { getDownloadErrorMessage } from '@/lib/resourceUi'
+import { ctaLabels, getDownloadErrorMessage } from '@/lib/resourceUi'
 
 // Interactive download gate form and mobile sticky action bar
 // House style: spaced hyphen " - " only
@@ -16,11 +16,15 @@ import { getDownloadErrorMessage } from '@/lib/resourceUi'
 export interface ResourceDownloadFormProps {
   slug: string
   title: string
+  kind?: string
+  delivery?: 'file' | 'link'
 }
 
 export default function ResourceDownloadForm({
   slug,
   title,
+  kind,
+  delivery = 'file',
 }: ResourceDownloadFormProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -32,6 +36,7 @@ export default function ResourceDownloadForm({
 
   // Success state
   const [downloadUrl, setDownloadUrl] = useState<string | null>(null)
+  const [deliveryType, setDeliveryType] = useState<'file' | 'link'>(delivery)
   const [secondsRemaining, setSecondsRemaining] = useState<number>(60)
 
   const nameInputRef = useRef<HTMLInputElement>(null)
@@ -62,9 +67,9 @@ export default function ResourceDownloadForm({
     return nextErrors
   }
 
-  // Handle countdown timer once URL is issued
+  // Handle countdown timer once URL is issued (for file downloads only)
   useEffect(() => {
-    if (!downloadUrl) return
+    if (!downloadUrl || deliveryType === 'link') return
 
     const timer = setInterval(() => {
       setSecondsRemaining((prev) => {
@@ -80,7 +85,14 @@ export default function ResourceDownloadForm({
     successHeadingRef.current?.focus()
 
     return () => clearInterval(timer)
-  }, [downloadUrl])
+  }, [downloadUrl, deliveryType])
+
+  // Move focus to success heading for link delivery
+  useEffect(() => {
+    if (downloadUrl && deliveryType === 'link') {
+      successHeadingRef.current?.focus()
+    }
+  }, [downloadUrl, deliveryType])
 
   const handleBlur = (field: 'name' | 'email') => {
     setTouched((prev) => ({ ...prev, [field]: true }))
@@ -136,7 +148,8 @@ export default function ResourceDownloadForm({
         return
       }
 
-      // Successful download link generation
+      // Successful download / link generation
+      setDeliveryType(data?.delivery === 'link' ? 'link' : 'file')
       setSecondsRemaining(60)
       setDownloadUrl(data.url)
       // Clear personal fields from component state
@@ -154,6 +167,7 @@ export default function ResourceDownloadForm({
 
   const handleReset = () => {
     setDownloadUrl(null)
+    setDeliveryType(delivery)
     setSecondsRemaining(60)
     setServerError(null)
     setName('')
@@ -168,6 +182,44 @@ export default function ResourceDownloadForm({
 
   // ================= SUCCESS PANEL =================
   if (downloadUrl) {
+    if (deliveryType === 'link') {
+      const labels = ctaLabels(kind, 'link')
+      return (
+        <div className="bg-white border border-[#F0E4D2] rounded-xl p-6 sm:p-10 shadow-sm max-w-xl mx-auto text-center motion-safe:transition-opacity">
+          <div
+            className="w-14 h-14 rounded-full bg-[#EBF7F2] text-[#1E7E5A] flex items-center justify-center mx-auto mb-4"
+            aria-hidden="true"
+          >
+            <Check className="w-7 h-7 stroke-[2.5]" />
+          </div>
+
+          <h2
+            ref={successHeadingRef}
+            tabIndex={-1}
+            className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] outline-none mb-3"
+          >
+            It is yours.
+          </h2>
+
+          <p className="text-sm sm:text-base text-[#5C5F73] leading-relaxed max-w-md mx-auto mb-6">
+            I have also sent the link to your inbox.
+          </p>
+
+          <div className="space-y-4">
+            <a
+              href={downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-md transition shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+            >
+              <span>{labels.success}</span>
+              <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
+            </a>
+          </div>
+        </div>
+      )
+    }
+
     const isExpired = secondsRemaining === 0
 
     return (
@@ -231,6 +283,8 @@ export default function ResourceDownloadForm({
   }
 
   // ================= GATE FORM =================
+  const currentCta = ctaLabels(kind, delivery)
+
   return (
     <div className="bg-white border border-[#F0E4D2] rounded-xl p-6 sm:p-10 shadow-sm max-w-xl mx-auto">
       <div className="mb-6">
@@ -401,7 +455,7 @@ export default function ResourceDownloadForm({
             </>
           ) : (
             <>
-              <span>Get the file</span>
+              <span>{currentCta.submit}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
             </>
           )}
@@ -412,14 +466,18 @@ export default function ResourceDownloadForm({
 }
 
 /**
- * Mobile-only sticky bottom bar with title and "Get the file" button.
+ * Mobile-only sticky bottom bar with title and action button.
  * Hides automatically when the form section is in view.
  */
 export function ResourceStickyBar({
   title,
+  kind,
+  delivery = 'file',
   formTargetId = 'get',
 }: {
   title: string
+  kind?: string
+  delivery?: 'file' | 'link'
   formTargetId?: string
 }) {
   const [isVisible, setIsVisible] = useState(true)
@@ -443,6 +501,8 @@ export function ResourceStickyBar({
 
   if (!isVisible) return null
 
+  const currentCta = ctaLabels(kind, delivery)
+
   return (
     <aside
       aria-label="Quick download"
@@ -456,7 +516,7 @@ export function ResourceStickyBar({
           href={`#${formTargetId}`}
           className="inline-flex items-center justify-center min-h-[48px] px-5 py-2.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-xs rounded-md shadow-sm transition whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#CF3F29]"
         >
-          Get the file
+          {currentCta.open}
         </a>
       </div>
     </aside>
