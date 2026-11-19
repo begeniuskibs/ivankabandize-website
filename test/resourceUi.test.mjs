@@ -9,6 +9,8 @@ import {
   kindLabel,
   getDownloadErrorMessage,
   ctaLabels,
+  shouldShowCategoryFilter,
+  filterResourcesByCategory,
 } from '../lib/resourceUi.ts'
 
 describe('formatFileSize', () => {
@@ -73,6 +75,7 @@ describe('kindLabel', () => {
     assert.equal(kindLabel('guide'), 'Guide')
     assert.equal(kindLabel('template'), 'Template')
     assert.equal(kindLabel('framework'), 'Framework')
+    assert.equal(kindLabel('digest_pdf'), 'Digest PDF')
   })
 
   it('handles case differences and fallbacks', () => {
@@ -173,4 +176,67 @@ describe('ctaLabels', () => {
     assert.deepEqual(ctaLabels('', 'link'), expectedDefault)
   })
 })
+
+describe('shouldShowCategoryFilter', () => {
+  it('returns true when there are 4 or more published resources', () => {
+    assert.equal(shouldShowCategoryFilter(4), true)
+    assert.equal(shouldShowCategoryFilter(5), true)
+    assert.equal(shouldShowCategoryFilter(10), true)
+  })
+
+  it('returns false when there are fewer than 4 published resources', () => {
+    assert.equal(shouldShowCategoryFilter(0), false)
+    assert.equal(shouldShowCategoryFilter(1), false)
+    assert.equal(shouldShowCategoryFilter(2), false)
+    assert.equal(shouldShowCategoryFilter(3), false)
+  })
+
+  it('returns false for non-numeric, negative or non-finite inputs', () => {
+    assert.equal(shouldShowCategoryFilter(-1), false)
+    assert.equal(shouldShowCategoryFilter(Number.NaN), false)
+    assert.equal(shouldShowCategoryFilter(null), false)
+    assert.equal(shouldShowCategoryFilter(undefined), false)
+  })
+})
+
+describe('filterResourcesByCategory', () => {
+  const sample = [
+    { title: 'Item 1', category: 'Productivity' },
+    { title: 'Item 2', category: 'Leadership' },
+    { title: 'Item 3', category: 'Productivity' },
+    { title: 'Item 4', category: null },
+    { title: 'Item 5', category: '' },
+  ]
+
+  it('returns all items when category is "All", null, undefined or empty', () => {
+    assert.deepEqual(filterResourcesByCategory(sample, 'All'), sample)
+    assert.deepEqual(filterResourcesByCategory(sample, 'all'), sample)
+    assert.deepEqual(filterResourcesByCategory(sample, null), sample)
+    assert.deepEqual(filterResourcesByCategory(sample, undefined), sample)
+    assert.deepEqual(filterResourcesByCategory(sample, ''), sample)
+    assert.deepEqual(filterResourcesByCategory(sample, '   '), sample)
+  })
+
+  it('filters by category case-insensitively', () => {
+    const prod = filterResourcesByCategory(sample, 'productivity')
+    assert.equal(prod.length, 2)
+    assert.equal(prod[0].title, 'Item 1')
+    assert.equal(prod[1].title, 'Item 3')
+
+    const leader = filterResourcesByCategory(sample, 'LEADERSHIP')
+    assert.equal(leader.length, 1)
+    assert.equal(leader[0].title, 'Item 2')
+  })
+
+  it('returns empty array when category has no matches', () => {
+    const none = filterResourcesByCategory(sample, 'NonExistent')
+    assert.deepEqual(none, [])
+  })
+
+  it('handles non-array inputs safely', () => {
+    assert.deepEqual(filterResourcesByCategory(null, 'Productivity'), [])
+    assert.deepEqual(filterResourcesByCategory(undefined, 'Productivity'), [])
+  })
+})
+
 

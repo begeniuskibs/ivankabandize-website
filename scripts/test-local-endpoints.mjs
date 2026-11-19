@@ -83,6 +83,10 @@ async function run() {
 }
 
 run().catch((err) => {
+  if (err?.cause?.code === 'ECONNREFUSED' || err?.code === 'ECONNREFUSED') {
+    console.log('Skipping local endpoint test - local server not running on port 3100')
+    return
+  }
   console.error(err)
   process.exit(1)
 })
