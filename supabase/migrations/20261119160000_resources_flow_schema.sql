@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS public.resources (
   CONSTRAINT resources_visibility_check CHECK (visibility IN ('public', 'members'))
 );
 
--- Trigger for auto - updating updated_at on public.resources
+-- Trigger for auto-updating updated_at on public.resources
 DROP TRIGGER IF EXISTS set_updated_at_resources ON public.resources;
 CREATE TRIGGER set_updated_at_resources
   BEFORE UPDATE ON public.resources
@@ -71,7 +71,7 @@ ALTER TABLE public.resources ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.resource_downloads ENABLE ROW LEVEL SECURITY;
 
 -- Policy on public.resources: ONE policy, owner only.
--- Public pages will read resources only through the server - only admin client,
+-- Public pages will read resources only through the server-only admin client,
 -- selecting safe columns, so file_path is never visible to visitors.
 DROP POLICY IF EXISTS "resources_owner_all" ON public.resources;
 CREATE POLICY "resources_owner_all"
@@ -129,7 +129,7 @@ REVOKE TRUNCATE, TRIGGER, REFERENCES ON TABLE public.resources, public.resource_
 -- It must NOT have INSERT privilege (all download records are created exclusively via service_role admin client)
 REVOKE INSERT ON TABLE public.resource_downloads FROM authenticated;
 
--- Grant explicit least - privilege permissions to authenticated role
+-- Grant explicit least-privilege permissions to authenticated role
 GRANT SELECT, INSERT, UPDATE, DELETE ON TABLE public.resources TO authenticated;
 GRANT SELECT, UPDATE, DELETE ON TABLE public.resource_downloads TO authenticated;
 
@@ -149,6 +149,6 @@ ON CONFLICT (id) DO UPDATE SET
   allowed_mime_types = ARRAY['application/pdf', 'application/zip'];
 
 -- Note: Deliberately NO storage.objects policies for anon or authenticated roles.
--- The server route accesses files and generates short - lived signed download URLs using the service_role key.
+-- The server route accesses files and generates short-lived signed download URLs using the service_role key.
 
 COMMIT;

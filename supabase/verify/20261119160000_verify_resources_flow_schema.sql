@@ -1,7 +1,7 @@
 -- Verification: 20261119160000_verify_resources_flow_schema.sql
--- Purpose: Read - only verification queries for resources and resource_downloads schema
+-- Purpose: Read-only verification queries for resources and resource_downloads schema
 -- Date: 2026-11-19
--- Note: Run these read - only queries after applying the migration to verify tables, RLS, grants, and bucket.
+-- Note: Run these read-only queries after applying the migration to verify tables, RLS, grants, and bucket.
 
 -- 1. Verify tables exist in public schema (expected: 2 rows; total tables in public will be 19)
 SELECT table_name, table_type
@@ -46,7 +46,7 @@ WHERE table_schema = 'public'
 ORDER BY table_name, grantee, privilege_type;
 
 -- 7. Manual test for anon role permissions (Run as superuser / postgres in Supabase SQL editor):
--- Note: On project - scoped read - only connection poolers, 'SET LOCAL ROLE anon' returns
+-- Note: On project-scoped read-only connection poolers, 'SET LOCAL ROLE anon' returns
 -- '42501: permission denied to set role "anon"'. Therefore, execute this test manually in
 -- the Supabase dashboard SQL Editor where superuser elevation is available:
 --

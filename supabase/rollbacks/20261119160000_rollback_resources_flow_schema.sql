@@ -5,10 +5,10 @@
 
 BEGIN;
 
--- 1. Remove storage bucket
--- Note: Bucket deletion only works when the bucket is empty.
--- Any uploaded resource files must be removed first in the Supabase dashboard or via storage API.
-DELETE FROM storage.buckets WHERE id = 'resource-files';
+-- 1. Storage bucket removal notice
+-- Note: Supabase blocks direct deletions on storage tables ("Direct deletion from storage tables is not allowed. Use the Storage API instead.").
+-- The bucket resource-files must be emptied and then deleted by hand in the Supabase dashboard (Storage) or through the Storage API;
+-- this rollback only removes the policies, trigger, indexes and tables.
 
 -- 2. Drop policies on resource_downloads
 DROP POLICY IF EXISTS "resource_downloads_delete_owner_only" ON public.resource_downloads;
