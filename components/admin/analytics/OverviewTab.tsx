@@ -10,6 +10,7 @@ import { SummaryCard } from './SummaryCard'
 import { SetupCard } from './SetupCard'
 import { AnalyticsSharesList } from './AnalyticsSharesList'
 import { GoogleBlockState } from './GoogleBlockState'
+import { GLASS_CARD } from '../glass'
 
 interface OverviewTabProps {
   data: AnalyticsData
@@ -43,7 +44,7 @@ export function OverviewTab({
   return (
     <div className="space-y-4">
       {/* Notice Card */}
-      <div className="flex items-start gap-3 bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-xs text-[#5C5F73]">
+      <div className={`flex items-start gap-3 bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-xs text-[#5C5F73] ${GLASS_CARD}`}>
         <span
           className="text-sm leading-none mt-0.5 select-none text-[#5C5F73]"
           aria-hidden="true"
@@ -56,7 +57,7 @@ export function OverviewTab({
               Own counter started on 12 Nov 2026.
             </b>{' '}
             It runs on every article read without cookies or consent banners.
-            Older visits and non - article pages are not in these numbers.
+            Older visits and pages that are not articles are not in these numbers.
           </p>
           {data.capHit && (
             <p className="m-0 text-[#CF3F29] font-medium leading-relaxed">
@@ -102,14 +103,14 @@ export function OverviewTab({
       {/* Google Analytics 3-column Grid: Where readers come from, Countries, Phone or computer */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Where readers come from */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
                 Where readers come from
               </h2>
               <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Accepted - cookie visitors only
+                Visitors who accepted cookies only
               </p>
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -136,14 +137,14 @@ export function OverviewTab({
         </div>
 
         {/* Countries */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
                 Countries
               </h2>
               <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Accepted - cookie visitors only
+                Visitors who accepted cookies only
               </p>
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -170,14 +171,14 @@ export function OverviewTab({
         </div>
 
         {/* Phone or computer */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
                 Phone or computer
               </h2>
               <p className="text-[#5C5F73] text-[12.5px] m-0 mt-0.5">
-                Accepted - cookie visitors only
+                Visitors who accepted cookies only
               </p>
             </div>
             <div className="flex items-center gap-1.5 flex-wrap">
@@ -217,7 +218,7 @@ export function OverviewTab({
             href="https://analytics.google.com"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white border border-[#F0E4D2] rounded-2xl p-5 hover:border-[#DCC9A8] transition-colors flex flex-col gap-1.5 text-inherit"
+            className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 hover:border-[#DCC9A8] transition-colors flex flex-col gap-1.5 text-inherit ${GLASS_CARD} md:hover:border-[#232536]/30`}
           >
             <div className="flex items-center justify-between font-semibold text-sm text-[#232536]">
               <span>Google Analytics</span>
@@ -232,7 +233,7 @@ export function OverviewTab({
             href="https://search.google.com/search-console"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white border border-[#F0E4D2] rounded-2xl p-5 hover:border-[#DCC9A8] transition-colors flex flex-col gap-1.5 text-inherit"
+            className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 hover:border-[#DCC9A8] transition-colors flex flex-col gap-1.5 text-inherit ${GLASS_CARD} md:hover:border-[#232536]/30`}
           >
             <div className="flex items-center justify-between font-semibold text-sm text-[#232536]">
               <span>Search Console</span>
@@ -247,7 +248,7 @@ export function OverviewTab({
             href="https://vercel.com/dashboard"
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-white border border-[#F0E4D2] rounded-2xl p-5 hover:border-[#DCC9A8] transition-colors flex flex-col gap-1.5 text-inherit"
+            className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 hover:border-[#DCC9A8] transition-colors flex flex-col gap-1.5 text-inherit ${GLASS_CARD} md:hover:border-[#232536]/30`}
           >
             <div className="flex items-center justify-between font-semibold text-sm text-[#232536]">
               <span>Vercel Analytics</span>

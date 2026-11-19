@@ -3,6 +3,7 @@
 import React from 'react'
 import type { TopArticleItem, ShareChartStyle } from '@/lib/adminAnalytics'
 import { BRAND_PALETTE } from '@/lib/adminAnalytics'
+import { GLASS_CARD } from '../glass'
 
 interface TopArticlesCardProps {
   articles: TopArticleItem[]
@@ -21,7 +22,7 @@ export function TopArticlesCard({
   const maxShare = topList[0]?.share || 1
 
   return (
-    <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col mt-4">
+    <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col mt-4 ${GLASS_CARD}`}>
       {/* Header */}
       <div className="flex justify-between items-start gap-4 mb-4">
         <div>
@@ -88,7 +89,7 @@ export function TopArticlesCard({
                     <td className="py-2.5 px-2">
                       {shareStyle === 'bars' ? (
                         <div className="flex items-center gap-2.5">
-                          <div className="flex-1 h-2 bg-[#F3EBDD] rounded-full overflow-hidden">
+                          <div className="flex-1 h-2 bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
                             <div
                               className="h-full rounded-full"
                               style={{

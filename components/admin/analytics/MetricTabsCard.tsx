@@ -4,6 +4,12 @@ import React, { useState } from 'react'
 import type { DayBucket, TimeChartStyle } from '@/lib/adminAnalytics'
 import { percentChange } from '@/lib/adminAnalytics'
 import { AnalyticsTimeSeriesChart } from './AnalyticsTimeSeriesChart'
+import {
+  GLASS_CARD,
+  GLASS_CHIP_NEUTRAL,
+  GLASS_CHIP_OK,
+  GLASS_CHIP_DANGER,
+} from '../glass'
 
 interface MetricTabsCardProps {
   range: number
@@ -38,7 +44,7 @@ export function MetricTabsCard({
   const currentDelta = isViews ? viewsDelta : membersDelta
 
   return (
-    <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col">
+    <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col ${GLASS_CARD}`}>
       {/* Metric Tabs */}
       <div
         className="flex gap-7 border-b border-[#F0E4D2] -mt-1 mb-3.5"
@@ -102,15 +108,15 @@ export function MetricTabsCard({
       <div className="flex justify-between items-center mb-2">
         <div>
           {currentDelta === null ? (
-            <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73]">
+            <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73] ${GLASS_CHIP_NEUTRAL}`}>
               No previous period data
             </span>
           ) : currentDelta < 0 ? (
-            <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#FDE6E1] text-[#CF3F29]">
+            <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#FDE6E1] text-[#CF3F29] ${GLASS_CHIP_DANGER}`}>
               {currentDelta}% vs the previous {range} days
             </span>
           ) : (
-            <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#E4F4EE] text-[#1C6B52]">
+            <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#E4F4EE] text-[#1C6B52] ${GLASS_CHIP_OK}`}>
               +{currentDelta}% vs the previous {range} days
             </span>
           )}

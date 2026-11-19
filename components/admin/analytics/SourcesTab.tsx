@@ -4,6 +4,7 @@ import React from 'react'
 import { ChipGA } from './AnalyticsChips'
 import { GoogleBlockState } from './GoogleBlockState'
 import type { GoogleAnalyticsData, SearchConsoleData } from './types'
+import { GLASS_CARD } from '../glass'
 
 interface SourcesTabProps {
   gaData?: GoogleAnalyticsData
@@ -33,7 +34,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
       {/* Google Analytics: Channels and Top referring sites */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Channels */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -65,14 +66,17 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
                     {item.channelGroup}
                   </span>
                   <span className="tabular-nums text-[#5C5F73] text-xs">
-                    {item.sessions.toLocaleString()} sessions ({item.users.toLocaleString()} users)
+                    {item.sessions.toLocaleString()}{' '}
+                    {item.sessions === 1 ? 'session' : 'sessions'} (
+                    {item.users.toLocaleString()}{' '}
+                    {item.users === 1 ? 'user' : 'users'})
                   </span>
                   <span className="tabular-nums text-[#232536] font-semibold text-xs min-w-[32px] text-right">
                     {item.share}%
                   </span>
-                  <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
+                  <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
                     <i
-                      className="block h-full bg-[#3C6FD1] rounded-full"
+                      className="block h-full bg-[#3C6FD1] rounded-full md:bg-[#232536]"
                       style={{ width: `${Math.min(item.share, 100)}%` }}
                     />
                   </div>
@@ -83,7 +87,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
         </div>
 
         {/* Top referring sites */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -115,14 +119,15 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
                     {item.sourceMedium}
                   </span>
                   <span className="tabular-nums text-[#5C5F73] text-xs">
-                    {item.sessions.toLocaleString()} sessions
+                    {item.sessions.toLocaleString()}{' '}
+                    {item.sessions === 1 ? 'session' : 'sessions'}
                   </span>
                   <span className="tabular-nums text-[#232536] font-semibold text-xs min-w-[32px] text-right">
                     {item.share}%
                   </span>
-                  <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
+                  <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
                     <i
-                      className="block h-full bg-[#3C6FD1] rounded-full"
+                      className="block h-full bg-[#3C6FD1] rounded-full md:bg-[#232536]"
                       style={{ width: `${Math.min(item.share, 100)}%` }}
                     />
                   </div>
@@ -134,7 +139,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
       </div>
 
       {/* Search Console: Performance totals */}
-      <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+      <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
         <div className="flex justify-between items-start gap-2.5 mb-3">
           <div>
             <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -157,7 +162,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
           emptyText="No Search Console totals recorded for this period yet."
         >
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60 md:bg-white/[0.4] md:border-[#F0E4D2]">
               <span className="block text-xs font-medium text-[#5C5F73]">
                 Total clicks
               </span>
@@ -165,7 +170,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
                 {gsc.totals.clicks.toLocaleString()}
               </span>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60 md:bg-white/[0.4] md:border-[#F0E4D2]">
               <span className="block text-xs font-medium text-[#5C5F73]">
                 Total impressions
               </span>
@@ -173,7 +178,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
                 {gsc.totals.impressions.toLocaleString()}
               </span>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60 md:bg-white/[0.4] md:border-[#F0E4D2]">
               <span className="block text-xs font-medium text-[#5C5F73]">
                 Average CTR
               </span>
@@ -181,7 +186,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
                 {(gsc.totals.ctr * 100).toFixed(1)}%
               </span>
             </div>
-            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60">
+            <div className="p-3.5 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/60 md:bg-white/[0.4] md:border-[#F0E4D2]">
               <span className="block text-xs font-medium text-[#5C5F73]">
                 Average position
               </span>
@@ -196,7 +201,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
       {/* Search Console: Top 10 queries and Top 10 pages */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Top 10 queries */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -256,7 +261,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
         </div>
 
         {/* Top 10 pages */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -323,7 +328,7 @@ export function SourcesTab({ gaData, gscData }: SourcesTabProps) {
 
       {/* Notice Callout */}
       {!isConfigured && (
-        <div className="flex gap-3 items-start bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-[#5C5F73] text-sm leading-relaxed mt-3">
+        <div className={`flex gap-3 items-start bg-white border border-[#F0E4D2] rounded-xl p-3.5 text-[#5C5F73] text-sm leading-relaxed mt-3 ${GLASS_CARD}`}>
           <span aria-hidden="true" className="text-base select-none mt-0.5">
             &#9432;
           </span>

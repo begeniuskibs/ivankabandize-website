@@ -1,6 +1,7 @@
 'use client'
 
 import React from 'react'
+import { GLASS_CARD } from '../glass'
 
 interface SetupCardProps {
   setupStatus?: {
@@ -44,12 +45,12 @@ export function SetupCard({ setupStatus }: SetupCardProps) {
   const progressPercent = Math.round((doneCount / steps.length) * 100)
 
   return (
-    <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col min-w-0">
+    <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col min-w-0 ${GLASS_CARD}`}>
       <div className="mb-2">
         <h2 className="text-sm font-semibold text-[#232536] m-0">
           Finish setting up analytics
         </h2>
-        <div className="h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden my-2.5">
+        <div className="h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden my-2.5 md:bg-[#232536]/[0.05]">
           <div
             className="h-full bg-[#232536] rounded-full transition-all duration-300"
             style={{ width: `${progressPercent}%` }}

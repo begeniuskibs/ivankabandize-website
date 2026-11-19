@@ -630,7 +630,7 @@ function renderNavItem(
         title={item.label}
         className={`relative w-10 h-10 mx-auto flex items-center justify-center rounded-xl text-xs font-medium transition ${
           active
-            ? 'bg-[#EF5B45] text-white font-semibold shadow-sm'
+            ? 'bg-[#EF5B45] text-white font-semibold shadow-sm md:bg-white/[0.14] md:shadow-none'
             : 'text-[#B2B5C6] hover:text-white hover:bg-[#222432]'
         }`}
       >
@@ -642,7 +642,7 @@ function renderNavItem(
           {item.icon}
         </span>
         {item.badge && (
-          <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#EF5B45]" />
+          <span className="absolute top-2 right-2 w-1.5 h-1.5 rounded-full bg-[#EF5B45] md:bg-white/70" />
         )}
       </Link>
     )
@@ -654,7 +654,7 @@ function renderNavItem(
         href={href}
         className={`flex items-center justify-between px-2.5 py-1.5 rounded-xl text-xs font-medium transition ${
           active
-            ? 'bg-[#EF5B45] text-white font-semibold shadow-sm'
+            ? 'bg-[#EF5B45] text-white font-semibold shadow-sm md:bg-white/[0.14] md:shadow-none'
             : 'text-[#B2B5C6] hover:text-white hover:bg-[#222432]'
         }`}
       >

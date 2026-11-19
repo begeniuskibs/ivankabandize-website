@@ -7,6 +7,7 @@ import { ChipOwn, ChipGA } from './AnalyticsChips'
 import { AnalyticsTimeSeriesChart } from './AnalyticsTimeSeriesChart'
 import { AnalyticsSharesList } from './AnalyticsSharesList'
 import { GoogleBlockState } from './GoogleBlockState'
+import { GLASS_CARD } from '../glass'
 
 interface AudienceTabProps {
   data: AnalyticsData
@@ -34,7 +35,7 @@ export function AudienceTab({
   return (
     <div className="space-y-4">
       {/* Grid 1: Member growth */}
-      <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+      <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
         <div className="flex justify-between items-start gap-2.5 mb-3">
           <div>
             <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -63,7 +64,7 @@ export function AudienceTab({
       {/* Grid 2: Members by tier & Sign-up sources */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Members by tier */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -92,7 +93,7 @@ export function AudienceTab({
         </div>
 
         {/* Sign-up sources */}
-        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col">
+        <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 flex flex-col ${GLASS_CARD}`}>
           <div className="flex justify-between items-start gap-2.5 mb-3">
             <div>
               <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -115,7 +116,7 @@ export function AudienceTab({
                 barColor="#232536"
               />
             ) : (
-              <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center">
+              <div className="py-7 px-4 rounded-xl bg-[#FAF6F0] border border-[#F0E4D2]/70 text-center md:bg-white/[0.4] md:border-[#F0E4D2]">
                 <p className="text-[13px] text-[#5C5F73] m-0">
                   No member sign-up sources recorded yet.
                 </p>
@@ -129,7 +130,7 @@ export function AudienceTab({
       <div className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Top countries */}
-          <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+          <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
             <div className="flex justify-between items-start gap-2.5 mb-3">
               <div>
                 <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -161,14 +162,15 @@ export function AudienceTab({
                       {item.country}
                     </span>
                     <span className="tabular-nums text-[#5C5F73] text-xs">
-                      {item.users.toLocaleString()} users
+                      {item.users.toLocaleString()}{' '}
+                      {item.users === 1 ? 'user' : 'users'}
                     </span>
                     <span className="tabular-nums text-[#232536] font-semibold text-xs min-w-[32px] text-right">
                       {item.share}%
                     </span>
-                    <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
+                    <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
                       <i
-                        className="block h-full bg-[#3C6FD1] rounded-full"
+                        className="block h-full bg-[#3C6FD1] rounded-full md:bg-[#232536]"
                         style={{ width: `${Math.min(item.share, 100)}%` }}
                       />
                     </div>
@@ -179,7 +181,7 @@ export function AudienceTab({
           </div>
 
           {/* Device categories */}
-          <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0">
+          <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 min-w-0 ${GLASS_CARD}`}>
             <div className="flex justify-between items-start gap-2.5 mb-3">
               <div>
                 <h2 className="text-sm font-semibold text-[#232536] m-0">
@@ -211,14 +213,15 @@ export function AudienceTab({
                       {item.deviceCategory}
                     </span>
                     <span className="tabular-nums text-[#5C5F73] text-xs">
-                      {item.users.toLocaleString()} users
+                      {item.users.toLocaleString()}{' '}
+                      {item.users === 1 ? 'user' : 'users'}
                     </span>
                     <span className="tabular-nums text-[#232536] font-semibold text-xs min-w-[32px] text-right">
                       {item.share}%
                     </span>
-                    <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden">
+                    <div className="col-span-3 h-1.5 bg-[#F3EBDD] rounded-full overflow-hidden md:bg-[#232536]/[0.05]">
                       <i
-                        className="block h-full bg-[#3C6FD1] rounded-full"
+                        className="block h-full bg-[#3C6FD1] rounded-full md:bg-[#232536]"
                         style={{ width: `${Math.min(item.share, 100)}%` }}
                       />
                     </div>

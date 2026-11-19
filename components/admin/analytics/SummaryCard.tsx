@@ -3,6 +3,12 @@
 import React from 'react'
 import type { DayBucket } from '@/lib/adminAnalytics'
 import { formatKampalaDisplayDate, percentChange } from '@/lib/adminAnalytics'
+import {
+  GLASS_CARD,
+  GLASS_CHIP_NEUTRAL,
+  GLASS_CHIP_OK,
+  GLASS_CHIP_DANGER,
+} from '../glass'
 
 interface SummaryCardProps {
   range: number
@@ -30,7 +36,7 @@ export function SummaryCard({
   const membersDelta = percentChange(totalMembersCurrent, totalMembersPrev)
 
   return (
-    <div className="bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col min-w-0">
+    <div className={`bg-white border border-[#F0E4D2] rounded-2xl p-5 md:p-6 flex flex-col min-w-0 ${GLASS_CARD}`}>
       <div className="mb-3">
         <h2 className="text-sm font-semibold text-[#232536] m-0">Summary</h2>
         <p className="text-xs text-[#5C5F73] mt-0.5 mb-0">
@@ -53,7 +59,7 @@ export function SummaryCard({
               : 'No views in this period'}
           </small>
         </div>
-        <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73]">
+        <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73] ${GLASS_CHIP_NEUTRAL}`}>
           Peak
         </span>
       </div>
@@ -73,15 +79,15 @@ export function SummaryCard({
         </div>
         <div>
           {membersDelta === null ? (
-            <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73]">
+            <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#F3EBDD] text-[#5C5F73] ${GLASS_CHIP_NEUTRAL}`}>
               0%
             </span>
           ) : membersDelta < 0 ? (
-            <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#FDE6E1] text-[#CF3F29]">
+            <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#FDE6E1] text-[#CF3F29] ${GLASS_CHIP_DANGER}`}>
               {membersDelta}%
             </span>
           ) : (
-            <span className="inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#E4F4EE] text-[#1C6B52]">
+            <span className={`inline-flex items-center text-xs font-semibold rounded-full px-2.5 py-0.5 bg-[#E4F4EE] text-[#1C6B52] ${GLASS_CHIP_OK}`}>
               +{membersDelta}%
             </span>
           )}
