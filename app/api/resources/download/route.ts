@@ -3,6 +3,7 @@ import {
   RESOURCE_DOWNLOAD_LIMITS,
   computeRequestFingerprint,
   escapeHtml,
+  isSameOrigin,
   sanitizeDownloadSubject,
   validateResourceDownloadPayload,
 } from '@/lib/resourceDownload'
@@ -19,12 +20,22 @@ export const maxDuration = 30
 
 export async function POST(request: Request) {
   try {
-    // 0a. Origin check: If present, must match site origin
+    // 0a. Origin check: If present, must match request host or site host (supports preview deployments)
     const origin = request.headers.get('origin')
     if (origin) {
-      const normalizedOrigin = origin.replace(/\/+$/, '')
-      const normalizedSiteUrl = SITE_URL.replace(/\/+$/, '')
-      if (normalizedOrigin !== normalizedSiteUrl) {
+      const forwardedHost = request.headers.get('x-forwarded-host')
+      const hostHeader = request.headers.get('host')
+      const requestHost =
+        forwardedHost?.split(',')[0].trim() || hostHeader?.trim() || ''
+
+      let siteHost = ''
+      try {
+        siteHost = new URL(SITE_URL).host
+      } catch {
+        siteHost = SITE_URL.replace(/^https?:\/\//, '').replace(/\/.*$/, '')
+      }
+
+      if (!isSameOrigin(origin, [requestHost, siteHost])) {
         return NextResponse.json(
           { ok: false, error: 'Forbidden' },
           { status: 403 }

@@ -58,6 +58,67 @@ export function computeRequestFingerprint(ip: string, secret: string): string {
 }
 
 /**
+ * Helper to extract and normalize host (including port) from a host string or URL.
+ */
+function extractHost(hostOrUrl: string): string | null {
+  const trimmed = hostOrUrl.trim()
+  if (!trimmed) return null
+  if (trimmed.includes('://')) {
+    try {
+      return new URL(trimmed).host.toLowerCase()
+    } catch {
+      return null
+    }
+  }
+  const cleaned = trimmed.replace(/^\/+/, '')
+  const hostPart = cleaned.split('/')[0].trim()
+  return hostPart ? hostPart.toLowerCase() : null
+}
+
+/**
+ * Validates that an origin header matches one of the allowed hosts (e.g. request host or site host).
+ * Returns true if origin is a valid URL whose host (including port) matches an allowed host case-insensitively.
+ * Returns false if origin is unparseable, missing, or host is missing or empty.
+ */
+export function isSameOrigin(
+  origin: string | null | undefined,
+  allowedHost: string | readonly string[] | (string | undefined)[],
+  additionalAllowedHost?: string
+): boolean {
+  if (!origin || typeof origin !== 'string') return false
+
+  let originHost: string
+  try {
+    const parsed = new URL(origin)
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+      return false
+    }
+    originHost = parsed.host.toLowerCase()
+    if (!originHost) return false
+  } catch {
+    return false
+  }
+
+  const rawHosts: (string | undefined)[] = []
+  if (Array.isArray(allowedHost)) {
+    rawHosts.push(...allowedHost)
+  } else if (typeof allowedHost === 'string') {
+    rawHosts.push(allowedHost)
+  }
+  if (typeof additionalAllowedHost === 'string') {
+    rawHosts.push(additionalAllowedHost)
+  }
+
+  const normalizedAllowed = rawHosts
+    .map((h) => (typeof h === 'string' ? extractHost(h) : null))
+    .filter((h): h is string => Boolean(h))
+
+  if (normalizedAllowed.length === 0) return false
+
+  return normalizedAllowed.includes(originHost)
+}
+
+/**
  * Escapes HTML characters in user-supplied strings before embedding into email HTML.
  */
 export function escapeHtml(str: string): string {

@@ -8,6 +8,7 @@ import {
   RESOURCE_DOWNLOAD_LIMITS,
   computeRequestFingerprint,
   escapeHtml,
+  isSameOrigin,
   sanitizeDownloadSubject,
   validateResourceDownloadPayload,
 } from '../lib/resourceDownload.ts'
@@ -285,5 +286,65 @@ describe('HTML Escaping & Subject Formatting', () => {
     const messyTitle = 'The\tWeekly\nPlanning   System\r\x00'
     const subject = sanitizeDownloadSubject(messyTitle)
     assert.equal(subject, 'Your download - The Weekly Planning System')
+  })
+})
+
+describe('isSameOrigin', () => {
+  it('returns true when origin has the exact same host', () => {
+    assert.equal(isSameOrigin('https://example.com', 'example.com'), true)
+  })
+
+  it('returns true when origin matches the production host in allowed hosts list', () => {
+    assert.equal(
+      isSameOrigin('https://ivankabandize.com', [
+        'preview.vercel.app',
+        'ivankabandize.com',
+      ]),
+      true
+    )
+  })
+
+  it('returns true when preview host equals request host', () => {
+    assert.equal(
+      isSameOrigin('https://preview-123.vercel.app', 'preview-123.vercel.app'),
+      true
+    )
+  })
+
+  it('returns false for a different site', () => {
+    assert.equal(isSameOrigin('https://evil.com', 'example.com'), false)
+    assert.equal(
+      isSameOrigin('https://sub.evil.com', ['example.com', 'preview.vercel.app']),
+      false
+    )
+  })
+
+  it('returns false for "null" string origin', () => {
+    assert.equal(isSameOrigin('null', 'example.com'), false)
+  })
+
+  it('returns false for garbage unparseable origin', () => {
+    assert.equal(isSameOrigin('not-a-valid-url', 'example.com'), false)
+    assert.equal(isSameOrigin('///', 'example.com'), false)
+  })
+
+  it('returns false when host is missing or empty', () => {
+    assert.equal(isSameOrigin('https://example.com', ''), false)
+    assert.equal(isSameOrigin('https://example.com', undefined), false)
+    assert.equal(isSameOrigin('https://example.com', []), false)
+  })
+
+  it('returns false on port mismatch', () => {
+    assert.equal(isSameOrigin('http://localhost:3000', 'localhost:4000'), false)
+    assert.equal(isSameOrigin('http://localhost:3000', 'localhost'), false)
+  })
+
+  it('returns true regardless of case differences', () => {
+    assert.equal(isSameOrigin('https://EXAMPLE.COM', 'example.com'), true)
+    assert.equal(isSameOrigin('https://example.com', 'EXAMPLE.COM'), true)
+    assert.equal(
+      isSameOrigin('https://Preview-App.Vercel.App', 'preview-app.vercel.app'),
+      true
+    )
   })
 })
