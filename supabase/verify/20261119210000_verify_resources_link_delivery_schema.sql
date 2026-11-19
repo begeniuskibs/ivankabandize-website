@@ -45,10 +45,11 @@ FROM public.resources
 GROUP BY delivery_type
 ORDER BY delivery_type;
 
--- 4. Negative constraint test block (wrapped in BEGIN ... ROLLBACK so nothing persists)
-BEGIN;
-
+-- 4. Constraint verification test block (7 negative cases, 2 positive cases)
+-- Run section 4 on its own as a separate query. A red error that starts with VERIFY REPORT is the normal, expected output. Expected: 9 PASS and 0 FAIL.
 DO $$
+DECLARE
+  results text[] := ARRAY[]::text[];
 BEGIN
   -- Case 1: link without external_url
   BEGIN
@@ -57,9 +58,9 @@ BEGIN
     ) VALUES (
       'verify-neg-link-no-url', 'Test', 'Summary', 'template', 'link', NULL
     );
-    RAISE NOTICE 'FAIL - link without external_url';
+    results := array_append(results, 'FAIL - link without external_url');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - link without external_url';
+    results := array_append(results, 'PASS - link without external_url');
   END;
 
   -- Case 2: link with an http:// url
@@ -69,9 +70,9 @@ BEGIN
     ) VALUES (
       'verify-neg-link-http-url', 'Test', 'Summary', 'template', 'link', 'http://insecure.example.com'
     );
-    RAISE NOTICE 'FAIL - link with an http:// url';
+    results := array_append(results, 'FAIL - link with an http:// url');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - link with an http:// url';
+    results := array_append(results, 'PASS - link with an http:// url');
   END;
 
   -- Case 3: link that also has a file_path
@@ -81,9 +82,9 @@ BEGIN
     ) VALUES (
       'verify-neg-link-with-file', 'Test', 'Summary', 'template', 'link', 'https://secure.example.com', 'files/test.pdf'
     );
-    RAISE NOTICE 'FAIL - link that also has a file_path';
+    results := array_append(results, 'FAIL - link that also has a file_path');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - link that also has a file_path';
+    results := array_append(results, 'PASS - link that also has a file_path');
   END;
 
   -- Case 4: file with an external_url
@@ -93,9 +94,9 @@ BEGIN
     ) VALUES (
       'verify-neg-file-with-url', 'Test', 'Summary', 'template', 'file', 'files/test.pdf', 'test.pdf', 'https://secure.example.com'
     );
-    RAISE NOTICE 'FAIL - file with an external_url';
+    results := array_append(results, 'FAIL - file with an external_url');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - file with an external_url';
+    results := array_append(results, 'PASS - file with an external_url');
   END;
 
   -- Case 5: file without file_path
@@ -105,21 +106,21 @@ BEGIN
     ) VALUES (
       'verify-neg-file-no-path', 'Test', 'Summary', 'template', 'file', NULL, 'test.pdf'
     );
-    RAISE NOTICE 'FAIL - file without file_path';
+    results := array_append(results, 'FAIL - file without file_path');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - file without file_path';
+    results := array_append(results, 'PASS - file without file_path');
   END;
 
-  -- Case 6: page_details set to a JSON array
+  -- Case 6: page_details as a JSON array
   BEGIN
     INSERT INTO public.resources (
       slug, title, summary, kind, delivery_type, file_path, file_name, page_details
     ) VALUES (
       'verify-neg-page-details-array', 'Test', 'Summary', 'template', 'file', 'files/test.pdf', 'test.pdf', '["not", "an", "object"]'::jsonb
     );
-    RAISE NOTICE 'FAIL - page_details set to a JSON array';
+    results := array_append(results, 'FAIL - page_details as a JSON array');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - page_details set to a JSON array';
+    results := array_append(results, 'PASS - page_details as a JSON array');
   END;
 
   -- Case 7: category longer than 60 characters
@@ -129,10 +130,35 @@ BEGIN
     ) VALUES (
       'verify-neg-category-too-long', 'Test', 'Summary', 'template', 'file', 'files/test.pdf', 'test.pdf', repeat('x', 61)
     );
-    RAISE NOTICE 'FAIL - category longer than 60 characters';
+    results := array_append(results, 'FAIL - category longer than 60 characters');
   EXCEPTION WHEN check_violation THEN
-    RAISE NOTICE 'PASS - category longer than 60 characters';
+    results := array_append(results, 'PASS - category longer than 60 characters');
   END;
-END $$;
 
-ROLLBACK;
+  -- Case 8 (Positive 1): valid link
+  BEGIN
+    INSERT INTO public.resources (
+      slug, title, summary, kind, delivery_type, external_url, category, page_details
+    ) VALUES (
+      'verify-pos-link', 'Test', 'Summary', 'template', 'link', 'https://www.notion.so/verify-example', 'Productivity', '{"facts": []}'::jsonb
+    );
+    results := array_append(results, 'PASS - valid link');
+  EXCEPTION WHEN check_violation THEN
+    results := array_append(results, 'FAIL - valid link');
+  END;
+
+  -- Case 9 (Positive 2): valid file
+  BEGIN
+    INSERT INTO public.resources (
+      slug, title, summary, kind, delivery_type, file_path, file_name
+    ) VALUES (
+      'verify-pos-file', 'Test', 'Summary', 'guide', 'file', 'verify/test.pdf', 'test.pdf'
+    );
+    results := array_append(results, 'PASS - valid file');
+  EXCEPTION WHEN check_violation THEN
+    results := array_append(results, 'FAIL - valid file');
+  END;
+
+  -- Raise an expected exception to report all results and roll back all test inserts
+  RAISE EXCEPTION '%', format('VERIFY REPORT (this error is expected, it rolls everything back so nothing is saved): %s', array_to_string(results, ' | '));
+END $$;
