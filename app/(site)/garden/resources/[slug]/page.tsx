@@ -142,6 +142,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
               alt={resource.title}
               fill
               priority
+              unoptimized
               sizes="(max-width: 768px) 100vw, 672px"
               className="object-cover"
             />
