@@ -25,10 +25,13 @@ import {
   INTENDED_USE_OPTIONS,
   getFirstName,
 } from '@/lib/resourceFlow'
+import { RESOURCE_CONSENT_TEXT } from '@/lib/resourceConsent'
 import ResourceConfetti from '@/components/public/ResourceConfetti'
 
 // Three-screen resource flow controller (detail, form, success)
 // House style: spaced hyphen " - " only
+
+const consentParts = RESOURCE_CONSENT_TEXT.split('See the Privacy Policy.')
 
 type ViewMode = 'detail' | 'form' | 'success'
 
@@ -365,11 +368,17 @@ export default function ResourceFlow({ resource, children }: ResourceFlowProps) 
         return
       }
 
+      const confirmedEmail = data.email ? data.email : email.trim().toLowerCase()
+      const confirmedFirstName = data.email
+        ? (data.firstName || getFirstName(name))
+        : getFirstName(name)
+      const confirmedIsMember = Boolean(data.email)
+
       setSecondsRemaining(data.expiresInSeconds || 60)
       setSuccessState({
-        isMember: false,
-        firstName: getFirstName(name),
-        email: email.trim().toLowerCase(),
+        isMember: confirmedIsMember,
+        firstName: confirmedFirstName,
+        email: confirmedEmail,
         delivery: data.delivery || resource.delivery_type,
         url: data.url || '',
         expiresInSeconds: data.expiresInSeconds || 60,
@@ -607,18 +616,16 @@ export default function ResourceFlow({ resource, children }: ResourceFlowProps) 
                   )}
                 </button>
 
-                {/* Approved consent text v1 verbatim */}
+                {/* Approved consent text v1 rendered from constant */}
                 <p className="text-xs text-[#5C5F73] mt-3 leading-relaxed">
-                  I am asking for this file. I understand that my name and email are
-                  stored so the download link can be sent to me and Ivan can see which
-                  files are used. See the{' '}
+                  {consentParts[0]}
                   <Link
                     href="/privacy-policy"
                     className="underline hover:text-[#232536] transition-colors"
                   >
-                    Privacy Policy
+                    See the Privacy Policy
                   </Link>
-                  .
+                  .{consentParts[1] || ''}
                 </p>
 
                 {/* Sign-in link for existing members */}
