@@ -18,6 +18,7 @@ describe('parsePageDetails', () => {
       faq: [],
       success_steps: [],
       related: [],
+      demo: [],
     }
 
     assert.deepEqual(parsePageDetails(null), expected)
@@ -39,6 +40,7 @@ describe('parsePageDetails', () => {
       faq: [],
       success_steps: [],
       related: [],
+      demo: [],
     }
     assert.deepEqual(parsePageDetails(['item1', 'item2']), expected)
   })
@@ -55,6 +57,7 @@ describe('parsePageDetails', () => {
     assert.deepEqual(res.faq, [])
     assert.deepEqual(res.success_steps, [])
     assert.deepEqual(res.related, [])
+    assert.deepEqual(res.demo, [])
   })
 
   it('drops unknown keys from the output', () => {
@@ -206,5 +209,251 @@ describe('parsePageDetails', () => {
     assert.equal(res.steps.length, 1)
     assert.equal(res.steps[0].title, 'Step 1')
     assert.equal(res.steps[0].detail, 'Detail 1')
+  })
+
+  it('parses valid demo tabs with columns and list variants', () => {
+    const raw = {
+      demo: [
+        {
+          label: 'Week Board',
+          caption: 'Coral highlights a Big Rock.',
+          type: 'columns',
+          columns: [
+            {
+              title: 'Mon',
+              items: [
+                { text: 'Budget review', key: true },
+                { text: 'Team 1:1', key: false },
+              ],
+            },
+            {
+              title: 'Tue',
+              items: [{ text: 'Write notes', key: false }],
+            },
+          ],
+        },
+        {
+          label: 'Big Rocks',
+          caption: 'Three, never more.',
+          type: 'list',
+          marker: 'number',
+          items: [
+            { text: 'Finish budget review', chip: 'Mon', done: false },
+            { text: 'Write sermon notes', chip: 'Tue', done: true },
+          ],
+        },
+        {
+          label: 'Parking Lot',
+          caption: '',
+          type: 'list',
+          marker: 'checkbox',
+          items: [
+            { text: 'Reply to venue', chip: '', done: false },
+            { text: 'Renew domain', chip: '', done: true },
+          ],
+        },
+      ],
+    }
+
+    const res = parsePageDetails(raw)
+    assert.equal(res.demo.length, 3)
+
+    // Tab 1: columns
+    assert.equal(res.demo[0].label, 'Week Board')
+    assert.equal(res.demo[0].caption, 'Coral highlights a Big Rock.')
+    assert.equal(res.demo[0].type, 'columns')
+    assert.equal(res.demo[0].columns?.length, 2)
+    assert.equal(res.demo[0].columns?.[0].title, 'Mon')
+    assert.equal(res.demo[0].columns?.[0].items.length, 2)
+    assert.equal(res.demo[0].columns?.[0].items[0].text, 'Budget review')
+    assert.equal(res.demo[0].columns?.[0].items[0].key, true)
+    assert.equal(res.demo[0].columns?.[0].items[1].key, false)
+
+    // Tab 2: list with number
+    assert.equal(res.demo[1].label, 'Big Rocks')
+    assert.equal(res.demo[1].caption, 'Three, never more.')
+    assert.equal(res.demo[1].type, 'list')
+    assert.equal(res.demo[1].marker, 'number')
+    assert.equal(res.demo[1].items?.length, 2)
+    assert.equal(res.demo[1].items?.[0].chip, 'Mon')
+    assert.equal(res.demo[1].items?.[0].done, false)
+    assert.equal(res.demo[1].items?.[1].done, true)
+
+    // Tab 3: list with checkbox
+    assert.equal(res.demo[2].label, 'Parking Lot')
+    assert.equal(res.demo[2].caption, '')
+    assert.equal(res.demo[2].type, 'list')
+    assert.equal(res.demo[2].marker, 'checkbox')
+    assert.equal(res.demo[2].items?.length, 2)
+  })
+
+  it('enforces demo caps and truncation', () => {
+    const raw = {
+      demo: Array.from({ length: 8 }, (_, i) => ({
+        label: `Tab ${i + 1} with long title exceeding twenty four chars`,
+        caption: 'c'.repeat(200),
+        type: 'columns',
+        columns: Array.from({ length: 10 }, (_, c) => ({
+          title: `Column ${c + 1} exceeds twelve`,
+          items: Array.from({ length: 6 }, (_, it) => ({
+            text: `Item ${it + 1} text exceeds forty characters limit right here`,
+            key: true,
+          })),
+        })),
+      })),
+    }
+
+    const res = parsePageDetails(raw)
+    // max 5 tabs
+    assert.equal(res.demo.length, 5)
+    // tab label max 24
+    assert.equal(res.demo[0].label.length, 24)
+    // tab caption max 160
+    assert.equal(res.demo[0].caption.length, 160)
+    // max 7 columns per tab
+    assert.equal(res.demo[0].columns?.length, 7)
+    // column title max 12
+    assert.equal(res.demo[0].columns?.[0].title.length, 12)
+    // max 4 items per column
+    assert.equal(res.demo[0].columns?.[0].items.length, 4)
+    // item text max 40
+    assert.equal(res.demo[0].columns?.[0].items[0].text.length, 40)
+
+    // Check list caps
+    const rawList = {
+      demo: [
+        {
+          label: 'List Tab',
+          type: 'list',
+          items: Array.from({ length: 12 }, () => ({
+            text: 't'.repeat(150),
+            chip: 'chip_too_long_here',
+            done: true,
+          })),
+        },
+      ],
+    }
+    const resList = parsePageDetails(rawList)
+    assert.equal(resList.demo.length, 1)
+    // max 8 items per list
+    assert.equal(resList.demo[0].items?.length, 8)
+    // list item text max 100
+    assert.equal(resList.demo[0].items?.[0].text.length, 100)
+    // list item chip max 12
+    assert.equal(resList.demo[0].items?.[0].chip.length, 12)
+  })
+
+  it('drops demo tabs with unknown type or empty label or no usable content', () => {
+    const raw = {
+      demo: [
+        { label: 'Good Tab', type: 'unknown_type', items: [{ text: 'Ok' }] },
+        { label: '   ', type: 'list', items: [{ text: 'Ok' }] },
+        { label: '', type: 'columns', columns: [{ title: 'Col', items: [] }] },
+        { label: 'No columns array', type: 'columns' },
+        { label: 'Empty columns array', type: 'columns', columns: [] },
+        { label: 'No items array', type: 'list' },
+        { label: 'Empty items array', type: 'list', items: [] },
+        { label: 'All empty items', type: 'list', items: [{ text: '   ' }] },
+        {
+          label: 'Valid Tab',
+          type: 'list',
+          items: [{ text: 'I am valid' }],
+        },
+      ],
+    }
+
+    const res = parsePageDetails(raw)
+    assert.equal(res.demo.length, 1)
+    assert.equal(res.demo[0].label, 'Valid Tab')
+  })
+
+  it('sets key and done to true only if raw value is exactly boolean true', () => {
+    const raw = {
+      demo: [
+        {
+          label: 'Strict Booleans',
+          type: 'columns',
+          columns: [
+            {
+              title: 'Col 1',
+              items: [
+                { text: 'A', key: true },
+                { text: 'B', key: 'true' },
+                { text: 'C', key: 1 },
+                { text: 'D', key: null },
+              ],
+            },
+          ],
+        },
+        {
+          label: 'List Booleans',
+          type: 'list',
+          items: [
+            { text: 'E', done: true },
+            { text: 'F', done: 'true' },
+            { text: 'G', done: 1 },
+            { text: 'H', done: undefined },
+          ],
+        },
+      ],
+    }
+
+    const res = parsePageDetails(raw)
+    assert.equal(res.demo[0].columns?.[0].items[0].key, true)
+    assert.equal(res.demo[0].columns?.[0].items[1].key, false)
+    assert.equal(res.demo[0].columns?.[0].items[2].key, false)
+    assert.equal(res.demo[0].columns?.[0].items[3].key, false)
+
+    assert.equal(res.demo[1].items?.[0].done, true)
+    assert.equal(res.demo[1].items?.[1].done, false)
+    assert.equal(res.demo[1].items?.[2].done, false)
+    assert.equal(res.demo[1].items?.[3].done, false)
+  })
+
+  it('leaves HTML in demo text as plain text without throwing', () => {
+    const raw = {
+      demo: [
+        {
+          label: '<b>Bold Tab</b>',
+          caption: '<p>Caption with tags</p>',
+          type: 'list',
+          items: [
+            {
+              text: '<span class="test">Item with markup</span>',
+              chip: '<em>New</em>',
+              done: false,
+            },
+          ],
+        },
+      ],
+    }
+
+    const res = parsePageDetails(raw)
+    assert.equal(res.demo.length, 1)
+    assert.equal(res.demo[0].label, '<b>Bold Tab</b>')
+    assert.equal(res.demo[0].caption, '<p>Caption with tags</p>')
+    assert.equal(
+      res.demo[0].items?.[0].text,
+      '<span class="test">Item with markup</span>'
+    )
+    assert.equal(res.demo[0].items?.[0].chip, '<em>New</em>')
+  })
+
+  it('safely handles malformed demo input without throwing', () => {
+    assert.doesNotThrow(() => parsePageDetails({ demo: 'not an array' }))
+    assert.doesNotThrow(() => parsePageDetails({ demo: 12345 }))
+    assert.doesNotThrow(() => parsePageDetails({ demo: null }))
+    assert.doesNotThrow(() => parsePageDetails({ demo: [null, undefined, 12, 'str'] }))
+    assert.doesNotThrow(() =>
+      parsePageDetails({
+        demo: [
+          { label: 'Tab', type: 'columns', columns: [null, 'string', 99] },
+          { label: 'Tab 2', type: 'list', items: [null, 'string'] },
+        ],
+      })
+    )
+
+    const res = parsePageDetails({ demo: 'bad' })
+    assert.deepEqual(res.demo, [])
   })
 })

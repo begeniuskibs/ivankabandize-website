@@ -22,6 +22,26 @@ export interface RelatedItem {
   label: string
 }
 
+export interface DemoItem {
+  text: string
+  chip: string
+  done: boolean
+}
+
+export interface DemoColumn {
+  title: string
+  items: { text: string; key: boolean }[]
+}
+
+export interface DemoTab {
+  label: string
+  caption: string
+  type: 'columns' | 'list'
+  marker?: 'number' | 'checkbox'
+  columns?: DemoColumn[]
+  items?: DemoItem[]
+}
+
 export interface PageDetails {
   facts: FactItem[]
   what_it_is: string
@@ -33,6 +53,7 @@ export interface PageDetails {
   faq: FaqItem[]
   success_steps: StepItem[]
   related: RelatedItem[]
+  demo: DemoTab[]
 }
 
 function trimString(val: unknown, maxLen: number): string {
@@ -61,6 +82,7 @@ export function parsePageDetails(value: unknown): PageDetails {
     faq: [],
     success_steps: [],
     related: [],
+    demo: [],
   }
 
   if (!value || typeof value !== 'object' || Array.isArray(value)) {
@@ -177,6 +199,108 @@ export function parsePageDetails(value: unknown): PageDetails {
       }
     }
 
+    // 8. demo: max 5 tabs
+    const demo: DemoTab[] = []
+    if (Array.isArray(raw.demo)) {
+      for (const rawTab of raw.demo) {
+        if (demo.length >= 5) break
+        if (!rawTab || typeof rawTab !== 'object' || Array.isArray(rawTab)) {
+          continue
+        }
+        const tabObj = rawTab as Record<string, unknown>
+        const label = trimString(tabObj.label, 24)
+        if (!label) continue
+
+        const caption = trimString(tabObj.caption, 160)
+        const type = tabObj.type
+
+        if (type === 'columns') {
+          const rawCols = tabObj.columns
+          if (!Array.isArray(rawCols)) continue
+
+          const columns: DemoColumn[] = []
+          for (const rawCol of rawCols) {
+            if (columns.length >= 7) break
+            if (!rawCol || typeof rawCol !== 'object' || Array.isArray(rawCol)) {
+              continue
+            }
+            const colObj = rawCol as Record<string, unknown>
+            const title = trimString(colObj.title, 12)
+            const items: { text: string; key: boolean }[] = []
+            if (Array.isArray(colObj.items)) {
+              for (const rawItem of colObj.items) {
+                if (items.length >= 4) break
+                if (
+                  !rawItem ||
+                  typeof rawItem !== 'object' ||
+                  Array.isArray(rawItem)
+                ) {
+                  continue
+                }
+                const itemObj = rawItem as Record<string, unknown>
+                const text = trimString(itemObj.text, 40)
+                if (text) {
+                  items.push({
+                    text,
+                    key: itemObj.key === true,
+                  })
+                }
+              }
+            }
+            if (title || items.length > 0) {
+              columns.push({ title, items })
+            }
+          }
+
+          if (columns.length > 0) {
+            demo.push({
+              label,
+              caption,
+              type: 'columns',
+              columns,
+            })
+          }
+        } else if (type === 'list') {
+          const rawItems = tabObj.items
+          if (!Array.isArray(rawItems)) continue
+
+          const items: DemoItem[] = []
+          for (const rawItem of rawItems) {
+            if (items.length >= 8) break
+            if (
+              !rawItem ||
+              typeof rawItem !== 'object' ||
+              Array.isArray(rawItem)
+            ) {
+              continue
+            }
+            const itemObj = rawItem as Record<string, unknown>
+            const text = trimString(itemObj.text, 100)
+            const chip = trimString(itemObj.chip, 12)
+            if (text) {
+              items.push({
+                text,
+                chip,
+                done: itemObj.done === true,
+              })
+            }
+          }
+
+          if (items.length > 0) {
+            const marker: 'number' | 'checkbox' =
+              tabObj.marker === 'checkbox' ? 'checkbox' : 'number'
+            demo.push({
+              label,
+              caption,
+              type: 'list',
+              marker,
+              items,
+            })
+          }
+        }
+      }
+    }
+
     return {
       facts,
       what_it_is,
@@ -188,6 +312,7 @@ export function parsePageDetails(value: unknown): PageDetails {
       faq,
       success_steps,
       related,
+      demo,
     }
   } catch {
     return empty

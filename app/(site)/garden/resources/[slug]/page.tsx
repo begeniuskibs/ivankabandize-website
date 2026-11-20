@@ -9,6 +9,7 @@ import { ctaLabels, kindLabel } from '@/lib/resourceUi'
 import ResourceDownloadForm, {
   ResourceStickyBar,
 } from '@/components/public/ResourceDownloadForm'
+import ResourceDemo from '@/components/public/ResourceDemo'
 
 // Single resource detail page and inline download gate
 // House style: spaced hyphen " - " only
@@ -272,6 +273,13 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
                 </li>
               ))}
             </ol>
+          </section>
+        )}
+
+        {/* Interactive demo tabs: only if data exists */}
+        {details.demo && details.demo.length > 0 && (
+          <section aria-label="Interactive preview" className="my-12">
+            <ResourceDemo demo={details.demo} />
           </section>
         )}
 
