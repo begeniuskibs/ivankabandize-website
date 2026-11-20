@@ -102,7 +102,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
         {/* Hero Block: 2 columns on desktop, single column on mobile */}
         <section
           aria-label="Resource introduction"
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center mb-12"
+          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center md:items-stretch mb-12"
         >
           {/* Left Column: chips, title, summary, facts row, CTA button */}
           <div>
@@ -148,7 +148,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
             <div className="pt-2">
               <a
                 href="#get"
-                className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+                className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 text-base max-md:min-h-[40px] max-md:px-5 max-md:py-2.5 max-md:text-sm bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
               >
                 {cta.open}
               </a>
@@ -156,9 +156,9 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
           </div>
 
           {/* Right/top Visual: cover_image_url if present, otherwise decorative brand-colour grid illustration */}
-          <div className="w-full">
+          <div className="w-full max-md:order-first max-md:mb-6 md:h-full">
             {resource.cover_image_url ? (
-              <div className="relative w-full aspect-[16/10] rounded-2xl overflow-hidden border border-[#F0E4D2] bg-white shadow-xs">
+              <div className="relative w-full aspect-[16/9] md:aspect-auto md:h-full md:min-h-[260px] rounded-2xl overflow-hidden border border-[#F0E4D2] bg-white shadow-xs">
                 <Image
                   src={resource.cover_image_url}
                   alt={resource.title}
@@ -172,7 +172,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
             ) : (
               <div
                 aria-hidden="true"
-                className="w-full aspect-[16/10] rounded-2xl border border-[#F0E4D2] bg-[#FAF3E8]/60 p-6 sm:p-8 flex items-center justify-center shadow-xs"
+                className="w-full aspect-[16/9] md:aspect-auto md:h-full md:min-h-[260px] rounded-2xl border border-[#F0E4D2] bg-[#FAF3E8]/60 p-6 sm:p-8 flex items-center justify-center shadow-xs"
               >
                 <div className="w-full max-w-sm grid grid-cols-3 gap-3.5">
                   <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
