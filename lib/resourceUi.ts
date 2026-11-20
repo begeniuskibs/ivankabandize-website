@@ -62,6 +62,8 @@ export function kindLabel(kind: string | null | undefined): string {
       return 'Template'
     case 'framework':
       return 'Framework'
+    case 'digest_pdf':
+      return 'Digest PDF'
     default:
       return normalized.charAt(0).toUpperCase() + normalized.slice(1)
   }
@@ -121,4 +123,36 @@ export function ctaLabels(
     success: 'Download now',
   }
 }
+
+/**
+ * Pure rule for category chips filter visibility:
+ * Shown ONLY when there are 4 or more published resources.
+ */
+export function shouldShowCategoryFilter(count: number): boolean {
+  return typeof count === 'number' && Number.isFinite(count) && count >= 4
+}
+
+/**
+ * Pure client-side filtering of resources by category (case-insensitive).
+ * Empty category, null, undefined, or "all" returns all resources.
+ */
+export function filterResourcesByCategory<T extends { category?: string | null }>(
+  resources: T[],
+  category: string | null | undefined
+): T[] {
+  if (!Array.isArray(resources)) return []
+  if (
+    !category ||
+    typeof category !== 'string' ||
+    !category.trim() ||
+    category.trim().toLowerCase() === 'all'
+  ) {
+    return resources
+  }
+  const target = category.trim().toLowerCase()
+  return resources.filter(
+    (item) => (item.category || '').trim().toLowerCase() === target
+  )
+}
+
 

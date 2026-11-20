@@ -9,6 +9,7 @@ import {
 } from '@/lib/resourceDownload'
 import { RESOURCE_CONSENT_TEXT } from '@/lib/resourceConsent'
 import { ctaLabels, getDownloadErrorMessage } from '@/lib/resourceUi'
+import type { PageDetails } from '@/lib/resourcePageDetails'
 
 // Interactive download gate form and mobile sticky action bar
 // House style: spaced hyphen " - " only
@@ -18,6 +19,7 @@ export interface ResourceDownloadFormProps {
   title: string
   kind?: string
   delivery?: 'file' | 'link'
+  details?: PageDetails
 }
 
 export default function ResourceDownloadForm({
@@ -25,6 +27,7 @@ export default function ResourceDownloadForm({
   title,
   kind,
   delivery = 'file',
+  details,
 }: ResourceDownloadFormProps) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
@@ -185,7 +188,8 @@ export default function ResourceDownloadForm({
     if (deliveryType === 'link') {
       const labels = ctaLabels(kind, 'link')
       return (
-        <div className="bg-white border border-[#F0E4D2] rounded-xl p-6 sm:p-10 shadow-sm max-w-xl mx-auto text-center motion-safe:transition-opacity">
+        <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 sm:p-10 shadow-xs max-w-xl mx-auto text-center motion-safe:transition-opacity duration-300 motion-reduce:transition-none">
+          {/* Success Checkmark */}
           <div
             className="w-14 h-14 rounded-full bg-[#EBF7F2] text-[#1E7E5A] flex items-center justify-center mx-auto mb-4"
             aria-hidden="true"
@@ -193,6 +197,7 @@ export default function ResourceDownloadForm({
             <Check className="w-7 h-7 stroke-[2.5]" />
           </div>
 
+          {/* Focusable success heading */}
           <h2
             ref={successHeadingRef}
             tabIndex={-1}
@@ -201,20 +206,91 @@ export default function ResourceDownloadForm({
             It is yours.
           </h2>
 
+          {/* Sent to inbox line */}
           <p className="text-sm sm:text-base text-[#5C5F73] leading-relaxed max-w-md mx-auto mb-6">
-            I have also sent the link to your inbox.
+            I have also sent the link to your inbox so you can find it later.
           </p>
 
+          {/* Open template button */}
           <div className="space-y-4">
             <a
               href={downloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-md transition shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl transition shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
             >
               <span>{labels.success}</span>
               <ArrowRight className="w-4 h-4 stroke-[2.5]" aria-hidden="true" />
             </a>
+          </div>
+
+          {/* Your next 10 minutes: numbered list from details.success_steps */}
+          {details?.success_steps && details.success_steps.length > 0 && (
+            <div className="mt-8 pt-8 border-t border-[#F0E4D2] text-left">
+              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4 text-center sm:text-left">
+                Your next 10 minutes
+              </h3>
+              <ol className="space-y-3 list-none p-0 m-0">
+                {details.success_steps.map((step, idx) => (
+                  <li
+                    key={idx}
+                    className="bg-[#FDF8F1] border border-[#F0E4D2] rounded-xl p-4 flex items-start gap-3.5 shadow-2xs"
+                  >
+                    <span
+                      className="w-7 h-7 rounded-full bg-[#CF3F29] text-white font-['MTN_Brighter_Sans',_sans-serif] font-bold text-sm flex items-center justify-center shrink-0 mt-0.5"
+                      aria-hidden="true"
+                    >
+                      {idx + 1}
+                    </span>
+                    <div className="flex-1 min-w-0">
+                      <strong className="block text-sm font-bold text-[#232536] mb-0.5">
+                        {step.title}
+                      </strong>
+                      <p className="text-xs sm:text-sm text-[#5C5F73] leading-relaxed">
+                        {step.detail}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          )}
+
+          {/* Keep reading: links from details.related */}
+          {details?.related && details.related.length > 0 && (
+            <div className="mt-8 pt-8 border-t border-[#F0E4D2] text-left">
+              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4 text-center sm:text-left">
+                Keep reading
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                {details.related.map((rel, idx) => (
+                  <Link
+                    key={idx}
+                    href={rel.href}
+                    className="group block p-4 bg-[#FDF8F1] border border-[#F0E4D2] hover:border-[#CF3F29] rounded-xl transition duration-200"
+                  >
+                    {rel.label && (
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-[#5C5F73] block mb-1">
+                        {rel.label}
+                      </span>
+                    )}
+                    <span className="text-sm font-bold text-[#232536] group-hover:text-[#CF3F29] transition-colors line-clamp-2">
+                      {rel.title} &rarr;
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Back link */}
+          <div className="mt-8 pt-6 border-t border-[#F0E4D2] text-center">
+            <Link
+              href="/garden/resources"
+              className="text-sm font-bold text-[#CF3F29] hover:text-[#b83420] transition"
+            >
+              &larr; Back to all resources
+            </Link>
           </div>
         </div>
       )
@@ -223,7 +299,7 @@ export default function ResourceDownloadForm({
     const isExpired = secondsRemaining === 0
 
     return (
-      <div className="bg-white border border-[#F0E4D2] rounded-xl p-6 sm:p-10 shadow-sm max-w-xl mx-auto text-center motion-safe:transition-opacity">
+      <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 sm:p-10 shadow-xs max-w-xl mx-auto text-center motion-safe:transition-opacity duration-300 motion-reduce:transition-none">
         <div
           className="w-14 h-14 rounded-full bg-[#EBF7F2] text-[#1E7E5A] flex items-center justify-center mx-auto mb-4"
           aria-hidden="true"
@@ -250,7 +326,7 @@ export default function ResourceDownloadForm({
               href={downloadUrl}
               rel="noopener"
               download
-              className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-md transition shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+              className="inline-flex items-center justify-center gap-2 w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl transition shadow-xs cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
             >
               <Download className="w-5 h-5" aria-hidden="true" />
               <span>Download now</span>
@@ -264,7 +340,7 @@ export default function ResourceDownloadForm({
             </p>
           </div>
         ) : (
-          <div className="space-y-4 bg-[#FAF3E8]/80 p-5 rounded-lg border border-[#F0E4D2]">
+          <div className="space-y-4 bg-[#FAF3E8]/80 p-5 rounded-xl border border-[#F0E4D2]">
             <p className="text-sm text-[#232536] font-medium leading-relaxed">
               That link has expired. Your emailed copy works for 24 hours, or you
               can ask for a new link.
@@ -272,7 +348,7 @@ export default function ResourceDownloadForm({
             <button
               type="button"
               onClick={handleReset}
-              className="inline-flex items-center justify-center min-h-[48px] px-6 py-2.5 bg-white border border-[#F0E4D2] hover:border-[#232536]/30 text-[#232536] font-bold text-sm rounded-md transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29]"
+              className="inline-flex items-center justify-center min-h-[48px] px-6 py-2.5 bg-white border border-[#F0E4D2] hover:border-[#232536]/30 text-[#232536] font-bold text-sm rounded-xl transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29]"
             >
               Get a new link
             </button>
@@ -286,7 +362,7 @@ export default function ResourceDownloadForm({
   const currentCta = ctaLabels(kind, delivery)
 
   return (
-    <div className="bg-white border border-[#F0E4D2] rounded-xl p-6 sm:p-10 shadow-sm max-w-xl mx-auto">
+    <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 sm:p-10 shadow-xs max-w-xl mx-auto">
       <div className="mb-6">
         <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-2">
           Get {title}
@@ -299,7 +375,7 @@ export default function ResourceDownloadForm({
       {serverError && (
         <div
           role="alert"
-          className="p-3.5 mb-5 rounded-md bg-[#FDF0ED] border border-[#F6C6BC] text-sm text-[#CF3F29] font-medium leading-relaxed"
+          className="p-3.5 mb-5 rounded-xl bg-[#FDF0ED] border border-[#F6C6BC] text-sm text-[#CF3F29] font-medium leading-relaxed"
         >
           {serverError}
         </div>
@@ -347,7 +423,7 @@ export default function ResourceDownloadForm({
               touched.name && errors.name ? 'resource-name-error' : undefined
             }
             placeholder="e.g. Maya"
-            className={`w-full min-h-[48px] px-4 py-3 rounded-md border text-base text-[#232536] bg-[#FDF8F1] focus:bg-white transition focus:outline-none focus:ring-2 ${
+            className={`w-full min-h-[48px] px-4 py-3 rounded-xl border text-base text-[#232536] bg-[#FDF8F1] focus:bg-white transition focus:outline-none focus:ring-2 ${
               touched.name && errors.name
                 ? 'border-[#CF3F29] focus:ring-[#CF3F29]'
                 : 'border-[#F0E4D2] focus:border-[#232536] focus:ring-[#232536]/20'
@@ -392,7 +468,7 @@ export default function ResourceDownloadForm({
               touched.email && errors.email ? 'resource-email-error' : undefined
             }
             placeholder="you@domain.com"
-            className={`w-full min-h-[48px] px-4 py-3 rounded-md border text-base text-[#232536] bg-[#FDF8F1] focus:bg-white transition focus:outline-none focus:ring-2 ${
+            className={`w-full min-h-[48px] px-4 py-3 rounded-xl border text-base text-[#232536] bg-[#FDF8F1] focus:bg-white transition focus:outline-none focus:ring-2 ${
               touched.email && errors.email
                 ? 'border-[#CF3F29] focus:ring-[#CF3F29]'
                 : 'border-[#F0E4D2] focus:border-[#232536] focus:ring-[#232536]/20'
@@ -426,7 +502,7 @@ export default function ResourceDownloadForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-md transition shadow-sm cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+          className="w-full min-h-[48px] px-6 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl transition shadow-xs cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
         >
           {isSubmitting ? (
             <>
@@ -506,7 +582,7 @@ export function ResourceStickyBar({
   return (
     <aside
       aria-label="Quick download"
-      className="fixed bottom-0 left-0 right-0 z-30 md:hidden bg-[#FDF8F1]/95 backdrop-blur-md border-t border-[#F0E4D2] p-3 px-4 shadow-lg motion-safe:transition-all"
+      className="max-md:block md:hidden fixed bottom-0 left-0 right-0 z-30 bg-[#FDF8F1]/95 backdrop-blur-md border-t border-[#F0E4D2] p-3 px-4 shadow-lg motion-safe:transition-all"
     >
       <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
         <p className="text-xs font-bold text-[#232536] truncate flex-1">
@@ -514,7 +590,7 @@ export function ResourceStickyBar({
         </p>
         <a
           href={`#${formTargetId}`}
-          className="inline-flex items-center justify-center min-h-[48px] px-5 py-2.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-xs rounded-md shadow-sm transition whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#CF3F29]"
+          className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-xs rounded-xl shadow-xs transition whitespace-nowrap focus:outline-none focus:ring-2 focus:ring-[#CF3F29]"
         >
           {currentCta.open}
         </a>
