@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResourceBySlug } from '@/lib/resources'
 import { ctaLabels, kindLabel } from '@/lib/resourceUi'
@@ -280,7 +280,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
           <section aria-label="Fit and suitability" className="my-12">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {hasWorksWell && (
-                <div className="bg-white border border-[#F0E4D2] border-t-4 border-t-[#1F8A5B] rounded-2xl p-6 shadow-xs">
+                <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs">
                   <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4">
                     Works well when...
                   </h2>
@@ -293,7 +293,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
               )}
 
               {hasNotFit && (
-                <div className="bg-white border border-[#F0E4D2] border-t-4 border-t-[#5C5F73] rounded-2xl p-6 shadow-xs">
+                <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs">
                   <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4">
                     Does not fit when...
                   </h2>
@@ -323,13 +323,22 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
                   key={idx}
                   className="group border-b border-[#F0E4D2] py-4 transition-colors"
                 >
-                  <summary className="font-bold text-base sm:text-lg text-[#232536] cursor-pointer focus:outline-none focus:text-[#CF3F29] list-none flex justify-between items-center gap-4">
+                  <summary className="font-bold text-base sm:text-lg text-[#232536] cursor-pointer list-none [&::-webkit-details-marker]:hidden flex justify-between items-center gap-4 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CF3F29] focus-visible:ring-offset-2 rounded-md">
                     <span>{item.q}</span>
                     <span
-                      className="text-[#5C5F73] group-open:rotate-180 transition-transform duration-200 motion-reduce:transition-none shrink-0"
+                      className="w-8 h-8 rounded-full border border-[#F0E4D2] hover:border-[#232536]/30 bg-white flex items-center justify-center shrink-0 text-[#232536]"
                       aria-hidden="true"
                     >
-                      &#x25BE;
+                      <Plus
+                        size={16}
+                        className="group-open:hidden"
+                        aria-hidden="true"
+                      />
+                      <Minus
+                        size={16}
+                        className="hidden group-open:block"
+                        aria-hidden="true"
+                      />
                     </span>
                   </summary>
                   <p className="mt-3 text-sm sm:text-base text-[#5C5F73] leading-relaxed">
