@@ -15,7 +15,9 @@ import {
 import { computeRequestFingerprint } from '../lib/resourceFingerprint.ts'
 import {
   RESOURCE_CONSENT_TEXT,
+  RESOURCE_CONSENT_TEXT_MEMBER,
   RESOURCE_CONSENT_VERSION,
+  RESOURCE_CONSENT_VERSION_MEMBER,
 } from '../lib/resourceConsent.ts'
 
 describe('Resource Consent Constants', () => {
@@ -24,6 +26,11 @@ describe('Resource Consent Constants', () => {
     assert.equal(
       RESOURCE_CONSENT_TEXT,
       'I am asking for this file. I understand that my name and email are stored so the download link can be sent to me and Ivan can see which files are used. See the Privacy Policy.'
+    )
+    assert.equal(RESOURCE_CONSENT_VERSION_MEMBER, 'v1-member')
+    assert.equal(
+      RESOURCE_CONSENT_TEXT_MEMBER,
+      'Signed-in member requested this file. Name and email taken from the member account.'
     )
   })
 })
@@ -64,6 +71,61 @@ describe('Payload Validation & Normalisation', () => {
       name: 'Ivan Kabandize',
       email: 'ivan@example.com',
       isHoneypot: false,
+      intendedUse: null,
+    })
+  })
+
+  describe('Intended Use Validation & Normalisation', () => {
+    it('accepts valid intendedUse values', () => {
+      for (const val of ['myself', 'team', 'church_ministry', 'curious']) {
+        const res = validateResourceDownloadPayload({
+          ...validPayload,
+          intendedUse: val,
+        })
+        assert.equal(res.isValid, true)
+        assert.equal(res.data?.intendedUse, val)
+      }
+    })
+
+    it('normalises missing or empty intendedUse to null', () => {
+      const res1 = validateResourceDownloadPayload({
+        ...validPayload,
+        intendedUse: '',
+      })
+      assert.equal(res1.isValid, true)
+      assert.equal(res1.data?.intendedUse, null)
+
+      const res2 = validateResourceDownloadPayload({
+        ...validPayload,
+        intendedUse: '   ',
+      })
+      assert.equal(res2.isValid, true)
+      assert.equal(res2.data?.intendedUse, null)
+
+      const res3 = validateResourceDownloadPayload({
+        ...validPayload,
+        intendedUse: undefined,
+      })
+      assert.equal(res3.isValid, true)
+      assert.equal(res3.data?.intendedUse, null)
+    })
+
+    it('rejects invalid intendedUse string', () => {
+      const res = validateResourceDownloadPayload({
+        ...validPayload,
+        intendedUse: 'invalid_category',
+      })
+      assert.equal(res.isValid, false)
+      assert.equal(res.error, 'Invalid request data.')
+    })
+
+    it('rejects non-string intendedUse', () => {
+      const res = validateResourceDownloadPayload({
+        ...validPayload,
+        intendedUse: 12345,
+      })
+      assert.equal(res.isValid, false)
+      assert.equal(res.error, 'Invalid request data.')
     })
   })
 
