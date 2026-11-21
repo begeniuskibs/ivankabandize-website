@@ -7,10 +7,10 @@ import {
   formatFileSize,
   splitParagraphs,
   kindLabel,
+  kindPluralLabel,
+  slugifyCategory,
   getDownloadErrorMessage,
   ctaLabels,
-  shouldShowCategoryFilter,
-  filterResourcesByCategory,
 } from '../lib/resourceUi.ts'
 
 describe('formatFileSize', () => {
@@ -177,65 +177,36 @@ describe('ctaLabels', () => {
   })
 })
 
-describe('shouldShowCategoryFilter', () => {
-  it('returns true when there are 4 or more published resources', () => {
-    assert.equal(shouldShowCategoryFilter(4), true)
-    assert.equal(shouldShowCategoryFilter(5), true)
-    assert.equal(shouldShowCategoryFilter(10), true)
+describe('kindPluralLabel', () => {
+  it('maps standard resource kinds to plural display labels', () => {
+    assert.equal(kindPluralLabel('template'), 'Templates')
+    assert.equal(kindPluralLabel('guide'), 'Guides')
+    assert.equal(kindPluralLabel('framework'), 'Frameworks')
+    assert.equal(kindPluralLabel('digest_pdf'), 'Digest PDFs')
   })
 
-  it('returns false when there are fewer than 4 published resources', () => {
-    assert.equal(shouldShowCategoryFilter(0), false)
-    assert.equal(shouldShowCategoryFilter(1), false)
-    assert.equal(shouldShowCategoryFilter(2), false)
-    assert.equal(shouldShowCategoryFilter(3), false)
-  })
-
-  it('returns false for non-numeric, negative or non-finite inputs', () => {
-    assert.equal(shouldShowCategoryFilter(-1), false)
-    assert.equal(shouldShowCategoryFilter(Number.NaN), false)
-    assert.equal(shouldShowCategoryFilter(null), false)
-    assert.equal(shouldShowCategoryFilter(undefined), false)
+  it('handles case differences, whitespace, and fallbacks', () => {
+    assert.equal(kindPluralLabel('TEMPLATE'), 'Templates')
+    assert.equal(kindPluralLabel('  guide  '), 'Guides')
+    assert.equal(kindPluralLabel('tool'), 'Tools')
+    assert.equal(kindPluralLabel(''), '')
+    assert.equal(kindPluralLabel(null), '')
+    assert.equal(kindPluralLabel(undefined), '')
   })
 })
 
-describe('filterResourcesByCategory', () => {
-  const sample = [
-    { title: 'Item 1', category: 'Productivity' },
-    { title: 'Item 2', category: 'Leadership' },
-    { title: 'Item 3', category: 'Productivity' },
-    { title: 'Item 4', category: null },
-    { title: 'Item 5', category: '' },
-  ]
-
-  it('returns all items when category is "All", null, undefined or empty', () => {
-    assert.deepEqual(filterResourcesByCategory(sample, 'All'), sample)
-    assert.deepEqual(filterResourcesByCategory(sample, 'all'), sample)
-    assert.deepEqual(filterResourcesByCategory(sample, null), sample)
-    assert.deepEqual(filterResourcesByCategory(sample, undefined), sample)
-    assert.deepEqual(filterResourcesByCategory(sample, ''), sample)
-    assert.deepEqual(filterResourcesByCategory(sample, '   '), sample)
+describe('slugifyCategory', () => {
+  it('slugifies category names cleanly', () => {
+    assert.equal(slugifyCategory('Productivity'), 'productivity')
+    assert.equal(slugifyCategory('Time Management'), 'time-management')
+    assert.equal(slugifyCategory('Leadership & Strategy'), 'leadership-strategy')
+    assert.equal(slugifyCategory('  Deep Work  '), 'deep-work')
   })
 
-  it('filters by category case-insensitively', () => {
-    const prod = filterResourcesByCategory(sample, 'productivity')
-    assert.equal(prod.length, 2)
-    assert.equal(prod[0].title, 'Item 1')
-    assert.equal(prod[1].title, 'Item 3')
-
-    const leader = filterResourcesByCategory(sample, 'LEADERSHIP')
-    assert.equal(leader.length, 1)
-    assert.equal(leader[0].title, 'Item 2')
-  })
-
-  it('returns empty array when category has no matches', () => {
-    const none = filterResourcesByCategory(sample, 'NonExistent')
-    assert.deepEqual(none, [])
-  })
-
-  it('handles non-array inputs safely', () => {
-    assert.deepEqual(filterResourcesByCategory(null, 'Productivity'), [])
-    assert.deepEqual(filterResourcesByCategory(undefined, 'Productivity'), [])
+  it('handles empty or non-string inputs safely', () => {
+    assert.equal(slugifyCategory(''), '')
+    assert.equal(slugifyCategory(null), '')
+    assert.equal(slugifyCategory(undefined), '')
   })
 })
 

@@ -125,34 +125,37 @@ export function ctaLabels(
 }
 
 /**
- * Pure rule for category chips filter visibility:
- * Shown ONLY when there are 4 or more published resources.
+ * Maps raw resource kind slugs to plural UI labels (template -> Templates, guide -> Guides, framework -> Frameworks).
  */
-export function shouldShowCategoryFilter(count: number): boolean {
-  return typeof count === 'number' && Number.isFinite(count) && count >= 4
+export function kindPluralLabel(kind: string | null | undefined): string {
+  if (!kind || typeof kind !== 'string') return ''
+  const normalized = kind.trim().toLowerCase()
+  switch (normalized) {
+    case 'template':
+      return 'Templates'
+    case 'guide':
+      return 'Guides'
+    case 'framework':
+      return 'Frameworks'
+    case 'digest_pdf':
+      return 'Digest PDFs'
+    default:
+      return normalized
+        ? normalized.charAt(0).toUpperCase() + normalized.slice(1) + 's'
+        : ''
+  }
 }
 
 /**
- * Pure client-side filtering of resources by category (case-insensitive).
- * Empty category, null, undefined, or "all" returns all resources.
+ * Normalises a category string to a URL-friendly slug.
  */
-export function filterResourcesByCategory<T extends { category?: string | null }>(
-  resources: T[],
-  category: string | null | undefined
-): T[] {
-  if (!Array.isArray(resources)) return []
-  if (
-    !category ||
-    typeof category !== 'string' ||
-    !category.trim() ||
-    category.trim().toLowerCase() === 'all'
-  ) {
-    return resources
-  }
-  const target = category.trim().toLowerCase()
-  return resources.filter(
-    (item) => (item.category || '').trim().toLowerCase() === target
-  )
+export function slugifyCategory(category: string | null | undefined): string {
+  if (!category || typeof category !== 'string') return ''
+  return category
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
 }
 
 

@@ -35,6 +35,7 @@ interface GardenLandingA2Props {
   libraryItems: GardenA2LibraryItem[]
   totalLibraryCount: number
   topicTags: GardenA2TopicTag[]
+  totalResourcesCount?: number
 }
 
 const STREAM_NAMES: Record<string, string> = {
@@ -49,6 +50,7 @@ export default function GardenLandingA2({
   libraryItems,
   totalLibraryCount,
   topicTags,
+  totalResourcesCount = 0,
 }: GardenLandingA2Props) {
   return (
     <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1]">
@@ -223,7 +225,7 @@ export default function GardenLandingA2({
             {/* Resources Card (Slate) */}
             <Link
               href="/garden/resources"
-              aria-label="Resources, coming soon"
+              aria-label="Resources"
               className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#EEEFF6] border border-[#D5D8E8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5C5F73] focus-visible:ring-offset-2"
             >
               {/* Full-card Background Art */}
@@ -255,9 +257,24 @@ export default function GardenLandingA2({
                 <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Templates and downloads you can put to work today.
                 </p>
-                <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs min-h-[28px]">
-                  <span className="inline-flex items-center text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full bg-white/80 text-[#5A5D70] border border-[#5A5D70]/20">
-                    Coming soon
+                <div className="pt-2.5 border-t border-[#D5D8E8]/60 flex items-center justify-between text-xs font-semibold min-h-[28px]">
+                  {totalResourcesCount > 0 ? (
+                    <span className="text-[#5A5D70] font-bold">
+                      {totalResourcesCount === 1
+                        ? '1 resource'
+                        : `${totalResourcesCount} resources`}
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <span className="inline-flex items-center gap-1 text-[#5A5D70] font-bold">
+                    <span>Open</span>
+                    <ArrowRight
+                      size={14}
+                      strokeWidth={2.5}
+                      aria-hidden="true"
+                      className="transition-transform duration-300 group-hover:translate-x-1 motion-reduce:group-hover:translate-x-0 motion-reduce:transition-none"
+                    />
                   </span>
                 </div>
               </div>
@@ -512,7 +529,7 @@ export default function GardenLandingA2({
                 Seeds are being packed
               </h3>
               <p className="text-sm text-[#5A5D70] max-w-lg mx-auto leading-relaxed">
-                Free templates and frameworks will land here. Members will be able to download them.
+                Templates and guides will be added here as they are ready.
               </p>
             </div>
           </div>
