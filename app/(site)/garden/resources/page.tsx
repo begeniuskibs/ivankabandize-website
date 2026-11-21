@@ -6,17 +6,13 @@ import ResourcesShelfList from '@/components/public/ResourcesShelfList'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResources } from '@/lib/resources'
 import { kindPluralLabel, slugifyCategory } from '@/lib/resourceUi'
+import GardenTopicBar from '@/components/public/GardenTopicBar'
+import { buildTopicBarItems } from '@/lib/gardenTopicBar'
 import {
   HERO_CHIP_ACTIVE,
   HERO_CHIP_INACTIVE,
-  TOPIC_ALL_CHIP_ACTIVE,
-  TOPIC_ALL_CHIP_INACTIVE,
-  TOPIC_CHIP_ACTIVE,
-  TOPIC_CHIP_INACTIVE,
   TOPIC_STRIP_WRAPPER,
   TOPIC_STRIP_CONTAINER,
-  TOPIC_STRIP_ROW,
-  TOPIC_STRIP_LABEL,
 } from '@/lib/gardenChipStyles'
 
 // Public shelf for downloadable resources
@@ -148,6 +144,11 @@ export default async function ResourcesPage({
     )
   }
 
+  const topicBarItems = buildTopicBarItems(
+    distinctCategories,
+    (slug) => buildResourcesHref(activeKind, slug)
+  )
+
   return (
     <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4]">
       {/* Existing Garden Hero with Key Categories chip slot */}
@@ -182,26 +183,10 @@ export default async function ResourcesPage({
       {distinctCategories.length > 0 && (
         <section className={TOPIC_STRIP_WRAPPER}>
           <div className={TOPIC_STRIP_CONTAINER}>
-            <div className={TOPIC_STRIP_ROW}>
-              <span className={TOPIC_STRIP_LABEL}>
-                Topic:
-              </span>
-              <Link
-                href={buildResourcesHref(activeKind, null)}
-                className={!activeTopic ? TOPIC_ALL_CHIP_ACTIVE : TOPIC_ALL_CHIP_INACTIVE}
-              >
-                All topics
-              </Link>
-              {distinctCategories.map((cat) => (
-                <Link
-                  key={cat.slug}
-                  href={buildResourcesHref(activeKind, cat.slug)}
-                  className={activeTopic === cat.slug ? TOPIC_CHIP_ACTIVE : TOPIC_CHIP_INACTIVE}
-                >
-                  {cat.name}
-                </Link>
-              ))}
-            </div>
+            <GardenTopicBar
+              items={topicBarItems}
+              activeKey={activeTopic || 'all'}
+            />
           </div>
         </section>
       )}

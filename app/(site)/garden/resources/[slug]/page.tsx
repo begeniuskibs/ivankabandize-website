@@ -87,9 +87,24 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
         <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-28 md:pb-16">
           {/* Back Link */}
           <div className="mb-6">
+            {/* Mobile back link */}
             <Link
               href="/garden/resources"
-              className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#5C5F73] hover:text-[#232536] transition cursor-pointer"
+              className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#5C5F73] hover:text-[#232536] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 rounded-xs transition-colors"
+            >
+              <ArrowLeft
+                size={12}
+                strokeWidth={2.5}
+                aria-hidden="true"
+                className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+              />
+              <span>Resources</span>
+            </Link>
+
+            {/* Desktop back link */}
+            <Link
+              href="/garden/resources"
+              className="hidden md:inline-flex group items-center gap-1.5 text-sm font-semibold text-[#5C5F73] hover:text-[#232536] transition cursor-pointer"
             >
               <ArrowLeft
                 size={16}
@@ -160,216 +175,215 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
               </div>
             </div>
 
-          {/* Right/top Visual: cover_image_url if present, otherwise decorative brand-colour grid illustration */}
-          <div className="w-full max-md:order-first max-md:mb-6 md:h-full">
-            {resource.cover_image_url ? (
-              <div className="relative w-full aspect-[16/9] md:aspect-auto md:h-full md:min-h-[260px] rounded-2xl overflow-hidden border border-[#F0E4D2] bg-white shadow-xs">
-                <Image
-                  src={resource.cover_image_url}
-                  alt={resource.title}
-                  fill
-                  priority
-                  unoptimized
-                  sizes="(max-width: 768px) 100vw, 520px"
-                  className="object-cover"
-                />
-              </div>
-            ) : (
-              <div
-                aria-hidden="true"
-                className="w-full aspect-[16/9] md:aspect-auto md:h-full md:min-h-[260px] rounded-2xl border border-[#F0E4D2] bg-[#FAF3E8]/60 p-6 sm:p-8 flex items-center justify-center shadow-xs"
-              >
-                <div className="w-full max-w-sm grid grid-cols-3 gap-3.5">
-                  <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
-                    <div className="w-8 h-2 rounded bg-[#EF5B45]" />
-                    <div className="space-y-1">
-                      <div className="w-full h-1.5 rounded bg-[#F0E4D2]" />
-                      <div className="w-3/4 h-1.5 rounded bg-[#F0E4D2]" />
+            {/* Right/top Visual: cover_image_url if present, otherwise decorative brand-colour grid illustration */}
+            <div className="w-full max-md:order-first max-md:mb-6 md:h-full">
+              {resource.cover_image_url ? (
+                <div className="relative w-full aspect-[16/9] md:aspect-auto md:h-full md:min-h-[260px] rounded-2xl overflow-hidden border border-[#F0E4D2] bg-white shadow-xs">
+                  <Image
+                    src={resource.cover_image_url}
+                    alt={resource.title}
+                    fill
+                    priority
+                    unoptimized
+                    sizes="(max-width: 768px) 100vw, 520px"
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div
+                  aria-hidden="true"
+                  className="w-full aspect-[16/9] md:aspect-auto md:h-full md:min-h-[260px] rounded-2xl border border-[#F0E4D2] bg-[#FAF3E8]/60 p-6 sm:p-8 flex items-center justify-center shadow-xs"
+                >
+                  <div className="w-full max-w-sm grid grid-cols-3 gap-3.5">
+                    <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
+                      <div className="w-8 h-2 rounded bg-[#EF5B45]" />
+                      <div className="space-y-1">
+                        <div className="w-full h-1.5 rounded bg-[#F0E4D2]" />
+                        <div className="w-3/4 h-1.5 rounded bg-[#F0E4D2]" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
-                    <div className="w-6 h-2 rounded bg-[#232536]" />
-                    <div className="space-y-1">
-                      <div className="w-full h-1.5 rounded bg-[#F0E4D2]" />
-                      <div className="w-1/2 h-1.5 rounded bg-[#F0E4D2]" />
+                    <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
+                      <div className="w-6 h-2 rounded bg-[#232536]" />
+                      <div className="space-y-1">
+                        <div className="w-full h-1.5 rounded bg-[#F0E4D2]" />
+                        <div className="w-1/2 h-1.5 rounded bg-[#F0E4D2]" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
-                    <div className="w-10 h-2 rounded bg-[#CF3F29]" />
-                    <div className="space-y-1">
-                      <div className="w-4/5 h-1.5 rounded bg-[#F0E4D2]" />
-                      <div className="w-2/3 h-1.5 rounded bg-[#F0E4D2]" />
+                    <div className="h-20 sm:h-24 rounded-xl bg-white border border-[#F0E4D2] p-3 flex flex-col justify-between shadow-2xs">
+                      <div className="w-10 h-2 rounded bg-[#CF3F29]" />
+                      <div className="space-y-1">
+                        <div className="w-4/5 h-1.5 rounded bg-[#F0E4D2]" />
+                        <div className="w-2/3 h-1.5 rounded bg-[#F0E4D2]" />
+                      </div>
                     </div>
-                  </div>
-                  <div className="col-span-2 h-14 rounded-xl bg-white border border-[#F0E4D2] p-3 flex items-center gap-3 shadow-2xs">
-                    <div className="w-7 h-7 rounded-lg bg-[#EF5B45]/15 flex items-center justify-center shrink-0">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#CF3F29]" />
+                    <div className="col-span-2 h-14 rounded-xl bg-white border border-[#F0E4D2] p-3 flex items-center gap-3 shadow-2xs">
+                      <div className="w-7 h-7 rounded-lg bg-[#EF5B45]/15 flex items-center justify-center shrink-0">
+                        <div className="w-2.5 h-2.5 rounded-full bg-[#CF3F29]" />
+                      </div>
+                      <div className="w-full space-y-1.5">
+                        <div className="w-4/5 h-2 rounded bg-[#232536]/20" />
+                        <div className="w-1/2 h-1.5 rounded bg-[#F0E4D2]" />
+                      </div>
                     </div>
-                    <div className="w-full space-y-1.5">
-                      <div className="w-4/5 h-2 rounded bg-[#232536]/20" />
-                      <div className="w-1/2 h-1.5 rounded bg-[#F0E4D2]" />
+                    <div className="col-span-1 h-14 rounded-xl bg-white border border-[#F0E4D2] p-3 flex items-center justify-center shadow-2xs">
+                      <div className="w-full h-2 rounded bg-[#232536]/15" />
                     </div>
-                  </div>
-                  <div className="col-span-1 h-14 rounded-xl bg-white border border-[#F0E4D2] p-3 flex items-center justify-center shadow-2xs">
-                    <div className="w-full h-2 rounded bg-[#232536]/15" />
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        </section>
+              )}
+            </div>
+          </section>
 
-        {/* 1. What it is, 2. Who it is for, 3. What it helps with (only if data exists) */}
-        {overviewCards.length > 0 && (
-          <section aria-label="Resource overview" className="my-12">
-            <div
-              className={`grid grid-cols-1 ${
-                overviewCards.length === 3
+          {/* 1. What it is, 2. Who it is for, 3. What it helps with (only if data exists) */}
+          {overviewCards.length > 0 && (
+            <section aria-label="Resource overview" className="my-12">
+              <div
+                className={`grid grid-cols-1 ${overviewCards.length === 3
                   ? 'md:grid-cols-3'
                   : overviewCards.length === 2
                     ? 'md:grid-cols-2'
                     : ''
-              } gap-6`}
-            >
-              {overviewCards.map((card, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs flex flex-col"
-                >
-                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-2.5">
-                    {card.title}
-                  </h2>
-                  <p className="text-sm sm:text-base text-[#5C5F73] leading-relaxed">
-                    {card.content}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* 4. Steps (numbered): only if data exists */}
-        {hasSteps && (
-          <section id="how" aria-label="Steps" className="my-12 scroll-mt-6">
-            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-6">
-              How to use it
-            </h2>
-            <ol className="space-y-3.5 list-none p-0 m-0">
-              {details.steps.map((step, idx) => (
-                <li
-                  key={idx}
-                  className="bg-white border border-[#F0E4D2] rounded-2xl p-4 sm:p-5 flex items-start gap-4 shadow-xs"
-                >
-                  <span
-                    className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#CF3F29] text-white font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base sm:text-lg flex items-center justify-center shrink-0 mt-0.5"
-                    aria-hidden="true"
+                  } gap-6`}
+              >
+                {overviewCards.map((card, idx) => (
+                  <div
+                    key={idx}
+                    className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs flex flex-col"
                   >
-                    {idx + 1}
-                  </span>
-                  <div className="flex-1 min-w-0">
-                    <strong className="block text-base font-bold text-[#232536] mb-1">
-                      {step.title}
-                    </strong>
-                    <p className="text-sm text-[#5C5F73] leading-relaxed">
-                      {step.detail}
+                    <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-2.5">
+                      {card.title}
+                    </h2>
+                    <p className="text-sm sm:text-base text-[#5C5F73] leading-relaxed">
+                      {card.content}
                     </p>
                   </div>
-                </li>
-              ))}
-            </ol>
-          </section>
-        )}
+                ))}
+              </div>
+            </section>
+          )}
 
-        {/* Interactive demo tabs: only if data exists */}
-        {details.demo && details.demo.length > 0 && (
-          <section aria-label="Interactive preview" className="my-12">
-            <ResourceDemo demo={details.demo} />
-          </section>
-        )}
-
-        {/* 5. Works well when / Does not fit when: two columns on desktop, only if data exists */}
-        {hasFitSection && (
-          <section aria-label="Fit and suitability" className="my-12">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {hasWorksWell && (
-                <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs">
-                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4">
-                    Works well when...
-                  </h2>
-                  <ul className="space-y-2.5 text-sm sm:text-base text-[#5C5F73] leading-relaxed list-disc pl-5">
-                    {details.works_well.map((item, idx) => (
-                      <li key={idx}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-
-              {hasNotFit && (
-                <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs">
-                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4">
-                    Does not fit when...
-                  </h2>
-                  <ul className="space-y-2.5 text-sm sm:text-base text-[#5C5F73] leading-relaxed list-disc pl-5">
-                    {details.not_fit.map((item, idx) => (
-                      <li key={idx}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-
-        {/* 6. FAQ: native details/summary, keyboard accessible, only if data exists */}
-        {hasFaq && (
-          <section
-            aria-label="Frequently asked questions"
-            className="my-12 max-w-2xl"
-          >
-            <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-6">
-              Questions people ask
-            </h2>
-            <div className="border-t border-[#F0E4D2]">
-              {details.faq.map((item, idx) => (
-                <details
-                  key={idx}
-                  className="group border-b border-[#F0E4D2] py-4 transition-colors"
-                >
-                  <summary className="font-bold text-base sm:text-lg text-[#232536] cursor-pointer list-none [&::-webkit-details-marker]:hidden flex justify-between items-center gap-4 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CF3F29] focus-visible:ring-offset-2 rounded-md">
-                    <span>{item.q}</span>
+          {/* 4. Steps (numbered): only if data exists */}
+          {hasSteps && (
+            <section id="how" aria-label="Steps" className="my-12 scroll-mt-6">
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-6">
+                How to use it
+              </h2>
+              <ol className="space-y-3.5 list-none p-0 m-0">
+                {details.steps.map((step, idx) => (
+                  <li
+                    key={idx}
+                    className="bg-white border border-[#F0E4D2] rounded-2xl p-4 sm:p-5 flex items-start gap-4 shadow-xs"
+                  >
                     <span
-                      className="w-8 h-8 rounded-full border border-[#F0E4D2] hover:border-[#232536]/30 bg-white flex items-center justify-center shrink-0 text-[#232536]"
+                      className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#CF3F29] text-white font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base sm:text-lg flex items-center justify-center shrink-0 mt-0.5"
                       aria-hidden="true"
                     >
-                      <Plus
-                        size={16}
-                        className="group-open:hidden"
-                        aria-hidden="true"
-                      />
-                      <Minus
-                        size={16}
-                        className="hidden group-open:block"
-                        aria-hidden="true"
-                      />
+                      {idx + 1}
                     </span>
-                  </summary>
-                  <p className="mt-3 text-sm sm:text-base text-[#5C5F73] leading-relaxed">
-                    {item.a}
-                  </p>
-                </details>
-              ))}
-            </div>
-          </section>
-        )}
+                    <div className="flex-1 min-w-0">
+                      <strong className="block text-base font-bold text-[#232536] mb-1">
+                        {step.title}
+                      </strong>
+                      <p className="text-sm text-[#5C5F73] leading-relaxed">
+                        {step.detail}
+                      </p>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )}
 
-      </main>
+          {/* Interactive demo tabs: only if data exists */}
+          {details.demo && details.demo.length > 0 && (
+            <section aria-label="Interactive preview" className="my-12">
+              <ResourceDemo demo={details.demo} />
+            </section>
+          )}
 
-      {/* Mobile-only sticky bottom bar (max-md: scoping only) */}
-      <ResourceStickyBar
-        title={resource.title}
-        subText={kindLabel(resource.kind)}
-      />
-    </div>
+          {/* 5. Works well when / Does not fit when: two columns on desktop, only if data exists */}
+          {hasFitSection && (
+            <section aria-label="Fit and suitability" className="my-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {hasWorksWell && (
+                  <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs">
+                    <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4">
+                      Works well when...
+                    </h2>
+                    <ul className="space-y-2.5 text-sm sm:text-base text-[#5C5F73] leading-relaxed list-disc pl-5">
+                      {details.works_well.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {hasNotFit && (
+                  <div className="bg-white border border-[#F0E4D2] rounded-2xl p-6 shadow-xs">
+                    <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-xl font-bold text-[#232536] mb-4">
+                      Does not fit when...
+                    </h2>
+                    <ul className="space-y-2.5 text-sm sm:text-base text-[#5C5F73] leading-relaxed list-disc pl-5">
+                      {details.not_fit.map((item, idx) => (
+                        <li key={idx}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </section>
+          )}
+
+          {/* 6. FAQ: native details/summary, keyboard accessible, only if data exists */}
+          {hasFaq && (
+            <section
+              aria-label="Frequently asked questions"
+              className="my-12 max-w-2xl"
+            >
+              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-6">
+                Questions people ask
+              </h2>
+              <div className="border-t border-[#F0E4D2]">
+                {details.faq.map((item, idx) => (
+                  <details
+                    key={idx}
+                    className="group border-b border-[#F0E4D2] py-4 transition-colors"
+                  >
+                    <summary className="font-bold text-base sm:text-lg text-[#232536] cursor-pointer list-none [&::-webkit-details-marker]:hidden flex justify-between items-center gap-4 min-h-[44px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#CF3F29] focus-visible:ring-offset-2 rounded-md">
+                      <span>{item.q}</span>
+                      <span
+                        className="w-8 h-8 rounded-full border border-[#F0E4D2] hover:border-[#232536]/30 bg-white flex items-center justify-center shrink-0 text-[#232536]"
+                        aria-hidden="true"
+                      >
+                        <Plus
+                          size={16}
+                          className="group-open:hidden"
+                          aria-hidden="true"
+                        />
+                        <Minus
+                          size={16}
+                          className="hidden group-open:block"
+                          aria-hidden="true"
+                        />
+                      </span>
+                    </summary>
+                    <p className="mt-3 text-sm sm:text-base text-[#5C5F73] leading-relaxed">
+                      {item.a}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </section>
+          )}
+
+        </main>
+
+        {/* Mobile-only sticky bottom bar (max-md: scoping only) */}
+        <ResourceStickyBar
+          title={resource.title}
+          subText={kindLabel(resource.kind)}
+        />
+      </div>
     </ResourceFlow>
   )
 }

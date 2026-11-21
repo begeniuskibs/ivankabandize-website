@@ -10,17 +10,13 @@ import {
   filterDigests,
   buildDigestHref,
 } from '@/lib/digestUi'
+import GardenTopicBar from '@/components/public/GardenTopicBar'
+import { buildTopicBarItems } from '@/lib/gardenTopicBar'
 import {
   HERO_CHIP_ACTIVE,
   HERO_CHIP_INACTIVE,
-  TOPIC_ALL_CHIP_ACTIVE,
-  TOPIC_ALL_CHIP_INACTIVE,
-  TOPIC_CHIP_ACTIVE,
-  TOPIC_CHIP_INACTIVE,
   TOPIC_STRIP_WRAPPER,
   TOPIC_STRIP_CONTAINER,
-  TOPIC_STRIP_ROW,
-  TOPIC_STRIP_LABEL,
 } from '@/lib/gardenChipStyles'
 
 export const dynamic = 'force-dynamic'
@@ -48,6 +44,10 @@ export default async function ReportDigestsPage({
   const availableKinds = getAvailableDigestKinds(DIGESTS)
   const distinctTopics = getDistinctDigestTopics(DIGESTS)
   const filteredDigests = filterDigests(DIGESTS, activeType, activeTopic)
+  const topicBarItems = buildTopicBarItems(
+    distinctTopics,
+    (slug) => buildDigestHref(activeType, slug)
+  )
 
   return (
     <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4]">
@@ -83,26 +83,10 @@ export default async function ReportDigestsPage({
       {distinctTopics.length > 0 && (
         <section className={TOPIC_STRIP_WRAPPER}>
           <div className={TOPIC_STRIP_CONTAINER}>
-            <div className={TOPIC_STRIP_ROW}>
-              <span className={TOPIC_STRIP_LABEL}>
-                Topic:
-              </span>
-              <Link
-                href={buildDigestHref(activeType, null)}
-                className={!activeTopic ? TOPIC_ALL_CHIP_ACTIVE : TOPIC_ALL_CHIP_INACTIVE}
-              >
-                All topics
-              </Link>
-              {distinctTopics.map((t) => (
-                <Link
-                  key={t.slug}
-                  href={buildDigestHref(activeType, t.slug)}
-                  className={activeTopic === t.slug ? TOPIC_CHIP_ACTIVE : TOPIC_CHIP_INACTIVE}
-                >
-                  {t.name}
-                </Link>
-              ))}
-            </div>
+            <GardenTopicBar
+              items={topicBarItems}
+              activeKey={activeTopic || 'all'}
+            />
           </div>
         </section>
       )}

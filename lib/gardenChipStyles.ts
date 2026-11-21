@@ -22,12 +22,6 @@ export const TOPIC_STRIP_WRAPPER =
 export const TOPIC_STRIP_CONTAINER =
   'max-w-6xl mx-auto px-4 sm:px-6 lg:px-8'
 
-export const TOPIC_STRIP_ROW =
-  'flex flex-wrap items-center gap-2'
-
-export const TOPIC_STRIP_LABEL =
-  'text-xs font-semibold text-[#5A5D70] mr-1'
-
 export function getHeroChipClass(isActive: boolean): string {
   return isActive ? HERO_CHIP_ACTIVE : HERO_CHIP_INACTIVE
 }
