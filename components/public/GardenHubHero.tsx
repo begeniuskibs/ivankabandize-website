@@ -19,6 +19,7 @@ export interface GardenHubHeroProps {
   imageAlt?: string
   tone?: GardenHubHeroTone
   breadcrumb?: GardenHubHeroBreadcrumb
+  children?: React.ReactNode
 }
 
 export default function GardenHubHero({
@@ -33,6 +34,7 @@ export default function GardenHubHero({
     parentHref: '/garden',
     currentLabel: title,
   },
+  children,
 }: GardenHubHeroProps) {
   const parentLabel = breadcrumb.parentLabel || 'The Garden'
   const parentHref = breadcrumb.parentHref || '/garden'
@@ -98,6 +100,12 @@ export default function GardenHubHero({
               {intro}
             </p>
           </div>
+
+          {children && (
+            <div className="mt-5 pt-4 md:mt-6 md:pt-5 border-t border-white/15 flex flex-wrap items-center gap-1.5 sm:gap-2 md:gap-2.5">
+              {children}
+            </div>
+          )}
         </div>
       </section>
     )

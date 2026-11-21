@@ -4,6 +4,7 @@ import GardenLandingA2 from '@/components/public/GardenLandingA2'
 import GardenArticlesView from '@/components/public/GardenArticlesView'
 import { getCardMeta } from '@/lib/postTeaser'
 import { SITE_URL } from '@/lib/siteUrl'
+import { getPublishedResources } from '@/lib/resources'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,10 +27,11 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
   const supabase = await createClient()
   const now = new Date().toISOString()
 
-  // Query posts table and library items in parallel (never select content)
+  // Query posts table, library items, and published resources in parallel (never select content)
   const [
     { data: posts, count: totalArticlesCount, error },
     { data: libraryItemsData, count: totalLibraryCount, error: libraryError },
+    publishedResources,
   ] = await Promise.all([
     supabase
       .from('posts')
@@ -47,6 +49,7 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
       .select('id, title, creator, type, url, thumbnail_url, created_at, slug, take_published', { count: 'exact' })
       .order('created_at', { ascending: false })
       .limit(6),
+    getPublishedResources(),
   ])
 
   if (error) {
@@ -189,6 +192,7 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
       libraryItems={libraryItemsData || []}
       totalLibraryCount={totalLibraryCount ?? (libraryItemsData || []).length}
       topicTags={topicTags}
+      totalResourcesCount={publishedResources.length}
     />
   )
 }
