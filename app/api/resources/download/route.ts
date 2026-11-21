@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import {
   RESOURCE_DOWNLOAD_LIMITS,
+  SLUG_REGEX,
   isSameOrigin,
   validateResourceDownloadPayload,
 } from '@/lib/resourceDownload'
@@ -8,9 +9,18 @@ import { computeRequestFingerprint } from '@/lib/resourceFingerprint'
 import {
   RESOURCE_CONSENT_TEXT,
   RESOURCE_CONSENT_VERSION,
+  RESOURCE_CONSENT_TEXT_MEMBER,
+  RESOURCE_CONSENT_VERSION_MEMBER,
 } from '@/lib/resourceConsent'
+import {
+  getFirstName,
+  isValidIntendedUse,
+  normaliseIntendedUse,
+  type IntendedUseValue,
+} from '@/lib/resourceFlow'
 import { buildResourceEmail } from '@/lib/resourceEmail'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { createClient } from '@/utils/supabase/server'
 import { checkRateLimit, getClientIp } from '@/lib/rateLimit'
 import { SITE_URL } from '@/lib/siteUrl'
 
@@ -61,9 +71,16 @@ export async function POST(request: Request) {
       )
     }
 
-    let body: unknown
+    let body: Record<string, unknown>
     try {
-      body = JSON.parse(rawBody)
+      const parsed = JSON.parse(rawBody)
+      if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return NextResponse.json(
+          { ok: false, error: 'Invalid request format.' },
+          { status: 400 }
+        )
+      }
+      body = parsed as Record<string, unknown>
     } catch {
       return NextResponse.json(
         { ok: false, error: 'Invalid JSON payload.' },
@@ -71,18 +88,97 @@ export async function POST(request: Request) {
       )
     }
 
-    const validation = validateResourceDownloadPayload(body)
-    if (!validation.isValid || !validation.data) {
-      return NextResponse.json(
-        { ok: false, error: validation.error || 'Invalid request data.' },
-        { status: 400 }
-      )
+    // Check member authentication
+    let isMember = false
+    let memberId: string | null = null
+    let memberEmail = ''
+    let memberName = ''
+    let slug = ''
+    let intendedUse: IntendedUseValue | null = null
+    let downloadName = ''
+    let downloadEmail = ''
+
+    try {
+      const userSupabase = await createClient()
+      const {
+        data: { user },
+      } = await userSupabase.auth.getUser()
+
+      if (user) {
+        const { data: member } = await userSupabase
+          .from('members')
+          .select('id, tier_status')
+          .eq('user_id', user.id)
+          .maybeSingle()
+
+        if (
+          member &&
+          member.tier_status &&
+          ['free', 'paid', 'comped'].includes(member.tier_status)
+        ) {
+          isMember = true
+          memberId = member.id
+
+          const { data: profile } = await userSupabase
+            .from('users')
+            .select('email, full_name')
+            .eq('id', user.id)
+            .maybeSingle()
+
+          memberEmail = profile?.email || user.email || ''
+          memberName =
+            profile?.full_name ||
+            (user.user_metadata?.full_name as string) ||
+            (user.user_metadata?.name as string) ||
+            'Member'
+        }
+      }
+    } catch {
+      isMember = false
     }
 
-    // 1. Honeypot check: If filled, return 200 { ok: true } with NO url and no DB writes
-    if (validation.data.isHoneypot) {
-      console.log('[resources/download] honeypot triggered')
-      return NextResponse.json({ ok: true }, { status: 200 })
+    if (isMember) {
+      const rawSlug = typeof body.slug === 'string' ? body.slug.trim() : ''
+      if (
+        !rawSlug ||
+        rawSlug.length > RESOURCE_DOWNLOAD_LIMITS.SLUG_MAX ||
+        !SLUG_REGEX.test(rawSlug)
+      ) {
+        return NextResponse.json(
+          { ok: false, error: 'Resource slug is required.' },
+          { status: 400 }
+        )
+      }
+      slug = rawSlug
+
+      if (!isValidIntendedUse(body.intendedUse)) {
+        return NextResponse.json(
+          { ok: false, error: 'Invalid request data.' },
+          { status: 400 }
+        )
+      }
+      intendedUse = normaliseIntendedUse(body.intendedUse)
+      downloadName = memberName
+      downloadEmail = memberEmail
+    } else {
+      const validation = validateResourceDownloadPayload(body)
+      if (!validation.isValid || !validation.data) {
+        return NextResponse.json(
+          { ok: false, error: validation.error || 'Invalid request data.' },
+          { status: 400 }
+        )
+      }
+
+      // 1. Honeypot check: If filled, return 200 { ok: true } with NO url and no DB writes
+      if (validation.data.isHoneypot) {
+        console.log('[resources/download] honeypot triggered')
+        return NextResponse.json({ ok: true }, { status: 200 })
+      }
+
+      slug = validation.data.slug
+      downloadName = validation.data.name
+      downloadEmail = validation.data.email
+      intendedUse = validation.data.intendedUse
     }
 
     // 2. Fingerprint secret check: FAIL CLOSED if missing or < 32 characters
@@ -119,7 +215,7 @@ export async function POST(request: Request) {
     const { data: resource, error: resourceError } = await adminClient
       .from('resources')
       .select('id, title, kind, delivery_type, file_path, file_name, external_url, visibility')
-      .eq('slug', validation.data.slug)
+      .eq('slug', slug)
       .eq('status', 'published')
       .maybeSingle()
 
@@ -154,7 +250,7 @@ export async function POST(request: Request) {
       adminClient
         .from('resource_downloads')
         .select('*', { count: 'exact', head: true })
-        .eq('email', validation.data.email)
+        .eq('email', downloadEmail)
         .gte('created_at', emailWindowStart),
       adminClient
         .from('resource_downloads')
@@ -193,14 +289,23 @@ export async function POST(request: Request) {
     }
 
     // 7. Insert resource_downloads row
+    const consentVersion = isMember
+      ? RESOURCE_CONSENT_VERSION_MEMBER
+      : RESOURCE_CONSENT_VERSION
+    const consentText = isMember
+      ? RESOURCE_CONSENT_TEXT_MEMBER
+      : RESOURCE_CONSENT_TEXT
+
     const { data: insertedRow, error: insertError } = await adminClient
       .from('resource_downloads')
       .insert({
         resource_id: resource.id,
-        name: validation.data.name,
-        email: validation.data.email,
-        consent_wording_version: RESOURCE_CONSENT_VERSION,
-        consent_text: RESOURCE_CONSENT_TEXT,
+        member_id: memberId,
+        name: downloadName,
+        email: downloadEmail,
+        intended_use: intendedUse,
+        consent_wording_version: consentVersion,
+        consent_text: consentText,
         request_fingerprint: fingerprint,
       })
       .select('id')
@@ -295,7 +400,7 @@ export async function POST(request: Request) {
       .from('resource_downloads')
       .select('*', { count: 'exact', head: true })
       .eq('resource_id', resource.id)
-      .eq('email', validation.data.email)
+      .eq('email', downloadEmail)
       .neq('id', insertedRow.id)
       .gte('email_sent_at', duplicateWindowStart)
 
@@ -345,7 +450,7 @@ export async function POST(request: Request) {
           } else {
             const emailContent = buildResourceEmail({
               title: resource.title,
-              name: validation.data.name,
+              name: downloadName,
               url: emailTargetUrl,
               delivery: isLinkDelivery ? 'link' : 'file',
               kind: resource.kind,
@@ -359,7 +464,7 @@ export async function POST(request: Request) {
               },
               body: JSON.stringify({
                 from: fromEmail,
-                to: [validation.data.email],
+                to: [downloadEmail],
                 subject: emailContent.subject,
                 html: emailContent.html,
                 text: emailContent.text,
@@ -407,6 +512,12 @@ export async function POST(request: Request) {
           ok: true,
           delivery: 'link',
           url: onScreenUrl,
+          ...(isMember
+            ? {
+                firstName: getFirstName(downloadName),
+                email: downloadEmail,
+              }
+            : {}),
         },
         { status: 200 }
       )
@@ -418,6 +529,12 @@ export async function POST(request: Request) {
         delivery: 'file',
         url: onScreenUrl,
         expiresInSeconds: 60,
+        ...(isMember
+          ? {
+              firstName: getFirstName(downloadName),
+              email: downloadEmail,
+            }
+          : {}),
       },
       { status: 200 }
     )

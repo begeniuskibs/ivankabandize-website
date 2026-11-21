@@ -5,10 +5,11 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResourceBySlug } from '@/lib/resources'
-import { ctaLabels, kindLabel } from '@/lib/resourceUi'
-import ResourceDownloadForm, {
+import { kindLabel } from '@/lib/resourceUi'
+import ResourceFlow, {
+  ResourceHeroCta,
   ResourceStickyBar,
-} from '@/components/public/ResourceDownloadForm'
+} from '@/components/public/ResourceFlow'
 import ResourceDemo from '@/components/public/ResourceDemo'
 
 // Single resource detail page and inline download gate
@@ -57,7 +58,6 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
   }
 
   const { details } = resource
-  const cta = ctaLabels(resource.kind, resource.delivery_type)
 
   // Overview sections (What it is, Who it is for, What it helps with)
   const overviewCards = [
@@ -82,79 +82,83 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
   const hasFacts = details.facts && details.facts.length > 0
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4] text-[#232536]">
-      <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-28 md:pb-16">
-        {/* Back Link */}
-        <div className="mb-6">
-          <Link
-            href="/garden/resources"
-            className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#5C5F73] hover:text-[#232536] transition cursor-pointer"
-          >
-            <ArrowLeft
-              size={16}
-              strokeWidth={2.5}
-              aria-hidden="true"
-              className="transition-transform group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
-            />
-            <span>All resources</span>
-          </Link>
-        </div>
-
-        {/* Hero Block: 2 columns on desktop, single column on mobile */}
-        <section
-          aria-label="Resource introduction"
-          className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center md:items-stretch mb-12"
-        >
-          {/* Left Column: chips, title, summary, facts row, CTA button */}
-          <div>
-            {/* Kind and category chips */}
-            <div className="flex flex-wrap items-center gap-2 mb-3.5">
-              <span className="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#EF5B45]/10 text-[#CF3F29]">
-                {kindLabel(resource.kind)}
-              </span>
-              {resource.category && (
-                <span className="inline-block text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#F7EDE0] text-[#5C5F73]">
-                  {resource.category}
-                </span>
-              )}
-            </div>
-
-            {/* Title */}
-            <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight mb-4 leading-[1.14]">
-              {resource.title}
-            </h1>
-
-            {/* Summary */}
-            <p className="text-base sm:text-lg text-[#5C5F73] leading-relaxed mb-6">
-              {resource.summary}
-            </p>
-
-            {/* Facts row: only rendered from details.facts if data exists */}
-            {hasFacts && (
-              <div className="flex flex-wrap items-center gap-6 sm:gap-8 py-4 my-6 border-y border-[#F0E4D2]">
-                {details.facts.map((fact, idx) => (
-                  <div key={idx}>
-                    <b className="block font-['MTN_Brighter_Sans',_sans-serif] text-lg sm:text-xl font-bold text-[#232536]">
-                      {fact.value}
-                    </b>
-                    <span className="text-xs sm:text-sm text-[#5C5F73]">
-                      {fact.label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            {/* Primary Action Button */}
-            <div className="pt-2">
-              <a
-                href="#get"
-                className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 text-base max-md:min-h-[40px] max-md:px-5 max-md:py-2.5 max-md:text-sm bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
-              >
-                {cta.open}
-              </a>
-            </div>
+    <ResourceFlow resource={resource}>
+      <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4] text-[#232536]">
+        <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-28 md:pb-16">
+          {/* Back Link */}
+          <div className="mb-6">
+            <Link
+              href="/garden/resources"
+              className="group inline-flex items-center gap-1.5 text-sm font-semibold text-[#5C5F73] hover:text-[#232536] transition cursor-pointer"
+            >
+              <ArrowLeft
+                size={16}
+                strokeWidth={2.5}
+                aria-hidden="true"
+                className="transition-transform group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+              />
+              <span>All resources</span>
+            </Link>
           </div>
+
+          {/* Hero Block: 2 columns on desktop, single column on mobile */}
+          <section
+            aria-label="Resource introduction"
+            className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-center md:items-stretch mb-12"
+          >
+            {/* Left Column: chips, title, summary, facts row, CTA button */}
+            <div>
+              {/* Kind and category chips */}
+              <div className="flex flex-wrap items-center gap-2 mb-3.5">
+                <span className="inline-block text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#EF5B45]/10 text-[#CF3F29]">
+                  {kindLabel(resource.kind)}
+                </span>
+                {resource.category && (
+                  <span className="inline-block text-[11px] font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-[#F7EDE0] text-[#5C5F73]">
+                    {resource.category}
+                  </span>
+                )}
+              </div>
+
+              {/* Title */}
+              <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight mb-4 leading-[1.14]">
+                {resource.title}
+              </h1>
+
+              {/* Summary */}
+              <p className="text-base sm:text-lg text-[#5C5F73] leading-relaxed mb-6">
+                {resource.summary}
+              </p>
+
+              {/* Facts row: only rendered from details.facts if data exists */}
+              {hasFacts && (
+                <div className="flex flex-wrap items-center gap-6 sm:gap-8 py-4 my-6 border-y border-[#F0E4D2]">
+                  {details.facts.map((fact, idx) => (
+                    <div key={idx}>
+                      <b className="block font-['MTN_Brighter_Sans',_sans-serif] text-lg sm:text-xl font-bold text-[#232536]">
+                        {fact.value}
+                      </b>
+                      <span className="text-xs sm:text-sm text-[#5C5F73]">
+                        {fact.label}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Primary Action Button and "See how it works" */}
+              <div className="pt-2 flex flex-wrap items-center gap-3">
+                <ResourceHeroCta />
+                {hasSteps && (
+                  <a
+                    href="#how"
+                    className="inline-flex items-center justify-center min-h-[48px] px-6 py-3.5 text-base max-md:min-h-[40px] max-md:px-4 max-md:py-2.5 max-md:text-sm font-semibold text-[#232536] bg-white hover:bg-[#FAF3E8] border border-[#F0E4D2] rounded-xl shadow-2xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+                  >
+                    See how it works
+                  </a>
+                )}
+              </div>
+            </div>
 
           {/* Right/top Visual: cover_image_url if present, otherwise decorative brand-colour grid illustration */}
           <div className="w-full max-md:order-first max-md:mb-6 md:h-full">
@@ -246,7 +250,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
 
         {/* 4. Steps (numbered): only if data exists */}
         {hasSteps && (
-          <section aria-label="Steps" className="my-12">
+          <section id="how" aria-label="Steps" className="my-12 scroll-mt-6">
             <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl sm:text-3xl font-bold text-[#232536] mb-6">
               How to use it
             </h2>
@@ -358,28 +362,14 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
           </section>
         )}
 
-        {/* Form Section with anchor id "get" */}
-        <section
-          id="get"
-          className="pt-10 border-t border-[#F0E4D2] my-12 scroll-mt-6"
-        >
-          <ResourceDownloadForm
-            slug={resource.slug}
-            title={resource.title}
-            kind={resource.kind}
-            delivery={resource.delivery_type}
-            details={resource.details}
-          />
-        </section>
       </main>
 
       {/* Mobile-only sticky bottom bar (max-md: scoping only) */}
       <ResourceStickyBar
         title={resource.title}
-        kind={resource.kind}
-        delivery={resource.delivery_type}
-        formTargetId="get"
+        subText={kindLabel(resource.kind)}
       />
     </div>
+    </ResourceFlow>
   )
 }

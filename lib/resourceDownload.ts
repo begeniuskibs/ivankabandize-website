@@ -1,6 +1,12 @@
 // Pure validation, normalization, and limit helpers for Resources downloads
 // House style: spaced hyphen " - " only
 
+import {
+  isValidIntendedUse,
+  normaliseIntendedUse,
+  type IntendedUseValue,
+} from './resourceFlow.ts'
+
 export const RESOURCE_DOWNLOAD_LIMITS = {
   MAX_REQUEST_BODY_CHARS: 4000,
   NAME_MIN: 2,
@@ -29,6 +35,7 @@ export interface ResourceDownloadInput {
   name?: unknown
   email?: unknown
   website?: unknown
+  intendedUse?: unknown
 }
 
 export interface ValidatedResourceDownload {
@@ -36,6 +43,7 @@ export interface ValidatedResourceDownload {
   name: string
   email: string
   isHoneypot: boolean
+  intendedUse: IntendedUseValue | null
 }
 
 export interface ResourceDownloadValidationResult {
@@ -148,6 +156,7 @@ export function validateResourceDownloadPayload(body: unknown): ResourceDownload
         name: '',
         email: '',
         isHoneypot: true,
+        intendedUse: null,
       },
     }
   }
@@ -203,6 +212,12 @@ export function validateResourceDownloadPayload(body: unknown): ResourceDownload
     }
   }
 
+  // 5. Validate intendedUse if present
+  if (!isValidIntendedUse(input.intendedUse)) {
+    return { isValid: false, error: 'Invalid request data.' }
+  }
+  const intendedUse = normaliseIntendedUse(input.intendedUse)
+
   return {
     isValid: true,
     data: {
@@ -210,6 +225,7 @@ export function validateResourceDownloadPayload(body: unknown): ResourceDownload
       name,
       email,
       isHoneypot: false,
+      intendedUse,
     },
   }
 }

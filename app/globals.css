@@ -183,6 +183,32 @@ body {
   animation: blob-morph 12s ease-in-out infinite;
 }
 
+/* Pop animation for success tick */
+@keyframes pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pop {
+  animation: pop 450ms ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-pop {
+    animation: none !important;
+  }
+}
+
 .prose a {
   color: #147358;
   text-decoration: underline;
