@@ -1,13 +1,7 @@
-'use client'
-
-import React, { useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { ArrowRight } from 'lucide-react'
-import { DIGESTS } from '@/lib/digests'
-import type { DigestHeroArt } from '@/lib/digests/types'
-
-const TOPICS = ['All', 'Faith', 'Technology', 'Work'] as const
-type Topic = (typeof TOPICS)[number]
+import type { Digest, DigestHeroArt } from '@/lib/digests/types'
 
 function CardCoverArt({ heroArt, slug }: { heroArt: DigestHeroArt; slug: string }) {
   const maskId = `card-art-mask-${slug}`
@@ -182,39 +176,16 @@ function CardCoverArt({ heroArt, slug }: { heroArt: DigestHeroArt; slug: string 
   )
 }
 
-export default function DigestIndexView() {
-  const [selectedTopic, setSelectedTopic] = useState<Topic>('All')
+interface DigestIndexViewProps {
+  digests: Digest[]
+}
 
-  const filteredDigests = DIGESTS.filter(
-    (d) => selectedTopic === 'All' || d.topic === selectedTopic
-  )
-
+export default function DigestIndexView({ digests }: DigestIndexViewProps) {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16">
-      {/* Topic Filter Tabs */}
-      <div className="flex flex-wrap items-center gap-2 mb-10">
-        {TOPICS.map((topic) => {
-          const isSelected = selectedTopic === topic
-          return (
-            <button
-              key={topic}
-              type="button"
-              onClick={() => setSelectedTopic(topic)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold transition-colors min-h-[36px] cursor-pointer ${
-                isSelected
-                  ? 'bg-[#232536] text-[#FDF8F1]'
-                  : 'bg-[#F7EDE0] text-[#5C5F73] hover:text-[#232536] hover:bg-[#E8DCC4]'
-              }`}
-            >
-              {topic}
-            </button>
-          )
-        })}
-      </div>
-
       {/* Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-        {filteredDigests.map((digest) => (
+        {digests.map((digest) => (
           <article
             key={digest.slug}
             className="flex flex-col bg-white border border-[#F0E4D2] rounded-2xl p-6 transition-all duration-200 hover:border-[#CF3F29] hover:shadow-md"

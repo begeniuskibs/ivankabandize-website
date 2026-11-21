@@ -168,6 +168,7 @@ export interface Digest {
   id: string
   slug: string
   topic: string
+  kind?: 'report' | 'research'
   color: string
   heroArt: DigestHeroArt
   title: string

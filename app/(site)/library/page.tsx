@@ -7,6 +7,18 @@ import ScrollReveal from '@/components/public/ScrollReveal'
 import GardenHubHero from '@/components/public/GardenHubHero'
 import { safeHref } from '@/lib/safeUrl'
 import { SITE_URL } from '@/lib/siteUrl'
+import {
+  HERO_CHIP_ACTIVE,
+  HERO_CHIP_INACTIVE,
+  TOPIC_ALL_CHIP_ACTIVE,
+  TOPIC_ALL_CHIP_INACTIVE,
+  TOPIC_CHIP_ACTIVE,
+  TOPIC_CHIP_INACTIVE,
+  TOPIC_STRIP_WRAPPER,
+  TOPIC_STRIP_CONTAINER,
+  TOPIC_STRIP_ROW,
+  TOPIC_STRIP_LABEL,
+} from '@/lib/gardenChipStyles'
 
 export const dynamic = 'force-dynamic'
 
@@ -34,6 +46,12 @@ interface LibraryItem {
 
 const ALLOWED_TYPES = ['book', 'podcast', 'newsletter'] as const
 type AllowedType = (typeof ALLOWED_TYPES)[number]
+
+const LIBRARY_TYPES = [
+  { key: 'book', label: 'Books' },
+  { key: 'podcast', label: 'Podcasts' },
+  { key: 'newsletter', label: 'Newsletters' },
+] as const
 
 function buildLibraryHref(topic: string | null, type: string | null): string {
   const q = new URLSearchParams()
@@ -101,6 +119,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
     }
   }
 
+  const availableTypes = LIBRARY_TYPES.filter((t) =>
+    allItems.some((item) => item.type === t.key)
+  )
+
   const podcasts = filteredItems.filter((item) => item.type === 'podcast')
   const books = filteredItems.filter((item) => item.type === 'book')
   const newsletters = filteredItems.filter((item) => item.type === 'newsletter')
@@ -121,95 +143,51 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
           parentHref: '/garden',
           currentLabel: 'Library',
         }}
-      />
+      >
+        <Link
+          href={buildLibraryHref(activeTopicSlug, null)}
+          className={!activeType ? HERO_CHIP_ACTIVE : HERO_CHIP_INACTIVE}
+        >
+          All
+        </Link>
+        {availableTypes.map((t) => (
+          <Link
+            key={t.key}
+            href={buildLibraryHref(activeTopicSlug, t.key)}
+            className={activeType === t.key ? HERO_CHIP_ACTIVE : HERO_CHIP_INACTIVE}
+          >
+            {t.label}
+          </Link>
+        ))}
+      </GardenHubHero>
 
-      {/* Filter Bar */}
-      <section className="bg-[#FAF3E8]/60 border-b border-[#F5ECDE] py-4 space-y-3">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-3">
-          {/* Type Filter Row */}
-          <ScrollReveal delayMs={150}>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-[#5A5D70] mr-1">
-                Type:
+      {/* Topics Cream Strip directly under hero */}
+      {topicTags.length > 0 && (
+        <section className={TOPIC_STRIP_WRAPPER}>
+          <div className={TOPIC_STRIP_CONTAINER}>
+            <div className={TOPIC_STRIP_ROW}>
+              <span className={TOPIC_STRIP_LABEL}>
+                Topic:
               </span>
               <Link
-                href={buildLibraryHref(activeTopicSlug, null)}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                  !activeType
-                    ? 'bg-[#232536] text-white font-bold'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
-                }`}
+                href={buildLibraryHref(null, activeType)}
+                className={!activeTopicSlug ? TOPIC_ALL_CHIP_ACTIVE : TOPIC_ALL_CHIP_INACTIVE}
               >
-                All
+                All topics
               </Link>
-              <Link
-                href={buildLibraryHref(activeTopicSlug, 'book')}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                  activeType === 'book'
-                    ? 'bg-[#232536] text-white font-bold'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
-                }`}
-              >
-                Books
-              </Link>
-              <Link
-                href={buildLibraryHref(activeTopicSlug, 'podcast')}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                  activeType === 'podcast'
-                    ? 'bg-[#232536] text-white font-bold'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
-                }`}
-              >
-                Podcasts
-              </Link>
-              <Link
-                href={buildLibraryHref(activeTopicSlug, 'newsletter')}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                  activeType === 'newsletter'
-                    ? 'bg-[#232536] text-white font-bold'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
-                }`}
-              >
-                Newsletters
-              </Link>
-            </div>
-          </ScrollReveal>
-
-          {/* Topic Filter Row */}
-          {topicTags.length > 0 && (
-            <ScrollReveal delayMs={180}>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold text-[#5A5D70] mr-1">
-                  Topics:
-                </span>
+              {topicTags.map((tag) => (
                 <Link
-                  href={buildLibraryHref(null, activeType)}
-                  className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                    !activeTopicSlug
-                      ? 'bg-[#232536] text-white font-bold'
-                      : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
-                  }`}
+                  key={tag.slug}
+                  href={buildLibraryHref(tag.slug, activeType)}
+                  className={activeTopicSlug === tag.slug ? TOPIC_CHIP_ACTIVE : TOPIC_CHIP_INACTIVE}
                 >
-                  All
+                  {tag.name}
                 </Link>
-                {topicTags.map((tag) => (
-                  <Link
-                    key={tag.slug}
-                    href={buildLibraryHref(tag.slug, activeType)}
-                    className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                      activeTopicSlug === tag.slug
-                        ? 'bg-[#2AA198] text-white font-bold'
-                        : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#2AA198]'
-                    }`}
-                  >
-                    {tag.name}
-                  </Link>
-                ))}
-              </div>
-            </ScrollReveal>
-          )}
-        </div>
-      </section>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* ================= CONTENT SECTIONS ================= */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-20">
