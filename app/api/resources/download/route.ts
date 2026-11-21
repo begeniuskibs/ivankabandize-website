@@ -233,7 +233,7 @@ export async function POST(request: Request) {
       )
     }
 
-    // 6. Database limits: per email (3 / 60m), per fingerprint (10 / 60m), global (20 / 60s)
+    // 6. Database limits: per email (3 / 60m), per fingerprint (10 / 60m), global (70 / 60s)
     const emailWindowStart = new Date(
       Date.now() - RESOURCE_DOWNLOAD_LIMITS.EMAIL_LIMIT_WINDOW_MINUTES * 60 * 1000
     ).toISOString()
