@@ -7,17 +7,13 @@ import ScrollReveal from '@/components/public/ScrollReveal'
 import GardenHubHero from '@/components/public/GardenHubHero'
 import { safeHref } from '@/lib/safeUrl'
 import { SITE_URL } from '@/lib/siteUrl'
+import GardenTopicBar from '@/components/public/GardenTopicBar'
+import { buildTopicBarItems } from '@/lib/gardenTopicBar'
 import {
   HERO_CHIP_ACTIVE,
   HERO_CHIP_INACTIVE,
-  TOPIC_ALL_CHIP_ACTIVE,
-  TOPIC_ALL_CHIP_INACTIVE,
-  TOPIC_CHIP_ACTIVE,
-  TOPIC_CHIP_INACTIVE,
   TOPIC_STRIP_WRAPPER,
   TOPIC_STRIP_CONTAINER,
-  TOPIC_STRIP_ROW,
-  TOPIC_STRIP_LABEL,
 } from '@/lib/gardenChipStyles'
 
 export const dynamic = 'force-dynamic'
@@ -131,6 +127,11 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
     ? filteredItems.filter((item) => item.type === activeType)
     : filteredItems
 
+  const topicBarItems = buildTopicBarItems(
+    topicTags,
+    (slug) => buildLibraryHref(slug, activeType)
+  )
+
   return (
     <div className="flex flex-col min-h-full bg-[#FDF8F1] text-[#232536] font-sans selection:bg-[#F7C55C] selection:text-[#232536]">
       {/* ================= HERO HEADER ================= */}
@@ -165,26 +166,10 @@ export default async function LibraryPage({ searchParams }: LibraryPageProps) {
       {topicTags.length > 0 && (
         <section className={TOPIC_STRIP_WRAPPER}>
           <div className={TOPIC_STRIP_CONTAINER}>
-            <div className={TOPIC_STRIP_ROW}>
-              <span className={TOPIC_STRIP_LABEL}>
-                Topic:
-              </span>
-              <Link
-                href={buildLibraryHref(null, activeType)}
-                className={!activeTopicSlug ? TOPIC_ALL_CHIP_ACTIVE : TOPIC_ALL_CHIP_INACTIVE}
-              >
-                All topics
-              </Link>
-              {topicTags.map((tag) => (
-                <Link
-                  key={tag.slug}
-                  href={buildLibraryHref(tag.slug, activeType)}
-                  className={activeTopicSlug === tag.slug ? TOPIC_CHIP_ACTIVE : TOPIC_CHIP_INACTIVE}
-                >
-                  {tag.name}
-                </Link>
-              ))}
-            </div>
+            <GardenTopicBar
+              items={topicBarItems}
+              activeKey={activeTopicSlug || 'all'}
+            />
           </div>
         </section>
       )}

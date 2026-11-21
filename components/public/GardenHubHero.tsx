@@ -63,7 +63,22 @@ export default function GardenHubHero({
           <div className="max-w-[620px] space-y-2 md:space-y-3">
             {/* Breadcrumb */}
             <nav aria-label="Breadcrumb">
-              <div className="inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0]">
+              {/* Mobile back link */}
+              <Link
+                href="/garden"
+                className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0] hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
+              >
+                <ArrowLeft
+                  size={12}
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+                />
+                <span>Garden</span>
+              </Link>
+
+              {/* Desktop breadcrumb */}
+              <div className="hidden md:inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0]">
                 <Link
                   href={parentHref}
                   className="group inline-flex items-center gap-1 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"

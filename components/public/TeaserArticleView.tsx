@@ -38,9 +38,24 @@ export default function TeaserArticleView({ teaser, isUpgrade = false }: TeaserA
       <div className="max-w-3xl mx-auto px-5 sm:px-6 lg:px-8">
         {/* Navigation Breadcrumb */}
         <div className="mb-10">
+          {/* Mobile back link */}
+          <Link
+            href="/garden?view=articles"
+            className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#5C5F73] hover:text-[#232536] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 rounded-xs transition-colors"
+          >
+            <ArrowLeft
+              size={12}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+            />
+            <span>Articles</span>
+          </Link>
+
+          {/* Desktop breadcrumb */}
           <Link
             href="/garden"
-            className="group inline-flex items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
+            className="hidden md:inline-flex group items-center gap-1.5 text-xs uppercase tracking-wider font-bold text-[#5A5D70] hover:text-[#232536] transition"
           >
             <ArrowLeft
               size={14}

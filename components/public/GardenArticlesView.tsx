@@ -5,6 +5,8 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
 import PostCard, { PostCardItem } from './PostCard'
+import GardenTopicBar from './GardenTopicBar'
+import { buildTopicBarItems } from '@/lib/gardenTopicBar'
 
 export interface GardenArticleTag {
   name?: string | null
@@ -177,7 +179,22 @@ export default function GardenArticlesView({
           <div className="max-w-[620px] space-y-2 md:space-y-3">
             {/* Breadcrumb */}
             <nav aria-label="Breadcrumb">
-              <div className="inline-flex flex-wrap items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0]">
+              {/* Mobile back link */}
+              <Link
+                href="/garden"
+                className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0] hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
+              >
+                <ArrowLeft
+                  size={12}
+                  strokeWidth={2.5}
+                  aria-hidden="true"
+                  className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+                />
+                <span>Garden</span>
+              </Link>
+
+              {/* Desktop breadcrumb */}
+              <div className="hidden md:inline-flex flex-wrap items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0]">
                 <Link
                   href="/garden"
                   className="group inline-flex items-center gap-1 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
@@ -340,41 +357,11 @@ export default function GardenArticlesView({
 
         {/* Topic row */}
         {topicTags && topicTags.length > 0 && (
-          <div className="flex flex-wrap items-center gap-2 sm:gap-2.5">
-            <span className="text-[14px] font-bold text-[#232536] shrink-0 mr-1">
-              Topic:
-            </span>
-            <button
-              type="button"
-              aria-pressed={selectedTopic === 'all'}
-              onClick={() => handleTopicChange('all')}
-              className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 ${
-                selectedTopic === 'all'
-                  ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
-                  : 'bg-white text-[#232536] border border-[#F5ECDE] hover:border-[#EF5B45]'
-              }`}
-            >
-              All topics
-            </button>
-            {topicTags.map((topic) => {
-              const isActive = selectedTopic === topic.slug
-              return (
-                <button
-                  key={topic.slug}
-                  type="button"
-                  aria-pressed={isActive}
-                  onClick={() => handleTopicChange(topic.slug)}
-                  className={`px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 ${
-                    isActive
-                      ? 'bg-[#CF3F29] text-white border border-[#CF3F29]'
-                      : 'bg-white text-[#232536] border border-[#F5ECDE] hover:border-[#EF5B45]'
-                  }`}
-                >
-                  {topic.name}
-                </button>
-              )
-            })}
-          </div>
+          <GardenTopicBar
+            items={buildTopicBarItems(topicTags)}
+            activeKey={selectedTopic}
+            onSelect={handleTopicChange}
+          />
         )}
 
         {/* Article grid */}

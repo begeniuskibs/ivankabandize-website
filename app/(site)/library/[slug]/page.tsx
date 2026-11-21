@@ -157,29 +157,45 @@ export default async function LibraryItemPage({ params }: LibraryItemPageProps) 
         {/* a) Breadcrumb */}
         <nav
           aria-label="Breadcrumb"
-          className="flex flex-wrap items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#5C5F73]"
         >
-          <Link
-            href="/garden"
-            className="hover:text-[#232536] transition-colors"
-          >
-            The Garden
-          </Link>
-          <span aria-hidden="true" className="text-[#5C5F73]/40">
-            /
-          </span>
+          {/* Mobile back link */}
           <Link
             href="/library"
-            className="hover:text-[#232536] transition-colors"
+            className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#5C5F73] hover:text-[#232536] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 rounded-xs transition-colors"
           >
-            Library
+            <ArrowLeft
+              size={12}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+            />
+            <span>Library</span>
           </Link>
-          <span aria-hidden="true" className="text-[#5C5F73]/40">
-            /
-          </span>
-          <span className="text-[#232536] truncate max-w-[200px] sm:max-w-md">
-            {item.title}
-          </span>
+
+          {/* Desktop breadcrumb */}
+          <div className="hidden md:flex flex-wrap items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-[#5C5F73]">
+            <Link
+              href="/garden"
+              className="hover:text-[#232536] transition-colors"
+            >
+              The Garden
+            </Link>
+            <span aria-hidden="true" className="text-[#5C5F73]/40">
+              /
+            </span>
+            <Link
+              href="/library"
+              className="hover:text-[#232536] transition-colors"
+            >
+              Library
+            </Link>
+            <span aria-hidden="true" className="text-[#5C5F73]/40">
+              /
+            </span>
+            <span className="text-[#232536] truncate max-w-[200px] sm:max-w-md">
+              {item.title}
+            </span>
+          </div>
         </nav>
 
         {/* b, c, d, e) Header & Media Block */}

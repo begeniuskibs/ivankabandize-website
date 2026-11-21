@@ -9,8 +9,6 @@ import {
   TOPIC_CHIP_INACTIVE,
   TOPIC_STRIP_WRAPPER,
   TOPIC_STRIP_CONTAINER,
-  TOPIC_STRIP_ROW,
-  TOPIC_STRIP_LABEL,
   getHeroChipClass,
   getTopicAllChipClass,
   getTopicChipClass,
@@ -62,7 +60,5 @@ describe('gardenChipStyles - exact class string preservation', () => {
   it('topic strip wrapper and container classes match Resources page', () => {
     assert.equal(TOPIC_STRIP_WRAPPER, 'bg-[#FAF3E8]/60 border-b border-[#F5ECDE] py-4')
     assert.equal(TOPIC_STRIP_CONTAINER, 'max-w-6xl mx-auto px-4 sm:px-6 lg:px-8')
-    assert.equal(TOPIC_STRIP_ROW, 'flex flex-wrap items-center gap-2')
-    assert.equal(TOPIC_STRIP_LABEL, 'text-xs font-semibold text-[#5A5D70] mr-1')
   })
 })

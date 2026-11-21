@@ -143,9 +143,24 @@ export default function DigestView({ slug }: DigestViewProps) {
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-12 flex items-center justify-between gap-3">
           {/* Back breadcrumb */}
+          {/* Mobile back link */}
           <Link
             href="/garden/report-digests"
-            className="group font-bold text-xs sm:text-sm text-[#232536] hover:text-[#CF3F29] transition-colors flex items-center gap-1.5 shrink-0"
+            className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#5C5F73] hover:text-[#232536] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 rounded-xs transition-colors shrink-0"
+          >
+            <ArrowLeft
+              size={12}
+              strokeWidth={2.5}
+              aria-hidden="true"
+              className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
+            />
+            <span>Report Digests</span>
+          </Link>
+
+          {/* Desktop breadcrumb */}
+          <Link
+            href="/garden/report-digests"
+            className="hidden md:inline-flex group font-bold text-xs sm:text-sm text-[#232536] hover:text-[#CF3F29] transition-colors items-center gap-1.5 shrink-0"
           >
             <ArrowLeft
               size={14}
