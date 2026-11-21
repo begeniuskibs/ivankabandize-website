@@ -6,6 +6,18 @@ import ResourcesShelfList from '@/components/public/ResourcesShelfList'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResources } from '@/lib/resources'
 import { kindPluralLabel, slugifyCategory } from '@/lib/resourceUi'
+import {
+  HERO_CHIP_ACTIVE,
+  HERO_CHIP_INACTIVE,
+  TOPIC_ALL_CHIP_ACTIVE,
+  TOPIC_ALL_CHIP_INACTIVE,
+  TOPIC_CHIP_ACTIVE,
+  TOPIC_CHIP_INACTIVE,
+  TOPIC_STRIP_WRAPPER,
+  TOPIC_STRIP_CONTAINER,
+  TOPIC_STRIP_ROW,
+  TOPIC_STRIP_LABEL,
+} from '@/lib/gardenChipStyles'
 
 // Public shelf for downloadable resources
 // House style: spaced hyphen " - " only
@@ -151,11 +163,7 @@ export default async function ResourcesPage({
       >
         <Link
           href={buildResourcesHref(null, activeTopic)}
-          className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 ${
-            !activeKind
-              ? 'bg-[#CF3F29] text-white shadow-sm'
-              : 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
-          }`}
+          className={!activeKind ? HERO_CHIP_ACTIVE : HERO_CHIP_INACTIVE}
         >
           All
         </Link>
@@ -163,11 +171,7 @@ export default async function ResourcesPage({
           <Link
             key={k}
             href={buildResourcesHref(k, activeTopic)}
-            className={`shrink-0 px-3 py-1.5 md:px-4 md:py-2 rounded-full text-xs md:text-sm font-semibold transition-colors duration-150 focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 ${
-              activeKind === k
-                ? 'bg-[#CF3F29] text-white shadow-sm'
-                : 'bg-white/10 text-[#FDF8F1] hover:bg-white/20 border border-white/10'
-            }`}
+            className={activeKind === k ? HERO_CHIP_ACTIVE : HERO_CHIP_INACTIVE}
           >
             {kindPluralLabel(k)}
           </Link>
@@ -176,19 +180,15 @@ export default async function ResourcesPage({
 
       {/* Topics Cream Strip directly under hero: only if at least one resource has a category */}
       {distinctCategories.length > 0 && (
-        <section className="bg-[#FAF3E8]/60 border-b border-[#F5ECDE] py-4">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs font-semibold text-[#5A5D70] mr-1">
+        <section className={TOPIC_STRIP_WRAPPER}>
+          <div className={TOPIC_STRIP_CONTAINER}>
+            <div className={TOPIC_STRIP_ROW}>
+              <span className={TOPIC_STRIP_LABEL}>
                 Topic:
               </span>
               <Link
                 href={buildResourcesHref(activeKind, null)}
-                className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                  !activeTopic
-                    ? 'bg-[#232536] text-white font-bold'
-                    : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#232536]/30 hover:text-[#232536]'
-                }`}
+                className={!activeTopic ? TOPIC_ALL_CHIP_ACTIVE : TOPIC_ALL_CHIP_INACTIVE}
               >
                 All topics
               </Link>
@@ -196,11 +196,7 @@ export default async function ResourcesPage({
                 <Link
                   key={cat.slug}
                   href={buildResourcesHref(activeKind, cat.slug)}
-                  className={`text-xs px-3 py-1 rounded-full font-medium transition cursor-pointer ${
-                    activeTopic === cat.slug
-                      ? 'bg-[#2AA198] text-white font-bold'
-                      : 'bg-white text-[#5A5D70] border border-[#F5ECDE] hover:border-[#2AA198]'
-                  }`}
+                  className={activeTopic === cat.slug ? TOPIC_CHIP_ACTIVE : TOPIC_CHIP_INACTIVE}
                 >
                   {cat.name}
                 </Link>

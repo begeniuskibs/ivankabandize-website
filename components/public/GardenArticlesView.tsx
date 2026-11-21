@@ -156,7 +156,7 @@ export default function GardenArticlesView({
   return (
     <div className="min-h-screen bg-[#FDF8F1] flex flex-col font-sans">
       {/* Hero band */}
-      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden max-md:min-h-[230px] md:py-24">
+      <section className="relative w-full bg-[#232536] text-[#FDF8F1] border-b border-white/15 overflow-hidden min-h-[230px] md:min-h-[270px] flex flex-col justify-center">
         {/* Background photo behind dark overlay */}
         <div className="absolute inset-0 z-0">
           <Image
@@ -172,16 +172,15 @@ export default function GardenArticlesView({
           <div className="absolute inset-0 bg-gradient-to-b from-[#232536]/55 via-[#232536]/80 to-[#232536]/92 md:bg-gradient-to-t md:from-[#232536] md:via-[#232536]/80 md:to-[#232536]/55" />
         </div>
 
-        {/* Content container: mobile has Style B padding (px-[18px] pt-[22px] pb-[26px]), desktop uses standard layout */}
-        <div className="relative z-10 max-w-6xl mx-auto px-[18px] pt-[22px] pb-[26px] md:p-0 md:px-6 lg:px-8">
-          {/* Breadcrumb */}
-          <nav aria-label="Breadcrumb" className="mb-3 md:mb-4">
-            {/* Mobile single parent-level back link */}
-            <div className="md:hidden">
-              {selectedStream === 'all' ? (
+        {/* Content container */}
+        <div className="relative z-10 max-w-6xl mx-auto w-full px-[18px] pt-[22px] pb-[26px] md:px-12 md:py-9">
+          <div className="max-w-[620px] space-y-2 md:space-y-3">
+            {/* Breadcrumb */}
+            <nav aria-label="Breadcrumb">
+              <div className="inline-flex flex-wrap items-center gap-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-[#E9E4F0]">
                 <Link
                   href="/garden"
-                  className="group inline-flex items-center gap-1.5 text-[12px] font-bold tracking-[0.12em] uppercase text-[#E9E4F0] hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
+                  className="group inline-flex items-center gap-1 hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
                 >
                   <ArrowLeft
                     size={12}
@@ -189,88 +188,56 @@ export default function GardenArticlesView({
                     aria-hidden="true"
                     className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
-                  <span>The Garden</span>
+                  <span>THE GARDEN</span>
                 </Link>
-              ) : (
-                <Link
-                  href="/garden?view=articles"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    handleStreamChange('all')
-                  }}
-                  className="group inline-flex items-center gap-1.5 text-[12px] font-bold tracking-[0.12em] uppercase text-[#E9E4F0] hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm transition-colors"
-                >
-                  <ArrowLeft
-                    size={12}
-                    strokeWidth={2.5}
-                    aria-hidden="true"
-                    className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
-                  />
-                  <span>Articles</span>
-                </Link>
-              )}
-            </div>
-
-            {/* Desktop 3-part breadcrumb */}
-            <div className="hidden md:flex items-center">
-              {selectedStream === 'all' ? (
-                <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
-                  <Link
-                    href="/garden"
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm"
-                  >
-                    THE GARDEN
-                  </Link>
-                  <span className="text-[#FDF8F1]/50">/</span>
+                <span className="text-[#E9E4F0]/40" aria-hidden="true">
+                  /
+                </span>
+                {selectedStream === 'all' ? (
                   <span className="text-[#FDF8F1]">ARTICLES</span>
-                </div>
+                ) : (
+                  <>
+                    <Link
+                      href="/garden?view=articles"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        handleStreamChange('all')
+                      }}
+                      className="hover:text-[#FDF8F1] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-xs transition-colors"
+                    >
+                      ARTICLES
+                    </Link>
+                    <span className="text-[#E9E4F0]/40" aria-hidden="true">
+                      /
+                    </span>
+                    <span className="text-[#FDF8F1]">{currentHero.title.toUpperCase()}</span>
+                  </>
+                )}
+              </div>
+            </nav>
+
+            {/* H1 Title */}
+            <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[30px] md:text-[44px] font-bold text-[#FDF8F1] leading-tight md:leading-[1.15] tracking-tight">
+              {currentHero.title}
+            </h1>
+
+            {/* Intro line / description with inline eyebrow when set */}
+            <p className="text-[15px] md:text-[18px] font-normal text-[#F3EFF7] leading-relaxed">
+              {currentHero.eyebrow ? (
+                <>
+                  <span className="uppercase font-bold tracking-wider text-[#F7C55C]">
+                    {currentHero.eyebrow}:
+                  </span>{' '}
+                  {currentHero.description}
+                </>
               ) : (
-                <div className="text-[12px] font-bold tracking-[0.1em] uppercase flex items-center gap-1.5">
-                  <Link
-                    href="/garden"
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm"
-                  >
-                    THE GARDEN
-                  </Link>
-                  <span className="text-[#FDF8F1]/50">/</span>
-                  <Link
-                    href="/garden?view=articles"
-                    onClick={(e) => {
-                      e.preventDefault()
-                      handleStreamChange('all')
-                    }}
-                    className="text-[#FDF8F1]/70 hover:text-[#FDF8F1] hover:underline focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#FDF8F1] focus-visible:outline-offset-2 rounded-sm"
-                  >
-                    ARTICLES
-                  </Link>
-                  <span className="text-[#FDF8F1]/50">/</span>
-                  <span className="text-[#FDF8F1]">{currentHero.title.toUpperCase()}</span>
-                </div>
+                currentHero.description
               )}
-            </div>
-          </nav>
-
-          {/* H1 Title */}
-          <h1 className="font-['MTN_Brighter_Sans',_sans-serif] text-[30px] leading-tight md:text-[52px] md:leading-[1.15] font-bold text-[#FDF8F1] mb-2 md:mb-3">
-            {currentHero.title}
-          </h1>
-
-          {/* Intro line / description with inline eyebrow when set */}
-          <p className="text-[15px] md:text-[18px] text-[#F3EFF7] md:text-[#FDF8F1]/85 font-light max-w-[620px] leading-relaxed mb-4 md:mb-6">
-            {currentHero.eyebrow ? (
-              <>
-                <span className="uppercase font-bold tracking-wider text-[#F7C55C]">
-                  {currentHero.eyebrow}:
-                </span>{' '}
-                {currentHero.description}
-              </>
-            ) : (
-              currentHero.description
-            )}
-          </p>
+            </p>
+          </div>
 
           {/* Stream pills: mobile is single row with no wrap or horizontal scroll, desktop wraps */}
-          <div className="mt-5 pt-4 md:mt-8 md:pt-6 border-t border-white/15 flex flex-nowrap md:flex-wrap items-center gap-1.5 sm:gap-2 md:gap-2.5 overflow-x-hidden md:overflow-x-visible">
+          <div className="mt-5 pt-4 md:mt-6 md:pt-5 border-t border-white/15 flex flex-nowrap md:flex-wrap items-center gap-1.5 sm:gap-2 md:gap-2.5 overflow-x-hidden md:overflow-x-visible">
             {STREAM_PILLS.map((pill) => {
               const isActive = selectedStream === pill.value
               return (
@@ -296,7 +263,7 @@ export default function GardenArticlesView({
       </section>
 
       {/* Main body area */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 md:py-12 w-full flex-1 space-y-10">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10 w-full flex-1 space-y-6 md:space-y-8">
         {/* Series row: shown only when selectedStream is "all" and series exist */}
         {selectedStream === 'all' && series && series.length > 0 && (
           <section aria-labelledby="series-row-heading">

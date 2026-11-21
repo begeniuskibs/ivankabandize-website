@@ -497,43 +497,6 @@ export default function GardenLandingA2({
             </Button>
           </div>
         </section>
-
-        {/* 6. Section Report Digests & Section Resources (Coming Soon Panels) */}
-        <section id="digests-and-resources" className="space-y-12">
-          {/* Report Digests */}
-          <div className="space-y-4">
-            <div className="border-b border-[#F5ECDE] pb-3">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536]">
-                Report Digests
-              </h2>
-            </div>
-            <div className="border-2 border-dashed border-[#EFDFB8] bg-[#FBF4E4]/40 rounded-lg p-8 sm:p-10 text-center">
-              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] mb-2">
-                The first digest is still growing
-              </h3>
-              <p className="text-sm text-[#5A5D70] max-w-lg mx-auto leading-relaxed">
-                Each one will explain a major report in plain language, with a button to get the original.
-              </p>
-            </div>
-          </div>
-
-          {/* Resources */}
-          <div className="space-y-4">
-            <div className="border-b border-[#F5ECDE] pb-3">
-              <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536]">
-                Resources
-              </h2>
-            </div>
-            <div className="border-2 border-dashed border-[#D5D8E8] bg-[#EEEFF6]/40 rounded-lg p-8 sm:p-10 text-center">
-              <h3 className="font-['MTN_Brighter_Sans',_sans-serif] text-lg font-bold text-[#232536] mb-2">
-                Seeds are being packed
-              </h3>
-              <p className="text-sm text-[#5A5D70] max-w-lg mx-auto leading-relaxed">
-                Templates and guides will be added here as they are ready.
-              </p>
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   )
