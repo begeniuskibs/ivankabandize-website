@@ -227,7 +227,7 @@ export default function DigestIndexView({ digests }: DigestIndexViewProps) {
             {/* Actions */}
             <div className="flex flex-wrap items-center gap-2 mt-auto pt-4 border-t border-[#F5ECDE]">
               <Link
-                href={`/garden/report-digests/${digest.slug}?v=2min`}
+                href={`/garden/digests/${digest.slug}?v=2min`}
                 className="group inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-[#CF3F29] text-white hover:bg-[#b83420] transition-colors"
               >
                 <span>2-minute version</span>
@@ -239,7 +239,7 @@ export default function DigestIndexView({ digests }: DigestIndexViewProps) {
                 />
               </Link>
               <Link
-                href={`/garden/report-digests/${digest.slug}`}
+                href={`/garden/digests/${digest.slug}`}
                 className="group inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-white border border-[#F0E4D2] text-[#232536] hover:border-[#CF3F29] hover:text-[#CF3F29] transition-colors"
               >
                 <span>Full digest</span>

@@ -3,6 +3,7 @@ import assert from 'node:assert/strict'
 import {
   getDigestKind,
   digestKindPluralLabel,
+  digestKindSingularLabel,
   getAvailableDigestKinds,
   getDistinctDigestTopics,
   filterDigests,
@@ -19,6 +20,7 @@ describe('digestUi - helpers', () => {
     it('returns the specified kind when present', () => {
       assert.equal(getDigestKind({ kind: 'report' }), 'report')
       assert.equal(getDigestKind({ kind: 'research' }), 'research')
+      assert.equal(getDigestKind({ kind: 'essay' }), 'essay')
     })
   })
 
@@ -35,10 +37,33 @@ describe('digestUi - helpers', () => {
       assert.equal(digestKindPluralLabel('  research  '), 'Research')
     })
 
+    it('returns Essays for essay', () => {
+      assert.equal(digestKindPluralLabel('essay'), 'Essays')
+      assert.equal(digestKindPluralLabel('ESSAY'), 'Essays')
+      assert.equal(digestKindPluralLabel('  essay  '), 'Essays')
+    })
+
     it('handles empty or non-string inputs safely', () => {
       assert.equal(digestKindPluralLabel(''), '')
       assert.equal(digestKindPluralLabel(null), '')
       assert.equal(digestKindPluralLabel(undefined), '')
+    })
+  })
+
+  describe('digestKindSingularLabel', () => {
+    it('returns Report Digest for report or empty', () => {
+      assert.equal(digestKindSingularLabel('report'), 'Report Digest')
+      assert.equal(digestKindSingularLabel(''), 'Report Digest')
+      assert.equal(digestKindSingularLabel(null), 'Report Digest')
+      assert.equal(digestKindSingularLabel(undefined), 'Report Digest')
+    })
+
+    it('returns Research Digest for research', () => {
+      assert.equal(digestKindSingularLabel('research'), 'Research Digest')
+    })
+
+    it('returns Essay for essay', () => {
+      assert.equal(digestKindSingularLabel('essay'), 'Essay')
     })
   })
 
@@ -52,7 +77,7 @@ describe('digestUi - helpers', () => {
       assert.deepEqual(kinds, [{ key: 'report', label: 'Reports' }])
     })
 
-    it('returns both Reports and Research when a research digest is added', () => {
+    it('returns both Reports and Research when a research digest is added, keeping canonical order', () => {
       const digests = [
         { id: '1', slug: 'd1', topic: 'Technology' },
         { id: '2', slug: 'd2', topic: 'Faith', kind: 'research' },
@@ -61,6 +86,30 @@ describe('digestUi - helpers', () => {
       assert.deepEqual(kinds, [
         { key: 'report', label: 'Reports' },
         { key: 'research', label: 'Research' },
+      ])
+    })
+
+    it('hides empty kinds and preserves strict canonical order (report, research, essay)', () => {
+      // Test when only report and essay exist (research is empty and thus hidden)
+      const reportAndEssay = [
+        { id: '1', slug: 'd1', topic: 'Technology', kind: 'report' },
+        { id: '2', slug: 'd2', topic: 'Writing', kind: 'essay' },
+      ]
+      assert.deepEqual(getAvailableDigestKinds(reportAndEssay), [
+        { key: 'report', label: 'Reports' },
+        { key: 'essay', label: 'Essays' },
+      ])
+
+      // Test when all three kinds exist: order is strictly report, research, essay
+      const allThree = [
+        { id: '3', slug: 'd3', topic: 'Writing', kind: 'essay' },
+        { id: '2', slug: 'd2', topic: 'Science', kind: 'research' },
+        { id: '1', slug: 'd1', topic: 'Business', kind: 'report' },
+      ]
+      assert.deepEqual(getAvailableDigestKinds(allThree), [
+        { key: 'report', label: 'Reports' },
+        { key: 'research', label: 'Research' },
+        { key: 'essay', label: 'Essays' },
       ])
     })
 
@@ -97,6 +146,7 @@ describe('digestUi - helpers', () => {
       { id: '1', slug: 'd1', topic: 'Technology', kind: 'report' },
       { id: '2', slug: 'd2', topic: 'Faith' }, // defaults to report
       { id: '3', slug: 'd3', topic: 'Work', kind: 'research' },
+      { id: '4', slug: 'd4', topic: 'Culture', kind: 'essay' }, // essay fixture
     ]
 
     it('returns all when type and topic are empty, null, or "all"', () => {
@@ -105,7 +155,7 @@ describe('digestUi - helpers', () => {
       assert.deepEqual(filterDigests(digests, '', ''), digests)
     })
 
-    it('filters by type', () => {
+    it('filters by type including essay fixture', () => {
       const reports = filterDigests(digests, 'report', null)
       assert.equal(reports.length, 2)
       assert.equal(reports[0].id, '1')
@@ -114,18 +164,31 @@ describe('digestUi - helpers', () => {
       const research = filterDigests(digests, 'research', null)
       assert.equal(research.length, 1)
       assert.equal(research[0].id, '3')
+
+      const essays = filterDigests(digests, 'essay', null)
+      assert.equal(essays.length, 1)
+      assert.equal(essays[0].id, '4')
+      assert.equal(essays[0].kind, 'essay')
     })
 
     it('filters by topic slug', () => {
       const faith = filterDigests(digests, null, 'faith')
       assert.equal(faith.length, 1)
       assert.equal(faith[0].id, '2')
+
+      const culture = filterDigests(digests, null, 'culture')
+      assert.equal(culture.length, 1)
+      assert.equal(culture[0].id, '4')
     })
 
     it('combines type and topic filters', () => {
       const match = filterDigests(digests, 'report', 'technology')
       assert.equal(match.length, 1)
       assert.equal(match[0].id, '1')
+
+      const essayMatch = filterDigests(digests, 'essay', 'culture')
+      assert.equal(essayMatch.length, 1)
+      assert.equal(essayMatch[0].id, '4')
 
       const noMatch = filterDigests(digests, 'research', 'technology')
       assert.equal(noMatch.length, 0)
@@ -134,15 +197,20 @@ describe('digestUi - helpers', () => {
 
   describe('buildDigestHref', () => {
     it('builds clean URL without parameters when none provided', () => {
-      assert.equal(buildDigestHref(null, null), '/garden/report-digests')
+      assert.equal(buildDigestHref(null, null), '/garden/digests')
     })
 
     it('adds type and topic search params', () => {
-      assert.equal(buildDigestHref('report', null), '/garden/report-digests?type=report')
-      assert.equal(buildDigestHref(null, 'faith'), '/garden/report-digests?topic=faith')
+      assert.equal(buildDigestHref('report', null), '/garden/digests?type=report')
+      assert.equal(buildDigestHref('essay', null), '/garden/digests?type=essay')
+      assert.equal(buildDigestHref(null, 'faith'), '/garden/digests?topic=faith')
       assert.equal(
         buildDigestHref('report', 'faith'),
-        '/garden/report-digests?type=report&topic=faith'
+        '/garden/digests?type=report&topic=faith'
+      )
+      assert.equal(
+        buildDigestHref('essay', 'culture'),
+        '/garden/digests?type=essay&topic=culture'
       )
     })
   })

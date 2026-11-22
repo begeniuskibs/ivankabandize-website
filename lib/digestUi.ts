@@ -1,13 +1,13 @@
 import type { Digest } from './digests/types.ts'
 import { slugifyCategory } from './resourceUi.ts'
 
-// Pure helpers for Report Digests UI filtering, key category chips and topic strip
+// Pure helpers for Digests UI filtering, key category chips and topic strip
 // House style: spaced hyphen " - " only
 
-export const CANONICAL_DIGEST_KINDS = ['report', 'research'] as const
+export const CANONICAL_DIGEST_KINDS = ['report', 'research', 'essay'] as const
 export type CanonicalDigestKind = (typeof CANONICAL_DIGEST_KINDS)[number]
 
-export function getDigestKind(digest: { kind?: 'report' | 'research' }): 'report' | 'research' {
+export function getDigestKind(digest: { kind?: 'report' | 'research' | 'essay' }): CanonicalDigestKind {
   return digest.kind || 'report'
 }
 
@@ -16,7 +16,16 @@ export function digestKindPluralLabel(kind: string | null | undefined): string {
   const norm = kind.trim().toLowerCase()
   if (norm === 'report') return 'Reports'
   if (norm === 'research') return 'Research'
+  if (norm === 'essay') return 'Essays'
   return norm.charAt(0).toUpperCase() + norm.slice(1)
+}
+
+export function digestKindSingularLabel(kind: string | null | undefined): string {
+  if (!kind || typeof kind !== 'string') return 'Report Digest'
+  const norm = kind.trim().toLowerCase()
+  if (norm === 'research') return 'Research Digest'
+  if (norm === 'essay') return 'Essay'
+  return 'Report Digest'
 }
 
 export function getAvailableDigestKinds(
@@ -83,5 +92,5 @@ export function buildDigestHref(type: string | null, topic: string | null): stri
   if (type) params.set('type', type)
   if (topic) params.set('topic', topic)
   const qs = params.toString()
-  return qs ? `/garden/report-digests?${qs}` : '/garden/report-digests'
+  return qs ? `/garden/digests?${qs}` : '/garden/digests'
 }

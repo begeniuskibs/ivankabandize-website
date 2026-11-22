@@ -145,7 +145,7 @@ export default function DigestView({ slug }: DigestViewProps) {
           {/* Back breadcrumb */}
           {/* Mobile back link */}
           <Link
-            href="/garden/report-digests"
+            href="/garden/digests"
             className="group inline-flex md:hidden items-center gap-1 text-[12px] font-bold uppercase tracking-[0.12em] text-[#5C5F73] hover:text-[#232536] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-[#232536] focus-visible:outline-offset-2 rounded-xs transition-colors shrink-0"
           >
             <ArrowLeft
@@ -154,12 +154,12 @@ export default function DigestView({ slug }: DigestViewProps) {
               aria-hidden="true"
               className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
             />
-            <span>Report Digests</span>
+            <span>Digests</span>
           </Link>
 
           {/* Desktop breadcrumb */}
           <Link
-            href="/garden/report-digests"
+            href="/garden/digests"
             className="hidden md:inline-flex group font-bold text-xs sm:text-sm text-[#232536] hover:text-[#CF3F29] transition-colors items-center gap-1.5 shrink-0"
           >
             <ArrowLeft
@@ -168,7 +168,7 @@ export default function DigestView({ slug }: DigestViewProps) {
               aria-hidden="true"
               className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
             />
-            <span className="hidden sm:inline">Report Digests</span>
+            <span className="hidden sm:inline">Digests</span>
           </Link>
 
           {/* Active section title */}
@@ -317,7 +317,7 @@ export default function DigestView({ slug }: DigestViewProps) {
               )}
               <div className="pt-4 max-md:pb-28">
                 <Link
-                  href="/garden/report-digests"
+                  href="/garden/digests"
                   data-digest-all-link="true"
                   className="group inline-flex items-center gap-1.5 font-semibold text-[#CF3F29] hover:underline"
                 >
@@ -327,7 +327,7 @@ export default function DigestView({ slug }: DigestViewProps) {
                     aria-hidden="true"
                     className="transition-transform duration-300 group-hover:-translate-x-1 motion-reduce:group-hover:translate-x-0"
                   />
-                  <span>All report digests</span>
+                  <span>All digests</span>
                 </Link>
               </div>
             </footer>

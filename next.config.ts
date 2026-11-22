@@ -110,6 +110,16 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
+        source: '/garden/report-digests',
+        destination: '/garden/digests',
+        permanent: true,
+      },
+      {
+        source: '/garden/report-digests/:slug',
+        destination: '/garden/digests/:slug',
+        permanent: true,
+      },
+      {
         source: '/rss',
         destination: '/feed.xml',
         permanent: true,

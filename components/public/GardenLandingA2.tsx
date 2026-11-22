@@ -171,9 +171,9 @@ export default function GardenLandingA2({
               </div>
             </Link>
 
-            {/* Report Digests Card (Gold) */}
+            {/* Digests Card (Gold) */}
             <Link
-              href="/garden/report-digests"
+              href="/garden/digests"
               className="group relative flex flex-col justify-between p-4 rounded-xl overflow-hidden min-h-[260px] md:min-h-[300px] bg-[#FBF4E4] border border-[#EFDFB8] transition-all duration-300 hover:-translate-y-[3px] hover:shadow-lg motion-reduce:hover:translate-y-0 motion-reduce:transition-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#A97B1A] focus-visible:ring-offset-2"
             >
               {/* Full-card Background Art */}
@@ -200,7 +200,7 @@ export default function GardenLandingA2({
               {/* Bottom Frosted Plate */}
               <div className="relative z-10 mt-auto rounded-lg bg-white/64 border border-white/60 shadow-xs backdrop-blur-md px-4 py-3.5">
                 <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-[22px] font-bold text-[#232536] leading-tight mb-1">
-                  Report Digests
+                  Digests
                 </h2>
                 <p className="text-[14px] text-[#5A5D70] leading-snug mb-3 line-clamp-3 min-h-[58px]">
                   Plain-language summaries of the research leaders should read.
