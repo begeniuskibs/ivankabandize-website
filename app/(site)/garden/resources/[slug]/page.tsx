@@ -5,7 +5,10 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResourceBySlug } from '@/lib/resources'
-import { getAutoRelatedArticles } from '@/lib/resourceRelatedServer'
+import {
+  getAutoRelatedArticles,
+  attachRelatedPostCards,
+} from '@/lib/resourceRelatedServer'
 import { kindLabel } from '@/lib/resourceUi'
 import ResourceFlow, {
   ResourceHeroCta,
@@ -58,22 +61,32 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
     notFound()
   }
 
-  let displayResource = resource
-  if (!resource.details.related || resource.details.related.length === 0) {
+  let relatedItems = resource.details.related
+  if (!relatedItems || relatedItems.length === 0) {
     try {
       const autoRelated = await getAutoRelatedArticles(resource.category)
       if (autoRelated.length > 0) {
-        displayResource = {
-          ...resource,
-          details: {
-            ...resource.details,
-            related: autoRelated,
-          },
-        }
+        relatedItems = autoRelated
       }
     } catch {
       console.error('[resources] failed to load related articles for resource')
     }
+  }
+
+  if (relatedItems && relatedItems.length > 0) {
+    try {
+      relatedItems = await attachRelatedPostCards(relatedItems)
+    } catch {
+      console.error('[resources] failed to attach post cards for related items')
+    }
+  }
+
+  const displayResource = {
+    ...resource,
+    details: {
+      ...resource.details,
+      related: relatedItems || [],
+    },
   }
 
   const { details } = displayResource
