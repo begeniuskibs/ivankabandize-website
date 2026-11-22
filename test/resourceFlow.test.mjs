@@ -16,15 +16,14 @@ import {
 
 describe('Resource Flow - Intended Use Options and Constants', () => {
   it('exposes the expected intended use dropdown options', () => {
-    assert.equal(INTENDED_USE_OPTIONS.length, 5)
+    assert.equal(INTENDED_USE_OPTIONS.length, 4)
     assert.deepEqual(INTENDED_USE_OPTIONS[0], { value: '', label: 'Choose one' })
     assert.deepEqual(INTENDED_USE_OPTIONS[1], { value: 'myself', label: 'For myself' })
-    assert.deepEqual(INTENDED_USE_OPTIONS[2], { value: 'team', label: 'For my team' })
-    assert.deepEqual(INTENDED_USE_OPTIONS[3], {
-      value: 'church_ministry',
-      label: 'For my church or ministry',
+    assert.deepEqual(INTENDED_USE_OPTIONS[2], {
+      value: 'team',
+      label: 'For my team or organisation',
     })
-    assert.deepEqual(INTENDED_USE_OPTIONS[4], { value: 'curious', label: 'Just curious' })
+    assert.deepEqual(INTENDED_USE_OPTIONS[3], { value: 'curious', label: 'Just curious' })
   })
 
   it('exposes the valid intended use values', () => {
