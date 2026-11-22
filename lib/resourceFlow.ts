@@ -9,17 +9,17 @@ export interface IntendedUseOption {
 export const INTENDED_USE_OPTIONS: readonly IntendedUseOption[] = [
   { value: '', label: 'Choose one' },
   { value: 'myself', label: 'For myself' },
-  { value: 'team', label: 'For my team' },
-  { value: 'church_ministry', label: 'For my church or ministry' },
+  { value: 'team', label: 'For my team or organisation' },
   { value: 'curious', label: 'Just curious' },
 ] as const
 
+// 'church_ministry' is a legacy value accepted for backward compatibility, but no longer offered in the form
 export type IntendedUseValue = 'myself' | 'team' | 'church_ministry' | 'curious'
 
 export const VALID_INTENDED_USE_VALUES: readonly string[] = [
   'myself',
   'team',
-  'church_ministry',
+  'church_ministry', // legacy value: accepted for existing records and backwards compatibility, but no longer offered
   'curious',
 ]
 

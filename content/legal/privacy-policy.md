@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Version 1.2 - Last updated: November 12th 2026
+Version 1.3 - Last updated: November 22nd 2026
 
 ## 1. WHO I AM
 
@@ -35,10 +35,12 @@ The table below shows, for action you might take on the site, what I collect, wh
 | **Subscribe to a newsletter** | Email address, the newsletter, the date you confirmed | To send you the newsletter you chose | Your consent (confirmed by email first) |
 | **Comment** | Your comment and the name on your account. Comments are public. | To run the discussion | Your consent when you post |
 | **Bookmark an article** | The article you saved. Visible only to you. | To let you find it again | Your account |
-| **Download a resource** | Name, email, organisation and role (optional), which file, when. If signed in, your account name and email. | To deliver the file and to see which resources are useful | My legitimate interest, and your consent for the optional marketing choice |
+| **Download a resource** | Name, email, organisation and role (optional), how you plan to use it (optional: for myself, for my team or organisation, or just curious), which file, when. If signed in, your account name and email. | To deliver the file and to see which resources are useful and who they help | My legitimate interest, and your consent for the optional marketing choice |
 | **Tick the optional marketing box** | Name and email on a separate marketing list | Occasional emails about new resources and related services | Your consent (confirmed by email first) |
 
 A copy of the download link is also emailed to you. Being a download contact never adds you to a newsletter or the community. Each is a separate choice.
+
+To stop misuse, each download record also keeps a scrambled code made from your network address. The code cannot be turned back into the address. Your network address is also held for about 10 minutes to limit repeated requests, then discarded.
 
 **What the "basis" column means.** The law says I need a valid reason before I use your personal data. These are the reasons I rely on:
 
