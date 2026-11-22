@@ -1,9 +1,12 @@
 import 'server-only'
 import { createAdminClient } from '@/utils/supabase/admin'
+import { getCardMeta } from '@/lib/postTeaser'
 import {
+  extractArticleSlugFromHref,
   pickRelatedArticles,
   type CandidatePost,
   type RelatedArticleItem,
+  type RelatedPostCardItem,
 } from './resourceRelated'
 
 // Server loader for public candidate posts matching a resource category
@@ -90,5 +93,107 @@ export async function getAutoRelatedArticles(
   } catch {
     console.error('[resourceRelated] failed to load related articles')
     return []
+  }
+}
+
+/**
+ * Takes related items, extracts slugs from hrefs of the form "/garden/<slug>",
+ * and fetches card fields (id, title, slug, featured_image_url, excerpt, published_at, readTime).
+ * Filtered by publish_status = 'published' AND visibility = 'public'.
+ * Never selects content or any body field.
+ * Unmatched items keep post = null and fall back to simple link boxes.
+ */
+export async function attachRelatedPostCards(
+  items: RelatedArticleItem[]
+): Promise<RelatedArticleItem[]> {
+  if (!items || !Array.isArray(items) || items.length === 0) {
+    return []
+  }
+
+  try {
+    const slugMap = new Map<string, string>()
+    for (const item of items) {
+      if (item && item.href) {
+        const slug = extractArticleSlugFromHref(item.href)
+        if (slug) {
+          slugMap.set(slug, item.href)
+        }
+      }
+    }
+
+    const uniqueSlugs = Array.from(slugMap.keys())
+    if (uniqueSlugs.length === 0) {
+      return items.map((item) => ({ ...item, post: null }))
+    }
+
+    const admin = createAdminClient()
+    const now = new Date().toISOString()
+
+    const { data, error } = await admin
+      .from('posts')
+      .select('id, title, slug, featured_image_url, excerpt, published_at')
+      .in('slug', uniqueSlugs)
+      .eq('publish_status', 'published')
+      .eq('visibility', 'public')
+      .not('published_at', 'is', null)
+      .lte('published_at', now)
+
+    if (error || !data) {
+      console.error('[resourceRelated] failed to fetch card fields for related articles')
+      return items.map((item) => ({ ...item, post: null }))
+    }
+
+    interface PostRow {
+      id: string
+      title: string
+      slug: string
+      featured_image_url: string | null
+      excerpt: string | null
+      published_at: string | null
+    }
+
+    const postRows = data as PostRow[]
+
+    let cardPreviews: Record<string, string> = {}
+    let cardReadTimes: Record<string, number> = {}
+
+    try {
+      const meta = await getCardMeta(postRows)
+      cardPreviews = meta.previews || {}
+      cardReadTimes = meta.readTimes || {}
+    } catch {
+      // Non-fatal, readTime and preview can fall back gracefully
+    }
+
+    const postBySlug = new Map<string, RelatedPostCardItem>()
+    for (const post of postRows) {
+      const previewText =
+        post.excerpt && post.excerpt.trim()
+          ? post.excerpt.trim()
+          : cardPreviews[post.id] || ''
+
+      postBySlug.set(post.slug, {
+        id: post.id,
+        title: post.title,
+        slug: post.slug,
+        featured_image_url: post.featured_image_url,
+        excerpt: post.excerpt,
+        preview: previewText,
+        published_at: post.published_at,
+        readTime: cardReadTimes[post.id] || null,
+      })
+    }
+
+    return items.map((item) => {
+      const slug = extractArticleSlugFromHref(item.href)
+      const matchedPost = slug ? postBySlug.get(slug) || null : null
+      return {
+        ...item,
+        post: matchedPost,
+      }
+    })
+  } catch {
+    console.error('[resourceRelated] attachRelatedPostCards unexpected error')
+    return items.map((item) => ({ ...item, post: null }))
   }
 }

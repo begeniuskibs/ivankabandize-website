@@ -3,7 +3,10 @@
 
 import { describe, it } from 'node:test'
 import assert from 'node:assert/strict'
-import { pickRelatedArticles } from '../lib/resourceRelated.ts'
+import {
+  extractArticleSlugFromHref,
+  pickRelatedArticles,
+} from '../lib/resourceRelated.ts'
 
 describe('pickRelatedArticles - Pure Helper', () => {
   const samplePosts = [
@@ -178,5 +181,79 @@ describe('pickRelatedArticles - Pure Helper', () => {
         []
       )
     })
+  })
+})
+
+describe('extractArticleSlugFromHref - Pure Helper', () => {
+  it('extracts slug from valid /garden/<slug> paths', () => {
+    assert.equal(
+      extractArticleSlugFromHref('/garden/weekly-planning-system'),
+      'weekly-planning-system'
+    )
+    assert.equal(
+      extractArticleSlugFromHref('/garden/focus-less-is-more'),
+      'focus-less-is-more'
+    )
+    assert.equal(
+      extractArticleSlugFromHref('  /garden/tools-growth  '),
+      'tools-growth'
+    )
+    assert.equal(
+      extractArticleSlugFromHref('/garden/some-slug-with-numbers-123'),
+      'some-slug-with-numbers-123'
+    )
+  })
+
+  it('strips query parameters and hash anchors from valid garden paths', () => {
+    assert.equal(
+      extractArticleSlugFromHref('/garden/weekly-planning-system?ref=download'),
+      'weekly-planning-system'
+    )
+    assert.equal(
+      extractArticleSlugFromHref('/garden/weekly-planning-system#how'),
+      'weekly-planning-system'
+    )
+    assert.equal(
+      extractArticleSlugFromHref('/garden/tools-growth?utm=test#section'),
+      'tools-growth'
+    )
+  })
+
+  it('rejects nested paths or sub-routes under garden', () => {
+    assert.equal(extractArticleSlugFromHref('/garden/series/some-series'), null)
+    assert.equal(extractArticleSlugFromHref('/garden/topics/some-topic'), null)
+    assert.equal(
+      extractArticleSlugFromHref('/garden/resources/some-resource'),
+      null
+    )
+  })
+
+  it('rejects non-garden internal paths', () => {
+    assert.equal(extractArticleSlugFromHref('/library/some-book'), null)
+    assert.equal(extractArticleSlugFromHref('/blog/some-post'), null)
+    assert.equal(extractArticleSlugFromHref('/garden'), null)
+    assert.equal(extractArticleSlugFromHref('/garden/'), null)
+  })
+
+  it('rejects external links and malformed URLs', () => {
+    assert.equal(
+      extractArticleSlugFromHref('https://example.com/garden/some-slug'),
+      null
+    )
+    assert.equal(
+      extractArticleSlugFromHref('https://ivankabandize.com/garden/some-slug'),
+      null
+    )
+    assert.equal(extractArticleSlugFromHref('//garden/some-slug'), null)
+  })
+
+  it('rejects empty, null, undefined, and non-string inputs safely', () => {
+    assert.equal(extractArticleSlugFromHref(''), null)
+    assert.equal(extractArticleSlugFromHref('   '), null)
+    assert.equal(extractArticleSlugFromHref(null), null)
+    assert.equal(extractArticleSlugFromHref(undefined), null)
+    assert.equal(extractArticleSlugFromHref(12345), null)
+    assert.equal(extractArticleSlugFromHref({}), null)
+    assert.equal(extractArticleSlugFromHref(['/garden/valid']), null)
   })
 })

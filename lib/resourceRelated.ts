@@ -9,10 +9,42 @@ export interface CandidatePost {
   topics?: string[] | null
 }
 
+export interface RelatedPostCardItem {
+  id: string
+  title: string
+  slug: string
+  featured_image_url?: string | null
+  excerpt?: string | null
+  preview?: string | null
+  published_at?: string | null
+  readTime?: number | null
+}
+
 export interface RelatedArticleItem {
   title: string
   href: string
   label: string
+  post?: RelatedPostCardItem | null
+}
+
+const ARTICLE_SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/
+
+/**
+ * Pure helper: extracts an article slug from an internal href of the form "/garden/<slug>".
+ * Returns the slug if valid, or null for other paths, external links, empty or non-string inputs.
+ */
+export function extractArticleSlugFromHref(href: unknown): string | null {
+  if (typeof href !== 'string') return null
+  const trimmed = href.trim()
+  if (!trimmed.startsWith('/garden/')) return null
+
+  // Drop query strings and hash anchors
+  const pathWithoutQuery = trimmed.split(/[?#]/)[0]
+  const remainder = pathWithoutQuery.slice('/garden/'.length)
+  if (!remainder || remainder.includes('/')) return null
+  if (!ARTICLE_SLUG_REGEX.test(remainder)) return null
+
+  return remainder
 }
 
 function resolveArticleLabel(contentType?: string | null): string {

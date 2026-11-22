@@ -20,6 +20,16 @@ export interface RelatedItem {
   title: string
   href: string
   label: string
+  post?: {
+    id: string
+    title: string
+    slug: string
+    featured_image_url?: string | null
+    excerpt?: string | null
+    preview?: string | null
+    published_at?: string | null
+    readTime?: number | null
+  } | null
 }
 
 export interface DemoItem {

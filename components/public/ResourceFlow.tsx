@@ -27,6 +27,7 @@ import {
 } from '@/lib/resourceFlow'
 import { RESOURCE_CONSENT_TEXT } from '@/lib/resourceConsent'
 import ResourceConfetti from '@/components/public/ResourceConfetti'
+import PostCard from '@/components/public/PostCard'
 
 // Three-screen resource flow controller (detail, form, success)
 // House style: spaced hyphen " - " only
@@ -646,170 +647,185 @@ export default function ResourceFlow({ resource, children }: ResourceFlowProps) 
 
       {/* 3. Success View (visitors after submit, members after click) */}
       {currentView === 'success' && successState && (
-        <main className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-10 sm:py-16 text-center font-sans text-[#232536]">
-          <ResourceConfetti />
+        <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 py-10 sm:py-16 text-center font-sans text-[#232536]">
+          <div className="max-w-2xl mx-auto">
+            <ResourceConfetti />
 
-          {/* Green tick circle */}
-          <div
-            className="w-16 h-16 rounded-full bg-[#EBF7F2] border-2 border-[#1E7E5A] text-[#1E7E5A] flex items-center justify-center mx-auto mb-6 shadow-xs animate-pop motion-reduce:animate-none"
-            aria-hidden="true"
-          >
-            <svg
-              className="w-8 h-8 stroke-current fill-none"
-              viewBox="0 0 24 24"
-              strokeWidth={3}
-              strokeLinecap="round"
-              strokeLinejoin="round"
+            {/* Green tick circle */}
+            <div
+              className="w-16 h-16 rounded-full bg-[#EBF7F2] border-2 border-[#1E7E5A] text-[#1E7E5A] flex items-center justify-center mx-auto mb-6 shadow-xs animate-pop motion-reduce:animate-none"
+              aria-hidden="true"
             >
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          </div>
-
-          {/* Heading */}
-          <h1
-            ref={successHeadingRef}
-            tabIndex={-1}
-            className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight mb-3 leading-[1.14] outline-none"
-          >
-            {successState.isMember
-              ? 'Welcome back. It is yours.'
-              : `It is yours, ${successState.firstName}.`}
-          </h1>
-
-          {/* Line under heading */}
-          <p className="text-base sm:text-lg text-[#5C5F73] leading-relaxed max-w-xl mx-auto mb-8">
-            {successState.isMember ? (
-              <>
-                You are signed in, so there is no form to fill. I have also sent the
-                link to{' '}
-                <strong className="font-bold text-[#232536]">
-                  {successState.email}
-                </strong>
-                , in case you are not sure which address it went to.
-              </>
-            ) : (
-              <>
-                I have also sent the link to{' '}
-                <strong className="font-bold text-[#232536]">
-                  {successState.email}
-                </strong>{' '}
-                so you can find it later.
-              </>
-            )}
-          </p>
-
-          {/* Primary Action Button */}
-          <div className="mb-10">
-            {successState.delivery === 'link' ? (
-              <a
-                href={successState.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+              <svg
+                className="w-8 h-8 stroke-current fill-none"
+                viewBox="0 0 24 24"
+                strokeWidth={3}
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                {labels.success}
-              </a>
-            ) : (
-              <div>
-                {secondsRemaining > 0 ? (
-                  <>
-                    <a
-                      href={successState.url}
-                      download
-                      className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
-                    >
-                      <Download size={18} aria-hidden="true" />
-                      <span>{labels.success}</span>
-                    </a>
-                    <p className="text-xs text-[#5C5F73] mt-2">
-                      This link expires in {secondsRemaining} seconds.
-                    </p>
-                  </>
-                ) : (
-                  <div>
-                    <p className="text-sm text-[#CF3F29] font-semibold mb-3">
-                      This download link has expired.
-                    </p>
-                    <button
-                      type="button"
-                      onClick={startFlow}
-                      disabled={isSubmitting}
-                      className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-sm rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
-                    >
-                      Get a new link
-                    </button>
-                  </div>
-                )}
-              </div>
-            )}
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            {/* Heading */}
+            <h1
+              ref={successHeadingRef}
+              tabIndex={-1}
+              className="font-['MTN_Brighter_Sans',_sans-serif] text-3xl sm:text-4xl lg:text-5xl font-bold text-[#232536] tracking-tight mb-3 leading-[1.14] outline-none"
+            >
+              {successState.isMember
+                ? 'Welcome back. It is yours.'
+                : `It is yours, ${successState.firstName}.`}
+            </h1>
+
+            {/* Line under heading */}
+            <p className="text-base sm:text-lg text-[#5C5F73] leading-relaxed max-w-xl mx-auto mb-8">
+              {successState.isMember ? (
+                <>
+                  You are signed in, so there is no form to fill. I have also sent the
+                  link to{' '}
+                  <strong className="font-bold text-[#232536]">
+                    {successState.email}
+                  </strong>
+                  , in case you are not sure which address it went to.
+                </>
+              ) : (
+                <>
+                  I have also sent the link to{' '}
+                  <strong className="font-bold text-[#232536]">
+                    {successState.email}
+                  </strong>{' '}
+                  so you can find it later.
+                </>
+              )}
+            </p>
+
+            {/* Primary Action Button */}
+            <div className="mb-10">
+              {successState.delivery === 'link' ? (
+                <a
+                  href={successState.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center min-h-[48px] px-8 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+                >
+                  {labels.success}
+                </a>
+              ) : (
+                <div>
+                  {secondsRemaining > 0 ? (
+                    <>
+                      <a
+                        href={successState.url}
+                        download
+                        className="inline-flex items-center justify-center gap-2 min-h-[48px] px-8 py-3.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-base rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+                      >
+                        <Download size={18} aria-hidden="true" />
+                        <span>{labels.success}</span>
+                      </a>
+                      <p className="text-xs text-[#5C5F73] mt-2">
+                        This link expires in {secondsRemaining} seconds.
+                      </p>
+                    </>
+                  ) : (
+                    <div>
+                      <p className="text-sm text-[#CF3F29] font-semibold mb-3">
+                        This download link has expired.
+                      </p>
+                      <button
+                        type="button"
+                        onClick={startFlow}
+                        disabled={isSubmitting}
+                        className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 bg-[#CF3F29] hover:bg-[#b83420] text-white font-bold text-sm rounded-xl shadow-xs transition cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#CF3F29] focus:ring-offset-2"
+                      >
+                        Get a new link
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Section: Your next 10 minutes (success_steps) */}
           {resource.details?.success_steps &&
             resource.details.success_steps.length > 0 && (
-              <section
-                aria-label="Your next 10 minutes"
-                className="my-12 text-left pt-8 border-t border-[#F0E4D2]"
-              >
-                <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536] mb-6 text-center">
-                  Your next 10 minutes
-                </h2>
-                <ol className="space-y-3.5 list-none p-0 m-0">
-                  {resource.details.success_steps.map((step, idx) => (
-                    <li
-                      key={idx}
-                      className="bg-white border border-[#F0E4D2] rounded-2xl p-4 sm:p-5 flex items-start gap-4 shadow-xs"
-                    >
-                      <span
-                        className="w-8 h-8 rounded-full bg-[#CF3F29] text-white font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base flex items-center justify-center shrink-0 mt-0.5"
-                        aria-hidden="true"
+              <div className="max-w-2xl mx-auto">
+                <section
+                  aria-label="Your next 10 minutes"
+                  className="my-12 text-left pt-8 border-t border-[#F0E4D2]"
+                >
+                  <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536] mb-6 text-center">
+                    Your next 10 minutes
+                  </h2>
+                  <ol className="space-y-3.5 list-none p-0 m-0">
+                    {resource.details.success_steps.map((step, idx) => (
+                      <li
+                        key={idx}
+                        className="bg-white border border-[#F0E4D2] rounded-2xl p-4 sm:p-5 flex items-start gap-4 shadow-xs"
                       >
-                        {idx + 1}
-                      </span>
-                      <div className="flex-1 min-w-0">
-                        <strong className="block text-base font-bold text-[#232536] mb-1">
-                          {step.title}
-                        </strong>
-                        <p className="text-sm text-[#5C5F73] leading-relaxed">
-                          {step.detail}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ol>
-              </section>
+                        <span
+                          className="w-8 h-8 rounded-full bg-[#CF3F29] text-white font-['MTN_Brighter_Sans',_sans-serif] font-bold text-base flex items-center justify-center shrink-0 mt-0.5"
+                          aria-hidden="true"
+                        >
+                          {idx + 1}
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <strong className="block text-base font-bold text-[#232536] mb-1">
+                            {step.title}
+                          </strong>
+                          <p className="text-sm text-[#5C5F73] leading-relaxed">
+                            {step.detail}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ol>
+                </section>
+              </div>
             )}
 
           {/* Section: Read the thinking behind it (related) */}
           {resource.details?.related && resource.details.related.length > 0 && (
             <section
               aria-label="Read the thinking behind it"
-              className="my-12 text-left pt-8 border-t border-[#F0E4D2]"
+              className="my-12 text-left pt-8 border-t border-[#F0E4D2] max-w-5xl mx-auto w-full"
             >
               <h2 className="font-['MTN_Brighter_Sans',_sans-serif] text-2xl font-bold text-[#232536] mb-6 text-center">
                 Read the thinking behind it
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
                 {resource.details.related.map((item, idx) => (
-                  <Link
-                    key={idx}
-                    href={item.href}
-                    className="group block bg-white border border-[#F0E4D2] rounded-2xl p-5 shadow-xs hover:border-[#CF3F29]/40 transition cursor-pointer"
-                  >
-                    <span className="block text-xs text-[#5C5F73] mb-1 font-medium">
-                      {item.label}
-                    </span>
-                    <strong className="block font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-bold text-[#232536] group-hover:text-[#CF3F29] transition-colors leading-snug">
-                      {item.title}
-                    </strong>
-                  </Link>
+                  <div key={idx} className="flex flex-col h-full text-left">
+                    {item.label && (
+                      <span className="block text-xs text-[#5C5F73] mb-1.5 font-medium">
+                        {item.label}
+                      </span>
+                    )}
+                    {item.post ? (
+                      <div className="flex-1 flex flex-col min-w-0">
+                        <PostCard post={item.post} />
+                      </div>
+                    ) : (
+                      <Link
+                        href={item.href}
+                        className="group block bg-white border border-[#F0E4D2] rounded-2xl p-5 shadow-xs hover:border-[#CF3F29]/40 transition cursor-pointer flex-1 flex flex-col justify-between"
+                      >
+                        <div>
+                          <strong className="block font-['MTN_Brighter_Sans',_sans-serif] text-base sm:text-lg font-bold text-[#232536] group-hover:text-[#CF3F29] transition-colors leading-snug">
+                            {item.title}
+                          </strong>
+                        </div>
+                      </Link>
+                    )}
+                  </div>
                 ))}
               </div>
             </section>
           )}
 
           {/* Centered link back to all resources */}
-          <p className="mt-10">
+          <p className="mt-10 max-w-2xl mx-auto">
             <Link
               href="/garden/resources"
               className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#5C5F73] hover:text-[#232536] transition cursor-pointer"
