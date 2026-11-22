@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { PanelLeftClose, PanelLeftOpen, ExternalLink } from 'lucide-react'
+import { PanelLeftClose, PanelLeftOpen, ExternalLink, Download } from 'lucide-react'
 import { createClient } from '@/utils/supabase/client'
 import { signOut } from '@/app/auth/actions'
 import {
@@ -235,6 +235,11 @@ export default function AdminSidebar({
       icon: <EnquiriesIcon size={18} />,
       badge: newInquiriesCount > 0 ? String(newInquiriesCount) : undefined,
     },
+    {
+      label: 'Downloads',
+      href: '/admin/downloads',
+      icon: <Download size={18} />,
+    },
   ]
 
   const automationsNav: SidebarItem[] = [
@@ -275,6 +280,9 @@ export default function AdminSidebar({
     }
     if (item.href === '/admin/enquiries') {
       return pathname.startsWith('/admin/enquiries')
+    }
+    if (item.href === '/admin/downloads') {
+      return pathname.startsWith('/admin/downloads')
     }
     return pathname === item.href
   }
