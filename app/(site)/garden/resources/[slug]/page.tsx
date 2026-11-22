@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import { ArrowLeft, Minus, Plus } from 'lucide-react'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResourceBySlug } from '@/lib/resources'
+import { getAutoRelatedArticles } from '@/lib/resourceRelatedServer'
 import { kindLabel } from '@/lib/resourceUi'
 import ResourceFlow, {
   ResourceHeroCta,
@@ -57,7 +58,25 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
     notFound()
   }
 
-  const { details } = resource
+  let displayResource = resource
+  if (!resource.details.related || resource.details.related.length === 0) {
+    try {
+      const autoRelated = await getAutoRelatedArticles(resource.category)
+      if (autoRelated.length > 0) {
+        displayResource = {
+          ...resource,
+          details: {
+            ...resource.details,
+            related: autoRelated,
+          },
+        }
+      }
+    } catch {
+      console.error('[resources] failed to load related articles for resource')
+    }
+  }
+
+  const { details } = displayResource
 
   // Overview sections (What it is, Who it is for, What it helps with)
   const overviewCards = [
@@ -82,7 +101,7 @@ export default async function ResourcePage({ params }: ResourcePageProps) {
   const hasFacts = details.facts && details.facts.length > 0
 
   return (
-    <ResourceFlow resource={resource}>
+    <ResourceFlow resource={displayResource}>
       <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4] text-[#232536]">
         <main className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 pb-28 md:pb-16">
           {/* Back Link */}

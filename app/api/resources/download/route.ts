@@ -193,9 +193,14 @@ export async function POST(request: Request) {
       )
     }
 
-    // 3. IP limit via checkRateLimit (10 requests per 600 seconds)
+    // 3. IP limit via checkRateLimit (70 requests per 600 seconds)
     const clientIp = getClientIp(request.headers)
-    const ipRateLimit = await checkRateLimit(clientIp, 10, 600, 'resource-ip')
+    const ipRateLimit = await checkRateLimit(
+      clientIp,
+      RESOURCE_DOWNLOAD_LIMITS.IP_LIMIT_MAX,
+      RESOURCE_DOWNLOAD_LIMITS.IP_LIMIT_WINDOW_SECONDS,
+      'resource-ip'
+    )
     if (!ipRateLimit.success) {
       return NextResponse.json(
         {
