@@ -13,6 +13,8 @@ function getShortPublisher(pub: string): string {
 }
 
 interface DigestHeroProps {
+  title?: string
+  pub?: string
   kick: string
   h1: string
   lead: string
@@ -431,6 +433,8 @@ function HeroIllustration({
 }
 
 export default function DigestHero({
+  title,
+  pub,
   kick,
   h1,
   lead,
@@ -446,6 +450,10 @@ export default function DigestHero({
   const headerRef = useRef<HTMLElement>(null)
   const [isHeroVisible, setIsHeroVisible] = useState(true)
   const [isAboutExpanded, setIsAboutExpanded] = useState(false)
+  const [isCreditExpanded, setIsCreditExpanded] = useState(false)
+
+  const displayTitle = title || about?.title || ''
+  const displayPub = pub || about?.publisher || ''
 
   useEffect(() => {
     const el = headerRef.current
@@ -667,23 +675,19 @@ export default function DigestHero({
         </div>
 
         {/* Credit */}
-        <p
+        <div
           data-hero-credit="true"
-          className="text-xs sm:text-[13px] text-[#A9ABC0] mt-6 max-w-2xl leading-relaxed"
+          className="text-xs sm:text-[13px] text-[#A9ABC0] mt-6 max-w-2xl leading-relaxed space-y-2"
         >
-          {creditParts.map((part, idx) => {
-            if (part.startsWith('<b>') && part.endsWith('</b>')) {
-              return (
-                <strong key={idx} className="text-[#FDF8F1] font-semibold">
-                  {part.slice(3, -4)}
-                </strong>
-              )
-            }
-            return <React.Fragment key={idx}>{part}</React.Fragment>
-          })}
-          {sourceUrl && (
-            <>
-              {' '}
+          <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
+            <span>
+              Digest of{' '}
+              <strong className="text-[#FDF8F1] font-semibold">
+                {displayTitle}
+              </strong>
+              , by {displayPub}.
+            </span>
+            {sourceUrl && (
               <a
                 href={sourceUrl}
                 target="_blank"
@@ -693,10 +697,34 @@ export default function DigestHero({
                 <span>Read the original report</span>
                 <ExternalLink size={13} strokeWidth={2} aria-hidden="true" />
               </a>
-              .
-            </>
-          )}
-        </p>
+            )}
+            <button
+              type="button"
+              onClick={() => setIsCreditExpanded((v) => !v)}
+              aria-expanded={isCreditExpanded}
+              className="text-[#A9ABC0] hover:text-[#FDF8F1] underline cursor-pointer transition-colors"
+            >
+              {isCreditExpanded
+                ? 'Hide full credit and licence'
+                : 'Show full credit and licence'}
+            </button>
+          </div>
+
+          <div className={isCreditExpanded ? 'block' : 'hidden'}>
+            <p>
+              {creditParts.map((part, idx) => {
+                if (part.startsWith('<b>') && part.endsWith('</b>')) {
+                  return (
+                    <strong key={idx} className="text-[#FDF8F1] font-semibold">
+                      {part.slice(3, -4)}
+                    </strong>
+                  )
+                }
+                return <React.Fragment key={idx}>{part}</React.Fragment>
+              })}
+            </p>
+          </div>
+        </div>
       </div>
     </header>
   )
