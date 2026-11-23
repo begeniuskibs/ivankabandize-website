@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { Leaf, BookOpen, ArrowRight } from 'lucide-react'
 import Button from '@/components/Button'
+import { digestCountLabel } from '@/lib/digestUi'
 
 export interface GardenA2Article {
   id: string
@@ -36,6 +37,7 @@ interface GardenLandingA2Props {
   totalLibraryCount: number
   topicTags: GardenA2TopicTag[]
   totalResourcesCount?: number
+  totalDigestsCount: number
 }
 
 const STREAM_NAMES: Record<string, string> = {
@@ -51,6 +53,7 @@ export default function GardenLandingA2({
   totalLibraryCount,
   topicTags,
   totalResourcesCount = 0,
+  totalDigestsCount,
 }: GardenLandingA2Props) {
   return (
     <div className="flex flex-col min-h-full font-sans bg-[#FDF8F1]">
@@ -207,7 +210,7 @@ export default function GardenLandingA2({
                 </p>
                 <div className="pt-2.5 border-t border-[#EFDFB8]/60 flex items-center justify-between text-xs font-semibold min-h-[28px]">
                   <span className="text-gold-text font-bold">
-                    3 digests
+                    {digestCountLabel(totalDigestsCount)}
                   </span>
                   <span className="inline-flex items-center gap-1 text-gold-text font-bold">
                     <span>Open</span>

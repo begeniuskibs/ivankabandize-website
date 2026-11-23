@@ -5,6 +5,7 @@ import GardenArticlesView from '@/components/public/GardenArticlesView'
 import { getCardMeta } from '@/lib/postTeaser'
 import { SITE_URL } from '@/lib/siteUrl'
 import { getPublishedResources } from '@/lib/resources'
+import { DIGESTS } from '@/lib/digests'
 
 export const dynamic = 'force-dynamic'
 
@@ -193,6 +194,7 @@ export default async function GardenPage({ searchParams }: GardenPageProps) {
       totalLibraryCount={totalLibraryCount ?? (libraryItemsData || []).length}
       topicTags={topicTags}
       totalResourcesCount={publishedResources.length}
+      totalDigestsCount={DIGESTS.length}
     />
   )
 }

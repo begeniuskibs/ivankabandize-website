@@ -8,6 +8,7 @@ import {
   getDistinctDigestTopics,
   filterDigests,
   buildDigestHref,
+  digestCountLabel,
 } from '../lib/digestUi.ts'
 
 describe('digestUi - helpers', () => {
@@ -212,6 +213,24 @@ describe('digestUi - helpers', () => {
         buildDigestHref('essay', 'culture'),
         '/garden/digests?type=essay&topic=culture'
       )
+    })
+  })
+
+  describe('digestCountLabel', () => {
+    it('returns "0 digests" for 0', () => {
+      assert.equal(digestCountLabel(0), '0 digests')
+    })
+
+    it('returns "1 digest" for 1', () => {
+      assert.equal(digestCountLabel(1), '1 digest')
+    })
+
+    it('returns "2 digests" for 2', () => {
+      assert.equal(digestCountLabel(2), '2 digests')
+    })
+
+    it('returns "4 digests" for 4', () => {
+      assert.equal(digestCountLabel(4), '4 digests')
     })
   })
 })

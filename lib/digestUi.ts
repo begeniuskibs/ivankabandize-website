@@ -94,3 +94,9 @@ export function buildDigestHref(type: string | null, topic: string | null): stri
   const qs = params.toString()
   return qs ? `/garden/digests?${qs}` : '/garden/digests'
 }
+
+export function digestCountLabel(n: number): string {
+  if (n === 1) return '1 digest'
+  return `${n} digests`
+}
+
