@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Download, AlertCircle, ChevronLeft, ChevronRight, X } from 'lucide-react'
+import { Download, ChevronLeft, ChevronRight } from 'lucide-react'
 import { getAuthenticatedOwner } from '@/utils/supabase/auth'
 import {
   calculateDownloadsSummary,
@@ -11,9 +11,9 @@ import {
   formatResourceKind,
   formatShortError,
   getIntendedUseLabel,
-  INTENDED_USE_OPTIONS,
   buildDownloadsExportHref,
 } from '@/lib/adminDownloads'
+import DownloadsFilters from '@/components/admin/DownloadsFilters'
 
 export const dynamic = 'force-dynamic'
 
@@ -124,10 +124,6 @@ export default async function AdminDownloadsPage({ searchParams }: PageProps) {
   const totalCount = totalFilteredCount ?? 0
   const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE))
   const isCapped = totalCount > 5000
-
-  const hasActiveFilters = Boolean(
-    filters.resource || filters.use || filters.from || filters.to || filters.q
-  )
 
   const exportHref = buildDownloadsExportHref({
     resource: filters.resource,
@@ -267,125 +263,8 @@ export default async function AdminDownloadsPage({ searchParams }: PageProps) {
             </div>
           </div>
 
-          {/* Filters Form */}
-          <form
-            method="GET"
-            action="/admin/downloads"
-            className="bg-white border border-gray-200 rounded-2xl p-4 shadow-[0_2px_8px_rgba(0,0,0,0.02)] space-y-3"
-          >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
-              {/* Resource Filter */}
-              <div>
-                <label htmlFor="filter-resource" className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Resource
-                </label>
-                <select
-                  id="filter-resource"
-                  name="resource"
-                  defaultValue={filters.resource || 'all'}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
-                >
-                  <option value="all">All resources</option>
-                  {resources.map((r) => (
-                    <option key={r.id} value={r.id}>
-                      {r.title}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Intended Use Filter */}
-              <div>
-                <label htmlFor="filter-use" className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Intended Use
-                </label>
-                <select
-                  id="filter-use"
-                  name="use"
-                  defaultValue={filters.use || ''}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
-                >
-                  <option value="">All intended uses</option>
-                  {INTENDED_USE_OPTIONS.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Date From */}
-              <div>
-                <label htmlFor="filter-from" className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  From
-                </label>
-                <input
-                  type="date"
-                  id="filter-from"
-                  name="from"
-                  defaultValue={filters.from || ''}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
-                />
-              </div>
-
-              {/* Date To */}
-              <div>
-                <label htmlFor="filter-to" className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  To
-                </label>
-                <input
-                  type="date"
-                  id="filter-to"
-                  name="to"
-                  defaultValue={filters.to || ''}
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
-                />
-              </div>
-
-              {/* Search query */}
-              <div>
-                <label htmlFor="filter-q" className="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider mb-1">
-                  Search
-                </label>
-                <input
-                  type="text"
-                  id="filter-q"
-                  name="q"
-                  defaultValue={filters.q || ''}
-                  placeholder="Name or email..."
-                  className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
-                />
-              </div>
-            </div>
-
-            {/* Rejection notice if odd characters entered */}
-            {filters.isSearchRejected && (
-              <div className="flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200">
-                <AlertCircle size={14} className="shrink-0" />
-                <span>Search query contained unsupported characters and was safely ignored.</span>
-              </div>
-            )}
-
-            <div className="flex items-center justify-between pt-2 border-t border-gray-100">
-              <div className="text-xs text-gray-500">
-                {hasActiveFilters && (
-                  <Link
-                    href="/admin/downloads"
-                    className="inline-flex items-center gap-1 text-gray-500 hover:text-gray-900 transition"
-                  >
-                    <X size={12} />
-                    <span>Clear filters</span>
-                  </Link>
-                )}
-              </div>
-              <button
-                type="submit"
-                className="px-4 py-1.5 rounded-lg text-xs font-semibold bg-[#191A23] text-white hover:bg-[#262837] transition cursor-pointer"
-              >
-                Apply Filters
-              </button>
-            </div>
-          </form>
+          {/* Filters Bar */}
+          <DownloadsFilters resources={resources} filters={filters} />
 
           {/* Empty states or Log table */}
           {summary.totalDownloads === 0 ? (
