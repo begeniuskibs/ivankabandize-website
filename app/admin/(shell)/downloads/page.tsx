@@ -264,7 +264,11 @@ export default async function AdminDownloadsPage({ searchParams }: PageProps) {
           </div>
 
           {/* Filters Bar */}
-          <DownloadsFilters resources={resources} filters={filters} />
+          <DownloadsFilters
+            key={`${filters.resource || 'all'}|${filters.use || ''}|${filters.from || ''}|${filters.to || ''}`}
+            resources={resources}
+            filters={filters}
+          />
 
           {/* Empty states or Log table */}
           {summary.totalDownloads === 0 ? (

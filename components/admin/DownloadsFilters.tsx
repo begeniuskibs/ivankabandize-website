@@ -53,13 +53,14 @@ export default function DownloadsFilters({
 }: DownloadsFiltersProps) {
   const router = useRouter()
   const [isPending, startTransition] = useTransition()
+
+  // Local state for all filter inputs so UI reflects user selection immediately
+  const [resource, setResource] = useState(filters.resource || 'all')
+  const [use, setUse] = useState(filters.use || '')
+  const [from, setFrom] = useState(filters.from || '')
+  const [to, setTo] = useState(filters.to || '')
   const [searchQuery, setSearchQuery] = useState(filters.q || '')
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null)
-
-  // Keep local search input in sync if URL query changes externally
-  useEffect(() => {
-    setSearchQuery(filters.q || '')
-  }, [filters.q])
 
   // Cleanup pending debounce timer on unmount
   useEffect(() => {
@@ -83,15 +84,10 @@ export default function DownloadsFilters({
     }
 
     const currentResource =
-      overrides.resource !== undefined
-        ? overrides.resource
-        : (filters.resource || 'all')
-    const currentUse =
-      overrides.use !== undefined ? overrides.use : (filters.use || '')
-    const currentFrom =
-      overrides.from !== undefined ? overrides.from : (filters.from || '')
-    const currentTo =
-      overrides.to !== undefined ? overrides.to : (filters.to || '')
+      overrides.resource !== undefined ? overrides.resource : resource
+    const currentUse = overrides.use !== undefined ? overrides.use : use
+    const currentFrom = overrides.from !== undefined ? overrides.from : from
+    const currentTo = overrides.to !== undefined ? overrides.to : to
     const currentQ = overrides.q !== undefined ? overrides.q : searchQuery
 
     const targetUrl = buildFilterUrl({
@@ -137,17 +133,20 @@ export default function DownloadsFilters({
       debounceTimerRef.current = null
     }
     setSearchQuery('')
+    setResource('all')
+    setUse('')
+    setFrom('')
+    setTo('')
     startTransition(() => {
       router.replace('/admin/downloads')
     })
   }
 
   const hasActiveFilters = Boolean(
-    (filters.resource && filters.resource !== 'all') ||
-      filters.use ||
-      filters.from ||
-      filters.to ||
-      filters.q ||
+    (resource && resource !== 'all') ||
+      use ||
+      from ||
+      to ||
       searchQuery.trim()
   )
 
@@ -170,8 +169,12 @@ export default function DownloadsFilters({
           <select
             id="filter-resource"
             name="resource"
-            value={filters.resource || 'all'}
-            onChange={(e) => applyFilters({ resource: e.target.value })}
+            value={resource}
+            onChange={(e) => {
+              const val = e.target.value
+              setResource(val)
+              applyFilters({ resource: val })
+            }}
             className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition cursor-pointer"
           >
             <option value="all">All resources</option>
@@ -194,8 +197,12 @@ export default function DownloadsFilters({
           <select
             id="filter-use"
             name="use"
-            value={filters.use || ''}
-            onChange={(e) => applyFilters({ use: e.target.value })}
+            value={use}
+            onChange={(e) => {
+              const val = e.target.value
+              setUse(val)
+              applyFilters({ use: val })
+            }}
             className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition cursor-pointer"
           >
             <option value="">All intended uses</option>
@@ -219,8 +226,12 @@ export default function DownloadsFilters({
             type="date"
             id="filter-from"
             name="from"
-            value={filters.from || ''}
-            onChange={(e) => applyFilters({ from: e.target.value })}
+            value={from}
+            onChange={(e) => {
+              const val = e.target.value
+              setFrom(val)
+              applyFilters({ from: val })
+            }}
             className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
           />
         </div>
@@ -237,8 +248,12 @@ export default function DownloadsFilters({
             type="date"
             id="filter-to"
             name="to"
-            value={filters.to || ''}
-            onChange={(e) => applyFilters({ to: e.target.value })}
+            value={to}
+            onChange={(e) => {
+              const val = e.target.value
+              setTo(val)
+              applyFilters({ to: val })
+            }}
             className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs text-gray-900 focus:bg-white focus:outline-none focus:border-[#EF5B45] transition"
           />
         </div>
