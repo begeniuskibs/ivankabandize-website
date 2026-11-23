@@ -4,11 +4,13 @@ import type { CardsBlock } from '@/lib/digests/types'
 export default function CardsRenderer({ block }: { block: CardsBlock }) {
   const count = block.items.length
   const gridClasses =
-    count === 2
-      ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
-      : count === 4
-        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
-        : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
+    count === 1
+      ? 'grid grid-cols-1 gap-4'
+      : count === 2
+        ? 'grid grid-cols-1 sm:grid-cols-2 gap-4'
+        : count === 4
+          ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4'
+          : 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
 
   return (
     <div className={gridClasses}>

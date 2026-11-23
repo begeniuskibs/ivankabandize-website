@@ -19,11 +19,11 @@ export const aiFoundationsWorldBank: Digest = {
     publisher: 'The World Bank',
     year: '2025',
     purpose:
-      'Shows how unevenly AI is spread, and what lower-income countries need to use it.',
+      'Shows how unevenly AI is spread across countries and what low- and middle-income countries need in place to use it.',
     likelyHelps:
-      'Leaders and funders working in or with lower-income countries.',
+      'Leaders, funders, educators and policy people who work in or with lower-income countries, and anyone asking whether AI will narrow or widen the gap.',
     whyPicked:
-      "Much of the world's service happens where connection, power and skills are thin.",
+      "A lot of the world's service and business happens where connection, computing power and skills are thin. Seeing the gap clearly helps us plan with facts.",
   },
   facts: [
     [4, 'foundations: the 4Cs'],
@@ -54,26 +54,26 @@ export const aiFoundationsWorldBank: Digest = {
           items: [
             [
               '<span data-n="87">0</span>%',
-              'of notable AI models come from high-income countries.',
+              'of notable AI models come from high-income countries. They hold just 17% of the world\'s people.',
             ],
             [
               '<span data-n="27">0</span>%',
-              'of people in low-income countries use the internet (2024).',
+              'of people in low-income countries use the internet (2024). In high-income countries it is 93%.',
             ],
             [
               '<span data-n="50">0</span>%',
-              "of the world's secure internet servers are in the United States (2024).",
+              "of the world's secure internet servers are in the United States (2024). Another 41% are in other high-income countries.",
             ],
             [
               '<span data-n="4">0</span>%',
-              'of people in low-income countries have 5G coverage (2024).',
+              'of people in low-income countries have 5G coverage (2024). In high-income countries it is 84%.',
             ],
           ],
         },
         {
           k: 'note',
           h: 'My one-line summary',
-          p: 'The power to build and run AI sits in a few places. Four foundations decide who benefits.',
+          p: 'The power to build and run AI sits in a few places. Four foundations decide who benefits: connectivity, compute, context and competency. The report warns that early advantages can lock the gap in.',
         },
       ],
     },
@@ -89,28 +89,28 @@ export const aiFoundationsWorldBank: Digest = {
             {
               k: 'Start',
               t: 'One hundred AI models',
-              p: 'Picture 100 notable AI models. Where do they come from?',
+              p: 'Picture 100 notable AI models. Where do they come from? Hold that thought, and compare it with where the world\'s people live.',
               cap: ['100 AI models', 'No order yet'],
               f: scat(C.gr),
             },
             {
               k: 'Models',
               t: '87 come from high-income countries',
-              p: "High-income countries are 17% of the world's people.",
+              p: "High-income countries are 17% of the world's people and 64% of its economy. Yet 87 of the 100 models come from them.",
               cap: ['87%', 'of notable AI models'],
               f: hund(87, C.bl, C.gr),
             },
             {
               k: 'Start-ups',
               t: '86 of every 100 AI start-ups',
-              p: 'The same group, the same pattern (as of July 2025).',
+              p: 'The same group, the same pattern (as of July 2025). They also produce 54% of AI research papers and 32% of generative AI patent applications (2014 to 2023).',
               cap: ['86%', 'of AI start-ups'],
               f: hund(86, C.bl, C.gr),
             },
             {
               k: 'Funding',
               t: '91 of every 100 in venture money',
-              p: 'The money follows the same line.',
+              p: 'The money follows the same line. Leaving out China and India, low- and middle-income countries are 48% of people but get under 1% of AI start-up funding.',
               cap: ['91%', 'of AI start-up funding'],
               f: hund(91, C.bl, C.gr),
             },
@@ -120,7 +120,7 @@ export const aiFoundationsWorldBank: Digest = {
           k: 'rings',
           a: ['Outer ring: 87% of notable AI models.', 'High-income countries.', 87],
           b: ["Inner ring: 17% of the world's people.", '', 17],
-          p: "High-income countries are 17% of the world's people, and they build most of the AI.",
+          p: "High-income countries are 17% of the world's people, and they build most of the AI. Leaving out China and India, low- and middle-income countries are 48% of people and 15% of the economy, but hold 4% of AI start-ups.",
         },
         {
           k: 'hbars',
@@ -136,17 +136,17 @@ export const aiFoundationsWorldBank: Digest = {
                 ['Lower-middle-income', 4.7],
                 ['Low-income countries', 0.7],
               ],
-              '#1F5F6B',
+              '#EF5B45',
             ],
           ],
-          note: "More than 40% of ChatGPT's traffic came from middle-income countries in mid-2025.",
+          note: "More than 40% of ChatGPT's global traffic came from middle-income countries in mid-2025. The picture changes when you look at the share of internet users: use is far lower there than in high-income countries.",
         },
         {
           k: 'cards',
           items: [
             [
               'Firms are slower',
-              'Even in advanced economies only about 8% of firms have deliberately adopted AI.',
+              'Even in advanced economies only about 8% of firms have deliberately adopted AI. Individual use has jumped, but firms and governments are still early.',
             ],
             [
               'Small AI',
@@ -165,19 +165,19 @@ export const aiFoundationsWorldBank: Digest = {
           tabs: [
             [
               'Connectivity',
-              '<p>Can people get online, at a price and speed that makes AI usable?</p>',
+              '<p>Can people get online, at a price and speed that makes AI usable? Getting online is only the first step. How well people are online, in speed, data and 5G coverage, decides how much AI they can actually use. About one third of the world\'s people are still offline.</p>',
             ],
             [
               'Compute',
-              '<p>Is there computing power (chips, servers, data centres, cloud) to run AI?</p>',
+              '<p>Is there computing power (chips, servers, data centres, cloud) to run AI? Compute is the fuel AI runs on, and the report calls it the new electricity. Governments face a choice: build local data centres, or rent computing power from abroad.</p>',
             ],
             [
               'Context',
-              "<p>Is there data, language coverage, and local models and apps that fit people's real situations?</p>",
+              "<p>Is there data, language coverage, and local models and apps that fit people's real situations? AI learns from the data it is given, and most of that data is in English and from the rich world. Local languages, local data and open-source tools help close that gap.</p>",
             ],
             [
               'Competency',
-              '<p>Do people have the skills to use, adapt and build with AI, and to stay in their own country to do it?</p>',
+              '<p>Do people have the skills to use, adapt and build with AI, and to stay in their own country to do it? Basic digital skills are the starting point, and advanced skills are rare everywhere. Brain drain pulls skilled people away from the places that need them.</p>',
             ],
           ],
         },
@@ -216,7 +216,7 @@ export const aiFoundationsWorldBank: Digest = {
                 ['Lower-middle-income', 100],
                 ['Low-income countries', 5],
               ],
-              '#1F5F6B',
+              '#232536',
             ],
           ],
           note: 'About 1,400 GB against 5 GB. This gap is widening.',
@@ -262,7 +262,7 @@ export const aiFoundationsWorldBank: Digest = {
                 ['Upper-middle-income', 18],
                 ['Lower-middle-income', 5],
               ],
-              '#1F5F6B',
+              '#EF5B45',
             ],
           ],
           note:
@@ -311,7 +311,7 @@ export const aiFoundationsWorldBank: Digest = {
                 ['Open data sets on a leading AI platform', 56],
                 ['Scientific papers (nearly)', 98],
               ],
-              '#1F5F6B',
+              '#EF5B45',
             ],
             [
               'Venture money in AI training data (through 2023)',
@@ -358,7 +358,7 @@ export const aiFoundationsWorldBank: Digest = {
                 ['Upper-middle-income', 38],
                 ['Lower-middle-income', 21],
               ],
-              '#1F5F6B',
+              '#232536',
             ],
           ],
           note:
@@ -377,7 +377,7 @@ export const aiFoundationsWorldBank: Digest = {
                 ['Lower-middle-income', 11],
                 ['High-income countries', 2],
               ],
-              '#1F5F6B',
+              '#EF5B45',
             ],
           ],
           note:
@@ -475,8 +475,8 @@ export const aiFoundationsWorldBank: Digest = {
           k: 'jargon',
           terms: [
             {
-              t: 'Low-, middle- and high-income countries (LIC, MIC, HIC)',
-              p: 'The World Bank\'s groups by national income. "Upper-middle" and "lower-middle" split the middle group.',
+              t: 'LIC, MIC, HIC',
+              p: 'Low-, middle- and high-income countries. The World Bank\'s groups by national income. "Upper-middle" and "lower-middle" split the middle group.',
             },
             {
               t: 'Compute',
@@ -514,9 +514,9 @@ export const aiFoundationsWorldBank: Digest = {
           k: 'take',
           approved: true,
           paras: [
-            'The numbers are not an argument for despair. They show where help is most useful: connection, power, local data and skills.',
-            'Small AI matters most for people serving in places with thin infrastructure, because it works with what they have today.',
-            'Whoever is not at the table when AI tools are built gets tools that do not fit them. Language and context are part of fairness.',
+            'The numbers are not an argument for despair. They show where help is most useful: connection, power, local data and skills. Each of the four foundations is something a country, a funder or a partner can invest in, one step at a time.',
+            'Small AI matters most for people serving in places with thin infrastructure, because it works with what they have today. A teacher, a nurse or a farmer does not need a data centre to get a coach or a co-worker.',
+            'Whoever is not at the table when AI tools are built gets tools that do not fit them. Language and context are part of fairness. That is why local data, local languages and local skills matter as much as the cables and the chips.',
           ],
         },
       ],
