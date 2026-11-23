@@ -510,7 +510,7 @@ export default function GardenFeed({
                   <div className="flex items-center justify-between mb-6 border-b border-[#F5ECDE] pb-3">
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold uppercase tracking-widest text-gold-text">
-                        Report Digests
+                        Digests
                       </span>
                       <span className="text-[#5A5D70]/40 text-xs">•</span>
                       <span className="text-xs font-medium text-[#5A5D70]">

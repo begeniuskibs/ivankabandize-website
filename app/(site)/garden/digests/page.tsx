@@ -22,21 +22,21 @@ import {
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
-  title: 'Report Digests - The Garden',
+  title: 'Digests - The Garden',
   description:
-    'Plain-language summaries of the research leaders should read, with a button to get the original.',
+    'Plain-language summaries of the reports, research and essays leaders should read, with a button to get the original.',
   alternates: {
-    canonical: `${SITE_URL}/garden/report-digests`,
+    canonical: `${SITE_URL}/garden/digests`,
   },
 }
 
-interface ReportDigestsPageProps {
+interface DigestsPageProps {
   searchParams?: Promise<{ type?: string; topic?: string }>
 }
 
-export default async function ReportDigestsPage({
+export default async function DigestsPage({
   searchParams,
-}: ReportDigestsPageProps) {
+}: DigestsPageProps) {
   const params = (await searchParams) || {}
   const activeType = params.type || null
   const activeTopic = params.topic || null
@@ -53,13 +53,13 @@ export default async function ReportDigestsPage({
     <div className="flex flex-col min-h-screen bg-[#FDF8F1] font-sans selection:bg-[#E8DCC4]">
       {/* Hub Hero with Key Categories */}
       <GardenHubHero
-        title="Report Digests"
-        intro="I read the reports leaders keep meaning to read, and turn each one into something you can take in over a cup of tea. Every digest has a 2-minute version."
+        title="Digests"
+        intro="I read the reports, research and essays leaders keep meaning to read, and turn each one into something you can take in over a cup of tea. Every digest has a 2-minute version."
         imageSrc="/garden-heroes/digests.jpg"
         breadcrumb={{
           parentLabel: 'The Garden',
           parentHref: '/garden',
-          currentLabel: 'Report Digests',
+          currentLabel: 'Digests',
         }}
       >
         <Link
@@ -99,7 +99,7 @@ export default async function ReportDigestsPage({
               No digests match these filters.
             </p>
             <Link
-              href="/garden/report-digests"
+              href="/garden/digests"
               className="text-xs uppercase tracking-wider font-semibold text-[#CF3F29] hover:underline"
             >
               Clear filters

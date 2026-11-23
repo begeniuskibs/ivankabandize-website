@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { getDigestBySlug, DIGESTS } from '@/lib/digests'
 import DigestView from '@/components/public/digests/DigestView'
 import { SITE_URL } from '@/lib/siteUrl'
+import { digestKindSingularLabel } from '@/lib/digestUi'
 
 export const dynamic = 'force-dynamic'
 
@@ -26,21 +27,24 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
+  const kindLabel = digestKindSingularLabel(digest.kind)
+  const metaTitle = `${digest.title} - ${kindLabel}`
+
   return {
-    title: `${digest.title} - Report Digest`,
+    title: metaTitle,
     description: digest.lead,
     alternates: {
-      canonical: `${SITE_URL}/garden/report-digests/${digest.slug}`,
+      canonical: `${SITE_URL}/garden/digests/${digest.slug}`,
     },
     openGraph: {
-      title: `${digest.title} - Report Digest`,
+      title: metaTitle,
       description: digest.lead,
-      url: `${SITE_URL}/garden/report-digests/${digest.slug}`,
+      url: `${SITE_URL}/garden/digests/${digest.slug}`,
       type: 'article',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${digest.title} - Report Digest`,
+      title: metaTitle,
       description: digest.lead,
     },
   }

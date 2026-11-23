@@ -54,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${SITE_URL}/garden/report-digests`,
+      url: `${SITE_URL}/garden/digests`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.8,
@@ -157,9 +157,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.5,
     }))
 
-  // 6. Report digest routes
+  // 6. Digest routes
   const digestRoutes: MetadataRoute.Sitemap = DIGESTS.map((d) => ({
-    url: `${SITE_URL}/garden/report-digests/${d.slug}`,
+    url: `${SITE_URL}/garden/digests/${d.slug}`,
     lastModified: new Date(),
     changeFrequency: 'monthly',
     priority: 0.8,
